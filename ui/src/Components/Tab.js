@@ -5,8 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { observer } from "mobx-react";
 import { isFunction } from "lodash";
 
-import routerStore from "../Stores/RouterStore";
-
 let styles = {
   container:{
     height:"50px",
@@ -71,9 +69,6 @@ let styles = {
 export default class Tab extends React.Component {
   handleClick = (e) => {
     e.preventDefault();
-    if(this.props.path){
-      routerStore.history.push(this.props.path);
-    }
     if(isFunction(this.props.onClick)){
       this.props.onClick(e);
     }

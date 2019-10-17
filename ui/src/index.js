@@ -1,14 +1,9 @@
 import React from "react";
 import { render } from "react-dom";
 import { observer } from "mobx-react";
-import { Router, Route, Switch, matchPath } from "react-router-dom";
-import { Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { FormStore } from "hbp-quickfire";
 import { Button } from "react-bootstrap";
 import injectStyles from "react-jss";
-
-import "react-virtualized/styles.css";
 
 import Cookies from "universal-cookie";
 
@@ -16,23 +11,10 @@ import "./Services/IconsImport";
 
 import appStore from "./Stores/AppStore";
 import authStore from "./Stores/AuthStore";
-import routerStore from "./Stores/RouterStore";
-import structureStore from "./Stores/StructureStore";
-import instanceStore from "./Stores/InstanceStore";
-import browseStore from "./Stores/BrowseStore";
 
-import Tab from "./Components/Tab";
-import SaveBar from "./Views/Instance/SaveBar";
 import UserProfileTab from "./Views/UserProfileTab";
 
-import NotFound from "./Views/NotFound";
-import Home from "./Views/Home";
 import Login from "./Views/Login";
-import Help from "./Views/Help";
-// import Statistics from "./Views/Statistics";
-import Browse from "./Views/Browse";
-import Instance from "./Views/Instance";
-import NewInstance from "./Views/NewInstance";
 import QueryBuilder from "./Views/QueryBuilder";
 import FetchingLoader from "./Components/FetchingLoader";
 import BGMessage from "./Components/BGMessage";
@@ -40,9 +22,6 @@ import GlobalError from "./Views/GlobalError";
 import * as Sentry from "@sentry/browser";
 
 import "babel-polyfill";
-import "./CustomFields";
-
-FormStore.setPathNodeSeparator("|");
 
 const styles = {
   "@global html, body, #root": {
@@ -265,22 +244,8 @@ const styles = {
 @injectStyles(styles)
 @observer
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    authStore.tryAuthenticate();
-    this.state = {
-      currentLocation: routerStore.history.location.pathname
-    };
-    routerStore.history.listen(location => {
-      this.setState({ currentLocation: location.pathname });
-    });
-    this.kCode = { step: 0, ref: [38, 38, 40, 40, 37, 39, 37, 39, 66, 65] };
-  }
-
-
-
   componentDidMount() {
-    document.addEventListener("keydown", this.handleGlobalShortcuts);
+    authStore.tryAuthenticate();
     // Init of sentry (logs) bucket
     const cookies = new Cookies();
     const sentryUrl = cookies.get("sentry_url");
@@ -291,267 +256,40 @@ class App extends React.Component {
     }
   }
 
-
   componentDidCatch(error, info) {
     appStore.setGlobalError(error, info);
-  }
-
-  handleGlobalShortcuts = (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.altKey && e.keyCode === 84) {
-      appStore.toggleTheme();
-    } else if (e.altKey && e.keyCode === 66) { // alt+b, browse
-      routerStore.history.push("/browse");
-    } else if (e.altKey && e.keyCode === 78) { // alt+n, new
-      this.handleCreateInstance();
-    } else if (e.altKey && e.keyCode === 68) { // alt+d, dashboard
-      routerStore.history.push("/");
-    } else if (e.keyCode === 112) { // F1, help
-      routerStore.history.push("/help");
-    } else if (e.altKey && e.keyCode === 87) { // alt+w, close
-      if (e.shiftKey) { // alt+shift+w, close all
-        this.handleCloseAllInstances();
-      } else {
-        let matchInstanceTab = matchPath(this.state.currentLocation, { path: "/instance/:mode/:id*", exact: "true" });
-        if (matchInstanceTab) {
-          this.handleCloseInstance(matchInstanceTab.params.id);
-        }
-      }
-    } else if (e.altKey && e.keyCode === 37) { // left arrow, previous
-      let matchInstanceTab = matchPath(this.state.currentLocation, { path: "/instance/:mode/:id*", exact: "true" });
-      this.handleFocusPreviousInstance(matchInstanceTab && matchInstanceTab.params.id);
-    } else if (e.altKey && e.keyCode === 39) { // right arrow, next
-      let matchInstanceTab = matchPath(this.state.currentLocation, { path: "/instance/:mode/:id*", exact: "true" });
-      this.handleFocusNextInstance(matchInstanceTab && matchInstanceTab.params.id);
-    } else {
-      this.kCode.step = this.kCode.ref[this.kCode.step] === e.keyCode ? this.kCode.step + 1 : 0;
-      if (this.kCode.step === this.kCode.ref.length) {
-        this.kCode.step = 0;
-        appStore.setTheme("cupcake");
-      }
-    }
-  }
-
-  handleToggleSaveBar = () => {
-    instanceStore.toggleSavebarDisplay();
-  }
-
-  handleRetryDeleteInstance = async () => {
-    instanceStore.retryDeleteInstance();
-  }
-
-  handleCancelDeleteInstance = () => {
-    instanceStore.cancelDeleteInstance();
-  }
-
-  handleCloseInstance(instanceId) {
-    if (matchPath(this.state.currentLocation, { path: "/instance/:mode/:id*", exact: "true" })) {
-      if (matchPath(this.state.currentLocation, { path: `/instance/:mode/${instanceId}`, exact: "true" })) {
-        if (instanceStore.openedInstances.size > 1) {
-          let openedInstances = Array.from(instanceStore.openedInstances.keys());
-          let currentInstanceIndex = openedInstances.indexOf(instanceId);
-          let newInstanceId = currentInstanceIndex >= openedInstances.length - 1 ? openedInstances[currentInstanceIndex - 1] : openedInstances[currentInstanceIndex + 1];
-
-          let openedInstance = instanceStore.openedInstances.get(newInstanceId);
-          routerStore.history.push(`/instance/${openedInstance.viewMode}/${newInstanceId}`);
-        } else {
-          routerStore.history.push("/browse");
-          browseStore.clearSelectedInstance();
-        }
-      }
-    }
-    instanceStore.closeInstance(instanceId);
-    const instance = instanceStore.instances.get(instanceId);
-    const instancesToBeDeleted = instance.linkedIds;
-    instanceStore.removeUnusedInstances(instanceId, instancesToBeDeleted);
-  }
-
-  handleCloseAllInstances() {
-    if (!(matchPath(this.state.currentLocation, { path: "/", exact: "true" })
-      || matchPath(this.state.currentLocation, { path: "/browse", exact: "true" })
-      || matchPath(this.state.currentLocation, { path: "/query-builder", exact: "true" })
-      || matchPath(this.state.currentLocation, { path: "/help/*", exact: "true" }))) {
-      routerStore.history.push("/browse");
-    }
-    instanceStore.closeAllInstances();
-  }
-
-  handleFocusPreviousInstance(instanceId) {
-    if (instanceId && matchPath(this.state.currentLocation, { path: "/instance/:mode/:id*", exact: "true" }) && matchPath(this.state.currentLocation, { path: `/instance/:mode/${instanceId}`, exact: "true" })) {
-      if (instanceStore.openedInstances.size > 1) {
-        let openedInstances = Array.from(instanceStore.openedInstances.keys());
-        let currentInstanceIndex = openedInstances.indexOf(instanceId);
-        let newInstanceId = currentInstanceIndex === 0 ? openedInstances[openedInstances.length - 1] : openedInstances[currentInstanceIndex - 1];
-
-        let openedInstance = instanceStore.openedInstances.get(newInstanceId);
-        routerStore.history.push(`/instance/${openedInstance.viewMode}/${newInstanceId}`);
-      } else {
-        routerStore.history.push("/browse");
-      }
-    } else {
-      if (instanceStore.openedInstances.size > 1) {
-        const openedInstances = Array.from(instanceStore.openedInstances.keys());
-        const newInstanceId = openedInstances[openedInstances.length - 1];
-        const openedInstance = instanceStore.openedInstances.get(newInstanceId);
-        routerStore.history.push(`/instance/${openedInstance.viewMode}/${newInstanceId}`);
-      } else {
-        routerStore.history.push("/browse");
-      }
-    }
-  }
-
-  handleFocusNextInstance(instanceId) {
-    if (instanceId && matchPath(this.state.currentLocation, { path: "/instance/:mode/:id*", exact: "true" }) && matchPath(this.state.currentLocation, { path: `/instance/:mode/${instanceId}`, exact: "true" })) {
-      if (instanceStore.openedInstances.size > 1) {
-        let openedInstances = Array.from(instanceStore.openedInstances.keys());
-        let currentInstanceIndex = openedInstances.indexOf(instanceId);
-        let newInstanceId = currentInstanceIndex >= openedInstances.length - 1 ? openedInstances[0] : openedInstances[currentInstanceIndex + 1];
-
-        let openedInstance = instanceStore.openedInstances.get(newInstanceId);
-        routerStore.history.push(`/instance/${openedInstance.viewMode}/${newInstanceId}`);
-      } else {
-        routerStore.history.push("/browse");
-      }
-    } else {
-      if (instanceStore.openedInstances.size > 1) {
-        const openedInstances = Array.from(instanceStore.openedInstances.keys());
-        const newInstanceId = openedInstances[0];
-        const openedInstance = instanceStore.openedInstances.get(newInstanceId);
-        routerStore.history.push(`/instance/${openedInstance.viewMode}/${newInstanceId}`);
-      } else {
-        routerStore.history.push("/browse");
-      }
-    }
-  }
-
-  handleGoToDashboard = () => {
-    routerStore.history.push("/");
   }
 
   handleRetryRetriveUserProfile = () => {
     authStore.retriveUserProfile();
   }
 
-  handleCreateInstance = () => {
-    if (!browseStore.isFetched.lists && !browseStore.isFetching.list) {
-      browseStore.fetchLists();
-    }
-    instanceStore.toggleShowCreateModal();
-  }
-
-  handleHideCreateModal = () => {
-    instanceStore.toggleShowCreateModal();
-  }
-
-  handleLogout = () => {
-    if (!instanceStore.hasUnsavedChanges || confirm("You have unsaved changes pending. Are you sure you want to logout?")) {
-      instanceStore.flushOpenedTabs();
-      authStore.logout();
-      document.querySelector("#root").style.display = "none";
-      window.location.href = window.rootPath + "/";
-    }
-  }
   render() {
     const { classes } = this.props;
-    const { currentLocation } = this.state;
     const Theme = appStore.availableThemes[appStore.currentTheme];
     return (
-      <Router history={routerStore.history}>
         <div className={classes.layout}>
           <Theme />
           <div className={classes.tabs}>
-
             <div className={`${classes.logo} layout-logo`} onClick={this.handleGoToDashboard}>
               <img src={`${window.rootPath}/assets/HBP.png`} alt="" width="30" height="30" />
-              <span>Knowledge Graph Editor</span>
+              <span>Knowledge Graph Query Builder</span>
             </div>
-
             {!appStore.globalError &&
-              <React.Fragment>
-                <div className={classes.fixedTabsLeft}>
-                  {authStore.isFullyAuthenticated ?
-                    <React.Fragment>
-                      <Tab icon={"home"} current={matchPath(currentLocation, { path: "/", exact: "true" })} path={"/"} label={"Home"} hideLabel />
-                      <Tab icon={"search"} current={matchPath(currentLocation, { path: "/browse", exact: "true" })} path={"/browse"} hideLabel label={"Browse"} />
-                      <Tab icon={"file"} current={instanceStore.showCreateModal} onClick={this.handleCreateInstance} hideLabel label={"New instance"} />
-                      <Tab icon={"blender-phone"} current={matchPath(currentLocation, { path: "/query-builder", exact: "true" })} path={"/query-builder"} hideLabel label={"Query Builder"} />
-                    </React.Fragment>
-                    : null
-                  }
-                </div>
-                <div className={classes.dynamicTabs}>
-                  {authStore.isFullyAuthenticated && Array.from(instanceStore.openedInstances.keys()).map(instanceId => {
-                    const instance = instanceStore.instances.get(instanceId);
-                    const mode = instanceStore.openedInstances.get(instanceId).viewMode;
-                    let label;
-                    let color = undefined;
-                    if (instance && !instance.isFetching && !instance.hasFetchError) {
-                      const labelField = instance.data && instance.data.ui_info && instance.data.ui_info.labelField;
-                      const field = labelField && instance.form.getField(labelField);
-                      label = field ? field.getValue() : instanceId;
-                      color = instance.data && structureStore.colorPalletteBySchema(instance.data.fields.id.value.path);
-                    }
-                    if (!label) {
-                      label = instanceId;
-                    }
-                    return (
-                      <Tab
-                        key={instanceId}
-                        icon={instance.isFetching ? "circle-notch" : "circle"}
-                        iconSpin={instance.isFetching}
-                        iconColor={color}
-                        current={matchPath(currentLocation, { path: `/instance/${mode}/${instanceId}`, exact: "true" })}
-                        path={`/instance/${mode}/${instanceId}`}
-                        onClose={this.handleCloseInstance.bind(this, instanceId)}
-                        label={label} />
-                    );
-                  })}
-                </div>
-                <div className={classes.fixedTabsRight}>
-                  {authStore.isFullyAuthenticated &&
-                    <React.Fragment>
-                      <Tab icon={"question-circle"} current={matchPath(currentLocation, { path: "/help", exact: "true" })} path={"/help"} hideLabel label={"Help"} />
-                      <UserProfileTab className={classes.userProfileTab} size={32} />
-                    </React.Fragment>
-                  }
-                </div>
-              </React.Fragment>
-            }
+              <div className={classes.fixedTabsRight}>
+                {authStore.isFullyAuthenticated && <UserProfileTab className={classes.userProfileTab} size={32} />
+                }
+              </div>}
           </div>
           <div className={classes.body}>
-            {instanceStore.hasUnsavedChanges && !matchPath(this.state.currentLocation, { path: "/instance/:mode/:id*", exact: "true" }) &&
-              <div className={`${classes.savebar} ${instanceStore.showSaveBar ? "show" : ""}`}>
-                <div className={classes.savebarToggle} onClick={this.handleToggleSaveBar}>
-                  <FontAwesomeIcon className={classes.savebarToggleIcon} icon={"exclamation-triangle"} />&nbsp;
-                  <FontAwesomeIcon icon={"caret-down"} />&nbsp;
-                  <FontAwesomeIcon icon={"pencil-alt"} />
-                </div>
-                <SaveBar />
-              </div>
-            }
             {appStore.globalError ?
-              <Route component={GlobalError} />
+              <GlobalError />
               :
               !authStore.isOIDCAuthenticated ?
-                <Route component={Login} />
+                <Login />
                 :
                 authStore.isFullyAuthenticated ?
-                  <Switch>
-                    <Route path="/instance/view/:id*" render={(props) => (<Instance {...props} mode="view" />)} />
-                    <Route path="/instance/edit/:id*" render={(props) => (<Instance {...props} mode="edit" />)} />
-                    <Route path="/instance/invite/:id*" render={(props) => (<Instance {...props} mode="invite" />)} />
-                    <Route path="/instance/graph/:id*" render={(props) => (<Instance {...props} mode="graph" />)} />
-                    <Route path="/instance/release/:id*" render={(props) => (<Instance {...props} mode="release" />)} />
-                    <Route path="/instance/manage/:id*" render={(props) => (<Instance {...props} mode="manage" />)} />
-                    <Route path="/query-builder" exact={true} component={QueryBuilder} />
-
-                    <Route path="/browse" exact={true} component={Browse} />
-                    <Route path="/help" component={Help} />
-                    {/* <Route path="/kg-stats" exact={true} component={Statistics} /> */}
-                    <Route path="/loginSuccess" exact={true} component={() => null} />
-                    <Route path="/" exact={true} component={Home} />
-                    <Route component={NotFound} />
-                  </Switch>
-                  : null
+                  <QueryBuilder />: null
             }
             {authStore.isOIDCAuthenticated && !authStore.hasUserProfile && (
               authStore.isRetrievingUserProfile ?
@@ -573,47 +311,9 @@ class App extends React.Component {
             )}
           </div>
           <div className={`${classes.status} layout-status`}>
-
+              Copyright &copy; {new Date().getFullYear()} Human Brain Project. All rights reserved. 
           </div>
-          {authStore.isFullyAuthenticated && (
-            <React.Fragment>
-              {instanceStore.showCreateModal &&
-                <Modal dialogClassName={classes.newInstanceModal} show={true} onHide={this.handleHideCreateModal}>
-                  <Modal.Header closeButton>
-                    New Instance
-                  </Modal.Header>
-                  <Modal.Body>
-                    <NewInstance onCancel={this.handleHideCreateModal} />
-                  </Modal.Body>
-                </Modal>
-              }
-              {instanceStore.deleteInstanceError ?
-                <div className={classes.deleteInstanceErrorModal}>
-                  <Modal.Dialog>
-                    <Modal.Body>
-                      <div className={classes.deleteInstanceError}>{instanceStore.deleteInstanceError}</div>
-                      <div className={classes.deleteInstanceErrorFooterBar}>
-                        <Button onClick={this.handleCancelDeleteInstance}>Cancel</Button>
-                        <Button bsStyle="primary" onClick={this.handleRetryDeleteInstance}><FontAwesomeIcon icon="redo-alt" />&nbsp;Retry</Button>
-                      </div>
-                    </Modal.Body>
-                  </Modal.Dialog>
-                </div>
-                :
-                instanceStore.isDeletingInstance && !!instanceStore.instanceToDelete ?
-                  <div className={classes.deletingInstanceModal}>
-                    <Modal.Dialog>
-                      <Modal.Body>
-                        <FetchingLoader>{`Deleting instance "${instanceStore.instanceToDelete}" ...`}</FetchingLoader>
-                      </Modal.Body>
-                    </Modal.Dialog>
-                  </div>
-                  : null
-              }
-            </React.Fragment>
-          )}
         </div>
-      </Router>
     );
   }
 }

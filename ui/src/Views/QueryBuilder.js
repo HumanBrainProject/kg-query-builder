@@ -7,14 +7,14 @@ import { Scrollbars } from "react-custom-scrollbars";
 
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 import structureStore from "../Stores/StructureStore";
-import Query from "./QueryBuilder/Query";
-import QueriesDrawer from "./QueryBuilder/QueriesDrawer";
+import Query from "./Query";
+import QueriesDrawer from "./QueriesDrawer";
 
-import RootSchemaChoice from "./QueryBuilder/RootSchemaChoice";
-import QuerySpecification from "./QueryBuilder/QuerySpecification";
-import Options from "./QueryBuilder/Options";
-import Result from "./QueryBuilder/Result";
-import ResultTable from "./QueryBuilder/ResultTable";
+import RootSchemaChoice from "./RootSchemaChoice";
+import QuerySpecification from "./QuerySpecification";
+import Options from "./Options";
+import Result from "./Result";
+import ResultTable from "./ResultTable";
 import Tab from "../Components/Tab";
 import BGMessage from "../Components/BGMessage";
 import FetchingLoader from "../Components/FetchingLoader";
