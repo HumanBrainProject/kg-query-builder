@@ -1,83 +1,50 @@
-// import console from "../Services/Logger";
 import { observable, computed, action, runInAction } from "mobx";
 import API from "../Services/API";
 
-const oidConnectServerUri = "https://services.humanbrainproject.eu/oidc/authorize";
-const oidClientId = "nexus-kg-search";
-const oidLocalStorageKey = "hbp.kg-editor.oid";
-
-const generateRandomKey = () => {
-  let key = "";
-  const chars = "ABCDEF0123456789";
-  for (let i=0; i<4; i++) {
-    if (key !== "") {
-      key += "-";
-    }
-    for (let j=0; j<5; j++) {
-      key += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-  }
-  return key;
+const userKeys = {
+  id: "@id",
+  username: "http://schema.org/alternateName",
+  email: "http://schema.org/email",
+  displayName: "http://schema.org/name",
+  givenName: "http://schema.org/givenName",
+  familyName: "http://schema.org/familyName"
 };
 
-const getKey = (hash, key) => {
-  if (typeof hash !== "string" || typeof key !== "string") {
-    return null;
+const mapUserProfile = data => {
+  const user = {};
+  if (data && data.data) {
+    Object.entries(userKeys).forEach(([name, fullyQualifiedName]) => {
+      if (data.data[fullyQualifiedName]) {
+        user[name] = data.data[fullyQualifiedName];
+      }
+    });
   }
-  const patterns = [
-    `^#${key}=([^&]+)&.+$`,
-    `^.+&${key}=([^&]+)&.+$`,
-    `^#${key}=([^&]+)$`,
-    `^.+&${key}=([^&]+)$`
-  ];
-  let value = null;
-  patterns.some(pattern => {
-    const reg = new RegExp(pattern);
-    const m = hash.match(reg);
-    if (m && m.length === 2) {
-      value = m[1];
-      return true;
-    }
-    return false;
-  });
-  return value;
+  return user;
 };
-
-let rootPath = window.rootPath || "";
-let redirectUri = `${window.location.protocol}//${window.location.host}${rootPath}/loginSuccess`;
-let stateKey = btoa(redirectUri);
-let sessionTimer = null;
 
 class AuthStore {
-  @observable session = null;
+  @observable endpoint = null;
   @observable user = null;
   @observable isRetrievingUserProfile = false;
   @observable userProfileError = false;
-  reloginResolve = null;
-  reloginPromise = new Promise((resolve)=>{this.reloginResolve = resolve;});
-  expiredToken = false;
+  @observable authError = null;
+  @observable authSuccess = false;
+  keycloak = null;
 
-  constructor(){
-    if(Storage === undefined){
+  constructor() {
+    if (Storage === undefined) {
       throw "The browser must support WebStorage API";
     }
-
-    window.addEventListener("storage", (e) => {
-      if(e.key !== oidLocalStorageKey){
-        return;
-      }
-      this.tryAuthenticate();
-    });
   }
 
   @computed
   get accessToken() {
-    return this.hasExpired? null: this.session.accessToken;
+    return this.isAuthenticated ? this.keycloak.token: "";
   }
 
   @computed
-  get isOIDCAuthenticated() {
-    return !this.hasExpired;
+  get isAuthenticated() {
+    return this.authSuccess;
   }
 
   @computed
@@ -87,76 +54,29 @@ class AuthStore {
 
   @computed
   get isFullyAuthenticated() {
-    return this.isOIDCAuthenticated && this.hasUserProfile;
-  }
-
-  get hasExpired() {
-    return this.session === null || (new Date() - this.session.expiryTimestamp) > 0;
-  }
-
-  get loginUrl() {
-    const nonceKey = generateRandomKey();
-    const url = `${oidConnectServerUri}?response_type=id_token%20token&client_id=${oidClientId}&redirect_uri=${escape(redirectUri)}&scope=openid%20profile&state=${stateKey}&nonce=${nonceKey}`;
-    return url;
-  }
-
-  startSessionTimer() {
-    if (this.hasExpired) {
-      return;
-    }
-    clearTimeout(sessionTimer);
-    sessionTimer = setTimeout(() => {
-      // console.log("session is expiring...");
-      this.logout();
-    }, this.session.expiryTimestamp -(new Date()).getTime());
+    return this.isAuthenticated && this.hasUserProfile;
   }
 
   @action
   logout() {
-    // console.log("logout");
-    clearTimeout(sessionTimer);
-    this.session = null;
-    this.expiredToken = true;
     this.user = null;
-    if (typeof Storage !== "undefined" ) {
-      localStorage.removeItem(oidLocalStorageKey);
-    }
-    return this.reloginPromise;
-  }
-
-  listenForLogin(){
-    window.addEventListener("message", this.loginSuccessHandler);
+    this.keycloak.logout();
   }
 
   @action
-  loginSuccessHandler(e){
-    if(e.data === "LOGIN_SUCCESS"){
-      this.tryAuthenticate();
-    }
-    window.removeEventListener("message", this.loginSuccessHandler);
-  }
-
-  @action
-  async retriveUserProfile() {
-    if (!this.hasExpired && !this.user) {
+  async retrieveUserProfile() {
+    if (this.isAuthenticated && !this.user) {
       this.userProfileError = false;
       this.isRetrievingUserProfile = true;
       try {
-        /* Uncomment to test error handling
-        if ((Math.floor(Math.random() * 10) % 2) === 0) {
-          throw "Error 501";
-        }
-        */
         const { data } = await API.axios.get(API.endpoints.user());
         runInAction(() => {
-          this.user = data && data.data;
+          this.user = mapUserProfile(data);
           this.isRetrievingUserProfile = false;
-          this.reloginResolve();
-          this.reloginPromise = new Promise((resolve)=>{this.reloginResolve = resolve;});
         });
       } catch (e) {
         runInAction(() => {
-          this.userProfileError = e.message?e.message:e;
+          this.userProfileError = e.message ? e.message : e;
           this.isRetrievingUserProfile = false;
         });
       }
@@ -164,40 +84,51 @@ class AuthStore {
   }
 
   @action
-  async tryAuthenticate() {
-    const hash = window.location.hash;
-    const accessToken = getKey(hash, "access_token");
-    const state = getKey(hash, "state");
-    const expiresIn = getKey(hash, "expires_in");
+  initializeKeycloak() {
+    const keycloak = window.Keycloak({
+      "realm": "hbp",
+      "url":  this.endpoint,
+      "clientId": "kg-editor"
+    });
+    runInAction(() => this.keycloak = keycloak);
+    keycloak.onAuthSuccess = () => {
+      runInAction(() => this.authSuccess = true);
+      this.retrieveUserProfile();
+    };
+    keycloak.onAuthError = () => {
+      runInAction(() => this.authError = "There was an error during login. Please try again!");
+    };
+    keycloak.onTokenExpired = () => { keycloak.login(); };
+    keycloak.init({ onLoad: "login-required", flow: "implicit" });
+  }
 
-    if (accessToken && state && expiresIn) {
-      this.session = {
-        accessToken: accessToken,
-        expiryTimestamp: new Date().getTime() + 1000 * (Number(expiresIn) - 60)
-      };
-      this.startSessionTimer();
+  @action
+  async initiliazeAuthenticate() {
+    try {
+      const { data } = await API.axios.get(API.endpoints.auth());
+      runInAction(() => {
+        this.endpoint =  data && data.data? data.data.endpoint :null;
+      });
+      if(this.endpoint) {
+        const keycloakScript = document.createElement("script");
+        keycloakScript.src = this.endpoint + "/js/keycloak.js";
+        keycloakScript.async = true;
 
-      // console.log ("retrieved oid from url: ", this.session);
-      localStorage.setItem(oidLocalStorageKey, JSON.stringify(this.session));
-
-      // const uri = atob(state);
-      // console.log ("retrieved stateKey: ", uri);
-    } else {
-      const oidStoredState = JSON.parse(localStorage.getItem(oidLocalStorageKey));
-      // console.log ("retrieved oid from localStorage: ", oidStoredState);
-
-      if (oidStoredState && oidStoredState.expiryTimestamp && new Date() < oidStoredState.expiryTimestamp) {
-        this.session = oidStoredState;
-        this.startSessionTimer();
-      } else if(this.session){
-        this.logout();
+        document.head.appendChild(keycloakScript);
+        keycloakScript.onload = () => {
+          this.initializeKeycloak();
+        };
       }
-
+    } catch (e) {
+      return null;
     }
+  }
 
-    this.retriveUserProfile();
 
-    return this.session? this.session.accessToken: null;
+  @action
+  async test() {
+    const data = await API.axios.get(API.endpoints.test);
   }
 }
+
 export default new AuthStore();

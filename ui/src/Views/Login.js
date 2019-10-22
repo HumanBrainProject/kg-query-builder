@@ -41,6 +41,10 @@ export default class Login extends React.Component {
     this.state = { showFrame: false };
   }
 
+  handleTest = () => {
+    authStore.test();
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -61,12 +65,9 @@ export default class Login extends React.Component {
             <h3>Welcome to Knowledge Graph Editor</h3>
             <p>Please login to continue.</p>
             <div>
-              <Button bsStyle={"primary"} onClick={this.showFrame.bind(this)}>Login</Button>
+              <Button bsStyle={"primary"} onClick={this.handleTest}>Login</Button>
             </div>
           </div>
-        }
-        {this.state.showFrame &&
-          <iframe className={classes.oidFrame} frameBorder="0" src={authStore.loginUrl} />
         }
       </div>
     );

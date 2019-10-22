@@ -31,10 +31,11 @@ module.exports = {
     port: 3000,
     open: true,
     proxy: {
-      "/editor/api/**": {
-        target:"http://localhost:9000",
+      "/service/api/**": {
+        target:"http://localhost:8080",
         secure:false,
-        changeOrigin: true
+        changeOrigin: true,
+        pathRewrite: {'^/service/api' : ''}
       }
     },
     historyApiFallback: {

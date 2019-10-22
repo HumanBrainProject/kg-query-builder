@@ -245,7 +245,7 @@ const styles = {
 @observer
 class App extends React.Component {
   componentDidMount() {
-    authStore.tryAuthenticate();
+    authStore.initiliazeAuthenticate();
     // Init of sentry (logs) bucket
     const cookies = new Cookies();
     const sentryUrl = cookies.get("sentry_url");
@@ -268,52 +268,52 @@ class App extends React.Component {
     const { classes } = this.props;
     const Theme = appStore.availableThemes[appStore.currentTheme];
     return (
-        <div className={classes.layout}>
-          <Theme />
-          <div className={classes.tabs}>
-            <div className={`${classes.logo} layout-logo`} onClick={this.handleGoToDashboard}>
-              <img src={`${window.rootPath}/assets/HBP.png`} alt="" width="30" height="30" />
-              <span>Knowledge Graph Query Builder</span>
-            </div>
-            {!appStore.globalError &&
+      <div className={classes.layout}>
+        <Theme />
+        <div className={classes.tabs}>
+          <div className={`${classes.logo} layout-logo`} onClick={this.handleGoToDashboard}>
+            <img src={`${window.rootPath}/assets/HBP.png`} alt="" width="30" height="30" />
+            <span>Knowledge Graph Query Builder</span>
+          </div>
+          {!appStore.globalError &&
               <div className={classes.fixedTabsRight}>
                 {authStore.isFullyAuthenticated && <UserProfileTab className={classes.userProfileTab} size={32} />
                 }
               </div>}
-          </div>
-          <div className={classes.body}>
-            {appStore.globalError ?
-              <GlobalError />
-              :
-              !authStore.isOIDCAuthenticated ?
-                <Login />
-                :
-                authStore.isFullyAuthenticated ?
-                  <QueryBuilder />: null
-            }
-            {authStore.isOIDCAuthenticated && !authStore.hasUserProfile && (
-              authStore.isRetrievingUserProfile ?
-                <div className={classes.userProfileLoader}>
-                  <FetchingLoader>Retrieving user profile...</FetchingLoader>
-                </div>
-                :
-                authStore.userProfileError ?
-                  <div className={classes.userProfileError}>
-                    <BGMessage icon={"ban"}>
-                      {`There was a network problem retrieving user profile (${authStore.userProfileError}).
-                      If the problem persists, please contact the support.`}<br /><br />
-                      <Button bsStyle={"primary"} onClick={this.handleRetryRetriveUserProfile}>
-                        <FontAwesomeIcon icon={"redo-alt"} /> &nbsp; Retry
-                      </Button>
-                    </BGMessage>
-                  </div>
-                  : null
-            )}
-          </div>
-          <div className={`${classes.status} layout-status`}>
-              Copyright &copy; {new Date().getFullYear()} Human Brain Project. All rights reserved. 
-          </div>
         </div>
+        <div className={classes.body}>
+          {appStore.globalError ?
+            <GlobalError />
+            :
+            !authStore.isOIDCAuthenticated ?
+              <Login />
+              :
+              authStore.isFullyAuthenticated ?
+                <QueryBuilder />: null
+          }
+          {authStore.isOIDCAuthenticated && !authStore.hasUserProfile && (
+            authStore.isRetrievingUserProfile ?
+              <div className={classes.userProfileLoader}>
+                <FetchingLoader>Retrieving user profile...</FetchingLoader>
+              </div>
+              :
+              authStore.userProfileError ?
+                <div className={classes.userProfileError}>
+                  <BGMessage icon={"ban"}>
+                    {`There was a network problem retrieving user profile (${authStore.userProfileError}).
+                      If the problem persists, please contact the support.`}<br /><br />
+                    <Button bsStyle={"primary"} onClick={this.handleRetryRetriveUserProfile}>
+                      <FontAwesomeIcon icon={"redo-alt"} /> &nbsp; Retry
+                    </Button>
+                  </BGMessage>
+                </div>
+                : null
+          )}
+        </div>
+        <div className={`${classes.status} layout-status`}>
+              Copyright &copy; {new Date().getFullYear()} Human Brain Project. All rights reserved.
+        </div>
+      </div>
     );
   }
 }
