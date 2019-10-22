@@ -2,8 +2,9 @@ import React from "react";
 import { render } from "react-dom";
 import { observer } from "mobx-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import injectStyles from "react-jss";
+import { Scrollbars } from "react-custom-scrollbars";
 
 import Cookies from "universal-cookie";
 
@@ -20,6 +21,7 @@ import FetchingLoader from "./Components/FetchingLoader";
 import BGMessage from "./Components/BGMessage";
 import GlobalError from "./Views/GlobalError";
 import * as Sentry from "@sentry/browser";
+import WorkspaceSelector from "./Components/WorkspaceSelector";
 
 import "babel-polyfill";
 
@@ -39,7 +41,6 @@ const styles = {
     "-webkit-touch-callout": "none",
     userSelect: "none"
   },
-
   layout: {
     height: "100vh",
     display: "grid",
@@ -52,18 +53,6 @@ const styles = {
     display: "grid",
     gridTemplateRows: "1fr",
     gridTemplateColumns: "auto auto 1fr auto"
-  },
-  fixedTabsLeft: {
-    display: "grid",
-    gridTemplateColumns: "repeat(6, auto)"
-  },
-  dynamicTabs: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(120px, 0.5fr))"
-  },
-  fixedTabsRight: {
-    display: "grid",
-    gridTemplateColumns: "repeat(6, auto)"
   },
   body: {
     position: "relative",
@@ -88,51 +77,6 @@ const styles = {
   },
   status: {
     background: "var(--bg-color-ui-contrast1)"
-  },
-  savebar: {
-    position: "absolute",
-    top: 0,
-    right: "-400px",
-    width: "400px",
-    background: "var(--bg-color-ui-contrast3)",
-    borderLeft: "1px solid var(--border-color-ui-contrast1)",
-    color: "var(--ft-color-loud)",
-    height: "100%",
-    zIndex: 2,
-    transition: "right 0.25s ease",
-    "&.show": {
-      right: "0",
-    }
-  },
-  savebarToggle: {
-    cursor: "pointer",
-    position: "absolute",
-    bottom: "10px",
-    right: "100%",
-    background: "linear-gradient(90deg, var(--bg-color-ui-contrast1), var(--bg-color-ui-contrast3))",
-    borderRadius: "3px 0 0 3px",
-    padding: "10px",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    borderRight: "none",
-    textAlign: "center",
-    color: "#e67e22",
-    "&:hover": {
-      background: "var(--bg-color-ui-contrast3)"
-    }
-  },
-  savebarToggleIcon: {
-    animation: "pulse 2s linear infinite"
-  },
-  "@keyframes pulse": {
-    "0%": {
-      "transform": "scale(1.1)"
-    },
-    "50%": {
-      "transform": "scale(0.8)"
-    },
-    "100%": {
-      "transform": "scale(1.1)"
-    }
   },
   userProfileLoader: {
     position: "fixed",
@@ -173,70 +117,72 @@ const styles = {
     border: "1px solid var(--border-color-ui-contrast2)",
     borderLeft: "none"
   },
-  deleteInstanceErrorModal: {
-    "& .modal-dialog": {
-      top: "35%",
-      width: "max-content",
-      maxWidth: "800px",
-      "& .modal-body": {
-        padding: "15px 25px",
-        border: "1px solid var(--ft-color-loud)",
-        borderRadius: "4px",
-        color: "var(--ft-color-loud)",
-        background: "var(--list-bg-hover)"
-      }
+  workspacesSelection: {
+    fontSize: "1.5em",
+    padding: "0 0 30px 0",
+    "& h1": {
+      padding: "0 30px 20px 30px"
+    },
+    "& p": {
+      padding: "0 30px",
+      fontWeight: "300"
     }
   },
-  deleteInstanceError: {
-    margin: "20px 0",
-    color: "var(--ft-color-error)"
+  workspaces: {
+    display: "grid",
+    padding: "0 30px",
+    gridGap: "15px",
+    gridTemplateColumns: "repeat(1fr)",
+    "@media screen and (min-width:768px)": {
+      gridTemplateColumns: "repeat(2, 1fr)"
+    },
+    "@media screen and (min-width:1024px)": {
+      gridTemplateColumns: "repeat(3, 1fr)"
+    },
   },
-  deleteInstanceErrorFooterBar: {
-    marginBottom: "10px",
-    width: "100%",
+  workspace: {
+    position: "relative",
+    padding: "20px",
+    fontWeight: "300",
     textAlign: "center",
-    wordBreak: "keep-all",
-    whiteSpace: "nowrap",
-    "& button + button": {
-      marginLeft: "20px"
+    border: "1px solid #ccc",
+    borderRadius: "3px",
+    cursor: "pointer",
+    fontSize: "1.2em",
+    wordBreak: "break-word",
+    "@media screen and (min-width:768px)": {
+      whiteSpace: "nowrap"
+    },
+    "&:hover": {
+      background: "#f3f3f3"
     }
   },
-  deletingInstanceModal: {
-    "& .modal-dialog": {
-      top: "35%",
-      width: "max-content",
-      maxWidth: "800px",
-      "& .modal-body": {
-        padding: "30px",
-        border: "1px solid var(--ft-color-loud)",
-        borderRadius: "4px",
-        color: "var(--ft-color-loud)",
-        background: "var(--list-bg-hover)",
-        "& .fetchingPanel": {
-          position: "unset !important",
-          top: "unset",
-          left: "unset",
-          width: "unset",
-          transform: "none",
-          wordBreak: "break-word",
-          "& .fetchingLabel": {
-            display: "inline"
-          }
-        }
-      }
-    }
-  },
-  newInstanceModal: {
+  workspaceSelectionModal: {
     overflow: "hidden",
     width: "90%",
+    margin: "auto",
     "@media screen and (min-width:1024px)": {
-      width: "900px",
+      width: "900px"
     },
-    "& .modal-body": {
-      height: "calc(95vh - 52px)",
-      padding: "3px 0",
-      maxHeight: "calc(100vh - 210px)",
-      overflowY: "auto"
+    "&.modal-dialog": {
+      marginTop: "25vh",
+      "& .modal-body": {
+        padding: "0",
+        maxHeight: "calc(100vh - 30vh -80px)",
+        overflowY: "hidden"
+      }
+    }
+  },
+  noWorkspacesModal: {
+    "&.modal-dialog": {
+      marginTop: "40vh",
+      "& .modal-body": {
+        padding: "0 30px 15px 30px",
+        fontSize: "1.6rem",
+        "@media screen and (min-width:768px)": {
+          whiteSpace: "nowrap"
+        }
+      }
     }
   }
 };
@@ -264,6 +210,8 @@ class App extends React.Component {
     authStore.retriveUserProfile();
   }
 
+  handleClick = workspace => authStore.setCurrentWorkspace(workspace);
+
   render() {
     const { classes } = this.props;
     const Theme = appStore.availableThemes[appStore.currentTheme];
@@ -276,22 +224,55 @@ class App extends React.Component {
             <span>Knowledge Graph Query Builder</span>
           </div>
           {!appStore.globalError &&
-              <div className={classes.fixedTabsRight}>
-                {authStore.isFullyAuthenticated && <UserProfileTab className={classes.userProfileTab} size={32} />
-                }
-              </div>}
+          <React.Fragment>
+            {authStore.isFullyAuthenticated && authStore.hasWorkspaces && authStore.currentWorkspace?
+              <WorkspaceSelector />: <div></div>
+            }
+            <div></div>
+            {authStore.isFullyAuthenticated && <UserProfileTab className={classes.userProfileTab} size={32} />
+            }
+          </React.Fragment>}
         </div>
         <div className={classes.body}>
           {appStore.globalError ?
             <GlobalError />
             :
-            !authStore.isOIDCAuthenticated ?
+            !authStore.isAuthenticated ?
               <Login />
               :
               authStore.isFullyAuthenticated ?
-                <QueryBuilder />: null
+                authStore.hasWorkspaces?
+                  authStore.currentWorkspace?
+                    <QueryBuilder />
+                    :
+                    <Modal dialogClassName={classes.workspaceSelectionModal} show={true} centered>
+                      <Modal.Body>
+                        <div className={classes.workspacesSelection}>
+                          <h1>Welcome <span title={name}>{name}</span></h1>
+                          <p>Please select a workspace:</p>
+                          <div style={{height: `${Math.round(Math.min(window.innerHeight * 0.5 - 140, Math.ceil(authStore.workspaces.length / 3) * 80))}px`}}>
+                            <Scrollbars>
+                              <div className={classes.workspaces}>
+                                {authStore.workspaces.map(workspace =>
+                                  <div className={classes.workspace} key={workspace} onClick={() => this.handleClick(workspace)}>{workspace}</div>
+                                )}
+                              </div>
+                            </Scrollbars>
+                          </div>
+                        </div>
+                      </Modal.Body>
+                    </Modal>
+                  :
+                  <Modal dialogClassName={classes.noWorkspacesModal} show={true} centered>
+                    <Modal.Body>
+                      <h1>Welcome <span title={name}>{name}</span></h1>
+                      <p>You are currently not granted permission to acccess any workspaces.</p>
+                      <p>Please contact our team by email at : <a href={"mailto:kg-team@humanbrainproject.eu"}>kg-team@humanbrainproject.eu</a></p>
+                    </Modal.Body>
+                  </Modal>
+                : null
           }
-          {authStore.isOIDCAuthenticated && !authStore.hasUserProfile && (
+          {authStore.isAuthenticated && !authStore.hasUserProfile && (
             authStore.isRetrievingUserProfile ?
               <div className={classes.userProfileLoader}>
                 <FetchingLoader>Retrieving user profile...</FetchingLoader>

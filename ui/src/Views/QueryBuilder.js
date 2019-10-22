@@ -70,16 +70,23 @@ let styles = {
 @injectStyles(styles)
 @observer
 export default class QueryBuilder extends React.Component {
+  componentDidMount() {
+    this.fetchStructure(true);
+  }
+
   fetchStructure(forceFetch=false) {
     structureStore.fetchStructure(!!forceFetch);
   }
+
   handleSelectTab(tab) {
     queryBuilderStore.selectTab(tab);
     this.scrolledPanel.scrollToTop();
   }
+
   handleCloseField = () => {
     queryBuilderStore.closeFieldOptions();
   }
+
   handleRetryFetchStructure = () => {
     this.fetchStructure(true);
   }

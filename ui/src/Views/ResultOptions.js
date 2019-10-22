@@ -57,7 +57,7 @@ export default class ResultOptions extends React.Component{
       <div className={classes.container}>
         <form>
           <Row>
-            <Col xs={6}>
+            <Col xs={3}>
               <FormGroup>
                 <ControlLabel>Size</ControlLabel>
                 <FormControl
@@ -68,7 +68,7 @@ export default class ResultOptions extends React.Component{
                 />
               </FormGroup>
             </Col>
-            <Col xs={6}>
+            <Col xs={3}>
               <FormGroup>
                 <ControlLabel>Start</ControlLabel>
                 <FormControl
@@ -79,24 +79,22 @@ export default class ResultOptions extends React.Component{
                 />
               </FormGroup>
             </Col>
-          </Row>
-          <Row>
-            <Col xs={12}>
+            <Col xs={6}>
               <FormGroup>
                 <ControlLabel>Select space</ControlLabel>
                 <FormControl componentClass="select" placeholder="minds" value={queryBuilderStore.databaseScope} onChange={this.handleChangeScope} >
                   {scopeOptions.map(space => (
-                    <option value={space} key={space}>{space}</option>
+                    <option value={space.value} key={space}>{space.label}</option>
                   ))}
                 </FormControl>
               </FormGroup>
             </Col>
           </Row>
           <Row>
-            <Col xs={12}>
+            <Col xs={9}>
               <Checkbox  onChange={this.handleToggleRunStripVocab} checked={queryBuilderStore.runStripVocab}>Strip vocab</Checkbox>
             </Col>
-            <Col xs={12}>
+            <Col xs={3}>
               <Button bsStyle={"primary"} className={"btn-block"} disabled={queryBuilderStore.isQueryEmpty} onClick={this.handlExecuteQuery} title={!queryBuilderStore.isQueryEmpty?"Run it":"The current query specification is not valid/complete. Please select at least one field."}>
               Run it
               </Button>
