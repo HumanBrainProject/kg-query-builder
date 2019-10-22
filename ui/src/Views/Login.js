@@ -41,8 +41,8 @@ export default class Login extends React.Component {
     this.state = { showFrame: false };
   }
 
-  handleTest = () => {
-    authStore.test();
+  handleLogin = () => {
+    authStore.login();
   }
 
   render() {
@@ -65,7 +65,7 @@ export default class Login extends React.Component {
             <h3>Welcome to Knowledge Graph Editor</h3>
             <p>Please login to continue.</p>
             <div>
-              <Button bsStyle={"primary"} onClick={this.handleTest}>Login</Button>
+              <Button bsStyle={"primary"} onClick={this.handleLogin}>Login</Button>
             </div>
           </div>
         }

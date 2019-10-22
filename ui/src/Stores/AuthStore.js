@@ -99,7 +99,14 @@ class AuthStore {
       runInAction(() => this.authError = "There was an error during login. Please try again!");
     };
     keycloak.onTokenExpired = () => { keycloak.login(); };
-    keycloak.init({ onLoad: "login-required", flow: "implicit" });
+    keycloak.init({ flow: "implicit" });
+  }
+
+  @action
+  login() {
+    if(!this.isAuthenticated && this.keycloak) {
+      this.keycloak.login();
+    }
   }
 
   @action
@@ -122,12 +129,6 @@ class AuthStore {
     } catch (e) {
       return null;
     }
-  }
-
-
-  @action
-  async test() {
-    const data = await API.axios.get(API.endpoints.test);
   }
 }
 
