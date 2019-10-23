@@ -31,6 +31,7 @@ class AuthStore {
   @observable authError = null;
   @observable authSuccess = false;
   @observable currentWorkspace = null;
+  @observable isTokenExpired = false;
   keycloak = null;
 
   constructor() {
@@ -129,15 +130,21 @@ class AuthStore {
     runInAction(() => this.keycloak = keycloak);
     keycloak.onAuthSuccess = () => {
       runInAction(() => this.authSuccess = true);
-      this.retrieveUserProfile();
+      // this.retrieveUserProfile(); //TODO: Enable this when core endpoint works
+      this.user = {
+        workspaces: ["minds", "uniminds"] //TODO: Remove hardcoded values
+      };
     };
     keycloak.onAuthError = () => {
       runInAction(() => this.authError = "There was an error during login. Please try again!");
     };
     keycloak.onTokenExpired = () => {
-      this.authSuccess = false;
+      runInAction(() => {
+        this.authSuccess = false;
+        this.isTokenExpired = true;
+      });
     };
-    keycloak.init({ flow: "implicit" });
+    keycloak.init({ onLoad: "login-required", flow: "implicit" });
   }
 
   @action

@@ -220,7 +220,7 @@ class App extends React.Component {
         <Theme />
         <div className={classes.tabs}>
           <div className={`${classes.logo} layout-logo`} onClick={this.handleGoToDashboard}>
-            <img src={`${window.rootPath}/assets/HBP.png`} alt="" width="30" height="30" />
+            {/* <img src={`${window.rootPath}/assets/HBP.png`} alt="" width="30" height="30" /> */}
             <span>Knowledge Graph Query Builder</span>
           </div>
           {!appStore.globalError &&
