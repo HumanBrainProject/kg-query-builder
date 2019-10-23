@@ -134,7 +134,9 @@ class AuthStore {
     keycloak.onAuthError = () => {
       runInAction(() => this.authError = "There was an error during login. Please try again!");
     };
-    keycloak.onTokenExpired = () => { keycloak.login(); };
+    keycloak.onTokenExpired = () => {
+      this.authSuccess = false;
+    };
     keycloak.init({ flow: "implicit" });
   }
 
