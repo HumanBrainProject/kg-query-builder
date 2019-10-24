@@ -24,7 +24,6 @@ const mapUserProfile = data => {
 };
 
 class AuthStore {
-  @observable endpoint = null;
   @observable user = null;
   @observable isRetrievingUserProfile = false;
   @observable userProfileError = false;
@@ -32,7 +31,10 @@ class AuthStore {
   @observable authSuccess = false;
   @observable currentWorkspace = null;
   @observable isTokenExpired = false;
+  @observable isInitializing = true;
+  @observable initializationError = null;
   keycloak = null;
+  endpoint = null;
 
   constructor() {
     if (Storage === undefined) {
@@ -78,6 +80,8 @@ class AuthStore {
 
   @action
   logout() {
+    this.authSuccess = false;
+    this.isTokenExpired = true;
     this.user = null;
     this.keycloak.logout();
   }
@@ -88,12 +92,22 @@ class AuthStore {
       this.userProfileError = false;
       this.isRetrievingUserProfile = true;
       try {
-        const { data } = await API.axios.get(API.endpoints.user());
-        runInAction(() => {
-          this.user = mapUserProfile(data);
-          this.retrieveUserWorkspace();
-          this.isRetrievingUserProfile = false;
-        });
+        setTimeout(() => {
+          runInAction(() => {
+            this.user = {
+              id: "asdfasdfasdfsd",
+              workspaces: ["minds", "uniminds"] //TODO: Remove hardcoded values
+            };
+            this.retrieveUserWorkspace();
+            this.isRetrievingUserProfile = false;
+          });
+        }, 1000);
+        // const { data } = await API.axios.get(API.endpoints.user());
+        // runInAction(() => {
+        //   this.user = mapUserProfile(data);
+        //   this.retrieveUserWorkspace();
+        //   this.isRetrievingUserProfile = false;
+        // });
       } catch (e) {
         runInAction(() => {
           this.userProfileError = e.message ? e.message : e;
@@ -129,14 +143,16 @@ class AuthStore {
     });
     runInAction(() => this.keycloak = keycloak);
     keycloak.onAuthSuccess = () => {
-      runInAction(() => this.authSuccess = true);
-      // this.retrieveUserProfile(); //TODO: Enable this when core endpoint works
-      this.user = {
-        workspaces: ["minds", "uniminds"] //TODO: Remove hardcoded values
-      };
+      runInAction(() => {
+        this.authSuccess = true;
+        this.isInitializing = false;
+      });
+      this.retrieveUserProfile();
     };
-    keycloak.onAuthError = () => {
-      runInAction(() => this.authError = "There was an error during login. Please try again!");
+    keycloak.onAuthError = error => {
+      runInAction(() => {
+        this.authError = error.error_description;
+      });
     };
     keycloak.onTokenExpired = () => {
       runInAction(() => {
@@ -156,6 +172,8 @@ class AuthStore {
 
   @action
   async initiliazeAuthenticate() {
+    this.isInitializing = true;
+    this.authError = null;
     try {
       const { data } = await API.axios.get(API.endpoints.auth());
       runInAction(() => {
@@ -170,9 +188,24 @@ class AuthStore {
         keycloakScript.onload = () => {
           this.initializeKeycloak();
         };
+        keycloakScript.onerror = () => {
+          document.head.removeChild(keycloakScript);
+          runInAction(() => {
+            this.isInitializing = false;
+            this.authError = `Failed to load resource! (${keycloakScript.src})`;
+          });
+        };
+      } else {
+        runInAction(() => {
+          this.isInitializing = false;
+          this.authError = "service endpoints configuration is not correctly set";
+        });
       }
     } catch (e) {
-      return null;
+      runInAction(() => {
+        this.isInitializing = false;
+        this.authError = `Failed to load service endpoints configuration (${e && e.message?e.message:e})`;
+      });
     }
   }
 }

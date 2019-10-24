@@ -26,9 +26,13 @@ let styles = {
     color: "var(--ft-color-normal)",
   },
   structureLoader: {
+    position: "fixed",
+    top: 0,
+    left: 0,
     width: "100%",
     height: "100%",
     zIndex: 10000,
+    background: "var(--bg-color-blend-contrast1)",
     "& .fetchingPanel": {
       width: "auto",
       padding: "30px",
@@ -99,7 +103,7 @@ export default class QueryBuilder extends React.Component {
         {structureStore.isFetchingStructure ?
           <div className={classes.structureLoader}>
             <FetchingLoader>
-              Fetching api structure
+              Fetching api structure...
             </FetchingLoader>
           </div>
           :
