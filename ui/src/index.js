@@ -141,7 +141,6 @@ class App extends React.Component {
   render() {
     const { classes } = this.props;
     const Theme = appStore.availableThemes[appStore.currentTheme];
-    console.log(authStore.hasWorkspaces);
     return (
       <div className={classes.layout}>
         <Theme />
@@ -150,14 +149,14 @@ class App extends React.Component {
           {appStore.globalError ?
             <GlobalError />
             :
-            !appStore.isInitialized || !authStore.isAuthenticated ?
+            (!appStore.isInitialized || !authStore.isAuthenticated ?
               <Login />
               :
-              authStore.hasWorkspaces?
-                appStore.currentWorkspace?
+              (authStore.hasWorkspaces?
+                (appStore.currentWorkspace?
                   <QueryBuilder />
                   :
-                  <WorkspaceModal />
+                  <WorkspaceModal />)
                 :
                 <Modal dialogClassName={classes.noWorkspacesModal} show={true}>
                   <Modal.Body>
@@ -166,6 +165,8 @@ class App extends React.Component {
                     <p>Please contact our team by email at : <a href={"mailto:kg-team@humanbrainproject.eu"}>kg-team@humanbrainproject.eu</a></p>
                   </Modal.Body>
                 </Modal>
+              )
+            )
           }
         </div>
         <div className={`${classes.status} layout-status`}>

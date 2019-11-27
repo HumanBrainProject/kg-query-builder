@@ -30,4 +30,18 @@ public class Workspaces {
                 .block();
     }
 
+    @GetMapping("/types")
+    public Map<?, ?> getWorkspaceTypes(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String authorizationToken, @RequestParam("workspace") String workspace) {
+        return WebClient.builder().build()
+                .get()
+                .uri(String.format("%s/types?stage=LIVE&withProperties=true&workspace=%s", kgCoreEndpoint, workspace))
+                .headers(h -> {
+                    h.add(HttpHeaders.AUTHORIZATION, authorizationToken);
+                    h.add("Client-Authorization", ServiceClient.kgeditor.toString());
+                })
+                .retrieve()
+                .bodyToMono(Map.class)
+                .block();
+    }
+
 }

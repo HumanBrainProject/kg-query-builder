@@ -4,6 +4,7 @@ import authStore from "../Stores/AuthStore";
 const endpoints = {
   "auth": () => "/service/api/auth/endpoint",
   "user": () => "/service/api/user",
+  "workspaces": () => "/service/api/workspaces",
   "structure": () => "/service/api/structure?withLinks=true",
   "performQuery": function(instancePath, vocab, size, start, databaseScope){
     return `/service/api/query/${instancePath}/instances${arguments.length > 1?"?":""}${

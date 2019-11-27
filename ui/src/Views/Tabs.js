@@ -17,7 +17,7 @@ const styles = {
   },
   fixedTabsLeft: {
     display: "grid",
-    gridTemplateColumns: "repeat(6, auto)"
+    gridTemplateColumns: "auto 1fr"
   },
   fixedTabsRight: {
     display: "grid",

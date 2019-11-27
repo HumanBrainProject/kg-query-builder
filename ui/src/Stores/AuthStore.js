@@ -8,7 +8,7 @@ const userKeys = {
   displayName: "http://schema.org/name",
   givenName: "http://schema.org/givenName",
   familyName: "http://schema.org/familyName",
-  workspaces: "https://kg.ebrains.eu/meta/workspaces"
+  // workspaces: "https://kg.ebrains.eu/meta/workspaces"
 };
 
 const mapUserProfile = data => {
@@ -98,6 +98,27 @@ class AuthStore {
       }
     }
     return this.hasUserProfile;
+  }
+
+  @action
+  async retrieveUserWorkspaces() {
+    if(this.isAuthenticated && this.hasUserProfile) {
+      try {
+        const { data } = await API.axios.get(API.endpoints.workspaces());
+        runInAction(() => {
+          if(data && data.data) {
+            this.user.workspaces = data.data.map(workspace => workspace["http://schema.org/name"]);
+          } else {
+            this.user.workspaces= [];
+          }
+        });
+      } catch(e) {
+        runInAction(() => {
+          this.user.workspaces = [];
+        });
+      }
+    }
+    return this.hasWorkspaces;
   }
 
   @action

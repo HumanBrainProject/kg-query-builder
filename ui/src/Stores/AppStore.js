@@ -44,6 +44,10 @@ class AppStore{
           this.initializingMessage = "Retrieving user profile...";
         });
         await authStore.retrieveUserProfile();
+        runInAction(() => {
+          this.initializingMessage = "Retrieving workspaces...";
+        });
+        await authStore.retrieveUserWorkspaces();
         if (authStore.userProfileError) {
           runInAction(() => {
             this.initializationError = authStore.userProfileError;
@@ -55,7 +59,8 @@ class AppStore{
         await this.initializeWorkspace();
         runInAction(() => {
           this.initializingMessage = null;
-          this.isInitialized = !!this.currentWorkspace ;
+          // this.isInitialized = !!this.currentWorkspace; //TODO: Check if this one applies here, why cast the currentWorkspace?
+          this.isInitialized = true;
         });
       }
     }
@@ -64,11 +69,9 @@ class AppStore{
   @action
   async initializeWorkspace() {
     let workspace = null;
-    this.initializingMessage = "Setting workspace...";
     workspace = localStorage.getItem("currentWorkspace");
     this.setCurrentWorkspace(workspace);
     return this.currentWorkspace;
-
   }
 
   @action
