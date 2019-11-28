@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Scrollbars } from "react-custom-scrollbars";
 
 import queryBuilderStore from "../Stores/QueryBuilderStore";
-import structureStore from "../Stores/StructureStore";
+import typesStore from "../Stores/TypesStore";
 import Query from "./Query";
 import QueriesDrawer from "./QueriesDrawer";
 
@@ -73,13 +73,13 @@ let styles = {
 
 @injectStyles(styles)
 @observer
-export default class QueryBuilder extends React.Component {
+class QueryBuilder extends React.Component {
   componentDidMount() {
     this.fetchStructure(true);
   }
 
   fetchStructure(forceFetch=false) {
-    structureStore.fetchStructure(!!forceFetch);
+    typesStore.fetch(!!forceFetch);
   }
 
   handleSelectTab(tab) {
@@ -100,24 +100,24 @@ export default class QueryBuilder extends React.Component {
 
     return (
       <div className={classes.container}>
-        {structureStore.isFetchingStructure ?
+        {typesStore.isFetching ?
           <div className={classes.structureLoader}>
             <FetchingLoader>
               Fetching api structure...
             </FetchingLoader>
           </div>
           :
-          structureStore.fetchStuctureError ?
+          typesStore.fetchError ?
             <BGMessage icon={"ban"}>
               There was a network problem fetching the api structure.<br />
               If the problem persists, please contact the support.<br />
-              <small>{structureStore.fetchStuctureError}</small><br /><br />
+              <small>{typesStore.fetchError}</small><br /><br />
               <Button bsStyle={"primary"} onClick={this.handleRetryFetchStructure}>
                 <FontAwesomeIcon icon={"redo-alt"} />&nbsp;&nbsp; Retry
               </Button>
             </BGMessage>
             :
-            !structureStore.hasSchemas ?
+            !typesStore.hasSchemas ?
               <BGMessage icon={"blender-phone"}>
                 No schemas available.<br />
                 If the problem persists, please contact the support.<br /><br />
@@ -175,3 +175,5 @@ export default class QueryBuilder extends React.Component {
     );
   }
 }
+
+export default QueryBuilder;

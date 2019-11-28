@@ -152,7 +152,7 @@ class App extends React.Component {
             (!appStore.isInitialized || !authStore.isAuthenticated ?
               <Login />
               :
-              (authStore.hasWorkspaces?
+              (authStore.hasUserWorkspaces?
                 (appStore.currentWorkspace?
                   <QueryBuilder />
                   :

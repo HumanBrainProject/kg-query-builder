@@ -1,10 +1,12 @@
 import axios from "axios";
 import authStore from "../Stores/AuthStore";
+import appStore from "../Stores/AppStore";
 
 const endpoints = {
   "auth": () => "/service/api/auth/endpoint",
   "user": () => "/service/api/user",
   "workspaces": () => "/service/api/workspaces",
+  "workspaceTypes": () => `/service/api/workspaces/${appStore.currentWorkspace}/types`,
   "structure": () => "/service/api/structure?withLinks=true",
   "performQuery": function(instancePath, vocab, size, start, databaseScope){
     return `/service/api/query/${instancePath}/instances${arguments.length > 1?"?":""}${

@@ -1,6 +1,6 @@
 import React from "react";
 import queryBuilderStore from "../Stores/QueryBuilderStore";
-import structureStore from "../Stores/StructureStore";
+import typesStore from "../Stores/TypesStore";
 import { observer } from "mobx-react";
 import injectStyles from "react-jss";
 
@@ -44,12 +44,12 @@ export default class RootSchemaChoice extends React.Component {
     const { classes } = this.props;
     return (
       <div className={classes.container}>
-        {structureStore.sortedGroupedSchemas.map(group => {
+        {typesStore.sortedGroupedSchemas.map(group => {
           return (
             <div className={classes.schemaSelectGroup} key={group}>
               <h3>{group}</h3>
               <div>
-                {structureStore.getSortedSchemasByGroup(group).map(schema => {
+                {typesStore.getSortedSchemasByGroup(group).map(schema => {
                   return (
                     <div className={classes.schemaSelectSchema} key={schema.id} onClick={this.handleSelectRootSchema.bind(this, schema)}>
                       {schema.label} - <small>{schema.id}</small>

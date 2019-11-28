@@ -6,7 +6,7 @@ import { Button } from "react-bootstrap";
 
 import Fields from "./Fields";
 import queryBuilderStore from "../Stores/QueryBuilderStore";
-import structureStore from "../Stores/StructureStore";
+import typesStore from "../Stores/TypesStore";
 
 let styles = {
   container: {
@@ -183,7 +183,7 @@ export default class Field extends React.Component {
                   {field.schema.canBe && !!field.schema.canBe.length && (
                     <span className={classes.canBe}>
                       ( {field.schema.canBe.map(schemaId => {
-                        const schema = structureStore.findSchemaById(schemaId);
+                        const schema = typesStore.findSchemaById(schemaId);
                         return (
                           <React.Fragment key={schemaId}>
                             <span title={schemaId}>{(schema && schema.label) || schemaId}</span>&nbsp;
@@ -210,7 +210,7 @@ export default class Field extends React.Component {
                 {!field.isRootMerge && field.schema.canBe && !!field.schema.canBe.length && (
                   <span className={classes.canBe}>
                     ( {field.schema.canBe.map(schemaId => {
-                      const schema = structureStore.findSchemaById(schemaId);
+                      const schema = typesStore.findSchemaById(schemaId);
                       return (
                         <React.Fragment key={schemaId}>
                           <span title={schemaId}>{(schema && schema.label) || schemaId}</span>&nbsp;

@@ -3,6 +3,7 @@ import { observable, action, runInAction } from "mobx";
 import DefaultTheme from "../Themes/Default";
 import BrightTheme from "../Themes/Bright";
 import authStore from "./AuthStore";
+import typesStore from "./TypesStore";
 
 class AppStore{
   @observable globalError = null;
@@ -44,10 +45,6 @@ class AppStore{
           this.initializingMessage = "Retrieving user profile...";
         });
         await authStore.retrieveUserProfile();
-        runInAction(() => {
-          this.initializingMessage = "Retrieving workspaces...";
-        });
-        await authStore.retrieveUserWorkspaces();
         if (authStore.userProfileError) {
           runInAction(() => {
             this.initializationError = authStore.userProfileError;
@@ -55,11 +52,22 @@ class AppStore{
           });
         }
       }
+      if(authStore.isAuthenticated && authStore.hasUserProfile && !authStore.hasUserWorkspaces) {
+        runInAction(() => {
+          this.initializingMessage = "Retrieving workspaces...";
+        });
+        await authStore.retrieveUserWorkspaces();
+        if (authStore.workspacesError) {
+          runInAction(() => {
+            this.initializationError = authStore.workspacesError;
+            this.initializingMessage = null;
+          });
+        }
+      }
       if(authStore.isFullyAuthenticated) {
-        await this.initializeWorkspace();
+        this.initializeWorkspace();
         runInAction(() => {
           this.initializingMessage = null;
-          // this.isInitialized = !!this.currentWorkspace; //TODO: Check if this one applies here, why cast the currentWorkspace?
           this.isInitialized = true;
         });
       }
@@ -67,7 +75,7 @@ class AppStore{
   }
 
   @action
-  async initializeWorkspace() {
+  initializeWorkspace() {
     let workspace = null;
     workspace = localStorage.getItem("currentWorkspace");
     this.setCurrentWorkspace(workspace);
@@ -76,8 +84,8 @@ class AppStore{
 
   @action
   setCurrentWorkspace = workspace => {
-    if (!workspace || !authStore.workspaces.includes(workspace)) {
-      if (authStore.hasWorkspaces && authStore.workspaces.length === 1) {
+    if (!workspace || !authStore.hasWorkspaces || !authStore.workspaces.includes(workspace)) {
+      if (authStore.hasUserWorkspaces && authStore.workspaces.length === 1) {
         workspace = authStore.workspaces[0];
       } else {
         workspace = null;
@@ -86,7 +94,7 @@ class AppStore{
     if(this.currentWorkspace !== workspace) {
       this.currentWorkspace = workspace;
       localStorage.setItem("currentWorkspace", workspace);
-      // typesStore.fetch(true);
+      typesStore.fetch(true);
     }
   }
 

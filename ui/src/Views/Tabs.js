@@ -63,7 +63,7 @@ class Tabs extends React.Component {
         {!appStore.globalError &&
           <React.Fragment>
             <div className={classes.fixedTabsLeft}>
-              {authStore.isFullyAuthenticated && authStore.hasWorkspaces && appStore.currentWorkspace?
+              {authStore.isFullyAuthenticated && authStore.hasUserWorkspaces && appStore.currentWorkspace?
                 <WorkspaceSelector />
                 : null
               }

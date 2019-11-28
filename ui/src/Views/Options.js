@@ -1,6 +1,6 @@
 import React from "react";
 import queryBuilderStore from "../Stores/QueryBuilderStore";
-import structureStore from "../Stores/StructureStore";
+import typesStore from "../Stores/TypesStore";
 import { observer } from "mobx-react";
 import MultiToggle from "../Components/MultiToggle";
 import injectStyles from "react-jss";
@@ -349,7 +349,7 @@ export default class Options extends React.Component {
                   {properties.map(propSchema => (
                     <div className={classes.property} key={propSchema.attribute + (propSchema.reverse ? "reverse" : "")} onClick={this.handleAddMergeChildField.bind(this, propSchema)}>
                       {propSchema.label} - <small>{propSchema.attribute}</small>
-                      &nbsp;&nbsp;( can be: {propSchema.canBe.map(schemaId => structureStore.findSchemaById(schemaId).label).join(", ")} )
+                      &nbsp;&nbsp;( can be: {propSchema.canBe.map(schemaId => typesStore.findSchemaById(schemaId).label).join(", ")} )
                     </div>
                   ))}
                 </div>
@@ -383,7 +383,7 @@ export default class Options extends React.Component {
                 {properties.map(propSchema => (
                   <div className={classes.property} key={propSchema.attribute + (propSchema.reverse ? "reverse" : "")} onClick={this.handleAddField.bind(this, propSchema)}>
                     {propSchema.label} - <small>{propSchema.attribute}</small>
-                    &nbsp;&nbsp;( can be: {propSchema.canBe.map(schemaId => structureStore.findSchemaById(schemaId).label).join(", ")} )
+                    &nbsp;&nbsp;( can be: {propSchema.canBe.map(schemaId => typesStore.findSchemaById(schemaId).label).join(", ")} )
                   </div>
                 ))}
               </div>

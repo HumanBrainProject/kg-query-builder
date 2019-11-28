@@ -1,6 +1,8 @@
 package eu.hbp.kg.queryBuilder.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.hbp.kg.queryBuilder.model.ServiceClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,9 @@ public class Workspaces {
 
     @Value("${kgcore.endpoint}")
     String kgCoreEndpoint;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     @GetMapping
@@ -30,8 +35,8 @@ public class Workspaces {
                 .block();
     }
 
-    @GetMapping("/types")
-    public Map<?, ?> getWorkspaceTypes(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String authorizationToken, @RequestParam("workspace") String workspace) {
+    @GetMapping("/{workspace}/types")
+    public Map<?, ?> getWorkspaceTypes(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String authorizationToken, @PathVariable("workspace") String workspace) {
         return WebClient.builder().build()
                 .get()
                 .uri(String.format("%s/types?stage=LIVE&withProperties=true&workspace=%s", kgCoreEndpoint, workspace))

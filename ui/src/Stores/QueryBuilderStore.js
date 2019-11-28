@@ -5,7 +5,7 @@ import { remove } from "lodash";
 import jsonld from "jsonld";
 
 import authStore from "./AuthStore";
-import structureStore from "./StructureStore";
+import typesStore from "./TypesStore";
 
 const defaultContext = {
   "@vocab": "https://schema.hbp.eu/graphQuery/",
@@ -222,7 +222,7 @@ class QueryBuilderStore {
   @observable currentField = null;
 
   constructor(){
-    structureStore.fetchStructure();
+    // typesStore.fetch();
   }
 
   get queryIdRegex() {
@@ -239,7 +239,7 @@ class QueryBuilderStore {
     }
     const result = [];
     lookups.forEach(schemaId => {
-      const schema = structureStore.findSchemaById(schemaId);
+      const schema = typesStore.findSchemaById(schemaId);
       const lookup = {
         id: schema.id,
         label: schema.label,
@@ -260,7 +260,7 @@ class QueryBuilderStore {
     }
     const result = [];
     lookups.forEach(schemaId => {
-      const schema = structureStore.findSchemaById(schemaId);
+      const schema = typesStore.findSchemaById(schemaId);
       const lookup = {
         id: schema.id,
         label: schema.label,
@@ -541,7 +541,7 @@ class QueryBuilderStore {
       parent.fields.forEach(field => {
         let isUnknown = true;
         parent.lookups.some(schemaId => {
-          const schema = structureStore.findSchemaById(schemaId);
+          const schema = typesStore.findSchemaById(schemaId);
           if (schema && schema.properties && schema.properties.length) {
             if (schema.properties.find(property => property.attribute === field.schema.attribute && ((!field.schema.canBe && !property.canBe) || (isEqual(toJS(field.schema.canBe), toJS(property.canBe)))))) {
               isUnknown = false;
@@ -815,7 +815,7 @@ class QueryBuilderStore {
           let property = null;
           if (attribute) {
             parentField.lookups.some(schemaId => {
-              const schema = structureStore.findSchemaById(schemaId);
+              const schema = typesStore.findSchemaById(schemaId);
               if (schema && schema.properties && schema.properties.length) {
                 property = schema.properties.find(property => property.attribute === attribute && (!jsonField.fields || (jsonField.fields && property.canBe)));
                 if (property) {
@@ -931,7 +931,7 @@ class QueryBuilderStore {
           const parentFieldLookup = (parentField.isRootMerge && parentField.parent) ? parentField.parent : parentField;
           if (attribute && parentFieldLookup.schema && parentFieldLookup.schema.canBe && parentFieldLookup.schema.canBe.length) {
             parentFieldLookup.schema.canBe.some(schemaId => {
-              const schema = structureStore.findSchemaById(schemaId);
+              const schema = typesStore.findSchemaById(schemaId);
               if (schema && schema.properties && schema.properties.length) {
                 property = schema.properties.find(property => property.attribute === attribute && (!jsonField.fields || (jsonField.fields && property.canBe)));
                 if (property) {

@@ -7,8 +7,7 @@ const userKeys = {
   email: "http://schema.org/email",
   displayName: "http://schema.org/name",
   givenName: "http://schema.org/givenName",
-  familyName: "http://schema.org/familyName",
-  // workspaces: "https://kg.ebrains.eu/meta/workspaces"
+  familyName: "http://schema.org/familyName"
 };
 
 const mapUserProfile = data => {
@@ -25,8 +24,11 @@ const mapUserProfile = data => {
 
 class AuthStore {
   @observable user = null;
+  @observable workspaces = null;
   @observable isRetrievingUserProfile = false;
-  @observable userProfileError = false;
+  @observable userProfileError = null;
+  @observable isRetrievingWorkspaces = false;
+  @observable workspacesError = null;
   @observable authError = null;
   @observable authSuccess = false;
   @observable isTokenExpired = false;
@@ -58,17 +60,17 @@ class AuthStore {
 
   @computed
   get hasWorkspaces() {
-    return this.user && this.user.workspaces instanceof Array && !!this.user.workspaces.length;
+    return !!this.workspaces;
   }
 
   @computed
-  get workspaces() {
-    return this.hasWorkspaces ? this.user.workspaces: [];
+  get hasUserWorkspaces() {
+    return this.workspaces instanceof Array && !!this.workspaces.length;
   }
 
   @computed
   get isFullyAuthenticated() {
-    return this.isAuthenticated && this.hasUserProfile;
+    return this.isAuthenticated && this.hasUserProfile && this.hasWorkspaces;
   }
 
   @action
@@ -76,13 +78,14 @@ class AuthStore {
     this.authSuccess = false;
     this.isTokenExpired = true;
     this.user = null;
+    this.workspaces = null;
     this.keycloak.logout();
   }
 
   @action
   async retrieveUserProfile() {
     if (this.isAuthenticated && !this.user) {
-      this.userProfileError = false;
+      this.userProfileError = null;
       this.isRetrievingUserProfile = true;
       try {
         const { data } = await API.axios.get(API.endpoints.user());
@@ -97,28 +100,26 @@ class AuthStore {
         });
       }
     }
-    return this.hasUserProfile;
   }
 
   @action
   async retrieveUserWorkspaces() {
-    if(this.isAuthenticated && this.hasUserProfile) {
+    if(this.isAuthenticated && this.hasUserProfile && !this.isRetrievingWorkspaces) {
       try {
+        this.workspacesError = null;
+        this.isRetrievingWorkspaces = true;
         const { data } = await API.axios.get(API.endpoints.workspaces());
         runInAction(() => {
-          if(data && data.data) {
-            this.user.workspaces = data.data.map(workspace => workspace["http://schema.org/name"]);
-          } else {
-            this.user.workspaces= [];
-          }
+          this.workspaces = data && data.data ? data.data.map(workspace => workspace["http://schema.org/name"]) : [];
+          this.isRetrievingWorkspaces = false;
         });
       } catch(e) {
         runInAction(() => {
-          this.user.workspaces = [];
+          this.workspacesError = e.message ? e.message : e;
+          this.isRetrievingWorkspaces = false;
         });
       }
     }
-    return this.hasWorkspaces;
   }
 
   @action
