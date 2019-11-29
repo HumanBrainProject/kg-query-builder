@@ -104,7 +104,7 @@ let styles = {
 
 @injectStyles(styles)
 @observer
-export default class SavedQuery extends React.Component{
+class SavedQuery extends React.Component{
   constructor(props){
     super(props);
     this.editBookmarkNameRef = React.createRef();
@@ -196,3 +196,5 @@ export default class SavedQuery extends React.Component{
     );
   }
 }
+
+export default SavedQuery;

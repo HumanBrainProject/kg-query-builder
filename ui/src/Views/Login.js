@@ -34,7 +34,7 @@ const styles = {
 };
 
 @injectStyles(styles)
-export default class Login extends React.Component {
+class Login extends React.Component {
   handleLogin = () => authStore.login();
 
   render() {
@@ -58,3 +58,5 @@ export default class Login extends React.Component {
     );
   }
 }
+
+export default Login;

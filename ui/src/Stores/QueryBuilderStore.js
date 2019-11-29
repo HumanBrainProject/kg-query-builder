@@ -1170,8 +1170,10 @@ class QueryBuilderStore {
         });
       } catch (e) {
         const message = e.message ? e.message : e;
-        query.deleteError = `Error while deleting query "${query.id}" (${message})`;
-        query.isDeleting = false;
+        runInAction(() => {
+          query.deleteError = `Error while deleting query "${query.id}" (${message})`;
+          query.isDeleting = false;
+        });
       }
     }
   }

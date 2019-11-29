@@ -138,7 +138,7 @@ class PopOverContent extends React.Component {
 
 @injectStyles(styles)
 @observer
-export default class UserProfileTab extends React.Component{
+class UserProfileTab extends React.Component{
   constructor(props){
     super(props);
     this.state = { showPopOver: false, popOverPosition: "bottom", tokenCopied: null };
@@ -229,3 +229,5 @@ export default class UserProfileTab extends React.Component{
     );
   }
 }
+
+export default UserProfileTab;

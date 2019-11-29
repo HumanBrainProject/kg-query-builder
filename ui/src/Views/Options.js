@@ -151,7 +151,7 @@ const style = {
 
 @injectStyles(style)
 @observer
-export default class Options extends React.Component {
+class Options extends React.Component {
   handleAddField(schema, e) {
     //Don't got to newly chosen field options if ctrl is pressed (or cmd)
     queryBuilderStore.addField(schema, queryBuilderStore.currentField, !e.ctrlKey && !e.metaKey);
@@ -394,3 +394,5 @@ export default class Options extends React.Component {
     );
   }
 }
+
+export default Options;

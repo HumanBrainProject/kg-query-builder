@@ -282,7 +282,7 @@ const styles = {
 
 @injectStyles(styles)
 @observer
-export default class Query extends React.Component{
+class Query extends React.Component{
 
   handleChangeQueryId = event => {
     queryBuilderStore.queryId = event.target.value;
@@ -561,3 +561,5 @@ export default class Query extends React.Component{
     );
   }
 }
+
+export default Query;

@@ -66,7 +66,7 @@ let styles = {
 
 @injectStyles(styles)
 @observer
-export default class Tab extends React.Component {
+class Tab extends React.Component {
   handleClick = (e) => {
     e.preventDefault();
     if(isFunction(this.props.onClick)){
@@ -102,3 +102,5 @@ export default class Tab extends React.Component {
     );
   }
 }
+
+export default Tab;

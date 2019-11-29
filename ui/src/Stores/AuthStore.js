@@ -102,6 +102,7 @@ class AuthStore {
             this.isRetrievingUserProfile = false;
           });
         }, 1000);
+        mapUserProfile(); // TODO: remove this line
         // const { data } = await API.axios.get(API.endpoints.user());
         // runInAction(() => {
         //   this.user = mapUserProfile(data);

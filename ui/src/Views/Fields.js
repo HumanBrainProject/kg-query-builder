@@ -11,7 +11,7 @@ let styles = {
 
 @injectStyles(styles)
 @observer
-export default class Fields extends React.Component{
+class Fields extends React.Component{
   render(){
     const {classes, field} = this.props;
     return(
@@ -30,3 +30,5 @@ export default class Fields extends React.Component{
     );
   }
 }
+
+export default Fields;

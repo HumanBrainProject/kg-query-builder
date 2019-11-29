@@ -188,7 +188,7 @@ class ResultValue extends React.Component {
 
 @injectStyles(styles)
 @observer
-export default class ResultTable extends React.Component{
+class ResultTable extends React.Component{
   handleBreadcrumbClick(index){
     queryBuilderStore.returnToTableViewRoot(index);
   }
@@ -277,3 +277,5 @@ export default class ResultTable extends React.Component{
     );
   }
 }
+
+export default ResultTable;

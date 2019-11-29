@@ -29,7 +29,7 @@ const styles = {
 
 @injectStyles(styles)
 @observer
-export default class Result extends React.Component{
+class Result extends React.Component{
 
   handlExecuteQuery = () => {
     queryBuilderStore.executeQuery();
@@ -75,3 +75,5 @@ export default class Result extends React.Component{
     );
   }
 }
+
+export default Result;

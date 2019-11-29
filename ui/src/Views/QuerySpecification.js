@@ -6,7 +6,7 @@ import ThemeRJV from "./ThemeRJV";
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 
 @observer
-export default class QuerySpecification extends React.Component{
+class QuerySpecification extends React.Component{
   render(){
     return(
       queryBuilderStore.rootField &&
@@ -14,3 +14,5 @@ export default class QuerySpecification extends React.Component{
     );
   }
 }
+
+export default QuerySpecification;

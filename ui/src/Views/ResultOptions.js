@@ -30,7 +30,7 @@ const scopeOptions =  [{label: "Released", value: "RELEASED" }, {label: "Curated
 
 @injectStyles(styles)
 @observer
-export default class ResultOptions extends React.Component{
+class ResultOptions extends React.Component{
   handleToggleRunStripVocab = () => {
     queryBuilderStore.toggleRunStripVocab();
   }
@@ -105,3 +105,5 @@ export default class ResultOptions extends React.Component{
     );
   }
 }
+
+export default ResultOptions;

@@ -123,7 +123,7 @@ const styles = {
 
 @injectStyles(styles)
 @observer
-export default class QueriesDrawer extends React.Component{
+class QueriesDrawer extends React.Component{
 
   handleToggleDrawer = () => {
     queryBuilderStore.showQueries = !queryBuilderStore.showQueries;
@@ -205,3 +205,5 @@ export default class QueriesDrawer extends React.Component{
     );
   }
 }
+
+export default QueriesDrawer;

@@ -31,7 +31,7 @@ const styles = {
 
 @injectStyles(styles)
 @observer
-export default class WorkspaceSelector extends React.Component {
+class WorkspaceSelector extends React.Component {
   selectWorkspace = eventKey => {
     authStore.setCurrentWorkspace(eventKey);
   }
@@ -58,3 +58,5 @@ export default class WorkspaceSelector extends React.Component {
     );
   }
 }
+
+export default WorkspaceSelector;

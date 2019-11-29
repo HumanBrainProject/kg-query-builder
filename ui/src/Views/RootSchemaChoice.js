@@ -35,7 +35,7 @@ let style = {
 
 @observer
 @injectStyles(style)
-export default class RootSchemaChoice extends React.Component {
+class RootSchemaChoice extends React.Component {
   handleSelectRootSchema = (schema) => {
     queryBuilderStore.selectRootSchema(schema);
   }
@@ -64,3 +64,5 @@ export default class RootSchemaChoice extends React.Component {
     );
   }
 }
+
+export default RootSchemaChoice;

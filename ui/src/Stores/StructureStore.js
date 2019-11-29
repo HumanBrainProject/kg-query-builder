@@ -20280,6 +20280,7 @@ class StructureStore {
       this.fetchStuctureError = null;
       try {
         // const response = await API.axios.get(API.endpoints.structure());
+        API.endpoints.structure(); //TODO: remove this line
         setTimeout(() => {
           runInAction(() => {
             // this.structure = response.data;

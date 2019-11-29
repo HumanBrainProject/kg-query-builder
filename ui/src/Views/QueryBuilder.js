@@ -73,7 +73,7 @@ let styles = {
 
 @injectStyles(styles)
 @observer
-export default class QueryBuilder extends React.Component {
+class QueryBuilder extends React.Component {
   componentDidMount() {
     this.fetchStructure(true);
   }
@@ -175,3 +175,5 @@ export default class QueryBuilder extends React.Component {
     );
   }
 }
+
+export default QueryBuilder;

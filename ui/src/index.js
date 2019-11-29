@@ -292,7 +292,6 @@ class App extends React.Component {
                             <p>Please contact our team by email at : <a href={"mailto:kg-team@humanbrainproject.eu"}>kg-team@humanbrainproject.eu</a></p>
                           </Modal.Body>
                         </Modal>
-                    
           }
         </div>
         <div className={`${classes.status} layout-status`}>

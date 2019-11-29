@@ -135,7 +135,7 @@ let styles = {
 
 @injectStyles(styles)
 @observer
-export default class Field extends React.Component {
+class Field extends React.Component {
   handleSelectField = () => {
     queryBuilderStore.selectField(this.props.field);
   }
@@ -246,3 +246,5 @@ export default class Field extends React.Component {
     );
   }
 }
+
+export default Field;

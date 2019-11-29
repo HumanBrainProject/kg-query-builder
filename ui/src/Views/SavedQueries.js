@@ -78,7 +78,7 @@ let styles = {
 
 @injectStyles(styles)
 @observer
-export default class SavedQueries extends React.Component{
+class SavedQueries extends React.Component{
   render(){
     const {classes, title, subTitle, list, expanded, onExpandToggle, onRefresh, showUser, enableDelete } = this.props;
 
@@ -111,3 +111,5 @@ export default class SavedQueries extends React.Component{
     );
   }
 }
+
+export default SavedQueries;
