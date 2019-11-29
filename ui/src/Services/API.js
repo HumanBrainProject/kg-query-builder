@@ -1,9 +1,12 @@
 import axios from "axios";
 import authStore from "../Stores/AuthStore";
+import appStore from "../Stores/AppStore";
 
 const endpoints = {
   "auth": () => "/service/api/auth/endpoint",
   "user": () => "/service/api/user",
+  "workspaces": () => "/service/api/workspaces",
+  "workspaceTypes": () => `/service/api/workspaces/${appStore.currentWorkspace}/types`,
   "structure": () => "/service/api/structure?withLinks=true",
   "performQuery": function(instancePath, vocab, size, start, databaseScope){
     return `/service/api/query/${instancePath}/instances${arguments.length > 1?"?":""}${
@@ -26,11 +29,8 @@ class API {
     });
     this._axios.interceptors.response.use(null, (error) => {
       if (error.response && error.response.status === 401 && !error.config._isRetry) {
-        return authStore.logout().then(()=>{
-          error.config.headers.Authorization = "Bearer " + authStore.accessToken;
-          error.config._isRetry = true;
-          return this.axios.request(error.config);
-        });
+        authStore.logout();
+        return this.axios.request(error.config);
       } else {
         return Promise.reject(error);
       }

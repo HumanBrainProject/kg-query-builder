@@ -1,7 +1,7 @@
 import { observable, action, computed, runInAction } from "mobx";
-import { sortBy, groupBy } from "lodash";
+//import { sortBy, groupBy } from "lodash";
 import API from "../Services/API";
-
+/*
 const mockup = {
   "schemas": [
     {
@@ -20219,83 +20219,123 @@ const mockup = {
     }
   ]
 };
+*/
 
-class StructureStore {
-  @observable colorPaletteByLabel = new Map();
-  @observable structure = null;
-  @observable fetchStuctureError = null;
-  @observable isFetchingStructure = false;
-  colorPalette = null;
+// class TypesStore {
+//   @observable colorPaletteByLabel = new Map();
+//   @observable structure = null;
+//   @observable fetchStuctureError = null;
+//   @observable isFetchingStructure = false;
+//   colorPalette = null;
+
+//   @computed
+//   get groupedSchemas() {
+//     return groupBy(this.structure.schemas, "group");
+//   }
+
+//   @computed
+//   get sortedGroupedSchemas() {
+//     return Object.keys(this.groupedSchemas).sort();
+//   }
+
+//   @computed
+//   get hasSchemas() {
+//     return (
+//       !this.fetchStuctureError &&
+//       this.structure &&
+//       this.structure.schemas &&
+//       this.structure.schemas.length
+//     );
+//   }
+
+//   @computed
+//   get schemasMap() {
+//     const map = new Map();
+//     this.structure && this.structure.schemas && this.structure.schemas.length && this.structure.schemas.forEach(schema => map.set(schema.id, schema));
+//     return map;
+//   }
+
+//   @computed
+//   get schemasLabel() {
+//     const map = new Map();
+//     this.structure && this.structure.schemas && this.structure.schemas.length && this.structure.schemas.forEach(schema => map.set(schema.id, schema.label));
+//     return map;
+//   }
+
+//   getSortedSchemasByGroup(group) {
+//     return sortBy(this.groupedSchemas[group], ["label"]);
+//   }
+
+//   findSchemaById(id) {
+//     return this.schemasMap.get(id);
+//   }
+
+//   findLabelBySchema(schema) {
+//     return this.schemasLabel.get(schema);
+//   }
+
+//   @action
+//   async fetchStructure(forceFetch=false) {
+//     if (!this.isFetchingStructure && (!this.structure || !!forceFetch)) {
+//       this.isFetchingStructure = true;
+//       this.fetchStuctureError = null;
+//       try {
+//         // const response = await API.axios.get(API.endpoints.structure());
+//         setTimeout(() => {
+//           runInAction(() => {
+//             // this.structure = response.data;
+//             this.structure = mockup;
+//             this.isFetchingStructure = false;
+//           });
+//         }, 1000);
+//       } catch (e) {
+//         const message = e.message ? e.message : e;
+//         this.fetchStuctureError = `Error while fetching api structure (${message})`;
+//         this.isFetchingStructure = false;
+//       }
+//     }
+//   }
+
+// }
+
+// export default new TypesStore();
+
+class TypesStore {
+  @observable types = [];
+  @observable fetchError = null;
+  @observable isFetching = false;
+
+  // filteredList(term) {
+  //   term = typeof term === "string" && term.trim().toLowerCase();
+  //   if(term) {
+  //     return this.types.filter(type => type && typeof type.label === "string" && type.label.toLowerCase().includes(term));
+  //   }
+  //   return this.types;
+  // }
 
   @computed
-  get groupedSchemas() {
-    return groupBy(this.structure.schemas, "group");
-  }
-
-  @computed
-  get sortedGroupedSchemas() {
-    return Object.keys(this.groupedSchemas).sort();
-  }
-
-  @computed
-  get hasSchemas() {
-    return (
-      !this.fetchStuctureError &&
-      this.structure &&
-      this.structure.schemas &&
-      this.structure.schemas.length
-    );
-  }
-
-  @computed
-  get schemasMap() {
-    const map = new Map();
-    this.structure && this.structure.schemas && this.structure.schemas.length && this.structure.schemas.forEach(schema => map.set(schema.id, schema));
-    return map;
-  }
-
-  @computed
-  get schemasLabel() {
-    const map = new Map();
-    this.structure && this.structure.schemas && this.structure.schemas.length && this.structure.schemas.forEach(schema => map.set(schema.id, schema.label));
-    return map;
-  }
-
-  getSortedSchemasByGroup(group) {
-    return sortBy(this.groupedSchemas[group], ["label"]);
-  }
-
-  findSchemaById(id) {
-    return this.schemasMap.get(id);
-  }
-
-  findLabelBySchema(schema) {
-    return this.schemasLabel.get(schema);
+  get isFetched() {
+    return !this.fetchError && this.types.length;
   }
 
   @action
-  async fetchStructure(forceFetch=false) {
-    if (!this.isFetchingStructure && (!this.structure || !!forceFetch)) {
-      this.isFetchingStructure = true;
-      this.fetchStuctureError = null;
+  async fetch(forceFetch=false) {
+    if (!this.isFetching && (!this.types.length || !!forceFetch)) {
+      this.isFetching = true;
+      this.fetchError = null;
       try {
-        // const response = await API.axios.get(API.endpoints.structure());
-        API.endpoints.structure(); //TODO: remove this line
-        setTimeout(() => {
-          runInAction(() => {
-            // this.structure = response.data;
-            this.structure = mockup;
-            this.isFetchingStructure = false;
-          });
-        }, 1000);
+        const response = await API.axios.get(API.endpoints.workspaceTypes());
+        runInAction(() => {
+          this.types = (response.data && response.data.data && response.data.data.length)?response.data.data:[];
+          this.isFetching = false;
+        });
       } catch (e) {
         const message = e.message ? e.message : e;
-        this.fetchStuctureError = `Error while fetching api structure (${message})`;
-        this.isFetchingStructure = false;
+        this.fetchError = `Error while fetching types (${message})`;
+        this.isFetching = false;
       }
     }
   }
-
 }
 
-export default new StructureStore();
+export default new TypesStore();

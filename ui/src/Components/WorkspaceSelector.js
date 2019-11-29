@@ -4,6 +4,7 @@ import { Dropdown, MenuItem } from "react-bootstrap";
 import injectStyles from "react-jss";
 import authStore from "../Stores/AuthStore";
 import CustomDropdownToggle from "./CustomDropdownToggle";
+import appStore from "../Stores/AppStore";
 
 
 const styles = {
@@ -32,18 +33,19 @@ const styles = {
 @injectStyles(styles)
 @observer
 class WorkspaceSelector extends React.Component {
+
   selectWorkspace = eventKey => {
-    authStore.setCurrentWorkspace(eventKey);
+    appStore.setCurrentWorkspace(eventKey);
   }
 
   render() {
     const { classes } = this.props;
 
     return (
-      <div className={classes.container} title={`${authStore.currentWorkspace} workspace`}>
+      <div className={classes.container} title={`${appStore.currentWorkspace} workspace`}>
         {authStore.workspaces.length > 1 ?
           <Dropdown id="dropdown-custom-1">
-            <CustomDropdownToggle bsRole="toggle">{authStore.currentWorkspace}</CustomDropdownToggle>
+            <CustomDropdownToggle bsRole="toggle">{appStore.currentWorkspace}</CustomDropdownToggle>
             <Dropdown.Menu className={classes.dropdownMenu}>
               {authStore.workspaces.map(workspace =>
                 <MenuItem key={workspace}
@@ -53,7 +55,7 @@ class WorkspaceSelector extends React.Component {
               )}
             </Dropdown.Menu>
           </Dropdown>
-          : authStore.currentWorkspace}
+          : appStore.currentWorkspace}
       </div>
     );
   }

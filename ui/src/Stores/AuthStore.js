@@ -1,8 +1,10 @@
 import { observable, computed, action, runInAction } from "mobx";
 import API from "../Services/API";
 
+const rootPath = window.rootPath || "";
+
 const userKeys = {
-  id: "@id",
+  id: "https://schema.hbp.eu/users/nativeId",
   username: "http://schema.org/alternateName",
   email: "http://schema.org/email",
   displayName: "http://schema.org/name",
@@ -18,21 +20,23 @@ const mapUserProfile = data => {
         user[name] = data.data[fullyQualifiedName];
       }
     });
-    user.workspaces = ["minds", "uniminds"]; //TODO: remove hardcoded value;
   }
   return user;
 };
 
 class AuthStore {
   @observable user = null;
+  @observable workspaces = null;
   @observable isRetrievingUserProfile = false;
-  @observable userProfileError = false;
+  @observable userProfileError = null;
+  @observable isRetrievingWorkspaces = false;
+  @observable workspacesError = null;
   @observable authError = null;
   @observable authSuccess = false;
-  @observable currentWorkspace = null;
   @observable isTokenExpired = false;
   @observable isInitializing = true;
   @observable initializationError = null;
+  @observable isLogout = false;
   keycloak = null;
   endpoint = null;
 
@@ -59,23 +63,17 @@ class AuthStore {
 
   @computed
   get hasWorkspaces() {
-    return this.user && this.user.workspaces && !!this.user.workspaces.length;
+    return !!this.workspaces;
   }
 
   @computed
-  get workspaces() {
-    return this.hasWorkspaces ? this.user.workspaces: [];
+  get hasUserWorkspaces() {
+    return this.workspaces instanceof Array && !!this.workspaces.length;
   }
 
   @computed
   get isFullyAuthenticated() {
-    return this.isAuthenticated && this.hasUserProfile;
-  }
-
-  @action
-  setCurrentWorkspace(workspace) {
-    localStorage.setItem("currentWorkspace", workspace);
-    this.currentWorkspace = workspace;
+    return this.isAuthenticated && this.hasUserProfile && this.hasWorkspaces;
   }
 
   @action
@@ -83,32 +81,22 @@ class AuthStore {
     this.authSuccess = false;
     this.isTokenExpired = true;
     this.user = null;
-    this.keycloak.logout();
+    this.workspaces = null;
+    this.keycloak.logout({redirectUri: `${window.location.protocol}//${window.location.host}${rootPath}/logout`});
+    this.isLogout = true;
   }
 
   @action
   async retrieveUserProfile() {
     if (this.isAuthenticated && !this.user) {
-      this.userProfileError = false;
+      this.userProfileError = null;
       this.isRetrievingUserProfile = true;
       try {
-        setTimeout(() => {
-          runInAction(() => {
-            this.user = {
-              id: "asdfasdfasdfsd",
-              workspaces: ["minds", "uniminds"] //TODO: Remove hardcoded values
-            };
-            this.retrieveUserWorkspace();
-            this.isRetrievingUserProfile = false;
-          });
-        }, 1000);
-        mapUserProfile(); // TODO: remove this line
-        // const { data } = await API.axios.get(API.endpoints.user());
-        // runInAction(() => {
-        //   this.user = mapUserProfile(data);
-        //   this.retrieveUserWorkspace();
-        //   this.isRetrievingUserProfile = false;
-        // });
+        const { data } = await API.axios.get(API.endpoints.user());
+        runInAction(() => {
+          this.user = mapUserProfile(data);
+          this.isRetrievingUserProfile = false;
+        });
       } catch (e) {
         runInAction(() => {
           this.userProfileError = e.message ? e.message : e;
@@ -119,24 +107,27 @@ class AuthStore {
   }
 
   @action
-  retrieveUserWorkspace = () => {
-    //TODO: Get the options of spaces
-    const savedWorkspace = localStorage.getItem("currentWorkspace");
-    if (this.user.workspaces.includes(savedWorkspace)) {
-      this.currentWorkspace = savedWorkspace;
-    } else {
-      if (this.user.workspaces.length) {
-        if (this.user.workspaces.length > 1) {
-          this.currentWorkspace = null;
-        } else {
-          localStorage.setItem("currentWorkspace", this.user.workspaces[0]);
-        }
+  async retrieveUserWorkspaces() {
+    if(this.isAuthenticated && this.hasUserProfile && !this.isRetrievingWorkspaces) {
+      try {
+        this.workspacesError = null;
+        this.isRetrievingWorkspaces = true;
+        const { data } = await API.axios.get(API.endpoints.workspaces());
+        runInAction(() => {
+          this.workspaces = data && data.data ? data.data.map(workspace => workspace["http://schema.org/name"]) : [];
+          this.isRetrievingWorkspaces = false;
+        });
+      } catch(e) {
+        runInAction(() => {
+          this.workspacesError = e.message ? e.message : e;
+          this.isRetrievingWorkspaces = false;
+        });
       }
     }
   }
 
   @action
-  initializeKeycloak() {
+  initializeKeycloak(resolve, reject) {
     const keycloak = window.Keycloak({
       "realm": "hbp",
       "url":  this.endpoint,
@@ -148,12 +139,13 @@ class AuthStore {
         this.authSuccess = true;
         this.isInitializing = false;
       });
-      this.retrieveUserProfile();
+      resolve(true);
     };
     keycloak.onAuthError = error => {
       runInAction(() => {
         this.authError = error.error_description;
       });
+      reject(error.error_description);
     };
     keycloak.onTokenExpired = () => {
       runInAction(() => {
@@ -172,7 +164,8 @@ class AuthStore {
   }
 
   @action
-  async initiliazeAuthenticate() {
+  async authenticate() {
+    this.isLogout = false;
     this.isInitializing = true;
     this.authError = null;
     try {
@@ -181,21 +174,29 @@ class AuthStore {
         this.endpoint =  data && data.data? data.data.endpoint :null;
       });
       if(this.endpoint) {
-        const keycloakScript = document.createElement("script");
-        keycloakScript.src = this.endpoint + "/js/keycloak.js";
-        keycloakScript.async = true;
+        try {
+          await new Promise((resolve, reject) => {
+            const keycloakScript = document.createElement("script");
+            keycloakScript.src = this.endpoint + "/js/keycloak.js";
+            keycloakScript.async = true;
 
-        document.head.appendChild(keycloakScript);
-        keycloakScript.onload = () => {
-          this.initializeKeycloak();
-        };
-        keycloakScript.onerror = () => {
-          document.head.removeChild(keycloakScript);
-          runInAction(() => {
-            this.isInitializing = false;
-            this.authError = `Failed to load resource! (${keycloakScript.src})`;
+            document.head.appendChild(keycloakScript);
+            keycloakScript.onload = () => {
+              this.initializeKeycloak(resolve, reject);
+            };
+            keycloakScript.onerror = () => {
+              document.head.removeChild(keycloakScript);
+              runInAction(() => {
+                this.isInitializing = false;
+                this.authError = `Failed to load resource! (${keycloakScript.src})`;
+              });
+              reject(this.authError);
+            };
           });
-        };
+        } catch (e) {
+          // error are already set in the store so no need to do anything here
+          // window.console.log(e);
+        }
       } else {
         runInAction(() => {
           this.isInitializing = false;
@@ -208,6 +209,7 @@ class AuthStore {
         this.authError = `Failed to load service endpoints configuration (${e && e.message?e.message:e})`;
       });
     }
+    return this.authSuccess;
   }
 }
 

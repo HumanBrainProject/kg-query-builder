@@ -15,11 +15,12 @@ public class Authentication {
 
 
     @GetMapping("/endpoint")
-    public Map<?,?> getAuthEndpoint() {
-        return WebClient.builder().build().get().uri(String.format("%s/users/authorization", kgCoreEndpoint))
+    public Map<?, ?> getAuthEndpoint() {
+        return WebClient.builder().build()
+                .get()
+                .uri(String.format("%s/users/authorization", kgCoreEndpoint))
                 .retrieve()
                 .bodyToMono(Map.class)
                 .block();
     }
-
 }
