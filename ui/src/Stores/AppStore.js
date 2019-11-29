@@ -1,4 +1,5 @@
 import { observable, action, runInAction } from "mobx";
+import { matchPath } from "react-router-dom";
 
 import DefaultTheme from "../Themes/Default";
 import BrightTheme from "../Themes/Bright";
@@ -9,8 +10,9 @@ class AppStore{
   @observable globalError = null;
   @observable currentTheme;
   @observable historySettings;
-  @observable initializingMessage = "Initializing the application...";
+  @observable initializingMessage = null;
   @observable initializationError = null;
+  @observable canLogin = true;
   @observable currentWorkspace = null;
   @observable isInitialized = false;
 
@@ -21,13 +23,14 @@ class AppStore{
   }
 
   constructor(){
+    this.canLogin = !matchPath(window.location.pathname, { path: "/logout", exact: "true" });
     let savedTheme = localStorage.getItem("currentTheme");
     this.currentTheme = savedTheme === "bright"? "bright": "default";
   }
 
   @action
   async initialize() {
-    if (!this.isInitialized) {
+    if (this.canLogin && !this.isInitialized) {
       this.initializingMessage = "Initializing the application...";
       this.initializationError = null;
       if(!authStore.isAuthenticated) {
@@ -106,6 +109,17 @@ class AppStore{
   @action
   dismissGlobalError(){
     this.globalError = null;
+  }
+
+  @action
+  login = () => {
+    if (this.canLogin) {
+      authStore.login();
+    } else {
+      window.history.replaceState(window.history.state, "Knowledge Graph Query Builder", "/");
+      this.canLogin = true;
+      this.initialize(true);
+    }
   }
 
   setTheme(theme){

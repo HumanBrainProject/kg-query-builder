@@ -1,6 +1,8 @@
 import { observable, computed, action, runInAction } from "mobx";
 import API from "../Services/API";
 
+const rootPath = window.rootPath || "";
+
 const userKeys = {
   id: "https://schema.hbp.eu/users/nativeId",
   username: "http://schema.org/alternateName",
@@ -34,6 +36,7 @@ class AuthStore {
   @observable isTokenExpired = false;
   @observable isInitializing = true;
   @observable initializationError = null;
+  @observable isLogout = false;
   keycloak = null;
   endpoint = null;
 
@@ -79,7 +82,8 @@ class AuthStore {
     this.isTokenExpired = true;
     this.user = null;
     this.workspaces = null;
-    this.keycloak.logout();
+    this.keycloak.logout({redirectUri: `${window.location.protocol}//${window.location.host}${rootPath}/logout`});
+    this.isLogout = true;
   }
 
   @action
@@ -161,6 +165,7 @@ class AuthStore {
 
   @action
   async authenticate() {
+    this.isLogout = false;
     this.isInitializing = true;
     this.authError = null;
     try {

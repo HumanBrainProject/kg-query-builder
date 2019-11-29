@@ -58,7 +58,7 @@ const styles = {
 @injectStyles(styles)
 @observer
 class Login extends React.Component {
-  handleLogin = () => authStore.login();
+  handleLogin = () => appStore.login();
 
   handleRetryToInitialize() {
     appStore.initialize();
@@ -89,9 +89,15 @@ class Login extends React.Component {
                 <FetchingLoader>{appStore.initializingMessage}</FetchingLoader>
               </div>
               :
-              null
+              <div className={classes.panel}>
+                <h3>You are logged out of the application</h3>
+                <p></p>
+                <div>
+                  <Button bsStyle={"primary"} onClick={this.handleLogin}>Login</Button>
+                </div>
+              </div>
           :
-          authStore.isTokenExpired?
+          authStore.isTokenExpired && !authStore.isLogout?
             <div className={classes.panel}>
               <h3>Your session has expired</h3>
               <p>
