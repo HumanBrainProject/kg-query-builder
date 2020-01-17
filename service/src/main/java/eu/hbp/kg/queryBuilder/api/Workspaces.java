@@ -28,7 +28,7 @@ public class Workspaces {
                 .uri(String.format("%s/spaces?stage=LIVE", kgCoreEndpoint))
                 .headers(h -> {
                     h.add(HttpHeaders.AUTHORIZATION, authorizationToken);
-                    h.add("Client-Authorization", ServiceClient.kgeditor.toString());
+                    h.add("Client-Authorization", "");
                 })
                 .retrieve()
                 .bodyToMono(Map.class)
@@ -42,7 +42,7 @@ public class Workspaces {
                 .uri(String.format("%s/types?stage=LIVE&withProperties=true&workspace=%s", kgCoreEndpoint, workspace))
                 .headers(h -> {
                     h.add(HttpHeaders.AUTHORIZATION, authorizationToken);
-                    h.add("Client-Authorization", ServiceClient.kgeditor.toString());
+                    h.add("Client-Authorization", "");
                 })
                 .retrieve()
                 .bodyToMono(Map.class)

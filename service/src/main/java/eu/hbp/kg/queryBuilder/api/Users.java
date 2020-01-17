@@ -23,7 +23,7 @@ public class Users {
         return WebClient.builder().build().get().uri(String.format("%s/users/me", kgCoreEndpoint))
                 .headers(h -> {
                     h.add(HttpHeaders.AUTHORIZATION, authorizationToken);
-                    h.add("Client-Authorization", ServiceClient.kgeditor.toString());
+                    h.add("Client-Authorization", "");
                 })
                 .retrieve()
                 .bodyToMono(Map.class)
