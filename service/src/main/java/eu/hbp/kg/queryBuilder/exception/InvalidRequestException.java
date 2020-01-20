@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package eu.hbp.kg.queryBuilder;
+package eu.hbp.kg.queryBuilder.exception;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+public class InvalidRequestException extends RuntimeException {
 
-@SpringBootApplication
-public class KgQueryBuilderApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(KgQueryBuilderApplication.class, args);
+    public InvalidRequestException() {
     }
 
+    public InvalidRequestException(String message) {
+        super(message);
+    }
 }

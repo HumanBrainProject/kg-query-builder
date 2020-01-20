@@ -14,16 +14,26 @@
  * limitations under the License.
  */
 
-package eu.hbp.kg.queryBuilder;
+package eu.hbp.kg.queryBuilder.exception;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+public class UnauthorizedException extends RuntimeException {
 
-@SpringBootApplication
-public class KgQueryBuilderApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(KgQueryBuilderApplication.class, args);
+    public UnauthorizedException() {
     }
 
+    public UnauthorizedException(String message) {
+        super(message);
+    }
+
+    public UnauthorizedException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public UnauthorizedException(Throwable cause) {
+        super(cause);
+    }
+
+    public UnauthorizedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package eu.hbp.kg.queryBuilder;
+package eu.hbp.kg.queryBuilder.model;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+public class ClientAuthToken {
 
-@SpringBootApplication
-public class KgQueryBuilderApplication {
+    private final String clientToken;
 
-    public static void main(String[] args) {
-        SpringApplication.run(KgQueryBuilderApplication.class, args);
+    public ClientAuthToken(String clientToken) {
+        this.clientToken = clientToken;
+    }
+
+    public String getBearerToken() {
+        if (clientToken != null) {
+            return clientToken.toLowerCase().startsWith("bearer ") ? clientToken : "Bearer " + clientToken;
+        }
+        return null;
+    }
+
+    public String getRawToken(){
+        return clientToken!=null && clientToken.toLowerCase().startsWith("bearer ") ? clientToken.substring(7) : clientToken;
     }
 
 }

@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package eu.hbp.kg.queryBuilder;
+package eu.hbp.kg.queryBuilder.model;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 
-@SpringBootApplication
-public class KgQueryBuilderApplication {
+@Component
+@RequestScope
+@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+public class AuthContext {
 
-    public static void main(String[] args) {
-        SpringApplication.run(KgQueryBuilderApplication.class, args);
+    private AuthTokens authTokens;
+
+    public AuthTokens getAuthTokens() {
+        return authTokens;
     }
 
+    public void setAuthTokens(AuthTokens authTokens) {
+        this.authTokens = authTokens;
+    }
 }

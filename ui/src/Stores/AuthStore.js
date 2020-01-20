@@ -131,7 +131,7 @@ class AuthStore {
     const keycloak = window.Keycloak({
       "realm": "hbp",
       "url":  this.endpoint,
-      "clientId": "kg-editor"
+      "clientId": "kg"
     });
     runInAction(() => this.keycloak = keycloak);
     keycloak.onAuthSuccess = () => {

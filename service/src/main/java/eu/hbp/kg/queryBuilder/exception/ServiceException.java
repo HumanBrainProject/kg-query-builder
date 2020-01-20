@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package eu.hbp.kg.queryBuilder;
+package eu.hbp.kg.queryBuilder.exception;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+public class ServiceException extends RuntimeException {
 
-@SpringBootApplication
-public class KgQueryBuilderApplication {
+    private int statusCode;
 
-    public static void main(String[] args) {
-        SpringApplication.run(KgQueryBuilderApplication.class, args);
+    public ServiceException() {
     }
 
+    public ServiceException(int statusCode, String message) {
+        super(message);
+        this.statusCode = statusCode;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
 }

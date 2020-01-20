@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package eu.hbp.kg.queryBuilder;
+package eu.hbp.kg.queryBuilder.exception;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+public class AmbiguousException extends RuntimeException {
 
-@SpringBootApplication
-public class KgQueryBuilderApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(KgQueryBuilderApplication.class, args);
+    public AmbiguousException(String message) {
+        super(message);
     }
 
+    public AmbiguousException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

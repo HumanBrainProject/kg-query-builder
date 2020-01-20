@@ -1,14 +1,30 @@
+/*
+ * Copyright 2020 EPFL/Human Brain Project PCO
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package eu.hbp.kg.queryBuilder.api;
 
-import eu.hbp.kg.queryBuilder.model.ServiceClient;
+import eu.hbp.kg.queryBuilder.controller.ServiceCallWithClientSecret;
+import eu.hbp.kg.queryBuilder.model.AuthContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClient;
-
 import java.util.Map;
 
 @RequestMapping("/user")
@@ -18,16 +34,18 @@ public class Users {
     @Value("${kgcore.endpoint}")
     String kgCoreEndpoint;
 
+    @Autowired
+    private ServiceCallWithClientSecret serviceCall;
+
+    @Autowired
+    private AuthContext authContext;
+
     @GetMapping
     public Map<?,?> getUserProfile(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String authorizationToken) {
-        return WebClient.builder().build().get().uri(String.format("%s/users/me", kgCoreEndpoint))
-                .headers(h -> {
-                    h.add(HttpHeaders.AUTHORIZATION, authorizationToken);
-                    h.add("Client-Authorization", "");
-                })
-                .retrieve()
-                .bodyToMono(Map.class)
-                .block();
+        return serviceCall.get(
+                String.format("%s/users/me", kgCoreEndpoint),
+                authContext.getAuthTokens(),
+                Map.class);
     }
 
 }
