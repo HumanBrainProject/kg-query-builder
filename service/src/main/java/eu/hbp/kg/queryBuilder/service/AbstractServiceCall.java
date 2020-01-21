@@ -29,6 +29,9 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.util.Collection;
+import java.util.Collections;
+
 public class AbstractServiceCall {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -81,10 +84,10 @@ public class AbstractServiceCall {
         WebClient.RequestHeadersSpec<?> request = spec.accept(mediaType);
         logger.trace("Sending service request...");
         if (authContext != null && authContext.getUserAuthToken() != null) {
-            request = request.header(HttpHeaders.AUTHORIZATION, authContext.getUserAuthToken().getBearerToken());
+            request = request.headers(h -> h.put(HttpHeaders.AUTHORIZATION, Collections.singletonList(authContext.getUserAuthToken().getBearerToken())));
         }
         if(authContext != null && authContext.getClientAuthToken() != null){
-            request = request.header("Client-Authorization", authContext.getClientAuthToken().getBearerToken());
+            request = request.headers(h -> h.put("Client-Authorization", Collections.singletonList(authContext.getClientAuthToken().getBearerToken())));
         }
         return request.retrieve().bodyToMono(returnType).block();
     }
