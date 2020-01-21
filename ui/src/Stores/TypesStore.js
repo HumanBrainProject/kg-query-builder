@@ -20302,6 +20302,7 @@ const mockup = {
 
 class TypesStore {
   @observable types = {};
+  @observable workspaceTypeList = [];
   @observable fetchError = null;
   @observable isFetching = false;
 
@@ -20320,13 +20321,13 @@ class TypesStore {
 
   @computed
   get isFetched() {
-    return !this.fetchError && this.typeList.length;
+    return !this.fetchError && this.workspaceTypeList.length;
   }
 
   @computed
   get hasTypes() {
     return (
-      !!this.typeList.length
+      !!this.workspaceTypeList.length
     );
   }
 
@@ -20338,12 +20339,14 @@ class TypesStore {
       try {
         const response = await API.axios.get(API.endpoints.workspaceTypes());
         runInAction(() => {
-          response.data && response.data.length && response.data.forEach(type => this.types[type.id] = {
+          const types = (Array.isArray(response.data)?response.data:[]).map(type => ({
             id: type.id,
             label: type.label,
             properties: (Array.isArray(type.properties)?type.properties:[])
               .sort((a, b) => a.label < b.label ? -1 : a.label > b.label ? 1 : 0)
-          });
+          }));
+          this.workspaceTypeList = types;
+          types.forEach(type => this.types[type.id] = type);
           this.isFetching = false;
         });
       } catch (e) {
