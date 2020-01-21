@@ -16,12 +16,17 @@
 
 package eu.hbp.kg.queryBuilder.model;
 
+import eu.hbp.kg.queryBuilder.constants.SchemaFieldsConsts;
+
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TypeEntity {
     private String id;
     private String label;
-//    private List<Property> properties;
+    private List<Property> properties;
 
     public String getId() {
         return id;
@@ -39,23 +44,22 @@ public class TypeEntity {
         this.label = label;
     }
 
-//    public List<Property> getProperties() {
-//        return properties;
-//    }
-//
-//    public void setProperties(List<Property> properties) {
-//        this.properties = properties;
-//    }
+    public List<Property> getProperties() {
+        return properties;
+    }
 
-    public TypeEntity(String id, String label) {
+    public void setProperties(List<Property> properties) {
+        this.properties = properties;
+    }
+
+    public TypeEntity(String id, String label, List<Property> properties) {
         this.id = id;
         this.label = label;
-//        this.properties = properties;
+        this.properties = properties;
     }
-//
-//    public TypeEntity(String id, String label, List<Property> properties) {
-//        this.id = id;
-//        this.label = label;
-//        this.properties = properties;
-//    }
+
+    public static TypeEntity fromMap(Map d) {
+        List<Property> properties = ((Collection<?>) d.get(SchemaFieldsConsts.META_PROPERTIES)).stream().filter(p -> p instanceof Map).map(p -> (Map<?,?>) p).map(Property::fromMap).collect(Collectors.toList());
+        return new TypeEntity((String)(d.get(SchemaFieldsConsts.ID)), (String)(d.get(SchemaFieldsConsts.NAME)), properties);
+    }
 }

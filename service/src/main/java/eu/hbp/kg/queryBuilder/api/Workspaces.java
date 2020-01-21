@@ -18,10 +18,16 @@ package eu.hbp.kg.queryBuilder.api;
 
 import eu.hbp.kg.queryBuilder.controller.ServiceCallWithClientSecret;
 import eu.hbp.kg.queryBuilder.model.AuthContext;
+import eu.hbp.kg.queryBuilder.model.TypeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequestMapping("/workspaces")
 @RestController
@@ -45,11 +51,18 @@ public class Workspaces {
     }
 
     @GetMapping("/{workspace}/types")
-    public Map<?, ?> getWorkspaceTypes(@PathVariable("workspace") String workspace) {
-        return serviceCall.get(
+    public List<TypeEntity> getWorkspaceTypes(@PathVariable("workspace") String workspace) {
+        Map result = serviceCall.get(
                 String.format("%s/types?stage=LIVE&withProperties=true&workspace=%s", kgCoreEndpoint, workspace),
                 authContext.getAuthTokens(),
                 Map.class);
+        if(result!=null){
+            Object data = result.get("data");
+            if(data instanceof Collection){
+                return ((Collection<?>) data).stream().filter(d -> d instanceof Map).map(d -> (Map<?,?>) d).map(TypeEntity::fromMap).collect(Collectors.toList());
+            }
+        }
+        return Collections.emptyList();
     }
 
 }

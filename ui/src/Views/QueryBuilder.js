@@ -117,9 +117,9 @@ class QueryBuilder extends React.Component {
               </Button>
             </BGMessage>
             :
-            !typesStore.hasSchemas ?
+            !typesStore.hasTypes ?
               <BGMessage icon={"blender-phone"}>
-                No schemas available.<br />
+                No types available.<br />
                 If the problem persists, please contact the support.<br /><br />
                 <Button bsStyle={"primary"} onClick={this.handleRetryFetchStructure}>
                   <FontAwesomeIcon icon={"redo-alt"} />&nbsp;&nbsp; Retry

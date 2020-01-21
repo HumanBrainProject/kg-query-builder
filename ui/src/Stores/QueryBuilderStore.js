@@ -237,42 +237,40 @@ class QueryBuilderStore {
     if (!lookups || !lookups.length) {
       return [];
     }
-    const result = [];
-    lookups.forEach(schemaId => {
-      const schema = typesStore.findSchemaById(schemaId);
-      const lookup = {
-        id: schema.id,
-        label: schema.label,
-        properties: schema.properties
-          .filter(prop => !prop.canBe || !prop.canBe.length)
-          .sort((a, b) => a.label < b.label ? -1 : a.label > b.label ? 1 : 0)
-      };
-      if (lookup.properties.length) {
-        result.push(lookup);
+    return lookups.reduce((acc, id) => {
+      const type = typesStore.types[id];
+      if (type) {
+        const properties = type.properties.filter(prop => !prop.canBe || !prop.canBe.length)
+        if (properties.length) {
+          acc.push({
+            id: type.id,
+            label: type.label,
+            properties: properties
+          });
+        }
       }
-    });
-    return result;
+      return acc;
+    }, []);
   }
 
   getLookupsLinks(lookups) {
     if (!lookups || !lookups.length) {
       return [];
     }
-    const result = [];
-    lookups.forEach(schemaId => {
-      const schema = typesStore.findSchemaById(schemaId);
-      const lookup = {
-        id: schema.id,
-        label: schema.label,
-        properties: schema.properties
-          .filter(prop => prop.canBe && !!prop.canBe.length)
-          .sort((a, b) => a.label < b.label ? -1 : a.label > b.label ? 1 : 0)
-      };
-      if (lookup.properties.length) {
-        result.push(lookup);
+    return lookups.reduce((acc, id) => {
+      const type = typesStore.types[id];
+      if (type) {
+        const properties = type.properties.filter(prop => prop.canBe && !!prop.canBe.length);
+        if (properties.length) {
+          acc.push({
+            id: type.id,
+            label: type.label,
+            properties: properties
+          });
+        }
       }
-    });
-    return result;
+      return acc;
+    }, []);
   }
 
   @computed
@@ -540,10 +538,10 @@ class QueryBuilderStore {
     if (parent.isRootMerge) {
       parent.fields.forEach(field => {
         let isUnknown = true;
-        parent.lookups.some(schemaId => {
-          const schema = typesStore.findSchemaById(schemaId);
-          if (schema && schema.properties && schema.properties.length) {
-            if (schema.properties.find(property => property.attribute === field.schema.attribute && ((!field.schema.canBe && !property.canBe) || (isEqual(toJS(field.schema.canBe), toJS(property.canBe)))))) {
+        parent.lookups.some(id => {
+          const type = typesStore.types[id];
+          if (type) {
+            if (type.properties.find(property => property.attribute === field.schema.attribute && ((!field.schema.canBe && !property.canBe) || (isEqual(toJS(field.schema.canBe), toJS(property.canBe)))))) {
               isUnknown = false;
               return true;
             }
@@ -814,10 +812,10 @@ class QueryBuilderStore {
           }
           let property = null;
           if (attribute) {
-            parentField.lookups.some(schemaId => {
-              const schema = typesStore.findSchemaById(schemaId);
-              if (schema && schema.properties && schema.properties.length) {
-                property = schema.properties.find(property => property.attribute === attribute && (!jsonField.fields || (jsonField.fields && property.canBe)));
+            parentField.lookups.some(id => {
+              const type = typesStore.types[id];
+              if (type) {
+                property = type.properties.find(property => property.attribute === attribute && (!jsonField.fields || (jsonField.fields && property.canBe)));
                 if (property) {
                   property = toJS(property);
                 }
@@ -930,10 +928,10 @@ class QueryBuilderStore {
           let property = null;
           const parentFieldLookup = (parentField.isRootMerge && parentField.parent) ? parentField.parent : parentField;
           if (attribute && parentFieldLookup.schema && parentFieldLookup.schema.canBe && parentFieldLookup.schema.canBe.length) {
-            parentFieldLookup.schema.canBe.some(schemaId => {
-              const schema = typesStore.findSchemaById(schemaId);
-              if (schema && schema.properties && schema.properties.length) {
-                property = schema.properties.find(property => property.attribute === attribute && (!jsonField.fields || (jsonField.fields && property.canBe)));
+            parentFieldLookup.schema.canBe.some(id => {
+              const type = typesStore.types[id];
+              if (type) {
+                property = type.properties.find(property => property.attribute === attribute && (!jsonField.fields || (jsonField.fields && property.canBe)));
                 if (property) {
                   property = toJS(property);
                 }

@@ -44,22 +44,11 @@ class RootSchemaChoice extends React.Component {
     const { classes } = this.props;
     return (
       <div className={classes.container}>
-        {typesStore.sortedGroupedSchemas.map(group => {
-          return (
-            <div className={classes.schemaSelectGroup} key={group}>
-              <h3>{group}</h3>
-              <div>
-                {typesStore.getSortedSchemasByGroup(group).map(schema => {
-                  return (
-                    <div className={classes.schemaSelectSchema} key={schema.id} onClick={this.handleSelectRootSchema.bind(this, schema)}>
-                      {schema.label} - <small>{schema.id}</small>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
+        {typesStore.typeList.map(type => (
+          <div className={classes.schemaSelectSchema} key={type.id} onClick={this.handleSelectRootSchema.bind(this, type)}>
+            {type.label} - <small>{type.id}</small>
+          </div>
+        ))}
       </div>
     );
   }

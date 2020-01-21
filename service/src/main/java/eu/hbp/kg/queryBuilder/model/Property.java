@@ -16,20 +16,23 @@
 
 package eu.hbp.kg.queryBuilder.model;
 
+import eu.hbp.kg.queryBuilder.constants.SchemaFieldsConsts;
+
 import java.util.List;
+import java.util.Map;
 
 public class Property {
-    private String numOfOccurennces;
+    private Integer numOfOccurennces;
     private String simpleAttributeName;
     private String attribute;
     private String label;
     private List<String> canBe;
 
-    public String getNumOfOccurennces() {
+    public Integer getNumOfOccurennces() {
         return numOfOccurennces;
     }
 
-    public void setNumOfOccurennces(String numOfOccurennces) {
+    public void setNumOfOccurennces(Integer numOfOccurennces) {
         this.numOfOccurennces = numOfOccurennces;
     }
 
@@ -65,12 +68,27 @@ public class Property {
         this.canBe = canBe;
     }
 
-    public Property(String numOfOccurennces, String simpleAttributeName, String attribute, String label, List<String> canBe) {
+    public Property(Integer numOfOccurennces, String simpleAttributeName, String attribute, String label, List<String> canBe) {
         this.numOfOccurennces = numOfOccurennces;
         this.simpleAttributeName = simpleAttributeName;
         this.attribute = attribute;
         this.label = label;
         this.canBe = canBe;
+    }
+
+    public static Property fromMap(Map d) {
+        Integer numOfOccurennces = (Integer)(d.get(SchemaFieldsConsts.META_OCCURRENCES));
+        String attribute = (String)(d.get(SchemaFieldsConsts.ID));
+        String simpleAttributeName;
+        if(attribute.startsWith("@")) {
+            simpleAttributeName = attribute.replace("@", "");
+        } else {
+            String[] splittedAttribute = attribute.split("/");
+            simpleAttributeName = splittedAttribute[splittedAttribute.length - 1];
+        }
+        String label = (String)(d.get(SchemaFieldsConsts.NAME));
+        List<String> canBe = (List<String>) (d.get(SchemaFieldsConsts.META_TARGET_TYPES));
+        return new Property(numOfOccurennces, simpleAttributeName, attribute, label, canBe);
     }
 
 }
