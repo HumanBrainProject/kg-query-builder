@@ -7,6 +7,7 @@ const endpoints = {
   "user": () => "/service/api/user",
   "workspaces": () => "/service/api/workspaces",
   "workspaceTypes": () => `/service/api/workspaces/${appStore.currentWorkspace}/types`,
+  "types": () => "/service/api/types",
   "structure": () => "/service/api/structure?withLinks=true",
   "performQuery": function(vocab, size, start, databaseScope){
     return `/service/api/query/${appStore.currentWorkspace}/instances${arguments.length > 1?"?":""}${

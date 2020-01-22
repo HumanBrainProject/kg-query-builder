@@ -624,6 +624,7 @@ class QueryBuilderStore {
   @action selectField(field) {
     this.currentField = field;
     this.currentTab = "fieldOptions";
+    typesStore.addTypesToTetch(this.currentField.lookups);
   }
 
   @action closeFieldOptions() {
