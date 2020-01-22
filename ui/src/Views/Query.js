@@ -22,7 +22,7 @@ const styles = {
   },
   info: {
     display: "grid",
-    gridTemplateColumns: "1fr 2fr",
+    gridTemplateColumns: "300px 1fr",
     gridColumnGap: "30px",
     background: "var(--bg-color-ui-contrast2)",
     border: "1px solid var(--border-color-ui-contrast1)",
@@ -284,10 +284,6 @@ const styles = {
 @observer
 class Query extends React.Component{
 
-  handleChangeQueryId = event => {
-    queryBuilderStore.queryId = event.target.value;
-  }
-
   handleChangeLabel = event => {
     queryBuilderStore.label = event.target.value;
   }
@@ -310,6 +306,7 @@ class Query extends React.Component{
 
   handleShowSaveDialog = () => {
     queryBuilderStore.saveAsMode = true;
+    queryBuilderStore.setQueryId();
   }
 
   handleHideSaveDialog = () => {
@@ -353,15 +350,9 @@ class Query extends React.Component{
                   </React.Fragment>
                 )}
                 <h4>Query :</h4>
-                <input
-                  className={`form-control ${classes.input}`}
-                  required="required"
-                  pattern={queryBuilderStore.queryIdPattern}
-                  disabled={!queryBuilderStore.saveAsMode}
-                  placeholder={""}
-                  type="text"
-                  value={(queryBuilderStore.isQuerySaved && !queryBuilderStore.saveAsMode)?queryBuilderStore.sourceQuery.id:queryBuilderStore.queryId}
-                  onChange={this.handleChangeQueryId} />
+                <span className={`form-control ${classes.input}`}>
+                  {(queryBuilderStore.isQuerySaved && !queryBuilderStore.saveAsMode)?queryBuilderStore.sourceQuery.id:queryBuilderStore.queryId}
+                </span>
               </div>
               <div>
                 <h4>Label :</h4>
@@ -373,21 +364,6 @@ class Query extends React.Component{
                   value={queryBuilderStore.label}
                   onChange={this.handleChangeLabel} />
               </div>
-              {queryBuilderStore.saveAsMode && !queryBuilderStore.isQueryIdValid && queryBuilderStore.queryId !== "" && (
-                <div className={classes.queryIdError}>
-                  <FontAwesomeIcon icon="exclamation-triangle"/>&nbsp;&quot;{queryBuilderStore.queryId}&quot; is not a valid query name. It should not be empty. Accepted characters are a to z small or capital letters, numbers, minus and underscore!
-                </div>
-              )}
-              {queryBuilderStore.saveAsMode && queryBuilderStore.isQueryIdValid && queryBuilderStore.queryIdAlreadyInUse && (
-                <div className={classes.queryIdError}>
-                  <FontAwesomeIcon icon="exclamation-triangle"/>&nbsp;A query named &quot;{queryBuilderStore.queryId}&quot; already exists. Please choose another name!
-                </div>
-              )}
-              {queryBuilderStore.saveAsMode && queryBuilderStore.isQueryIdValid && queryBuilderStore.queryIdAlreadyExists && (
-                <div className={classes.queryIdError}>
-                  <FontAwesomeIcon icon="exclamation-triangle"/>&nbsp;You already created a query named &quot;{queryBuilderStore.queryId}&quot;. Please choose another name!
-                </div>
-              )}
               <div className={classes.description}>
                 <h4>Description :</h4>
                 <textarea
