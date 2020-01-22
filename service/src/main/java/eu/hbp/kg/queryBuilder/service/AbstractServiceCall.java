@@ -63,12 +63,12 @@ public class AbstractServiceCall {
 
 
     public <T> T patch(String uri, Object payload, AuthTokens authContext, Class<T> returnType) {
-        logger.trace("Sending a put");
+        logger.trace("Sending a patch");
         return executeRequest(loadBalancedWebClient.build().patch().uri(uri).contentType(MediaType.APPLICATION_JSON).body(payload == null ? BodyInserters.empty() : BodyInserters.fromObject(payload)), MediaType.APPLICATION_JSON, authContext, returnType);
     }
 
     public <T> T delete(String uri, AuthTokens authContext, Class<T> returnType) {
-        logger.trace("Sending a post");
+        logger.trace("Sending a delete");
         return executeRequest(loadBalancedWebClient.build().delete().uri(uri), MediaType.APPLICATION_JSON, authContext, returnType);
     }
 

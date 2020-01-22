@@ -2,6 +2,7 @@ import { observable, action, computed, runInAction, toJS } from "mobx";
 import { uniqueId, isEqual } from "lodash";
 import API from "../Services/API";
 import { remove } from "lodash";
+import _  from "lodash-uuid";
 import jsonld from "jsonld";
 
 import authStore from "./AuthStore";
@@ -272,6 +273,9 @@ class QueryBuilderStore {
       return acc;
     }, []);
   }
+
+  @action
+  setQueryId = () => this.queryId = _.uuid();
 
   @computed
   get currentFieldLookups() {
@@ -1044,6 +1048,7 @@ class QueryBuilderStore {
       try {
         const payload = this.JSONQuery;
         const response = await API.axios.post(API.endpoints.performQuery(this.rootField.schema.id, this.runStripVocab ? "https://schema.hbp.eu/myQuery/" : undefined, this.resultSize, this.resultStart, this.databaseScope), payload);
+        // const response = await API.axios.get(API.endpoints.performQuery(this.rootField.schema.id, this.runStripVocab ? "https://schema.hbp.eu/myQuery/" : undefined, this.resultSize, this.resultStart, this.databaseScope), payload);
         runInAction(() => {
           this.tableViewRoot = ["results"];
           this.result = response.data;
@@ -1101,9 +1106,10 @@ class QueryBuilderStore {
         this.sourceQuery.deleteError = null;
       }
       const queryId = this.saveAsMode ? this.queryId : this.sourceQuery.id;
+
       const payload = this.JSONQuery;
       try {
-        await API.axios.put(API.endpoints.query(this.rootField.schema.id, queryId), payload);
+        await API.axios.put(API.endpoints.query(queryId), payload);
         runInAction(() => {
           if (!this.saveAsMode && this.sourceQuery && this.sourceQuery.user === authStore.user.id) {
             this.sourceQuery.label = payload.label;
