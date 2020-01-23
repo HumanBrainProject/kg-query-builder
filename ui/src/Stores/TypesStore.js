@@ -44,6 +44,13 @@ class TypesStore {
             properties: (Array.isArray(type.properties)?type.properties:[])
               .sort((a, b) => a.label < b.label ? -1 : a.label > b.label ? 1 : 0)
           }));
+          // types = types.filter(type => {
+          //   if (type.id === "http://schema.org/Man") {
+          //     man = type;
+          //     return false;
+          //   }
+          //   return true;
+          // });
           this.workspaceTypeList = types;
           types.forEach(type => this.types[type.id] = type);
           this.isFetching = false;
@@ -60,7 +67,8 @@ class TypesStore {
   addTypesToTetch(types) {
     types
       .filter(id => !this.types[id])
-      .forEach(id => this.typesQueue.set(id));
+      .forEach(id => this.typesQueue.add(id));
+    this.processQueue();
   }
 
   @action
@@ -88,7 +96,7 @@ class TypesStore {
       let response = await API.axios.post(API.endpoints.types(), toProcess);
       runInAction(() =>{
         toProcess.forEach(identifier => {
-          const type =  response && response.data && response.data.data && response.data.data[identifier];
+          const type =  response && response.data && response.data && response.data[identifier];
           if(type){
             this.types[identifier] = type;
           }
