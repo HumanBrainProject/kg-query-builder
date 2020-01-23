@@ -59,7 +59,9 @@ public class TypeEntity {
     }
 
     public static TypeEntity fromMap(Map d) {
+        String id = (String) (d.get(SchemaFieldsConsts.ID));
+        String name = (String) (d.get(SchemaFieldsConsts.NAME));
         List<Property> properties = ((Collection<?>) d.get(SchemaFieldsConsts.META_PROPERTIES)).stream().filter(p -> p instanceof Map).map(p -> (Map<?,?>) p).map(Property::fromMap).collect(Collectors.toList());
-        return new TypeEntity((String)(d.get(SchemaFieldsConsts.ID)), (String)(d.get(SchemaFieldsConsts.NAME)), properties);
+        return new TypeEntity(id, name, properties);
     }
 }
