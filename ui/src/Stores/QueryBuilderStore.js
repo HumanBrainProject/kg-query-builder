@@ -241,7 +241,7 @@ class QueryBuilderStore {
     return lookups.reduce((acc, id) => {
       const type = typesStore.types[id];
       if (type) {
-        const properties = type.properties.filter(prop => !prop.canBe || !prop.canBe.length)
+        const properties = type.properties.filter(prop => !prop.canBe || !prop.canBe.length);
         if (properties.length) {
           acc.push({
             id: type.id,
@@ -667,8 +667,17 @@ class QueryBuilderStore {
   }
 
   @computed
+  get JSONMetaProperties() {
+    return {
+      name: this.rootField.schema.label,
+      alias: this.rootField.alias,
+      type: this.rootField.schema.id
+    };
+  }
+
+  @computed
   get JSONQuery() {
-    return Object.assign({}, { "@context": toJS(this.context) }, this.JSONQueryProperties, this.JSONQueryFields ? { fields: this.JSONQueryFields } : {});
+    return Object.assign({}, { "@context": toJS(this.context) }, {"meta": this.JSONMetaProperties }, this.JSONQueryProperties, this.JSONQueryFields ? { fields: this.JSONQueryFields } : {});
   }
 
   @computed
@@ -1203,44 +1212,43 @@ class QueryBuilderStore {
             this.specifications = [];
             this.showMyQueries = true;
             this.showOthersQueries = true;
-            const jsonSpecifications = response && response.data && response.data.length ? response.data : [];
+            const jsonSpecifications = response && response.data && response.data.data && response.data.data.length ? response.data.data : [];
             //const reg = /^(.+)\/(.+)\/(.+)\/v(\d+)\.(\d+)\.(\d+)\/(.+)$/;
-            const reg = /^specification_queries\/(.+)-(.+)-(.+)-v(\d+)_(\d+)_(\d+)-(.+)$/;
+            // const reg = /^specification_queries\/(.+)-(.+)-(.+)-v(\d+)_(\d+)_(\d+)-(.+)$/;
             jsonSpecifications.forEach(jsonSpec => {
-              if (jsonSpec && jsonSpec["@context"] && reg.test(jsonSpec._id)) { //jsonSpec["http://schema.org/identifier"]
-                const [, org, domain, schemaName, vMn, vmn, vpn, queryId] = jsonSpec._id.match(reg);
-                const schemaId = `${org}/${domain}/${schemaName}/v${vMn}.${vmn}.${vpn}`;
-                if (schemaId === this.rootField.schema.id) { //isQueryIdValid(queryId) &&
-                  jsonld.expand(jsonSpec, (expandErr, expanded) => {
-                    if (!expandErr) {
-                      jsonld.compact(expanded, jsonSpec["@context"], (compactErr, compacted) => {
-                        if (!compactErr) {
-                          //window.console.log(compacted);
-                          this.specifications.push({
-                            id: queryId,
-                            org: org,
-                            user: jsonSpec._createdByUser,
-                            context: compacted["@context"],
-                            merge: compacted.merge,
-                            fields: compacted.fields,
-                            properties: getProperties(compacted),
-                            label: jsonSpec.label ? jsonSpec.label : "",
-                            description: jsonSpec.description ? jsonSpec.description : "",
-                            isDeleting: false,
-                            deleteError: null
-                          });
-                        }
-                        else {
-                          window.console.log("error: was not able to compact JSON-LD", compactErr);
-                        }
+              // if (jsonSpec && jsonSpec["@context"] && reg.test(jsonSpec._id)) { //jsonSpec["http://schema.org/identifier"]
+              //   const [, org, domain, schemaName, vMn, vmn, vpn, queryId] = jsonSpec._id.match(reg);
+              //   const schemaId = `${org}/${domain}/${schemaName}/v${vMn}.${vmn}.${vpn}`;
+              //   if (schemaId === this.rootField.schema.id) { //isQueryIdValid(queryId) &&
+              let queryId = jsonSpec["@id"].split("/");
+              const label = jsonSpec["https://schema.hbp.eu/graphQuery/label"] ? jsonSpec["https://schema.hbp.eu/graphQuery/label"] : "";
+              jsonld.expand(jsonSpec, (expandErr, expanded) => {
+                if (!expandErr) {
+                  jsonld.compact(expanded, jsonSpec["@context"], (compactErr, compacted) => {
+                    if (!compactErr) {
+                      this.specifications.push({
+                        id: queryId[queryId.length-1],
+                        user: jsonSpec._createdByUser,
+                        context: compacted["@context"],
+                        merge: compacted.merge,
+                        fields: compacted.fields,
+                        properties: getProperties(compacted),
+                        label: label,
+                        description: jsonSpec.description ? jsonSpec.description : "",
+                        isDeleting: false,
+                        deleteError: null
                       });
                     }
                     else {
-                      window.console.log("error: was not able to expand JSON-LD", expandErr);
+                      window.console.log("error: was not able to compact JSON-LD", compactErr);
                     }
                   });
                 }
-              }
+                else {
+                  window.console.log("error: was not able to expand JSON-LD", expandErr);
+                }
+              });
+
             });
             if (this.sourceQuery) {
               const query = this.specifications.find(spec => spec.id === this.sourceQuery.id);

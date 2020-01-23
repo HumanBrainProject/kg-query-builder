@@ -16,9 +16,9 @@
 
 package eu.hbp.kg.queryBuilder.controller;
 
-import eu.hbp.kg.queryBuilder.service.AbstractServiceCall;
 import eu.hbp.kg.queryBuilder.model.AuthTokens;
 import eu.hbp.kg.queryBuilder.model.ClientAuthToken;
+import eu.hbp.kg.queryBuilder.service.AbstractServiceCall;
 import eu.hbp.kg.queryBuilder.service.KeycloakSvc;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

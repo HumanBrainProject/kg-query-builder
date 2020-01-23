@@ -20,8 +20,6 @@ import eu.hbp.kg.queryBuilder.exception.*;
 import eu.hbp.kg.queryBuilder.model.AuthContext;
 import eu.hbp.kg.queryBuilder.model.AuthTokens;
 import eu.hbp.kg.queryBuilder.model.UserAuthToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
