@@ -193,7 +193,7 @@ class QueryBuilderStore {
   @observable queryId = "";
   @observable label = "";
   @observable description = "";
-  @observable databaseScope = "RELEASED";
+  @observable stage = "RELEASED";
   @observable sourceQuery = null;
   @observable context = null;
   @observable rootField = null;
@@ -1056,9 +1056,14 @@ class QueryBuilderStore {
       this.runError = false;
       this.result = null;
       try {
-        const payload = this.JSONQuery;
-        const response = await API.axios.post(API.endpoints.performQuery(this.rootField.schema.id, this.runStripVocab ? "https://schema.hbp.eu/myQuery/" : undefined, this.resultSize, this.resultStart, this.databaseScope), payload);
-        // const response = await API.axios.get(API.endpoints.performQuery(this.rootField.schema.id, this.runStripVocab ? "https://schema.hbp.eu/myQuery/" : undefined, this.resultSize, this.resultStart, this.databaseScope), payload);
+        // const payload = this.JSONQuery;
+        // const response = await API.axios.post(API.endpoints.performQuery(this.rootField.schema.id, this.runStripVocab ? "https://schema.hbp.eu/myQuery/" : undefined, this.resultSize, this.resultStart, this.stage), payload);
+        const response = await API.axios.get(API.endpoints.performQuery(
+          this.sourceQuery.id,
+          this.runStripVocab ? "https://schema.hbp.eu/myQuery/" : undefined,
+          this.resultSize,
+          this.resultStart,
+          this.stage));
         runInAction(() => {
           this.tableViewRoot = ["results"];
           this.result = response.data;
@@ -1084,8 +1089,8 @@ class QueryBuilderStore {
   }
 
   @action
-  setDatabaseScope(scope) {
-    this.databaseScope = scope;
+  setStage(scope) {
+    this.stage = scope;
   }
 
   @action

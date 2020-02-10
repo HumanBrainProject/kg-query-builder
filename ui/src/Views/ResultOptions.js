@@ -26,30 +26,20 @@ const styles = {
   }
 };
 
-const scopeOptions =  [{label: "Released", value: "RELEASED" }, {label: "Curated", value: "INFERRED"}];
+const scopeOptions =  [{label: "Released", value: "RELEASED" }, {label: "Curated", value: "LIVE"}];
 
 @injectStyles(styles)
 @observer
 class ResultOptions extends React.Component{
-  handleToggleRunStripVocab = () => {
-    queryBuilderStore.toggleRunStripVocab();
-  }
+  handleToggleRunStripVocab = () => queryBuilderStore.toggleRunStripVocab();
 
-  handleChangeSize = (event, field) => {
-    queryBuilderStore.setResultSize(field.getValue());
-  }
+  handleChangeSize = event => queryBuilderStore.setResultSize(event.target.value);
 
-  handleChangeStart = (event, field) => {
-    queryBuilderStore.setResultStart(field.getValue());
-  }
+  handleChangeStart = event => queryBuilderStore.setResultStart(event.target.value);
 
-  handlExecuteQuery = () => {
-    queryBuilderStore.executeQuery();
-  }
+  handleChangeStage = event=> queryBuilderStore.setStage(event.target.value);
 
-  handleChangeScope = (event, field) => {
-    queryBuilderStore.setDatabaseScope(field.getValue());
-  }
+  handlExecuteQuery = () => queryBuilderStore.executeQuery();
 
   render(){
     const { classes } = this.props;
@@ -82,9 +72,9 @@ class ResultOptions extends React.Component{
             <Col xs={6}>
               <FormGroup>
                 <ControlLabel>Select space</ControlLabel>
-                <FormControl componentClass="select" placeholder="minds" value={queryBuilderStore.databaseScope} onChange={this.handleChangeScope} >
+                <FormControl componentClass="select" placeholder="minds" value={queryBuilderStore.stage} onChange={this.handleChangeStage} >
                   {scopeOptions.map(space => (
-                    <option value={space.value} key={space}>{space.label}</option>
+                    <option value={space.value} key={space.value}>{space.label}</option>
                   ))}
                 </FormControl>
               </FormGroup>

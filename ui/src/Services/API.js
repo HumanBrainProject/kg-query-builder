@@ -9,12 +9,12 @@ const endpoints = {
   "workspaceTypes": () => `/service/api/workspaces/${appStore.currentWorkspace}/types`,
   "types": () => "/service/api/types",
   "structure": () => "/service/api/structure?withLinks=true",
-  "performQuery": function(vocab, size, start, databaseScope){
-    return `/service/api/query/${appStore.currentWorkspace}/instances${arguments.length > 1?"?":""}${
+  "performQuery": (vocab, size, from, stage) => {
+    return `/service/api/query/${appStore.currentWorkspace}/instances?${
       ""}${vocab!==undefined && vocab!==null?`vocab=${encodeURIComponent(vocab)}&`:""}${
       ""}${size!==undefined && size!==null?`size=${encodeURIComponent(size)}&`:""}${
-      ""}${start!==undefined && start!==null?`start=${encodeURIComponent(start)}&`:""}${
-      ""}${databaseScope?`databaseScope=${databaseScope}`:"" }`;},
+      ""}${from!==undefined && from!==null?`from=${encodeURIComponent(from)}&`:""}${
+      ""}${stage?`stage=${stage}`:"" }`;},
   "query": uuid => `/service/api/query/${appStore.currentWorkspace}/${encodeURIComponent(uuid)}`,
   "listQueries": type => `/service/api/query?type=${encodeURIComponent(type)}`
 };
