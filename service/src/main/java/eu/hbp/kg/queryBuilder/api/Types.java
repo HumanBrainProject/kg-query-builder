@@ -38,6 +38,10 @@ public class Types {
     @Value("${kgcore.endpoint}")
     String kgCoreEndpoint;
 
+    @Value("${api.version}")
+    String apiVersion;
+
+
     @Autowired
     private ServiceCallWithClientSecret serviceCall;
 
@@ -51,7 +55,7 @@ public class Types {
     @PostMapping
     public Map<?, ?> getTypesByName(@RequestBody List<String> payload) {
         Map result = serviceCall.post(
-                String.format("%s/typesByName?stage=LIVE&withProperties=true", kgCoreEndpoint),
+                String.format("%s/%s/typesByName?stage=IN_PROGRESS&withProperties=true", kgCoreEndpoint, apiVersion),
                 payload,
                 authContext.getAuthTokens(),
                 Map.class);

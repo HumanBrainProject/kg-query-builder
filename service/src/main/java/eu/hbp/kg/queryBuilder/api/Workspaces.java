@@ -39,6 +39,9 @@ public class Workspaces {
     @Value("${kgcore.endpoint}")
     String kgCoreEndpoint;
 
+    @Value("${api.version}")
+    String apiVersion;
+
     @Autowired
     private ServiceCallWithClientSecret serviceCall;
 
@@ -48,7 +51,7 @@ public class Workspaces {
     @GetMapping
     public Map<?, ?> getWorkspaces() {
         return serviceCall.get(
-                String.format("%s/spaces?stage=LIVE", kgCoreEndpoint),
+                String.format("%s/%s/spaces?stage=IN_PROGRESS", kgCoreEndpoint, apiVersion),
                 authContext.getAuthTokens(),
                 Map.class);
     }
@@ -56,7 +59,7 @@ public class Workspaces {
     @GetMapping("/{workspace}/types")
     public List<TypeEntity> getWorkspaceTypes(@PathVariable("workspace") String workspace) {
         Map result = serviceCall.get(
-                String.format("%s/types?stage=LIVE&withProperties=true&workspace=%s", kgCoreEndpoint, workspace),
+                String.format("%s/%s/types?stage=IN_PROGRESS&withProperties=true&space=%s", kgCoreEndpoint, apiVersion, workspace),
                 authContext.getAuthTokens(),
                 Map.class);
         if(result!=null){

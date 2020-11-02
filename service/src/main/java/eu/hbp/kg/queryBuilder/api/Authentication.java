@@ -30,6 +30,9 @@ public class Authentication {
     @Value("${kgcore.endpoint}")
     String kgCoreEndpoint;
 
+    @Value("${api.version}")
+    String apiVersion;
+
     @Autowired
     private ServiceCallWithClientSecret serviceCall;
 
@@ -39,7 +42,7 @@ public class Authentication {
     @GetMapping("/endpoint")
     public Map<?, ?> getAuthEndpoint() {
         return serviceCall.get(
-                String.format("%s/users/authorization", kgCoreEndpoint),
+                String.format("%s/%s/users/authorization", kgCoreEndpoint, apiVersion),
                 authContext.getAuthTokens(),
                 Map.class);
     }

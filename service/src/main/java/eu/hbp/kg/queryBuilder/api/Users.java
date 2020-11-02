@@ -35,6 +35,9 @@ public class Users {
     @Value("${kgcore.endpoint}")
     String kgCoreEndpoint;
 
+    @Value("${api.version}")
+    String apiVersion;
+
     @Autowired
     private ServiceCallWithClientSecret serviceCall;
 
@@ -44,7 +47,7 @@ public class Users {
     @GetMapping
     public Map<?,?> getUserProfile(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String authorizationToken) {
         return serviceCall.get(
-                String.format("%s/users/me", kgCoreEndpoint),
+                String.format("%s/%s/users/me", kgCoreEndpoint, apiVersion),
                 authContext.getAuthTokens(),
                 Map.class);
     }

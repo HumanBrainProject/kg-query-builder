@@ -31,6 +31,10 @@ public class Query {
     @Value("${kgcore.endpoint}")
     String kgCoreEndpoint;
 
+
+    @Value("${api.version}")
+    String apiVersion;
+
     @Autowired
     private ServiceCallWithClientSecret serviceCall;
 
@@ -40,7 +44,7 @@ public class Query {
     @GetMapping
     public Map<?, ?> getQueries(@RequestParam("type") String type) {
         return serviceCall.get(
-                String.format("%s/queries?type=%s", kgCoreEndpoint, type),
+                String.format("%s/%s/queries?type=%s", kgCoreEndpoint, apiVersion, type),
                 authContext.getAuthTokens(),
                 Map.class);
     }
@@ -53,7 +57,7 @@ public class Query {
                                   @RequestParam("vocab") String vocab,
                                   @RequestParam("stage") String stage) {
         return serviceCall.get(
-                String.format("%s/queries/%s/instances?space=%s&from=%s&size=%s&vocab=%s&stage=%s", kgCoreEndpoint, queryId, workspace, from, size, vocab, stage),
+                String.format("%s/%s/queries/%s/instances?space=%s&from=%s&size=%s&vocab=%s&stage=%s", kgCoreEndpoint, apiVersion, queryId, workspace, from, size, vocab, stage),
                 authContext.getAuthTokens(),
                 Map.class);
     }
@@ -61,7 +65,7 @@ public class Query {
     @PutMapping("/{workspace}/{queryId}")
     public void saveQuery(@RequestBody Map<?, ?> query, @PathVariable("workspace") String workspace, @PathVariable("queryId") String queryId) {
         serviceCall.put(
-                String.format("%s/queries/%s?space=%s", kgCoreEndpoint, queryId, workspace),
+                String.format("%s/%s/queries/%s?space=%s", kgCoreEndpoint, apiVersion, queryId, workspace),
                 query,
                 authContext.getAuthTokens(),
                 Void.class
@@ -71,7 +75,7 @@ public class Query {
     @DeleteMapping("/{queryId}")
     public void deleteQuery(@PathVariable("queryId") String queryId) {
         serviceCall.delete(
-                String.format("%s/queries/%s", kgCoreEndpoint, queryId),
+                String.format("%s/%s/queries/%s", kgCoreEndpoint, apiVersion, queryId),
                 authContext.getAuthTokens(),
                 Void.class
         );

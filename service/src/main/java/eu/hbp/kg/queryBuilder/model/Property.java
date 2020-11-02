@@ -22,17 +22,17 @@ import java.util.List;
 import java.util.Map;
 
 public class Property {
-    private Integer numOfOccurennces;
+    private Double numOfOccurennces;
     private String simpleAttributeName;
     private String attribute;
     private String label;
     private List<String> canBe;
 
-    public Integer getNumOfOccurennces() {
+    public Double getNumOfOccurennces() {
         return numOfOccurennces;
     }
 
-    public void setNumOfOccurennces(Integer numOfOccurennces) {
+    public void setNumOfOccurennces(Double numOfOccurennces) {
         this.numOfOccurennces = numOfOccurennces;
     }
 
@@ -68,7 +68,7 @@ public class Property {
         this.canBe = canBe;
     }
 
-    public Property(Integer numOfOccurennces, String simpleAttributeName, String attribute, String label, List<String> canBe) {
+    public Property(Double numOfOccurennces, String simpleAttributeName, String attribute, String label, List<String> canBe) {
         this.numOfOccurennces = numOfOccurennces;
         this.simpleAttributeName = simpleAttributeName;
         this.attribute = attribute;
@@ -77,7 +77,7 @@ public class Property {
     }
 
     public static Property fromMap(Map d) {
-        Integer numOfOccurennces = (Integer)(d.get(SchemaFieldsConsts.META_OCCURRENCES));
+        Double numOfOccurennces = (Double)(d.get(SchemaFieldsConsts.META_OCCURRENCES));
         String attribute = (String)(d.get(SchemaFieldsConsts.ID));
         String simpleAttributeName;
         if(attribute.startsWith("@")) {

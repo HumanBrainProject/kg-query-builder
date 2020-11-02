@@ -35,6 +35,9 @@ public class KeycloakSvc {
     @Value("${kgcore.endpoint}")
     String kgCoreEndpoint;
 
+    @Value("${api.version}")
+    String apiVersion;
+
     private Logger logger = LoggerFactory.getLogger(KeycloakSvc.class);
 
     private String endpoint;
@@ -51,7 +54,7 @@ public class KeycloakSvc {
         try {
             Map<?, ?> endPointResponse = WebClient.builder().build()
                     .get()
-                    .uri(String.format("%s/users/authorization/tokenEndpoint", kgCoreEndpoint))
+                    .uri(String.format("%s/%s/users/authorization/tokenEndpoint", kgCoreEndpoint, apiVersion))
                     .retrieve()
                     .bodyToMono(Map.class)
                     .block();
