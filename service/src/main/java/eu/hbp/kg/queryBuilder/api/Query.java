@@ -18,11 +18,16 @@ package eu.hbp.kg.queryBuilder.api;
 
 import eu.hbp.kg.queryBuilder.controller.ServiceCallWithClientSecret;
 import eu.hbp.kg.queryBuilder.model.AuthContext;
+import eu.hbp.kg.queryBuilder.model.TypeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequestMapping("/query")
 @RestController
@@ -43,10 +48,19 @@ public class Query {
 
     @GetMapping
     public Map<?, ?> getQueries(@RequestParam("type") String type) {
-        return serviceCall.get(
+         Map result = serviceCall.get(
                 String.format("%s/%s/queries?type=%s", kgCoreEndpoint, apiVersion, type),
                 authContext.getAuthTokens(),
                 Map.class);
+        if(result != null){
+            List<Map<String, Object>> data = (List<Map<String, Object>>) result.get("data");
+            data.forEach(d -> {
+              String[] splitId = d.get("@id").toString().split("/");
+              d.put("@id", splitId[splitId.length - 1]);
+            });
+            return result;
+        }
+        return Collections.emptyMap();
     }
 
     @GetMapping("/{workspace}/{queryId}")

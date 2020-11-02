@@ -217,7 +217,7 @@ class QueryBuilderStore {
   @observable resultSize = 20;
   @observable resultStart = 0;
   @observable.shallow result = null;
-  @observable tableViewRoot = ["results"];
+  @observable tableViewRoot = ["data"];
 
   @observable currentTab = "query";
   @observable currentField = null;
@@ -1058,7 +1058,7 @@ class QueryBuilderStore {
         const payload = this.JSONQuery;
         const response = await API.axios.post(API.endpoints.performQuery(this.runStripVocab ? "https://schema.hbp.eu/myQuery/" : undefined, this.resultSize, this.resultStart, this.stage), payload);
         runInAction(() => {
-          this.tableViewRoot = ["results"];
+          this.tableViewRoot = ["data"];
           this.result = response.data;
           this.isRunning = false;
         });
@@ -1211,28 +1211,23 @@ class QueryBuilderStore {
             this.showMyQueries = true;
             this.showOthersQueries = true;
             const jsonSpecifications = response && response.data && response.data.data && response.data.data.length ? response.data.data : [];
-            //const reg = /^(.+)\/(.+)\/(.+)\/v(\d+)\.(\d+)\.(\d+)\/(.+)$/;
-            // const reg = /^specification_queries\/(.+)-(.+)-(.+)-v(\d+)_(\d+)_(\d+)-(.+)$/;
             jsonSpecifications.forEach(jsonSpec => {
-              // if (jsonSpec && jsonSpec["@context"] && reg.test(jsonSpec._id)) { //jsonSpec["http://schema.org/identifier"]
-              //   const [, org, domain, schemaName, vMn, vmn, vpn, queryId] = jsonSpec._id.match(reg);
-              //   const schemaId = `${org}/${domain}/${schemaName}/v${vMn}.${vmn}.${vpn}`;
-              //   if (schemaId === this.rootField.schema.id) { //isQueryIdValid(queryId) &&
-              let queryId = jsonSpec["@id"].split("/");
-              const label = jsonSpec["https://schema.hbp.eu/graphQuery/label"] ? jsonSpec["https://schema.hbp.eu/graphQuery/label"] : "";
+              let queryId = jsonSpec["@id"];
+              const label = jsonSpec["https://core.kg.ebrains.eu/vocab/query/label"] ? jsonSpec["https://core.kg.ebrains.eu/vocab/query/label"] : "";
+              jsonSpec["@context"] = toJS(defaultContext); // TODO: remove this line, it should be returned from KG Core
               jsonld.expand(jsonSpec, (expandErr, expanded) => {
                 if (!expandErr) {
                   jsonld.compact(expanded, jsonSpec["@context"], (compactErr, compacted) => {
                     if (!compactErr) {
                       this.specifications.push({
-                        id: queryId[queryId.length-1],
+                        id: queryId,
                         user: jsonSpec._createdByUser,
                         context: compacted["@context"],
                         merge: compacted.merge,
                         structure: compacted.structure,
                         properties: getProperties(compacted),
                         label: label,
-                        description: jsonSpec.description ? jsonSpec.description : "",
+                        description: jsonSpec["https://core.kg.ebrains.eu/vocab/query/description"] ? jsonSpec["https://core.kg.ebrains.eu/vocab/query/description"] : "",
                         isDeleting: false,
                         deleteError: null
                       });
