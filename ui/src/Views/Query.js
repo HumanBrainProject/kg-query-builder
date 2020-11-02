@@ -4,7 +4,6 @@ import { observer } from "mobx-react";
 import {Button, Modal} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Scrollbars } from "react-custom-scrollbars";
-import Color from "color";
 const jsdiff = require("diff");
 
 import queryBuilderStore from "../Stores/QueryBuilderStore";
@@ -217,14 +216,14 @@ const styles = {
     }
   },
   removed:{
-    background:new Color("#e74c3c").lighten(0.6).hex(),
+    background: "#FADBD7",
     textDecoration: "line-through",
     "& + $added": {
       marginLeft: "3px"
     }
   },
   added:{
-    background:new Color("#2ecc71").lighten(0.6).hex(),
+    background: "#A5EBC3",
     "& + $removed": {
       marginLeft: "3px"
     }

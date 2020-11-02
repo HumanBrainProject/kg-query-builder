@@ -50,14 +50,28 @@ public class Query {
     }
 
     @GetMapping("/{workspace}/{queryId}")
-    public Map<?, ?> executeQuery(@PathVariable("workspace") String workspace,
-                                  @PathVariable("queryId") String queryId,
-                                  @RequestParam("from") Integer from,
-                                  @RequestParam("size") Integer size,
-                                  @RequestParam("vocab") String vocab,
-                                  @RequestParam("stage") String stage) {
+    public Map<?, ?> executeQueryWithQueryId(@PathVariable("workspace") String workspace,
+                                             @PathVariable("queryId") String queryId,
+                                             @RequestParam("from") Integer from,
+                                             @RequestParam("size") Integer size,
+                                             @RequestParam("vocab") String vocab,
+                                             @RequestParam("stage") String stage) {
         return serviceCall.get(
                 String.format("%s/%s/queries/%s/instances?space=%s&from=%s&size=%s&vocab=%s&stage=%s", kgCoreEndpoint, apiVersion, queryId, workspace, from, size, vocab, stage),
+                authContext.getAuthTokens(),
+                Map.class);
+    }
+
+    @PostMapping
+    public Map<?, ?> executeQuery(
+            @RequestBody Map<?, ?> query,
+            @RequestParam("from") Integer from,
+            @RequestParam("size") Integer size,
+            @RequestParam("vocab") String vocab,
+            @RequestParam("stage") String stage) {
+        return serviceCall.post(
+                String.format("%s/%s/queries?from=%d&size=%d&vocab=%s&stage=%s", kgCoreEndpoint, apiVersion, from, size, vocab, stage),
+                query,
                 authContext.getAuthTokens(),
                 Map.class);
     }

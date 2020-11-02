@@ -26,7 +26,7 @@ const styles = {
   }
 };
 
-const scopeOptions =  [{label: "Released", value: "RELEASED" }, {label: "Curated", value: "LIVE"}];
+const scopeOptions =  [{label: "Released", value: "RELEASED" }, {label: "Curated", value: "IN_PROGRESS"}];
 
 @injectStyles(styles)
 @observer
@@ -37,7 +37,7 @@ class ResultOptions extends React.Component{
 
   handleChangeStart = event => queryBuilderStore.setResultStart(event.target.value);
 
-  handleChangeStage = event=> queryBuilderStore.setStage(event.target.value);
+  handleChangeStage = event => queryBuilderStore.setStage(event.target.value);
 
   handlExecuteQuery = () => queryBuilderStore.executeQuery();
 
