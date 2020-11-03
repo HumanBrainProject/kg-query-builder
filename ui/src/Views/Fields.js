@@ -1,29 +1,22 @@
 import React from "react";
-import injectStyles from "react-jss";
 import {observer} from "mobx-react";
 import Field from "./Field";
+import uniqueId from "lodash/uniqueId";
 
-let styles = {
-  container:{
-
-  }
-};
-
-@injectStyles(styles)
 @observer
 class Fields extends React.Component{
   render(){
-    const {classes, field} = this.props;
+    const {field} = this.props;
     return(
-      <div className={classes.container}>
+      <div>
         {field.merge && !!field.merge.length && field.merge.map(field => {
           return(
-            <Field field={field} key={`merge_${field._uniqueKey}`} />
+            <Field field={field} key={uniqueId("merge_")} />
           );
         })}
-        {field.fields && !!field.fields.length && field.fields.map(field => {
+        {field.structure && !!field.structure.length && field.structure.map(field => {
           return(
-            <Field field={field} key={`field_${field._uniqueKey}`} />
+            <Field field={field} key={uniqueId("field_")} />
           );
         })}
       </div>

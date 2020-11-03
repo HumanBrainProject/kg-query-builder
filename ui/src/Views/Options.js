@@ -300,7 +300,7 @@ class Options extends React.Component {
 
           {queryBuilderStore.currentField !== queryBuilderStore.rootField
             && (queryBuilderStore.currentFieldLookupsLinks && !!queryBuilderStore.currentFieldLookupsLinks.length)
-            && queryBuilderStore.currentField.fields.length === 1
+            && queryBuilderStore.currentField.structure.length === 1
             && !queryBuilderStore.currentField.isMerge
             && (
               <div className={classes.option}>
@@ -364,7 +364,7 @@ class Options extends React.Component {
         {(!queryBuilderStore.currentField.isFlattened
           || (queryBuilderStore.currentField.isMerge
             && (queryBuilderStore.currentField.isRootMerge
-              || (!queryBuilderStore.currentField.isRootMerge && (!queryBuilderStore.currentField.fields || !queryBuilderStore.currentField.fields.length))
+              || (!queryBuilderStore.currentField.isRootMerge && (!queryBuilderStore.currentField.structure || !queryBuilderStore.currentField.structure.length))
             )
           )
         ) && (
@@ -387,9 +387,8 @@ class Options extends React.Component {
                   <div className={classes.property} key={propSchema.attribute + (propSchema.reverse ? "reverse" : "")} onClick={this.handleAddField.bind(this, propSchema)}>
                     {propSchema.label} - <small>{propSchema.attribute}</small>
                     &nbsp;&nbsp;( can be: {propSchema.canBe.map(t => {
-                      const _type = t["https://core.kg.ebrains.eu/vocab/meta/type"];
-                      const type = typesStore.types[_type];
-                      return (type && type.label)?type.label:_type;
+                      const type = typesStore.types[t];
+                      return (type && type.label)?type.label:t;
                     }).join(", ")} )
                   </div>
                 ))}

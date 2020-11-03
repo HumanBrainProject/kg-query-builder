@@ -162,7 +162,7 @@ class Field extends React.Component {
               <FontAwesomeIcon icon="long-arrow-alt-right" />
             </div>
           )}
-          {field.isFlattened && (!field.isMerge || (field.fields && !!field.fields.length)) && (
+          {field.isFlattened && (!field.isMerge || (field.structure && !!field.structure.length)) && (
             <span className={classes.required}>
               <FontAwesomeIcon transform="flip-h" icon="level-down-alt" />&nbsp;&nbsp;
             </span>

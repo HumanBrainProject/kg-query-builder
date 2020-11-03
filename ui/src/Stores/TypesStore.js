@@ -49,7 +49,13 @@ class TypesStore {
             id: type.id,
             label: type.label,
             properties: (Array.isArray(type.properties)?type.properties:[])
-              .sort((a, b) => a.label < b.label ? -1 : a.label > b.label ? 1 : 0)
+              .map(p => {
+                if(p.canBe) {
+                  p.canBe  = p.canBe.map(v => v["https://core.kg.ebrains.eu/vocab/meta/type"]);
+                }
+                return p;
+              })
+              .sort((a, b) => a.simpleAttributeName.localeCompare(b.simpleAttributeName))
           }));
           this.workspaceTypeList = types.sort((a, b) => a.label.localeCompare(b.label));
           types.forEach(type => this.types[type.id] = type);

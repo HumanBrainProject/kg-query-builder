@@ -4,6 +4,7 @@ import API from "../Services/API";
 import { remove } from "lodash";
 import _  from "lodash-uuid";
 import jsonld from "jsonld";
+import Field from "./Field";
 
 import authStore from "./AuthStore";
 import typesStore from "./TypesStore";
@@ -28,21 +29,6 @@ const defaultContext = {
 const rootFieldReservedProperties = ["root_schema", "schema:root_schema", "http://schema.org/root_schema", "identifier", "schema:identifier", "http://schema.org/identifier", "@id", "@type", "https://core.kg.ebrains.eu/vocab/meta/revision", "https://core.kg.ebrains.eu/vocab/meta/space", "https://core.kg.ebrains.eu/vocab/meta/user", "@context", "structure", "merge", "label", "description"];
 const fieldReservedProperties = ["propertyName", "path", "merge", "structure"];
 
-const defaultOptions = [
-  {
-    name: "required",
-    value: undefined
-  },
-  {
-    name: "sort",
-    value: undefined
-  },
-  {
-    name: "ensure_order",
-    value: undefined
-  }
-];
-
 const namespaceReg = /^(.+):(.+)$/;
 const attributeReg = /^https?:\/\/.+\/(.+)$/;
 const modelReg = /^\/?((.+)\/(.+)\/(.+)\/(.+))$/;
@@ -58,136 +44,6 @@ const getProperties = query => {
       return result;
     }, {});
 };
-
-class Field {
-  @observable schema = null;
-  @observable merge = [];
-  @observable structure = [];
-  @observable alias = null;
-  @observable isFlattened = false;
-  @observable isMerge = false;
-  @observable optionsMap = new Map();
-  @observable isUnknown = null;;
-  @observable isInvalid = null;
-  @observable aliasError = null;
-
-  constructor(schema, parent) {
-    this.schema = schema;
-    this.parent = parent;
-    defaultOptions.forEach(option => this.optionsMap.set(option.name, option.value));
-  }
-
-  @action
-  setAlias(value) {
-    this.alias = value;
-    this.aliasError = (value.trim() === "" && this.isRootMerge);
-  }
-
-  @computed
-  get options() {
-    return Array.from(this.optionsMap).map(([name, value]) => ({
-      name: name,
-      value: toJS(value)
-    }));
-  }
-
-  getOption(name) {
-    return this.optionsMap.has(name) ? this.optionsMap.get(name) : undefined;
-  }
-
-  @action setOption(name, value, preventRecursivity) {
-    this.optionsMap.set(name, value);
-    if (name === "sort" && value && !preventRecursivity) {
-      this.parent.structure.forEach(field => {
-        if (field !== this) {
-          field.setOption("sort", undefined, true);
-        }
-      });
-    }
-  }
-
-  @computed
-  get _key() {
-    if (this.alias) {
-      return this.alias;
-    }
-    return this.schema && this.schema.attribute;
-  }
-
-  @computed
-  get _uniqueKey() {
-    if (this.parent && this.parent.structure && this.parent.structure.length) {
-      if (this.parent.structure.some(field => field !== this && field._key === this._key)) {
-        return uniqueId("QueryBuilderField_" + this._key);
-      }
-    }
-    return this._key;
-  }
-
-  @computed
-  get isRootMerge() {
-    return this.isMerge && (!this.parent || !this.parent.isMerge);
-  }
-
-  @computed
-  get parentIsRootMerge() {
-    return !this.isRootMerge && this.parent && this.parent.isRootMerge;
-  }
-
-  @computed
-  get rootMerge() {
-    if (!this.isMerge) {
-      return null;
-    }
-    let field = this;
-    while (field && !field.isRootMerge) {
-      field = field.parent;
-    }
-    return field;
-  }
-
-  @computed
-  get hasMergeChild() {
-    return this.isRootMerge ? (this.merge && !!this.merge.length) : (this.structure && !!this.structure.length);
-  }
-
-  @computed
-  get lookups() {
-    if (this.merge && !!this.merge.length) {
-      const canBe = [];
-      this.merge.forEach(field => {
-        let mergeField = field;
-        while (mergeField) {
-          if (mergeField.structure && !!mergeField.structure.length) {
-            mergeField = mergeField.structure[0];
-          } else {
-            if (mergeField.schema && mergeField.schema.canBe && !!mergeField.schema.canBe.length) {
-              mergeField.schema.canBe.forEach(schema => {
-                if (!canBe.includes(schema)) {
-                  canBe.push(schema);
-                }
-              });
-            }
-            mergeField = null;
-          }
-        }
-      });
-      return canBe;
-    }
-    return (this.schema && this.schema.canBe && !!this.schema.canBe) ? this.schema.canBe : [];
-  }
-
-  getDefaultAlias() {
-    let currentField = this;
-    while (currentField.isFlattened && currentField.structure[0] && currentField.structure[0].schema && currentField.structure[0].schema.canBe) {
-      currentField = currentField.structure[0];
-    }
-    if (!currentField.schema) {
-      return "";
-    }
-    return currentField.schema.simpleAttributeName || currentField.schema.simplePropertyName || currentField.schema.label || "";
-  }
-}
 
 class QueryBuilderStore {
   @observable queryId = "";
@@ -221,18 +77,6 @@ class QueryBuilderStore {
 
   @observable currentTab = "query";
   @observable currentField = null;
-
-  constructor(){
-    // typesStore.fetch();
-  }
-
-  get queryIdRegex() {
-    return /^[A-Za-z0-9_-]+$/;
-  }
-
-  get queryIdPattern() {
-    return this.queryIdRegex.source;
-  }
 
   getLookupsAttributes(lookups) {
     if (!lookups || !lookups.length) {
@@ -279,10 +123,7 @@ class QueryBuilderStore {
 
   @computed
   get currentFieldLookups() {
-    if (!this.currentField) {
-      return [];
-    }
-    return this.currentField.lookups;
+    return this.currentField?this.currentField.lookups:[];
   }
 
   @computed
@@ -408,44 +249,12 @@ class QueryBuilderStore {
 
   @computed
   get isQueryEmpty() {
-    //return !this.rootField || !((this.rootField.structure && this.rootField.structure.length) || this.rootField.isMerge);
     return !this.rootField || !this.rootField.structure || !this.rootField.structure.length;
   }
 
-  @computed
-  get queryIdAlreadyExists() {
-    return this.myQueries.some(spec => spec.id === this.queryId);
-  }
-
-  @computed
-  get queryIdAlreadyInUse() {
-    return this.othersQueries.some(spec => spec.id === this.queryId);
-  }
-
-  @computed
-  get isQueryIdValid() {
-    //window.console.log(this.queryIdRegex.test(this.queryId));
-    return this.queryIdRegex.test(this.queryId);
-  }
 
   @computed
   get hasQueryChanged() {
-    /*
-    if (this.sourceQuery) {
-      if (!isEqual(this.JSONQueryFields, toJS(this.sourceQuery.structure))) {
-        //window.console.log("Fields:", this.JSONQueryFields, toJS(this.sourceQuery.structure));
-        this.JSONQueryFields.forEach((field, index) => {
-          const origin = this.sourceQuery.structure[index];
-          if (!isEqual(field, toJS(origin))) {
-            window.console.log("Field:", field, toJS(origin));
-          }
-        });
-      }
-      if (!isEqual(this.JSONQueryProperties, toJS(this.sourceQuery.properties))) {
-        window.console.log("Properties:", this.JSONQueryProperties, toJS(this.sourceQuery.properties));
-      }
-    }
-    */
     return !isEqual(this.JSONQuery, this.JSONSourceQuery);
   }
 
@@ -971,7 +780,6 @@ class QueryBuilderStore {
         }
 
         if (!field) {
-          window.console.log("Unknown field: ", jsonField, "possible schemas: ", toJS(parentField.schema.canBe));
           field = new Field({}, parentField);
           field.isInvalid = true;
           field.isUnknown = true;
@@ -1108,7 +916,7 @@ class QueryBuilderStore {
 
   @action
   async saveQuery() {
-    if (!this.isQueryEmpty && this.isQueryIdValid && !this.queryIdAlreadyInUse && !this.isSaving && !this.saveError && !(this.sourceQuery && this.sourceQuery.isDeleting)) {
+    if (!this.isQueryEmpty && !this.isSaving && !this.saveError && !(this.sourceQuery && this.sourceQuery.isDeleting)) {
       this.isSaving = true;
       if (this.sourceQuery && this.sourceQuery.deleteError) {
         this.sourceQuery.deleteError = null;
@@ -1126,7 +934,7 @@ class QueryBuilderStore {
             this.sourceQuery.merge = payload.merge,
             this.sourceQuery.structure = payload.structure;
             this.sourceQuery.properties = getProperties(payload);
-          } else if (!this.saveAsMode && this.queryIdAlreadyExists) {
+          } else if (!this.saveAsMode) {
             this.sourceQuery = this.specifications.find(spec => spec.id === queryId);
             this.sourceQuery.label = payload.label;
             this.sourceQuery.description = payload.description;
@@ -1233,12 +1041,12 @@ class QueryBuilderStore {
                       });
                     }
                     else {
-                      window.console.log("error: was not able to compact JSON-LD", compactErr);
+                      this.fetchQueriesError = `Error while trying to compact JSON-LD (${compactErr})`;
                     }
                   });
                 }
                 else {
-                  window.console.log("error: was not able to expand JSON-LD", expandErr);
+                  this.fetchQueriesError = `Error while trying to expand JSON-LD (${expandErr})`;
                 }
               });
 
