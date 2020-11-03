@@ -100,10 +100,10 @@ public class Query {
         );
     }
 
-    @DeleteMapping("/{queryId}")
-    public void deleteQuery(@PathVariable("queryId") String queryId) {
+    @DeleteMapping("/{workspace}/{queryId}")
+    public void deleteQuery(@PathVariable("workspace") String workspace, @PathVariable("queryId") String queryId) {
         serviceCall.delete(
-                String.format("%s/%s/queries/%s", kgCoreEndpoint, apiVersion, queryId),
+                String.format("%s/%s/queries/%s?space=%s", kgCoreEndpoint, apiVersion, queryId, workspace),
                 authContext.getAuthTokens(),
                 Void.class
         );

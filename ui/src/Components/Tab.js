@@ -17,9 +17,6 @@ let styles = {
     cursor:"pointer",
     display:"grid",
     gridTemplateColumns:"auto 1fr auto",
-    "&$closable":{
-      paddingRight:"10px"
-    },
     "& $icon": {
       opacity:0.5
     },
@@ -30,7 +27,6 @@ let styles = {
       }
     }
   },
-  closable:{},
   current:{
     backgroundColor:"var(--bg-color-ui-contrast3)",
     color:"var(--ft-color-loud)",
@@ -67,14 +63,14 @@ let styles = {
 @injectStyles(styles)
 @observer
 class Tab extends React.Component {
-  handleClick = (e) => {
+  handleClick = e => {
     e.preventDefault();
     if(isFunction(this.props.onClick)){
       this.props.onClick(e);
     }
   }
 
-  handleClose = (e) => {
+  handleClose = e => {
     e.stopPropagation();
     if(isFunction(this.props.onClose)){
       this.props.onClose();
@@ -82,22 +78,17 @@ class Tab extends React.Component {
   }
 
   render(){
-    const {classes, current, icon, onClose, iconColor, iconSpin, hideLabel} = this.props;
+    const {classes, current, icon, iconColor, hideLabel} = this.props;
     return (
-      <div className={`${classes.container} ${current? classes.current: ""} ${onClose?classes.closable:""}`} onClick={this.handleClick}>
+      <div className={`${classes.container} ${current? classes.current: ""}`} onClick={this.handleClick}>
         <div className={classes.icon} style={iconColor?{color:iconColor}:{}} title={this.props.label}>
-          {icon && <FontAwesomeIcon fixedWidth icon={icon} spin={iconSpin}/>}
+          {icon && <FontAwesomeIcon fixedWidth icon={icon} />}
         </div>
         {hideLabel?null:
           <div className={classes.text} title={this.props.label}>
             {this.props.label}
           </div>
         }
-        {onClose?
-          <div className={classes.close} onClick={this.handleClose}>
-            <FontAwesomeIcon icon={"times"}/>
-          </div>
-          :null}
       </div>
     );
   }

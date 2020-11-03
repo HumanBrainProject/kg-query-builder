@@ -9,7 +9,8 @@ const userKeys = {
   email: "http://schema.org/email",
   displayName: "http://schema.org/name",
   givenName: "http://schema.org/givenName",
-  familyName: "http://schema.org/familyName"
+  familyName: "http://schema.org/familyName",
+  picture: "https://schema.hbp.eu/users/picture"
 };
 
 const mapUserProfile = data => {

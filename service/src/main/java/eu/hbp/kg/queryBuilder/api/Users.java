@@ -16,16 +16,20 @@
 
 package eu.hbp.kg.queryBuilder.api;
 
+import eu.hbp.kg.queryBuilder.constants.SchemaFieldsConsts;
 import eu.hbp.kg.queryBuilder.controller.ServiceCallWithClientSecret;
 import eu.hbp.kg.queryBuilder.model.AuthContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.print.attribute.standard.Media;
+import java.util.Base64;
 import java.util.Map;
 
 @RequestMapping("/user")
@@ -45,11 +49,19 @@ public class Users {
     private AuthContext authContext;
 
     @GetMapping
-    public Map<?,?> getUserProfile(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String authorizationToken) {
-        return serviceCall.get(
+    public Map<?, ?> getUserProfile() {
+        Map<String, Object> result = serviceCall.get(
                 String.format("%s/%s/users/me", kgCoreEndpoint, apiVersion),
                 authContext.getAuthTokens(),
                 Map.class);
+//        Map<String, Object> data = (Map<String, Object>) result.get("data");
+//        String userId = data.get(SchemaFieldsConsts.USER_ID).toString();
+//        String userPicture = serviceCall.get(
+//                String.format("%s/%s/users/%s/picture", kgCoreEndpoint, apiVersion, userId),
+//                authContext.getAuthTokens(),
+//                String.class);
+//        data.put(SchemaFieldsConsts.USER_PICTURE, userPicture);
+        return result;
     }
 
 }

@@ -1,8 +1,10 @@
 import { observable, action, computed, runInAction } from "mobx";
 import { debounce } from "lodash";
 import API from "../Services/API";
+import appStore from "../Stores/AppStore";
 
 class TypesStore {
+  @observable filterValue = "";
   @observable types = {};
   @observable workspaceTypeList = [];
   @observable fetchError = null;
@@ -14,13 +16,13 @@ class TypesStore {
   @observable isFetchingQueue = false;
 
   @computed
-  get typeList() {
-    return Object.values(this.types);
+  get isFetched() {
+    return !this.fetchError && this.workspaceTypeList.length;
   }
 
   @computed
-  get isFetched() {
-    return !this.fetchError && this.workspaceTypeList.length;
+  get filteredWorkspaceTypeList() {
+    return this.workspaceTypeList.filter(type => type.label.toLowerCase().indexOf(this.filterValue.trim().toLowerCase()) !== -1);
   }
 
   @computed
@@ -28,6 +30,11 @@ class TypesStore {
     return (
       !!this.workspaceTypeList.length
     );
+  }
+
+  @action
+  setFilterValue(value) {
+    this.filterValue = value;
   }
 
   @action
@@ -44,14 +51,7 @@ class TypesStore {
             properties: (Array.isArray(type.properties)?type.properties:[])
               .sort((a, b) => a.label < b.label ? -1 : a.label > b.label ? 1 : 0)
           }));
-          // types = types.filter(type => {
-          //   if (type.id === "http://schema.org/Man") {
-          //     man = type;
-          //     return false;
-          //   }
-          //   return true;
-          // });
-          this.workspaceTypeList = types;
+          this.workspaceTypeList = types.sort((a, b) => a.label.localeCompare(b.label));
           types.forEach(type => this.types[type.id] = type);
           this.isFetching = false;
         });

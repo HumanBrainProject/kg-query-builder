@@ -8,7 +8,7 @@ const jsdiff = require("diff");
 
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 import FetchingLoader from "../Components/FetchingLoader";
-import User from "./User";
+import User from "../Components/User";
 import Field from "./Field";
 
 const styles = {

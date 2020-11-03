@@ -10,10 +10,10 @@ const endpoints = {
   "types": () => "/service/api/types",
   "structure": () => "/service/api/structure?withLinks=true",
   "performQuery": (vocab, size, from, stage) => `/service/api/query?${
-      ""}${vocab!==undefined && vocab!==null?`vocab=${encodeURIComponent(vocab)}&`:""}${
-      ""}${size!==undefined && size!==null?`size=${encodeURIComponent(size)}&`:""}${
-      ""}${from!==undefined && from!==null?`from=${encodeURIComponent(from)}&`:""}${
-      ""}${stage?`stage=${stage}`:"" }`,
+    ""}${vocab!==undefined && vocab!==null?`vocab=${encodeURIComponent(vocab)}&`:""}${
+    ""}${size!==undefined && size!==null?`size=${encodeURIComponent(size)}&`:""}${
+    ""}${from!==undefined && from!==null?`from=${encodeURIComponent(from)}&`:""}${
+    ""}${stage?`stage=${stage}`:"" }`,
   "query": uuid => `/service/api/query/${appStore.currentWorkspace}/${encodeURIComponent(uuid)}`,
   "listQueries": type => `/service/api/query?type=${encodeURIComponent(type)}`
 };

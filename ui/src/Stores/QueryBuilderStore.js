@@ -25,7 +25,7 @@ const defaultContext = {
   }
 };
 
-const rootFieldReservedProperties = ["root_schema", "schema:root_schema", "http://schema.org/root_schema", "identifier", "schema:identifier", "http://schema.org/identifier", "_id", "_key", "_rev", "_createdByUser", "@context", "structure", "merge", "label", "description"];
+const rootFieldReservedProperties = ["root_schema", "schema:root_schema", "http://schema.org/root_schema", "identifier", "schema:identifier", "http://schema.org/identifier", "@id", "@type", "https://core.kg.ebrains.eu/vocab/meta/revision", "https://core.kg.ebrains.eu/vocab/meta/space", "https://core.kg.ebrains.eu/vocab/meta/user", "@context", "structure", "merge", "label", "description"];
 const fieldReservedProperties = ["propertyName", "path", "merge", "structure"];
 
 const defaultOptions = [
@@ -475,7 +475,7 @@ class QueryBuilderStore {
   @computed
   get myQueries() {
     if (authStore.hasUserProfile) {
-      return this.specifications.filter(spec => spec.user === authStore.user.id).sort((a, b) => a.label - b.label);
+      return this.specifications.filter(spec => spec.user.id === authStore.user.id).sort((a, b) => a.label - b.label);
     }
     return [];
   }
@@ -483,7 +483,7 @@ class QueryBuilderStore {
   @computed
   get othersQueries() {
     if (authStore.hasUserProfile) {
-      return this.specifications.filter(spec => spec.user !== authStore.user.id).sort((a, b) => a.label - b.label);
+      return this.specifications.filter(spec => spec.user.id !== authStore.user.id).sort((a, b) => a.label - b.label);
     }
     return this.specifications.sort((a, b) => a.label - b.label);
   }
@@ -1169,7 +1169,7 @@ class QueryBuilderStore {
     if (query && !query.isDeleting && !query.deleteError && !(query === this.sourceQuery && this.isSaving)) {
       query.isDeleting = true;
       try {
-        await API.axios.delete(API.endpoints.query(this.rootField.schema.id, query.id));
+        await API.axios.delete(API.endpoints.query(query.id));
         runInAction(() => {
           query.isDeleting = false;
           if (query === this.sourceQuery) {
@@ -1214,14 +1214,14 @@ class QueryBuilderStore {
             jsonSpecifications.forEach(jsonSpec => {
               let queryId = jsonSpec["@id"];
               const label = jsonSpec["https://core.kg.ebrains.eu/vocab/query/label"] ? jsonSpec["https://core.kg.ebrains.eu/vocab/query/label"] : "";
-              jsonSpec["@context"] = toJS(defaultContext); // TODO: remove this line, it should be returned from KG Core
+              jsonSpec["@context"] = toJS(defaultContext);
               jsonld.expand(jsonSpec, (expandErr, expanded) => {
                 if (!expandErr) {
                   jsonld.compact(expanded, jsonSpec["@context"], (compactErr, compacted) => {
                     if (!compactErr) {
                       this.specifications.push({
                         id: queryId,
-                        user: jsonSpec._createdByUser,
+                        user: jsonSpec["https://core.kg.ebrains.eu/vocab/meta/user"][0],
                         context: compacted["@context"],
                         merge: compacted.merge,
                         structure: compacted.structure,

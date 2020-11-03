@@ -6,7 +6,7 @@ import { Button } from "react-bootstrap";
 
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 import PopOverButton from "../Components/PopOverButton";
-import User from "./User";
+import User from "../Components/User";
 
 let styles = {
   container:{
@@ -150,7 +150,8 @@ class SavedQuery extends React.Component{
         <div className={classes.name}>
           <span>{query.label?query.label:query.id} - <small title="queryId">{query.id}</small></span>
           {showUser && query.user && query.org && (
-            <span className={`author ${enableDelete?"extra-padding":""}`}>by user<User org={query.org} userId={query.user} /></span>
+            <span className={`author ${enableDelete?"extra-padding":""}`}>by user <User user={query.user} />
+            </span>
           )}
           {enableDelete && !query.deleteError && !query.isDeleting && !this.state.showDeleteDialog && (
             <button className={classes.deleteButton} title="delete" onClick={this.handleConfirmDelete.bind(this)}><FontAwesomeIcon icon="times"/></button>

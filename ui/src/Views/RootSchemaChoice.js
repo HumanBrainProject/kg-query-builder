@@ -44,7 +44,7 @@ class RootSchemaChoice extends React.Component {
     const { classes } = this.props;
     return (
       <div className={classes.container}>
-        {typesStore.workspaceTypeList.map(type => (
+        {typesStore.filteredWorkspaceTypeList.map(type => (
           <div className={classes.schemaSelectSchema} key={type.id} onClick={this.handleSelectRootSchema.bind(this, type)}>
             {type.label} - <small>{type.id}</small>
           </div>

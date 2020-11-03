@@ -1,7 +1,7 @@
 import React from "react";
 import injectStyles from "react-jss";
 import { observer } from "mobx-react";
-import { Button } from "react-bootstrap";
+import { Button, FormControl} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Scrollbars } from "react-custom-scrollbars";
 
@@ -68,6 +68,24 @@ let styles = {
   },
   tabBodyInner: {
     padding: "10px"
+  },
+  filterTypeInput: {
+    color: "var(--ft-color-loud)",
+    width: "calc(100% - 20px)",
+    margin: "10px",
+    border: "1px solid transparent",
+    paddingLeft: "30px",
+    borderRadius: "2px",
+    backgroundColor: "var(--bg-color-blend-contrast1)"
+  },
+  filterType: {
+    position: "relative"
+  },
+  searchIcon: {
+    position: "absolute",
+    top: "20px",
+    left: "20px",
+    color: "var(--ft-color-normal)"
   }
 };
 
@@ -82,7 +100,7 @@ class QueryBuilder extends React.Component {
     typesStore.fetch(!!forceFetch);
   }
 
-  handleSelectTab(tab) {
+  handleSelectTab = tab => {
     queryBuilderStore.selectTab(tab);
     this.scrolledPanel.scrollToTop();
   }
@@ -94,6 +112,8 @@ class QueryBuilder extends React.Component {
   handleRetryFetchStructure = () => {
     this.fetchStructure(true);
   }
+
+  handleFilterTypes = e => typesStore.setFilterValue(e.target.value);
 
   render() {
     const { classes } = this.props;
@@ -132,7 +152,7 @@ class QueryBuilder extends React.Component {
                     <Query />
                     :
                     <BGMessage icon={"blender-phone"}>
-                      Please choose a root schema in the right panel
+                      Please choose a type in the right panel
                     </BGMessage>}
                 </div>
                 <div className={classes.tabbedPanel}>
@@ -145,7 +165,15 @@ class QueryBuilder extends React.Component {
                         <Tab icon={"table"} current={queryBuilderStore.currentTab === "resultTable"} label={"Results: Table View"} onClick={this.handleSelectTab.bind(this, "resultTable")} />
                       </React.Fragment>
                       :
-                      <Tab icon={"shopping-cart"} current={true} label={"Choose a root schema"} />
+                      <div className={classes.filterType}>
+                        <FormControl 
+                          className={classes.filterTypeInput}
+                          type="text"
+                          onChange={this.handleFilterTypes}
+                          value={typesStore.filterValue}
+                          placeholder="Filter types" />
+                          <FontAwesomeIcon icon="search" className={classes.searchIcon} />
+                      </div>
                     }
                   </div>
                   <div className={classes.tabBody}>

@@ -387,7 +387,7 @@ class Options extends React.Component {
                   <div className={classes.property} key={propSchema.attribute + (propSchema.reverse ? "reverse" : "")} onClick={this.handleAddField.bind(this, propSchema)}>
                     {propSchema.label} - <small>{propSchema.attribute}</small>
                     &nbsp;&nbsp;( can be: {propSchema.canBe.map(t => {
-                      const _type = t["https://core.kg.ebrains.eu/vocab/meta/type"]
+                      const _type = t["https://core.kg.ebrains.eu/vocab/meta/type"];
                       const type = typesStore.types[_type];
                       return (type && type.label)?type.label:_type;
                     }).join(", ")} )

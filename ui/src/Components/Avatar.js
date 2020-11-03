@@ -19,20 +19,20 @@ const styles = {
 class Avatar extends React.Component {
 
   render() {
-    const {classes, userId, name, picture, size=20} = this.props;
+    const {classes, user, size=20} = this.props;
 
-    if (!userId) {
+    if (!user) {
       return null;
     }
 
-    if (picture) {
+    if (user.picture) {
       return (
-        <img alt={name?name:userId} width={size} height={size} src={picture} title={name?name:userId} className={`${classes.avatar} avatar picture`} />
+        <img alt={user.name?user.name:user.id} width={size} height={size} src={user.picture} title={user.name?user.name:user.id} className={`${classes.avatar} avatar picture`} />
       );
     }
 
     return (
-      <FontAwesomeIcon icon="user" title={name?name:userId} className={`${classes.avatar} avatar default`} />
+      <FontAwesomeIcon icon="user" title={user.name?user.name:user.id} className={`${classes.avatar} avatar default`} />
     );
   }
 }

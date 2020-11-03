@@ -10,9 +10,6 @@ const styles = {
     },
     "& .avatar.picture": {
       margin: "0 2px 0 5px"
-    },
-    "& .name:not(.is-curator)":  {
-      color: "#337ab7"
     }
   }
 };
@@ -21,18 +18,16 @@ const styles = {
 class User extends React.Component {
 
   render() {
-    const {classes, userId, name, picture, isCurator, title} = this.props;
+    const {classes, user} = this.props;
 
-    if (!userId) {
+    if (!user) {
       return null;
     }
 
     return (
-      <span className={`${classes.user} user`}><Avatar userId={userId} name={name} picture={picture} />{title?
-        <span className={`name ${isCurator?"is-curator":""} `} title={title}>{name?name:userId}</span>
-        :
-        <span className={`name" ${isCurator?"is-curator":""} `} >{name?name:userId}</span>
-      }</span>
+      <span className={`${classes.user} user`}><Avatar user={user} />
+        <span className="name">{user.name?user.name:user.id}</span>
+      </span>
     );
   }
 }
