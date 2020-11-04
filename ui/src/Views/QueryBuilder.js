@@ -19,11 +19,14 @@ import Tab from "../Components/Tab";
 import BGMessage from "../Components/BGMessage";
 import FetchingLoader from "../Components/FetchingLoader";
 
+const rootPath = window.rootPath || "";
+
 let styles = {
   container: {
     width: "100%",
     height: "100%",
     color: "var(--ft-color-normal)",
+    backgroundImage: `url('${window.location.protocol}//${window.location.host}${rootPath}/assets/graph.png')`,
   },
   structureLoader: {
     position: "fixed",
