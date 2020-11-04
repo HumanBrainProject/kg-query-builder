@@ -26,6 +26,12 @@ import java.util.stream.Collectors;
 public class TypeEntity {
     private String id;
     private String label;
+
+    public String getColor() { return color; }
+
+    public void setColor(String color) { this.color = color; }
+
+    private String color;
     private List<Property> properties;
 
     public String getId() {
@@ -52,16 +58,18 @@ public class TypeEntity {
         this.properties = properties;
     }
 
-    public TypeEntity(String id, String label, List<Property> properties) {
+    public TypeEntity(String id, String label, String color, List<Property> properties) {
         this.id = id;
         this.label = label;
+        this.color = color;
         this.properties = properties;
     }
 
     public static TypeEntity fromMap(Map d) {
         String id = (String) (d.get(SchemaFieldsConsts.ID));
         String name = (String) (d.get(SchemaFieldsConsts.NAME));
+        String color = (String) (d.get(SchemaFieldsConsts.META_COLOR));
         List<Property> properties = ((Collection<?>) d.get(SchemaFieldsConsts.META_PROPERTIES)).stream().filter(p -> p instanceof Map).map(p -> (Map<?,?>) p).map(Property::fromMap).collect(Collectors.toList());
-        return new TypeEntity(id, name, properties);
+        return new TypeEntity(id, name, color, properties);
     }
 }

@@ -1,7 +1,6 @@
 import { observable, action, computed, runInAction } from "mobx";
 import { debounce } from "lodash";
 import API from "../Services/API";
-import appStore from "../Stores/AppStore";
 
 class TypesStore {
   @observable filterValue = "";
@@ -48,6 +47,7 @@ class TypesStore {
           const types = (Array.isArray(response.data)?response.data:[]).map(type => ({
             id: type.id,
             label: type.label,
+            color: type.color,
             properties: (Array.isArray(type.properties)?type.properties:[])
               .map(p => {
                 if(p.canBe) {

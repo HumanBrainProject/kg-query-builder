@@ -96,6 +96,7 @@ class QueryBuilderStore {
           acc.push({
             id: type.id,
             label: type.label,
+            color: type.color,
             properties: properties
           });
         }
@@ -116,6 +117,7 @@ class QueryBuilderStore {
           acc.push({
             id: type.id,
             label: type.label,
+            color: type.color,
             properties: properties
           });
         }

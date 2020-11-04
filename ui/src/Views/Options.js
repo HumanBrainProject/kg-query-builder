@@ -8,6 +8,7 @@ import { FormControl, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ReactJson from "react-json-view";
 import ThemeRJV from "./ThemeRJV";
+import Icon from "../Components/Icon";
 
 const style = {
   container: {
@@ -332,9 +333,9 @@ class Options extends React.Component {
           && queryBuilderStore.currentField !== queryBuilderStore.rootField
           && (
             <div className={classes.fields}>
-              {queryBuilderStore.currentFieldParentLookupsAttributes.map(({ id, label, properties }) => (
+              {queryBuilderStore.currentFieldParentLookupsAttributes.map(({ id, label, color, properties }) => (
                 <div className="merge" key={id}>
-                  <h3><strong>Merge</strong> attributes valid for {label} <small> - {id}</small></h3>
+                  <h3><strong>Merge</strong> attributes valid for <Icon icon="circle" color={color}/> {label} <small> - {id}</small></h3>
                   {properties.map(propSchema => (
                     <div className={classes.property} key={propSchema.attribute + (propSchema.reverse ? "reverse" : "")} onClick={this.handleAddMergeChildField.bind(this, propSchema)}>
                       {propSchema.label} - <small>{propSchema.attribute}</small>
@@ -343,16 +344,22 @@ class Options extends React.Component {
                 </div>
               ))}
 
-              {queryBuilderStore.currentFieldParentLookupsLinks.map(({ id, label, properties }) => (
+              {queryBuilderStore.currentFieldParentLookupsLinks.map(({ id, label, color, properties }) => (
                 <div className="merge" key={id}>
-                  <h3><strong>Merge</strong> links valid for {label} <small> - {id}</small></h3>
+                  <h3><strong>Merge</strong> links valid for <Icon icon="circle" color={color}/> {label} <small> - {id}</small></h3>
                   {properties.map(propSchema => (
                     <div className={classes.property} key={propSchema.attribute + (propSchema.reverse ? "reverse" : "")} onClick={this.handleAddMergeChildField.bind(this, propSchema)}>
                       {propSchema.label} - <small>{propSchema.attribute}</small>
-                      &nbsp;&nbsp;( can be: {propSchema.canBe.map(id => {
-                        const type = typesStore.types[id];
-                        return (type && type.label)?type.labe:id;
-                      }).join(", ")} )
+                      &nbsp;&nbsp;( can be: {propSchema.canBe.map(t => {
+                        const type = typesStore.types[t];
+                        const label = type?type.label:t;
+                        const color = type?type.color:null;
+                        return (
+                          <React.Fragment key={label} >
+                            <Icon icon="circle" color={color} />{label}
+                          </React.Fragment>
+                        );
+                      })} )
                     </div>
                   ))}
                 </div>
@@ -369,9 +376,9 @@ class Options extends React.Component {
           )
         ) && (
           <div className={classes.fields}>
-            {queryBuilderStore.currentFieldLookupsAttributes.map(({ id, label, properties }) => (
+            {queryBuilderStore.currentFieldLookupsAttributes.map(({ id, label, color, properties }) => (
               <div key={id}>
-                <h3>Attributes valid for {label} <small> - {id}</small></h3>
+                <h3>Attributes valid for <Icon icon="circle" color={color}/> {label} <small> - {id}</small></h3>
                 {properties.map(propSchema => (
                   <div className={classes.property} key={propSchema.attribute + (propSchema.reverse ? "reverse" : "")} onClick={this.handleAddField.bind(this, propSchema)}>
                     {propSchema.label} - <small>{propSchema.attribute}</small>
@@ -380,16 +387,22 @@ class Options extends React.Component {
               </div>
             ))}
 
-            {queryBuilderStore.currentFieldLookupsLinks.map(({ id, label, properties }) => (
+            {queryBuilderStore.currentFieldLookupsLinks.map(({ id, label, color, properties }) => (
               <div key={id}>
-                <h3>Links valid for {label} <small> - {id}</small></h3>
+                <h3>Links valid for <Icon icon="circle" color={color}/> {label} <small> - {id}</small></h3>
                 {properties.map(propSchema => (
                   <div className={classes.property} key={propSchema.attribute + (propSchema.reverse ? "reverse" : "")} onClick={this.handleAddField.bind(this, propSchema)}>
                     {propSchema.label} - <small>{propSchema.attribute}</small>
                     &nbsp;&nbsp;( can be: {propSchema.canBe.map(t => {
                       const type = typesStore.types[t];
-                      return (type && type.label)?type.label:t;
-                    }).join(", ")} )
+                      const label = type?type.label:t;
+                      const color = type?type.color:null;
+                      return (
+                        <React.Fragment key={label} >
+                          <Icon icon="circle" color={color} />{label}
+                        </React.Fragment>
+                      );
+                    })} )
                   </div>
                 ))}
               </div>

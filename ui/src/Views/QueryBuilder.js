@@ -166,13 +166,13 @@ class QueryBuilder extends React.Component {
                       </React.Fragment>
                       :
                       <div className={classes.filterType}>
-                        <FormControl 
+                        <FormControl
                           className={classes.filterTypeInput}
                           type="text"
                           onChange={this.handleFilterTypes}
                           value={typesStore.filterValue}
                           placeholder="Filter types" />
-                          <FontAwesomeIcon icon="search" className={classes.searchIcon} />
+                        <FontAwesomeIcon icon="search" className={classes.searchIcon} />
                       </div>
                     }
                   </div>

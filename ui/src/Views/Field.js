@@ -7,6 +7,7 @@ import { Button } from "react-bootstrap";
 import Fields from "./Fields";
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 import typesStore from "../Stores/TypesStore";
+import Icon from "../Components/Icon";
 
 let styles = {
   container: {
@@ -182,11 +183,13 @@ class Field extends React.Component {
                   &nbsp;&nbsp;{field.schema.label}&nbsp;
                   {field.schema.canBe && !!field.schema.canBe.length && (
                     <span className={classes.canBe}>
-                      ( {field.schema.canBe.map(id => {
-                        const type = typesStore.types[id];
+                      ( {field.schema.canBe.map(t => {
+                        const type = typesStore.types[t];
+                        const label = type?type.label:t;
+                        const color = type?type.color:null;
                         return (
-                          <React.Fragment key={id}>
-                            <span title={id}>{(type && type.label) || id}</span>&nbsp;
+                          <React.Fragment key={label} >
+                            <Icon icon="circle" color={color} />{label}
                           </React.Fragment>
                         );
                       })} )
@@ -209,11 +212,13 @@ class Field extends React.Component {
                 {field.schema.label}&nbsp;
                 {!field.isRootMerge && field.schema.canBe && !!field.schema.canBe.length && (
                   <span className={classes.canBe}>
-                    ( {field.schema.canBe.map(id => {
-                      const type = typesStore.types[id];
+                    ( {field.schema.canBe.map(t => {
+                      const type = typesStore.types[t];
+                      const label = type?type.label:t;
+                      const color = type?type.color:null;
                       return (
-                        <React.Fragment key={id}>
-                          <span title={id}>{(type && type.label) || id}</span>&nbsp;
+                        <React.Fragment key={label} >
+                          <Icon icon="circle" color={color} />{label}
                         </React.Fragment>
                       );
                     })} )

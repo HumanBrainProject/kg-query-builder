@@ -3,6 +3,7 @@ import queryBuilderStore from "../Stores/QueryBuilderStore";
 import typesStore from "../Stores/TypesStore";
 import { observer } from "mobx-react";
 import injectStyles from "react-jss";
+import Icon from "../Components/Icon";
 
 let style = {
   container: {
@@ -30,15 +31,13 @@ let style = {
     "&:hover": {
       background: "var(--bg-color-ui-contrast4)",
     }
-  },
+  }
 };
 
 @observer
 @injectStyles(style)
 class RootSchemaChoice extends React.Component {
-  handleSelectRootSchema = (schema) => {
-    queryBuilderStore.selectRootSchema(schema);
-  }
+  handleSelectRootSchema = schema => queryBuilderStore.selectRootSchema(schema);
 
   render() {
     const { classes } = this.props;
@@ -46,6 +45,7 @@ class RootSchemaChoice extends React.Component {
       <div className={classes.container}>
         {typesStore.filteredWorkspaceTypeList.map(type => (
           <div className={classes.schemaSelectSchema} key={type.id} onClick={this.handleSelectRootSchema.bind(this, type)}>
+            <Icon icon="circle" color={type.color}/>
             {type.label} - <small>{type.id}</small>
           </div>
         ))}

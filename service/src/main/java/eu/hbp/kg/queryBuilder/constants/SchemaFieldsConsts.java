@@ -10,6 +10,7 @@ public class SchemaFieldsConsts {
     public static final String META = VOCAB + "meta/";
     public static final String META_SPACE = META + "space";
     public static final String META_SPACES = META + "spaces";
+    public static final String META_COLOR = META + "color";
     public static final String META_PROPERTIES = META + "properties";
     public static final String META_OCCURRENCES = META + "occurrences";
     public static final String META_TARGET_TYPES = META + "targetTypes";
