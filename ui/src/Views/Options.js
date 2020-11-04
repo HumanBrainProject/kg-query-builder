@@ -386,7 +386,16 @@ class Options extends React.Component {
                 ))}
               </div>
             ))}
-
+            {queryBuilderStore.currentFieldLookupsAdvancedAttributes.map(({ id, label, color, properties }) => (
+              <div key={id}>
+                <h3>Advanced attributes valid for <Icon icon="circle" color={color}/> {label} <small> - {id}</small></h3>
+                {properties.map(propSchema => (
+                  <div className={classes.property} key={propSchema.attribute + (propSchema.reverse ? "reverse" : "")} onClick={this.handleAddField.bind(this, propSchema)}>
+                    {propSchema.label} - <small>{propSchema.attribute}</small>
+                  </div>
+                ))}
+              </div>
+            ))}
             {queryBuilderStore.currentFieldLookupsLinks.map(({ id, label, color, properties }) => (
               <div key={id}>
                 <h3>Links valid for <Icon icon="circle" color={color}/> {label} <small> - {id}</small></h3>

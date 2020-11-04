@@ -84,14 +84,14 @@ class QueryBuilderStore {
   @observable currentTab = "query";
   @observable currentField = null;
 
-  getLookupsAttributes(lookups) {
+  getLookupsAttributes(lookups, advanced=false) {
     if (!lookups || !lookups.length) {
       return [];
     }
     return lookups.reduce((acc, id) => {
       const type = typesStore.types[id];
       if (type) {
-        const properties = type.properties.filter(prop => !prop.canBe || !prop.canBe.length);
+        const properties = type.properties.filter(prop => (!prop.canBe || !prop.canBe.length) && ((advanced && prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) || (!advanced && !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))));
         if (properties.length) {
           acc.push({
             id: type.id,
@@ -136,7 +136,12 @@ class QueryBuilderStore {
 
   @computed
   get currentFieldLookupsAttributes() {
-    return this.getLookupsAttributes(this.currentFieldLookups);
+    return this.getLookupsAttributes(this.currentFieldLookups, false);
+  }
+
+  @computed
+  get currentFieldLookupsAdvancedAttributes() {
+    return this.getLookupsAttributes(this.currentFieldLookups, true);
   }
 
   @computed
@@ -154,7 +159,7 @@ class QueryBuilderStore {
 
   @computed
   get currentFieldParentLookupsAttributes() {
-    return this.getLookupsAttributes(this.currentFieldParentLookups);
+    return this.getLookupsAttributes(this.currentFieldParentLookups, false);
   }
 
   @computed
