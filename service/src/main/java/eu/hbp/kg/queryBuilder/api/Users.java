@@ -54,13 +54,13 @@ public class Users {
                 String.format("%s/%s/users/me", kgCoreEndpoint, apiVersion),
                 authContext.getAuthTokens(),
                 Map.class);
-//        Map<String, Object> data = (Map<String, Object>) result.get("data");
-//        String userId = data.get(SchemaFieldsConsts.USER_ID).toString();
-//        String userPicture = serviceCall.get(
-//                String.format("%s/%s/users/%s/picture", kgCoreEndpoint, apiVersion, userId),
-//                authContext.getAuthTokens(),
-//                String.class);
-//        data.put(SchemaFieldsConsts.USER_PICTURE, userPicture);
+        Map<String, Object> data = (Map<String, Object>) result.get("data");
+        String userId = data.get(SchemaFieldsConsts.USER_ID).toString();
+        String userPicture = serviceCall.get(
+                String.format("%s/%s/users/%s/picture", kgCoreEndpoint, apiVersion, userId),
+                authContext.getAuthTokens(),
+                String.class);
+        data.put(SchemaFieldsConsts.USER_PICTURE, userPicture);
         return result;
     }
 

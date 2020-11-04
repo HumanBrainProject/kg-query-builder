@@ -373,14 +373,14 @@ class Query extends React.Component{
                   value={queryBuilderStore.description}
                   onChange={this.handleChangeDescription} />
               </div>
-              {queryBuilderStore.isQuerySaved && !queryBuilderStore.saveAsMode && !queryBuilderStore.isOneOfMySavedQueries && queryBuilderStore.sourceQuery.org && queryBuilderStore.sourceQuery.user && (
+              {queryBuilderStore.isQuerySaved && !queryBuilderStore.saveAsMode && !queryBuilderStore.isOneOfMySavedQueries && queryBuilderStore.sourceQuery.user && (
                 <div className={classes.author} >
-                  <span>by user<User userId={queryBuilderStore.sourceQuery.user} /></span>
+                  <span>by user<User user={queryBuilderStore.sourceQuery.user} /></span>
                 </div>
               )}
             </React.Fragment>
           )}
-          {queryBuilderStore.isQuerySaved && !queryBuilderStore.saveAsMode && queryBuilderStore.showHeader && !queryBuilderStore.hasQueryChanged && (
+          {false && queryBuilderStore.isQuerySaved && !queryBuilderStore.saveAsMode && queryBuilderStore.showHeader && !queryBuilderStore.hasQueryChanged && (
             <div className={classes.links}>
               <h6>To go further: </h6>
               <ul>

@@ -53,9 +53,12 @@ class TypesStore {
                 if(p.canBe) {
                   p.canBe  = p.canBe.map(v => v["https://core.kg.ebrains.eu/vocab/meta/type"]);
                 }
+                if(!p.label) {
+                  p.label = p.simpleAttributeName.charAt(0).toUpperCase() + p.simpleAttributeName.slice(1);
+                }
                 return p;
               })
-              .sort((a, b) => a.simpleAttributeName.localeCompare(b.simpleAttributeName))
+              .sort((a, b) => a.label.localeCompare(b.label))
           }));
           this.workspaceTypeList = types.sort((a, b) => a.label.localeCompare(b.label));
           types.forEach(type => this.types[type.id] = type);

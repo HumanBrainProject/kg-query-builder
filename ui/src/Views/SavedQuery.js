@@ -144,12 +144,11 @@ class SavedQuery extends React.Component{
 
   render(){
     const {classes, query, showUser, enableDelete } = this.props;
-
     return (
       <div className={`${classes.container} ${query.isDeleting?"is-deleting":""}`} key={query.id} onClick={this.handleSelect.bind(this)} onMouseLeave={this.handleCloseDeleteDialog.bind(this)} ref={ref=>this.wrapperRef = ref} >
         <div className={classes.name}>
           <span>{query.label?query.label:query.id} - <small title="queryId">{query.id}</small></span>
-          {showUser && query.user && query.org && (
+          {showUser && query.user && (
             <span className={`author ${enableDelete?"extra-padding":""}`}>by user <User user={query.user} />
             </span>
           )}
