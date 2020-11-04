@@ -146,7 +146,7 @@ class QueryBuilder extends React.Component {
             </BGMessage>
             :
             !typesStore.hasTypes ?
-              <BGMessage icon={"blender-phone"}>
+              <BGMessage icon={"tools"}>
                 No types available.<br />
                 If the problem persists, please contact the support.<br /><br />
                 <Button bsStyle={"primary"} onClick={this.handleRetryFetchStructure}>
@@ -159,7 +159,7 @@ class QueryBuilder extends React.Component {
                   {queryBuilderStore.hasRootSchema ?
                     <Query />
                     :
-                    <BGMessage icon={"blender-phone"}>
+                    <BGMessage icon={"tools"}>
                       Please choose a type in the right panel
                     </BGMessage>}
                 </div>

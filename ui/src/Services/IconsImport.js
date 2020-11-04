@@ -60,11 +60,11 @@ import {faLongArrowAltRight} from "@fortawesome/free-solid-svg-icons/faLongArrow
 import {faShoppingCart} from "@fortawesome/free-solid-svg-icons/faShoppingCart";
 import {faPollH} from "@fortawesome/free-solid-svg-icons/faPollH";
 import {faSatelliteDish} from "@fortawesome/free-solid-svg-icons/faSatelliteDish";
-import {faBlenderPhone} from "@fortawesome/free-solid-svg-icons/faBlenderPhone";
 import {faTable} from "@fortawesome/free-solid-svg-icons/faTable";
 import {faAsterisk} from "@fortawesome/free-solid-svg-icons/faAsterisk";
 import {faLevelDownAlt} from "@fortawesome/free-solid-svg-icons/faLevelDownAlt";
 import {faSitemap} from "@fortawesome/free-solid-svg-icons/faSitemap";
+import {faTools} from "@fortawesome/free-solid-svg-icons/faTools";
 
 library.add(
   faUser,
@@ -126,9 +126,9 @@ library.add(
   faShoppingCart,
   faPollH,
   faSatelliteDish,
-  faBlenderPhone,
   faTable,
   faAsterisk,
   faLevelDownAlt,
-  faSitemap
+  faSitemap,
+  faTools
 );
