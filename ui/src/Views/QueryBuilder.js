@@ -79,7 +79,12 @@ let styles = {
     backgroundColor: "var(--bg-color-blend-contrast1)"
   },
   filterType: {
-    position: "relative"
+    position: "relative",
+    color: "var(--ft-color-loud)",
+    backgroundColor: "var(--bg-color-ui-contrast3)",
+    border: "1px solid var(--border-color-ui-contrast2)",
+    borderLeft: 0,
+    borderBottom: 0
   },
   searchIcon: {
     position: "absolute",

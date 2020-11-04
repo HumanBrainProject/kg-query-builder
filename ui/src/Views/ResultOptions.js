@@ -23,6 +23,13 @@ const styles = {
       background:"var(--bg-color-ui-contrast3)",
       transform:"rotate(45deg)"
     }
+  },
+  input: {
+    color: "var(--ft-color-loud)",
+    width: "calc(100% - 20px)",
+    border: "1px solid transparent",
+    borderRadius: "2px",
+    backgroundColor: "var(--bg-color-blend-contrast1)"
   }
 };
 
@@ -51,6 +58,7 @@ class ResultOptions extends React.Component{
               <FormGroup>
                 <ControlLabel>Size</ControlLabel>
                 <FormControl
+                  className={classes.input}
                   type="number"
                   value={queryBuilderStore.resultSize}
                   placeholder="20"
@@ -62,6 +70,7 @@ class ResultOptions extends React.Component{
               <FormGroup>
                 <ControlLabel>Start</ControlLabel>
                 <FormControl
+                  className={classes.input}
                   type="number"
                   value={queryBuilderStore.resultStart}
                   placeholder="0"
@@ -72,7 +81,7 @@ class ResultOptions extends React.Component{
             <Col xs={6}>
               <FormGroup>
                 <ControlLabel>Select space</ControlLabel>
-                <FormControl componentClass="select" placeholder="minds" value={queryBuilderStore.stage} onChange={this.handleChangeStage} >
+                <FormControl className={classes.input} componentClass="select" placeholder="minds" value={queryBuilderStore.stage} onChange={this.handleChangeStage} >
                   {scopeOptions.map(space => (
                     <option value={space.value} key={space.value}>{space.label}</option>
                   ))}
