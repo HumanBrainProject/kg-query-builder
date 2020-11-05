@@ -1,5 +1,4 @@
 import * as Sentry from "@sentry/browser";
-import "babel-polyfill";
 import { observer } from "mobx-react";
 import React from "react";
 import { Modal } from "react-bootstrap";
@@ -14,6 +13,8 @@ import Login from "./Views/Login";
 import QueryBuilder from "./Views/QueryBuilder";
 import WorkspaceModal from "./Views/WorkspaceModal";
 import Tabs from "./Views/Tabs";
+import "@babel/polyfill";
+
 
 
 
