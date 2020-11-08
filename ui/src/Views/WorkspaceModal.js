@@ -19,9 +19,11 @@ const styles = {
   },
   workspacesSelection: {
     fontSize: "1.5em",
-    padding: "0 0 30px 0",
+    padding: "30px 0",
     "& h1": {
-      padding: "0 30px 20px 30px"
+      padding: "0 30px 20px 30px",
+      marginBottom: ".5rem",
+      marginTop: 0
     },
     "& p": {
       padding: "0 30px",
@@ -66,6 +68,7 @@ const styles = {
     },
     "&.modal-dialog": {
       marginTop: "25vh",
+      maxWidth: "unset",
       "& .modal-body": {
         padding: "0",
         maxHeight: "calc(100vh - 30vh -80px)",
@@ -84,8 +87,7 @@ class WorkspaceModal extends React.Component{
   render(){
     const { classes } =  this.props;
     const firstNameReg = /^([^ ]+) .*$/;
-    const name = authStore.hasUserProfile
-      && authStore.user
+    const name = authStore.user
       && authStore.user.givenName?
       authStore.user.givenName
       :
@@ -101,12 +103,12 @@ class WorkspaceModal extends React.Component{
           "";
     return (
       <div className={classes.container}>
-        <Modal dialogClassName={classes.workspaceSelectionModal} show={true} >
+        <Modal dialogClassName={classes.workspaceSelectionModal} show={true} onHide={() => {}} >
           <Modal.Body>
             <div className={classes.workspacesSelection}>
               <h1>Welcome <span title={name}>{name}</span></h1>
               <p>Please select a workspace:</p>
-              <div style={{height: `${Math.round(Math.min(window.innerHeight * 0.5 - 140, Math.ceil(authStore.workspaces.length / 3) * 80))}px`}}>
+              <div style={{height: `${Math.round(Math.min(window.innerHeight * 0.5 - 140, Math.ceil(authStore.workspaces.length / 3) * 90))}px`}}>
                 <Scrollbars>
                   <div className={classes.workspaces}>
                     {authStore.workspaces.map(workspace =>

@@ -296,7 +296,7 @@ class QueryBuilderStore {
 
   @computed
   get myQueries() {
-    if (authStore.hasUserProfile) {
+    if (authStore.user) {
       return this.specifications.filter(spec => spec.user && (spec.user.id === authStore.user.id)).sort((a, b) => a.label - b.label);
     }
     return [];
@@ -304,7 +304,7 @@ class QueryBuilderStore {
 
   @computed
   get othersQueries() {
-    if (authStore.hasUserProfile) {
+    if (authStore.user) {
       return this.specifications.filter(spec =>  !spec.user || (spec.user.id !== authStore.user.id)).sort((a, b) => a.label - b.label);
     }
     return this.specifications.sort((a, b) => a.label - b.label);

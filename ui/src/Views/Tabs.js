@@ -63,18 +63,18 @@ class Tabs extends React.Component {
         {!appStore.globalError &&
           <React.Fragment>
             <div className={classes.fixedTabsLeft}>
-              {authStore.isFullyAuthenticated && authStore.hasUserWorkspaces && appStore.currentWorkspace?
+              {authStore.isAuthenticated && authStore.isUserAuthorized && authStore.hasUserWorkspaces && appStore.currentWorkspace?
                 <WorkspaceSelector />
                 : null
               }
             </div>
             <div className={classes.fixedTabsRight}>
-              {authStore.isFullyAuthenticated &&
+              {authStore.isAuthenticated && authStore.isUserAuthorized && (
                 <React.Fragment>
                   {/* <Tab icon={"question-circle"} current={matchPath(this.state.currentLocationPathname, { path: "/help", exact: "true" })} path={"/help"} hideLabel label={"Help"} /> */}
                   <UserProfileTab className={classes.userProfileTab} size={32} />
                 </React.Fragment>
-              }
+              )}
             </div>
           </React.Fragment>
         }

@@ -105,7 +105,7 @@ const styles = {
       }
     }
   },
-  noWorkspacesModal: {
+  noAccessModal: {
     "&.modal-dialog": {
       marginTop: "40vh",
       "& .modal-body": {
@@ -153,17 +153,27 @@ class App extends React.Component {
             (!appStore.isInitialized || !authStore.isAuthenticated ?
               <Login />
               :
-              (authStore.hasUserWorkspaces?
-                (appStore.currentWorkspace?
-                  <QueryBuilder />
+              (authStore.isUserAuthorized?
+                (authStore.hasUserWorkspaces?
+                  (appStore.currentWorkspace?
+                    <QueryBuilder />
+                    :
+                    <WorkspaceModal />)
                   :
-                  <WorkspaceModal />)
+                  <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
+                    <Modal.Body>
+                      <h1>Welcome <span title={name}>{name}</span></h1>
+                      <p>You are currently not granted permission to acccess any workspaces.</p>
+                      <p>Please contact our team by email at : <a href={"mailto:kg@ebrains.eu"}>kg@ebrains.eu</a></p>
+                    </Modal.Body>
+                  </Modal>
+                )
                 :
-                <Modal dialogClassName={classes.noWorkspacesModal} show={true}>
+                <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
                   <Modal.Body>
-                    <h1>Welcome <span title={name}>{name}</span></h1>
-                    <p>You are currently not granted permission to acccess any workspaces.</p>
-                    <p>Please contact our team by email at : <a href={"mailto:kg-team@humanbrainproject.eu"}>kg-team@humanbrainproject.eu</a></p>
+                    <h1>Welcome</h1>
+                    <p>You are currently not granted permission to acccess the application.</p>
+                    <p>Please contact our team by email at : <a href={"mailto:kg@ebrains.eu"}>kg@ebrains.eu</a></p>
                   </Modal.Body>
                 </Modal>
               )

@@ -26,6 +26,7 @@ const mapUserProfile = data => {
 };
 
 class AuthStore {
+  @observable isUserAuthorized = false;
   @observable user = null;
   @observable workspaces = null;
   @observable isRetrievingUserProfile = false;
@@ -72,15 +73,11 @@ class AuthStore {
     return this.workspaces instanceof Array && !!this.workspaces.length;
   }
 
-  @computed
-  get isFullyAuthenticated() {
-    return this.isAuthenticated && this.hasUserProfile && this.hasWorkspaces;
-  }
-
   @action
   logout() {
     this.authSuccess = false;
     this.isTokenExpired = true;
+    this.isUserAuthorized = false;
     this.user = null;
     this.workspaces = null;
     this.keycloak.logout({redirectUri: `${window.location.protocol}//${window.location.host}${rootPath}/logout`});
@@ -94,14 +91,22 @@ class AuthStore {
       this.isRetrievingUserProfile = true;
       try {
         const { data } = await API.axios.get(API.endpoints.user());
+        //throw {response: { status: 403}};
         runInAction(() => {
+          this.isUserAuthorized = true;
           this.user = mapUserProfile(data);
           this.isRetrievingUserProfile = false;
         });
       } catch (e) {
         runInAction(() => {
-          this.userProfileError = e.message ? e.message : e;
-          this.isRetrievingUserProfile = false;
+          if (e.response && e.response.status === 403) {
+            this.isUserAuthorized = false;
+            this.isRetrievingUserProfile = false;
+          } else {
+            this.isUserAuthorized = false;
+            this.userProfileError = e.message ? e.message : e;
+            this.isRetrievingUserProfile = false;
+          }
         });
       }
     }
@@ -109,19 +114,25 @@ class AuthStore {
 
   @action
   async retrieveUserWorkspaces() {
-    if(this.isAuthenticated && this.hasUserProfile && !this.isRetrievingWorkspaces) {
+    if(this.isAuthenticated && this.isUserAuthorized && !this.isRetrievingWorkspaces) {
       try {
         this.workspacesError = null;
         this.isRetrievingWorkspaces = true;
         const { data } = await API.axios.get(API.endpoints.workspaces());
+        //throw {response: { status: 403}};
         runInAction(() => {
           this.workspaces = data && data.data ? data.data.map(workspace => workspace["http://schema.org/name"]) : [];
           this.isRetrievingWorkspaces = false;
         });
       } catch(e) {
         runInAction(() => {
-          this.workspacesError = e.message ? e.message : e;
-          this.isRetrievingWorkspaces = false;
+          if (e.response && e.response.status === 403) {
+            this.workspaces = [];
+            this.isRetrievingWorkspaces = false;
+          } else {
+            this.workspacesError = e.message ? e.message : e;
+            this.isRetrievingWorkspaces = false;
+          }
         });
       }
     }

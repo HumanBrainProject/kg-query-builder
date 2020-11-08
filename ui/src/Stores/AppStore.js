@@ -48,14 +48,17 @@ class AppStore{
           this.initializingMessage = "Retrieving user profile...";
         });
         await authStore.retrieveUserProfile();
-        if (authStore.userProfileError) {
-          runInAction(() => {
+        runInAction(() => {
+          if (authStore.userProfileError) {
             this.initializationError = authStore.userProfileError;
             this.initializingMessage = null;
-          });
-        }
+          } else if (!authStore.isUserAuthorized && !authStore.isRetrievingUserProfile) {
+            this.isInitialized = true;
+            this.initializingMessage = null;
+          }
+        });
       }
-      if(authStore.isAuthenticated && authStore.hasUserProfile && !authStore.hasUserWorkspaces) {
+      if(authStore.isAuthenticated && authStore.isUserAuthorized && !authStore.hasUserWorkspaces) {
         runInAction(() => {
           this.initializingMessage = "Retrieving workspaces...";
         });
@@ -67,7 +70,7 @@ class AppStore{
           });
         }
       }
-      if(authStore.isFullyAuthenticated) {
+      if (authStore.isAuthenticated && authStore.isUserAuthorized && authStore.hasUserWorkspaces) {
         this.initializeWorkspace();
         runInAction(() => {
           this.initializingMessage = null;

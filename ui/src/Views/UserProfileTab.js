@@ -180,7 +180,7 @@ class UserProfileTab extends React.Component{
   }
 
   render(){
-    if (!authStore.isFullyAuthenticated || !authStore.hasUserProfile || !authStore.user) {
+    if (!authStore.isAuthenticated || !authStore.isUserAuthorized || !authStore.user) {
       return null;
     }
     const { classes, className, size=30 } = this.props;
