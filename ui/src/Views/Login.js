@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import injectStyles from "react-jss";
+import { createUseStyles } from "react-jss";
 import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -10,7 +10,7 @@ import authStore from "../Stores/AuthStore";
 import FetchingLoader from "../Components/FetchingLoader";
 import BGMessage from "../Components/BGMessage";
 
-const styles = {
+const useStyles = createUseStyles({
   container: {
     height: "100%"
   },
@@ -53,67 +53,60 @@ const styles = {
       marginLeft: "60px"
     }
   }
-};
+});
 
-@injectStyles(styles)
-@observer
-class Login extends React.Component {
-  handleLogin = () => appStore.login();
 
-  handleRetryToInitialize() {
-    appStore.initialize();
-  }
+const Login = observer(() => {
 
-  handleCancelInitialInstance() {
-    appStore.cancelInitialInstance();
-  }
+  const classes = useStyles();
 
-  render() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.container}>
-        {!appStore.isInitialized?
-          appStore.initializationError?
-            <div className={classes.error}>
-              <BGMessage icon={"ban"}>
-                {`There was a problem initializing (${appStore.initializationError}).
-                If the problem persists, please contact the support.`}<br /><br />
-                <Button bsStyle={"primary"} onClick={this.handleRetryToInitialize}>
-                  <FontAwesomeIcon icon={"redo-alt"} /> &nbsp; Retry
-                </Button>
-              </BGMessage>
-            </div>
-            :
-            appStore.initializingMessage?
-              <div className={classes.loader}>
-                <FetchingLoader>{appStore.initializingMessage}</FetchingLoader>
-              </div>
-              :
-              <div className={classes.panel}>
-                <h3>You are logged out of the application</h3>
-                <p></p>
-                <div>
-                  <Button bsStyle={"primary"} onClick={this.handleLogin}>Login</Button>
-                </div>
-              </div>
+  const handleLogin = () => appStore.login();
+
+  const handleRetryToInitialize = () => appStore.initialize();
+
+  return (
+    <div className={classes.container}>
+      {!appStore.isInitialized?
+        appStore.initializationError?
+          <div className={classes.error}>
+            <BGMessage icon={"ban"}>
+              {`There was a problem initializing (${appStore.initializationError}).
+              If the problem persists, please contact the support.`}<br /><br />
+              <Button bsStyle={"primary"} onClick={handleRetryToInitialize}>
+                <FontAwesomeIcon icon={"redo-alt"} /> &nbsp; Retry
+              </Button>
+            </BGMessage>
+          </div>
           :
-          authStore.isTokenExpired && !authStore.isLogout?
-            <div className={classes.panel}>
-              <h3>Your session has expired</h3>
-              <p>
-                Your session token has expired or has become invalid.<br/>
-                Click on the following button to ask a new one and continue with your session.
-              </p>
-              <div>
-                <Button bsStyle={"primary"} onClick={this.handleLogin}>Re-Login</Button>
-              </div>
+          appStore.initializingMessage?
+            <div className={classes.loader}>
+              <FetchingLoader>{appStore.initializingMessage}</FetchingLoader>
             </div>
             :
-            null
-        }
-      </div>
-    );
-  }
-}
+            <div className={classes.panel}>
+              <h3>You are logged out of the application</h3>
+              <p></p>
+              <div>
+                <Button bsStyle={"primary"} onClick={handleLogin}>Login</Button>
+              </div>
+            </div>
+        :
+        authStore.isTokenExpired && !authStore.isLogout?
+          <div className={classes.panel}>
+            <h3>Your session has expired</h3>
+            <p>
+              Your session token has expired or has become invalid.<br/>
+              Click on the following button to ask a new one and continue with your session.
+            </p>
+            <div>
+              <Button bsStyle={"primary"} onClick={handleLogin}>Re-Login</Button>
+            </div>
+          </div>
+          :
+          null
+      }
+    </div>
+  );
+});
 
 export default Login;

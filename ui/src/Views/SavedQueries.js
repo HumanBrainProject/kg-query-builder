@@ -1,12 +1,12 @@
 import React from "react";
-import injectStyles from "react-jss";
+import { createUseStyles } from "react-jss";
 import {observer} from "mobx-react";
 import { Scrollbars } from "react-custom-scrollbars";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import SavedQuery from "./SavedQuery";
 
-let styles = {
+const useStyles = createUseStyles({
   container:{
     display:"grid",
     gridTemplateRows:"auto 1fr",
@@ -74,42 +74,38 @@ let styles = {
       cursor: "pointer"
     }
   }
-};
+});
 
-@injectStyles(styles)
-@observer
-class SavedQueries extends React.Component{
-  render(){
-    const {classes, title, subTitle, list, expanded, onExpandToggle, onRefresh, showUser, enableDelete } = this.props;
+const SavedQueries = observer(({title, subTitle, list, expanded, onExpandToggle, onRefresh, showUser, enableDelete}) => {
+  const classes = useStyles();
 
-    return (
-      <div className={`${classes.container} ${expanded !== false?"":"collapsed"}`}>
-        {title && (
-          <div className={classes.title}>
-            {typeof onExpandToggle === "function" && (
-              <button className={`toggle-btn ${classes.toggleButton}`} onClick={onExpandToggle}><FontAwesomeIcon icon="angle-down"/></button>
-            )}
-            <h4 onClick={onExpandToggle}>{title}<small>{subTitle?(" - " + subTitle):""}</small></h4>
-            {typeof onRefresh === "function" && (
-              <button className="refresh-btn" onClick={onRefresh} title="Refresh"><FontAwesomeIcon icon="redo-alt"/></button>
-            )}
-          </div>
-        )}
-        {expanded !== false || !title?
-          !list || !list.length?
-            <div>no saved queries yet.</div>
-            :
-            <Scrollbars autoHide>
-              {list.map(query => (
-                <SavedQuery key={query.id} query={query} showUser={showUser} enableDelete={enableDelete} />
-              ))}
-            </Scrollbars>
+  return (
+    <div className={`${classes.container} ${expanded !== false?"":"collapsed"}`}>
+      {title && (
+        <div className={classes.title}>
+          {typeof onExpandToggle === "function" && (
+            <button className={`toggle-btn ${classes.toggleButton}`} onClick={onExpandToggle}><FontAwesomeIcon icon="angle-down"/></button>
+          )}
+          <h4 onClick={onExpandToggle}>{title}<small>{subTitle?(" - " + subTitle):""}</small></h4>
+          {typeof onRefresh === "function" && (
+            <button className="refresh-btn" onClick={onRefresh} title="Refresh"><FontAwesomeIcon icon="redo-alt"/></button>
+          )}
+        </div>
+      )}
+      {expanded !== false || !title?
+        !list || !list.length?
+          <div>no saved queries yet.</div>
           :
-          null
-        }
-      </div>
-    );
-  }
-}
+          <Scrollbars autoHide>
+            {list.map(query => (
+              <SavedQuery key={query.id} query={query} showUser={showUser} enableDelete={enableDelete} />
+            ))}
+          </Scrollbars>
+        :
+        null
+      }
+    </div>
+  );
+});
 
 export default SavedQueries;

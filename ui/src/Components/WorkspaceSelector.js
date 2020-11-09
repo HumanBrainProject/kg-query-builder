@@ -1,13 +1,13 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { Dropdown, MenuItem } from "react-bootstrap";
-import injectStyles from "react-jss";
+import { createUseStyles } from "react-jss";
 import authStore from "../Stores/AuthStore";
 import CustomDropdownToggle from "./CustomDropdownToggle";
 import appStore from "../Stores/AppStore";
 
 
-const styles = {
+const useStyles = createUseStyles({
   container: {
     height: "50px",
     lineHeight: "50px",
@@ -28,37 +28,30 @@ const styles = {
     margin: "0 0 0 -20px",
     fontSize: "0.9em"
   }
-};
+});
 
-@injectStyles(styles)
-@observer
-class WorkspaceSelector extends React.Component {
+const WorkspaceSelector = observer(() => {
+  const classes = useStyles();
 
-  selectWorkspace = eventKey => {
-    appStore.setCurrentWorkspace(eventKey);
-  }
+  const selectWorkspace = eventKey => appStore.setCurrentWorkspace(eventKey);
 
-  render() {
-    const { classes } = this.props;
-
-    return (
-      <div className={classes.container} title={`${appStore.currentWorkspace} workspace`}>
-        {authStore.workspaces.length > 1 ?
-          <Dropdown id="dropdown-custom-1">
-            <CustomDropdownToggle bsRole="toggle">{appStore.currentWorkspace}</CustomDropdownToggle>
-            <Dropdown.Menu className={classes.dropdownMenu}>
-              {authStore.workspaces.map(workspace =>
-                <MenuItem key={workspace}
-                  eventKey={workspace}
-                  onSelect={this.selectWorkspace}>
-                  {workspace}</MenuItem>
-              )}
-            </Dropdown.Menu>
-          </Dropdown>
-          : appStore.currentWorkspace}
-      </div>
-    );
-  }
-}
+  return (
+    <div className={classes.container} title={`${appStore.currentWorkspace} workspace`}>
+      {authStore.workspaces.length > 1 ?
+        <Dropdown id="dropdown-custom-1">
+          <CustomDropdownToggle bsRole="toggle">{appStore.currentWorkspace}</CustomDropdownToggle>
+          <Dropdown.Menu className={classes.dropdownMenu}>
+            {authStore.workspaces.map(workspace =>
+              <MenuItem key={workspace}
+                eventKey={workspace}
+                onSelect={selectWorkspace}>
+                {workspace}</MenuItem>
+            )}
+          </Dropdown.Menu>
+        </Dropdown>
+        : appStore.currentWorkspace}
+    </div>
+  );
+});
 
 export default WorkspaceSelector;

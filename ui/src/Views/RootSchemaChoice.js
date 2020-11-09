@@ -2,10 +2,10 @@ import React from "react";
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 import typesStore from "../Stores/TypesStore";
 import { observer } from "mobx-react";
-import injectStyles from "react-jss";
+import { createUseStyles } from "react-jss";
 import Icon from "../Components/Icon";
 
-let style = {
+const useStyles = createUseStyles({
   container: {
     color: "var(--ft-color-loud)"
   },
@@ -32,26 +32,24 @@ let style = {
       background: "var(--bg-color-ui-contrast4)",
     }
   }
-};
+});
 
-@observer
-@injectStyles(style)
-class RootSchemaChoice extends React.Component {
-  handleSelectRootSchema = schema => queryBuilderStore.selectRootSchema(schema);
+const RootSchemaChoice = observer(() =>  {
+  const classes = useStyles();
 
-  render() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.container}>
-        {typesStore.filteredWorkspaceTypeList.map(type => (
-          <div className={classes.schemaSelectSchema} key={type.id} onClick={this.handleSelectRootSchema.bind(this, type)}>
-            <Icon icon="circle" color={type.color}/>
-            {type.label} - <small>{type.id}</small>
-          </div>
-        ))}
-      </div>
-    );
-  }
-}
+  const handleSelectRootSchema = schema => queryBuilderStore.selectRootSchema(schema);
+
+  return (
+    <div className={classes.container}>
+      {typesStore.filteredWorkspaceTypeList.map(type => (
+        <div className={classes.schemaSelectSchema} key={type.id} onClick={handleSelectRootSchema(type)}>
+          <Icon icon="circle" color={type.color}/>
+          {type.label} - <small>{type.id}</small>
+        </div>
+      ))}
+    </div>
+  );
+
+});
 
 export default RootSchemaChoice;

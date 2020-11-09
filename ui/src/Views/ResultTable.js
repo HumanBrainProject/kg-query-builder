@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { toJS } from "mobx";
-import injectStyles from "react-jss";
+import { createUseStyles } from "react-jss";
 import { Button, Table, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { get, isObject, isArray, isString, isInteger } from "lodash";
@@ -11,7 +11,7 @@ import BGMessage from "../Components/BGMessage";
 import FetchingLoader from "../Components/FetchingLoader";
 import ResultOptions from "./ResultOptions";
 
-const styles = {
+const useStyles = createUseStyles({
   container:{
     color:"var(--ft-color-loud)",
     "& td":{
@@ -103,20 +103,14 @@ const styles = {
       cursor:"default",
     }
   }
-};
+});
 
-@injectStyles(styles)
-@observer
-class ResultValue extends React.Component {
+const ResultValue = observer(({name, index, value}) => {
+  const classes = useStyles();
 
-  handleOpenCollection = () => {
-    const {name, index} = this.props;
-    queryBuilderStore.appendTableViewRoot(index,name);
-  }
+  const handleOpenCollection = () => queryBuilderStore.appendTableViewRoot(index,name);
 
-
-  get link() {
-    const {name, value} = this.props;
+  const getLink =  () => {
     const reg = /^https?:\/\/[^.]+\.[^.]+\.[^.]+\/relativeUrl$/;
     if (name === "relativeUrl" || reg.test(name)) {
       return value;
@@ -132,150 +126,139 @@ class ResultValue extends React.Component {
       return result;
     }
     return null;
-  }
+  };
 
-  render() {
-    const {classes, name, index, value} = this.props;
-
-    if (isArray(value)) {
-      if (!value.length) {
-        return (
-          <em>empty collection</em>
-        );
-      }
+  if (isArray(value)) {
+    if (!value.length) {
       return (
-        <Button bsSize={"xsmall"} bsStyle={"primary"} onClick={this.handleOpenCollection}>
-          Collection ({value.length})
-        </Button>
+        <em>empty collection</em>
       );
     }
-
-    const link = this.link;
-
     return (
-      <OverlayTrigger placement="top" overlay={
-        <Tooltip id={`result-tooltip-${name}-${index}`}>
-          {isObject(value)?
-            this.link?
-              this.link
-              :
-              <em>{JSON.stringify(value)}</em>
-            :value
-          }
-        </Tooltip>}>
-        <div className={`${classes.value} ${link?"is-link":""}`}>
+      <Button bsSize={"xsmall"} bsStyle={"primary"} onClick={handleOpenCollection}>
+          Collection ({value.length})
+      </Button>
+    );
+  }
+
+  const link = getLink();
+
+  return (
+    <OverlayTrigger placement="top" overlay={
+      <Tooltip id={`result-tooltip-${name}-${index}`}>
+        {isObject(value)?
+          link?
+            link
+            :
+            <em>{JSON.stringify(value)}</em>
+          :value
+        }
+      </Tooltip>}>
+      <div className={`${classes.value} ${link?"is-link":""}`}>
+        {isObject(value)?
+          link?
+            link
+            :
+            <em>object</em>
+          :value
+        }
+        <Tooltip placement="top" id={`result-tooltip-${name}-${index}-2`}>
           {isObject(value)?
             link?
               link
               :
-              <em>object</em>
+              <em>{JSON.stringify(value)}</em>
             :value
           }
-          <Tooltip placement="top" id={`result-tooltip-${name}-${index}-2`}>
-            {isObject(value)?
-              link?
-                link
-                :
-                <em>{JSON.stringify(value)}</em>
-              :value
-            }
-          </Tooltip>
-        </div>
-      </OverlayTrigger>
-    );
-  }
-}
+        </Tooltip>
+      </div>
+    </OverlayTrigger>
+  );
 
-@injectStyles(styles)
-@observer
-class ResultTable extends React.Component{
-  handleBreadcrumbClick(index){
-    queryBuilderStore.returnToTableViewRoot(index);
-  }
+});
 
-  handlExecuteQuery = () => {
-    queryBuilderStore.executeQuery();
-  }
+const ResultTable = observer(() => {
+  const classes = useStyles();
 
-  handlClearError = () => {
-    queryBuilderStore.runError = null;
-  }
+  const handleBreadcrumbClick = index => queryBuilderStore.returnToTableViewRoot(index);
 
-  render(){
-    const {classes} = this.props;
-    let objectKeys = [];
-    let subResult = {};
-    if(queryBuilderStore.result){
-      subResult = get(queryBuilderStore.result, toJS(queryBuilderStore.tableViewRoot));
-      objectKeys = !subResult.length || isString(subResult[0])?[""]:Object.keys(subResult[0]);
-    }
-    return(
-      <div className={classes.container}>
-        <ResultOptions/>
-        {queryBuilderStore.isRunning?
-          <div className={classes.fetchingPanel}>
-            <FetchingLoader>
+  const handlExecuteQuery = () => queryBuilderStore.executeQuery();
+
+  const handlClearError = () => queryBuilderStore.setRunError(null);
+
+  let objectKeys = [];
+  let subResult = {};
+  if(queryBuilderStore.result){
+    subResult = get(queryBuilderStore.result, toJS(queryBuilderStore.tableViewRoot));
+    objectKeys = !subResult.length || isString(subResult[0])?[""]:Object.keys(subResult[0]);
+  }
+  return(
+    <div className={classes.container}>
+      <ResultOptions/>
+      {queryBuilderStore.isRunning?
+        <div className={classes.fetchingPanel}>
+          <FetchingLoader>
             Fetching query...
-            </FetchingLoader>
-          </div>
-          :
-          queryBuilderStore.runError?
-            <BGMessage icon={"ban"}>
+          </FetchingLoader>
+        </div>
+        :
+        queryBuilderStore.runError?
+          <BGMessage icon={"ban"}>
               There was a network problem fetching the query.<br/>
               If the problem persists, please contact the support.<br/>
-              <small>{queryBuilderStore.runError}</small><br/><br/>
-              {queryBuilderStore.isQueryEmpty?
-                <Button bsStyle={"primary"} onClick={this.handlClearError}>
-                  <FontAwesomeIcon icon={"redo-alt"}/>&nbsp;&nbsp; OK
-                </Button>
-                :
-                <Button bsStyle={"primary"} onClick={this.handlExecuteQuery}>
-                  <FontAwesomeIcon icon={"redo-alt"}/>&nbsp;&nbsp; Retry
-                </Button>
-              }
-            </BGMessage>
-            :
-            queryBuilderStore.result && (
-              <React.Fragment>
-                <div className={classes.breadcrumb}>
-                  {queryBuilderStore.tableViewRoot.map((item, index) =>
-                    <div className={`${classes.breadcrumbItem}${!isInteger(item)?" clickable":""}`} key={index} onClick={isString(item)?this.handleBreadcrumbClick.bind(this, index):undefined}>
-                      {isInteger(item)?"#"+item:item} {index === 0?`(${queryBuilderStore.result.total})`:""}
-                    </div>
-                  )}
-                </div>
-                <Table>
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      {objectKeys.map( key =>
-                        <th key={key}>{key}</th>
-                      )}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {subResult.map((row, index) =>
-                      <tr key={"row"+index}>
-                        <th>{index}</th>
-                        {isString(row)?
-                          <td>{row}</td>
-                          :
-                          objectKeys.map(name => (
-                            <td key={name+index}>
-                              <ResultValue name={name} index={index} value={row[name]} />
-                            </td>
-                          ))
-                        }
-                      </tr>
+            <small>{queryBuilderStore.runError}</small><br/><br/>
+            {queryBuilderStore.isQueryEmpty?
+              <Button bsStyle={"primary"} onClick={handlClearError}>
+                <FontAwesomeIcon icon={"redo-alt"}/>&nbsp;&nbsp; OK
+              </Button>
+              :
+              <Button bsStyle={"primary"} onClick={handlExecuteQuery}>
+                <FontAwesomeIcon icon={"redo-alt"}/>&nbsp;&nbsp; Retry
+              </Button>
+            }
+          </BGMessage>
+          :
+          queryBuilderStore.result && (
+            <React.Fragment>
+              <div className={classes.breadcrumb}>
+                {queryBuilderStore.tableViewRoot.map((item, index) =>
+                  <div className={`${classes.breadcrumbItem}${!isInteger(item)?" clickable":""}`} key={index} onClick={isString(item)?handleBreadcrumbClick(index):undefined}>
+                    {isInteger(item)?"#"+item:item} {index === 0?`(${queryBuilderStore.result.total})`:""}
+                  </div>
+                )}
+              </div>
+              <Table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    {objectKeys.map( key =>
+                      <th key={key}>{key}</th>
                     )}
-                  </tbody>
-                </Table>
-              </React.Fragment>
-            )
-        }
-      </div>
-    );
-  }
-}
+                  </tr>
+                </thead>
+                <tbody>
+                  {subResult.map((row, index) =>
+                    <tr key={"row"+index}>
+                      <th>{index}</th>
+                      {isString(row)?
+                        <td>{row}</td>
+                        :
+                        objectKeys.map(name => (
+                          <td key={name+index}>
+                            <ResultValue name={name} index={index} value={row[name]} />
+                          </td>
+                        ))
+                      }
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </React.Fragment>
+          )
+      }
+    </div>
+  );
+
+});
 
 export default ResultTable;

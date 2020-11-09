@@ -117,7 +117,8 @@ class Field {
     return (this.schema && this.schema.canBe && !!this.schema.canBe) ? this.schema.canBe : [];
   }
 
-  getDefaultAlias() {
+  @computed
+  get defaultAlias() {
     let currentField = this;
     while (currentField.isFlattened && currentField.structure[0] && currentField.structure[0].schema && currentField.structure[0].schema.canBe) {
       currentField = currentField.structure[0];

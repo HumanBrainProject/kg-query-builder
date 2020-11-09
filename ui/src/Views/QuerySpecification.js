@@ -5,14 +5,9 @@ import ThemeRJV from "./ThemeRJV";
 
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 
-@observer
-class QuerySpecification extends React.Component{
-  render(){
-    return(
-      queryBuilderStore.rootField &&
+const QuerySpecification = observer(() => (
+  queryBuilderStore.rootField &&
       <ReactJson collapsed={false} name={false} theme={ThemeRJV} src={queryBuilderStore.JSONQuery} />
-    );
-  }
-}
+));
 
 export default QuerySpecification;

@@ -1,4 +1,4 @@
-import { observable, action, computed, runInAction, toJS } from "mobx";
+import { observable, action, computed, runInAction, toJS, isAction } from "mobx";
 import { uniqueId, isEqual } from "lodash";
 import API from "../Services/API";
 import { remove } from "lodash";
@@ -925,6 +925,56 @@ class QueryBuilderStore {
     } else if (!this.isSaving) {
       this.rootField.structure = [];
     }
+  }
+
+  @action
+  setRunError(error) {
+    this.runError = error;
+  }
+
+  @action
+  setFetchQueriesError(error) {
+    this.fetchQueriesError = error;
+  }
+
+  @action
+  setSaveAsMode(mode) {
+    this.saveAsMode = mode;
+  }
+
+  @action
+  toggleCompareChanges() {
+    this.compareChanges = !this.compareChanges;
+  }
+
+  @action
+  toggleQueries() {
+    this.showQueries = !this.showQueries;
+  }
+
+  @action
+  toggleOtherQueries() {
+    this.showOthersQueries = !this.showOthersQueries;
+  }
+
+  @action
+  toggleMyQueries() {
+    this.showMyQueries = !this.showMyQueries;
+  }
+
+  @action
+  toggleHeader() {
+    this.showHeader = !this.showHeader;
+  }
+
+  @action
+  setLabel(label) {
+    this.label = label;
+  }
+
+  @isAction
+  setDescription(description) {
+    this.description = description;
   }
 
   @action
