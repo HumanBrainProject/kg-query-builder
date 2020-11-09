@@ -1,8 +1,7 @@
 import React from "react";
-import { observer } from "mobx-react";
+import { Button } from "react-bootstrap";
 import { createUseStyles } from "react-jss";
-import { FormControl } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 
 const useStyles = createUseStyles({
   option: {
@@ -50,50 +49,23 @@ const useStyles = createUseStyles({
     "& strong": {
       color: "var(--ft-color-loud)"
     }
-  },
-  aliasError: {
-    marginTop: "6px",
-    color: "var(--ft-color-error)"
   }
 });
 
-
-const Name = observer(({ field, rootField }) => {
-
+const AddMergeButton = ({ show, onClick }) => {
   const classes = useStyles();
 
-  const { isMerge, isRootMerge, alias, defaultAlias, aliasError, parent, setAlias } = field;
-
-  const handleChangeName = e => setAlias(e.target.value);
-
-  if (field == rootField
-    || parent.isFlattened
-    || (isMerge && !isRootMerge)
-  ) {
+  if (!show) {
     return null;
   }
 
   return (
-    <div className={classes.option} >
-      {isRootMerge ?
-        <div className={classes.optionLabel}>
-          <strong><FontAwesomeIcon transform="shrink-8" icon="asterisk" /></strong>Merge name
-        </div>
-        :
-        <div className={classes.optionLabel}>
-            Target name <small>(only applicable if parent field is not flattened)</small>
-        </div>
-      }
-      <div>
-        <FormControl type="text" required={isRootMerge} value={alias || ""} placeholder={defaultAlias()} onChange={handleChangeName} />
-        {aliasError && (
-          <div className={classes.aliasError}>
-            <FontAwesomeIcon icon="exclamation-triangle" />&nbsp;Empty value is not accepted
-          </div>
-        )}
+    <div className={classes.option}>
+      <div className={classes.optionLabel}>
+        <Button onClick={onClick}>Add a merge field</Button>
       </div>
     </div>
   );
-});
+};
 
-export default Name;
+export default AddMergeButton;

@@ -1,5 +1,5 @@
-import React from "react";
-import injectStyles from "react-jss";
+import React, { useRef, useEffect} from "react";
+import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react";
 import { Button, FormControl} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -21,7 +21,7 @@ import FetchingLoader from "../Components/FetchingLoader";
 
 const rootPath = window.rootPath || "";
 
-let styles = {
+const useStyles = createUseStyles({
   container: {
     width: "100%",
     height: "100%",
@@ -95,121 +95,111 @@ let styles = {
     left: "20px",
     color: "var(--ft-color-normal)"
   }
-};
+});
 
-@injectStyles(styles)
-@observer
-class QueryBuilder extends React.Component {
-  componentDidMount() {
-    this.fetchStructure(true);
-  }
 
-  fetchStructure(forceFetch=false) {
-    typesStore.fetch(!!forceFetch);
-  }
+const QueryBuilder = observer(() => {
+  const classes = useStyles();
+  const scrolledPanel = useRef();
 
-  handleSelectTab = tab => {
+  useEffect(() => fetchStructure(true), []);
+
+  const fetchStructure = (forceFetch=false) => typesStore.fetch(forceFetch);
+
+  const handleSelectTab = tab => {
     queryBuilderStore.selectTab(tab);
-    this.scrolledPanel.scrollToTop();
-  }
+    scrolledPanel.current.scrollToTop();
+  };
 
-  handleCloseField = () => {
-    queryBuilderStore.closeFieldOptions();
-  }
+  const handleCloseField = () => queryBuilderStore.closeFieldOptions();
 
-  handleRetryFetchStructure = () => {
-    this.fetchStructure(true);
-  }
+  const handleRetryFetchStructure = () => fetchStructure(true);
 
-  handleFilterTypes = e => typesStore.setFilterValue(e.target.value);
+  const handleFilterTypes = e => typesStore.setFilterValue(e.target.value);
 
-  render() {
-    const { classes } = this.props;
-
-    return (
-      <div className={classes.container}>
-        {typesStore.isFetching ?
-          <div className={classes.structureLoader}>
-            <FetchingLoader>
+  return (
+    <div className={classes.container}>
+      {typesStore.isFetching ?
+        <div className={classes.structureLoader}>
+          <FetchingLoader>
               Fetching api structure...
-            </FetchingLoader>
-          </div>
-          :
-          typesStore.fetchError ?
-            <BGMessage icon={"ban"}>
+          </FetchingLoader>
+        </div>
+        :
+        typesStore.fetchError ?
+          <BGMessage icon={"ban"}>
               There was a network problem fetching the api structure.<br />
               If the problem persists, please contact the support.<br />
-              <small>{typesStore.fetchError}</small><br /><br />
-              <Button bsStyle={"primary"} onClick={this.handleRetryFetchStructure}>
+            <small>{typesStore.fetchError}</small><br /><br />
+            <Button bsStyle={"primary"} onClick={handleRetryFetchStructure}>
+              <FontAwesomeIcon icon={"redo-alt"} />&nbsp;&nbsp; Retry
+            </Button>
+          </BGMessage>
+          :
+          !typesStore.hasTypes ?
+            <BGMessage icon={"tools"}>
+                No types available.<br />
+                If the problem persists, please contact the support.<br /><br />
+              <Button bsStyle={"primary"} onClick={handleRetryFetchStructure}>
                 <FontAwesomeIcon icon={"redo-alt"} />&nbsp;&nbsp; Retry
               </Button>
             </BGMessage>
             :
-            !typesStore.hasTypes ?
-              <BGMessage icon={"tools"}>
-                No types available.<br />
-                If the problem persists, please contact the support.<br /><br />
-                <Button bsStyle={"primary"} onClick={this.handleRetryFetchStructure}>
-                  <FontAwesomeIcon icon={"redo-alt"} />&nbsp;&nbsp; Retry
-                </Button>
-              </BGMessage>
-              :
-              <div className={classes.layout}>
-                <div className={classes.leftPanel}>
-                  {queryBuilderStore.hasRootSchema ?
-                    <Query />
-                    :
-                    <BGMessage icon={"tools"}>
+            <div className={classes.layout}>
+              <div className={classes.leftPanel}>
+                {queryBuilderStore.hasRootSchema ?
+                  <Query />
+                  :
+                  <BGMessage icon={"tools"}>
                       Please choose a type in the right panel
-                    </BGMessage>}
-                </div>
-                <div className={classes.tabbedPanel}>
-                  <div className={classes.tabs}>
-                    {queryBuilderStore.hasRootSchema ?
-                      <React.Fragment>
-                        {queryBuilderStore.currentField && <Tab icon={"cog"} current={queryBuilderStore.currentTab === "fieldOptions"} label={"Field options"} onClose={this.handleCloseField} onClick={this.handleSelectTab.bind(this, "fieldOptions")} />}
-                        <Tab icon={"shopping-cart"} current={queryBuilderStore.currentTab === "query"} label={"Query specification"} onClick={this.handleSelectTab.bind(this, "query")} />
-                        <Tab icon={"poll-h"} current={queryBuilderStore.currentTab === "result"} label={"Results: JSON View"} onClick={this.handleSelectTab.bind(this, "result")} />
-                        <Tab icon={"table"} current={queryBuilderStore.currentTab === "resultTable"} label={"Results: Table View"} onClick={this.handleSelectTab.bind(this, "resultTable")} />
-                      </React.Fragment>
-                      :
-                      <div className={classes.filterType}>
-                        <FormControl
-                          className={classes.filterTypeInput}
-                          type="text"
-                          onChange={this.handleFilterTypes}
-                          value={typesStore.filterValue}
-                          placeholder="Filter types" />
-                        <FontAwesomeIcon icon="search" className={classes.searchIcon} />
-                      </div>
-                    }
-                  </div>
-                  <div className={classes.tabBody}>
-                    <Scrollbars autoHide ref={ref => this.scrolledPanel = ref}>
-                      <div className={classes.tabBodyInner}>
-                        {!queryBuilderStore.hasRootSchema ?
-                          <RootSchemaChoice />
-                          : queryBuilderStore.currentTab === "query" ?
-                            <QuerySpecification />
-                            : queryBuilderStore.currentTab === "result" ?
-                              <Result />
-                              : queryBuilderStore.currentTab === "resultTable" ?
-                                <ResultTable />
-                                : queryBuilderStore.currentTab === "fieldOptions" ?
-                                  <Options />
-                                  : null}
-                      </div>
-                    </Scrollbars>
-                  </div>
-                </div>
-                {queryBuilderStore.hasRootSchema && (
-                  <QueriesDrawer />
-                )}
+                  </BGMessage>}
               </div>
-        }
-      </div>
-    );
-  }
-}
+              <div className={classes.tabbedPanel}>
+                <div className={classes.tabs}>
+                  {queryBuilderStore.hasRootSchema ?
+                    <React.Fragment>
+                      {queryBuilderStore.currentField && <Tab icon={"cog"} current={queryBuilderStore.currentTab === "fieldOptions"} label={"Field options"} onClose={handleCloseField} onClick={handleSelectTab("fieldOptions")} />}
+                      <Tab icon={"shopping-cart"} current={queryBuilderStore.currentTab === "query"} label={"Query specification"} onClick={handleSelectTab("query")} />
+                      <Tab icon={"poll-h"} current={queryBuilderStore.currentTab === "result"} label={"Results: JSON View"} onClick={handleSelectTab("result")} />
+                      <Tab icon={"table"} current={queryBuilderStore.currentTab === "resultTable"} label={"Results: Table View"} onClick={handleSelectTab("resultTable")} />
+                    </React.Fragment>
+                    :
+                    <div className={classes.filterType}>
+                      <FormControl
+                        className={classes.filterTypeInput}
+                        type="text"
+                        onChange={handleFilterTypes}
+                        value={typesStore.filterValue}
+                        placeholder="Filter types" />
+                      <FontAwesomeIcon icon="search" className={classes.searchIcon} />
+                    </div>
+                  }
+                </div>
+                <div className={classes.tabBody}>
+                  <Scrollbars autoHide ref={scrolledPanel}>
+                    <div className={classes.tabBodyInner}>
+                      {!queryBuilderStore.hasRootSchema ?
+                        <RootSchemaChoice />
+                        : queryBuilderStore.currentTab === "query" ?
+                          <QuerySpecification />
+                          : queryBuilderStore.currentTab === "result" ?
+                            <Result />
+                            : queryBuilderStore.currentTab === "resultTable" ?
+                              <ResultTable />
+                              : queryBuilderStore.currentTab === "fieldOptions" ?
+                                <Options />
+                                : null}
+                    </div>
+                  </Scrollbars>
+                </div>
+              </div>
+              {queryBuilderStore.hasRootSchema && (
+                <QueriesDrawer />
+              )}
+            </div>
+      }
+    </div>
+  );
+});
 
 export default QueryBuilder;

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import injectStyles from "react-jss";
+import { createUseStyles } from "react-jss";
 import { Overlay, Popover, Button } from "react-bootstrap";
 import {uniqueId} from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,7 +10,7 @@ import authStore from "../Stores/AuthStore";
 
 import Avatar from "../Components/Avatar";
 
-let styles = {
+const useStyles = createUseStyles({
   container: {
     position: "relative",
     display: "inline-block"
@@ -100,7 +100,7 @@ let styles = {
     transition: "transform .3s ease-in-out",
     transform: "translateY(-48px)"
   }
-};
+});
 
 const windowHeight = () => {
   const w = window,
@@ -111,123 +111,105 @@ const windowHeight = () => {
   //return $(window).height();
 };
 
-class PopOverContent extends React.Component {
-  constructor(props){
-    super(props);
-    this.ref = React.createRef();
-  }
-  componentDidMount() {
-    this.handleSizeChange();
-  }
-  componentDidUpdate() {
-    this.handleSizeChange();
-  }
-  handleSizeChange() {
-    if (this.ref.current) {
-      typeof this.props.onSizeChange === "function" && this.props.onSizeChange(this.ref.current.getBoundingClientRect());
+const PopOverContent = ({onSizeChange, children}) => {
+  const ref = useRef();
+
+  useEffect(() => {
+    if (ref.current) {
+      typeof onSizeChange === "function" && onSizeChange(ref.current.getBoundingClientRect());
     }
-  }
-  render() {
-    return (
-      <div ref={this.ref}>
-        {this.props.children}
-      </div>
-    );
-  }
-}
+  });
 
-@injectStyles(styles)
-@observer
-class UserProfileTab extends React.Component{
-  constructor(props){
-    super(props);
-    this.state = { showPopOver: false, popOverPosition: "bottom", tokenCopied: null };
-    this.popOverId = uniqueId("popover");
-    this.buttonRef = React.createRef();
-  }
 
-  handlePopOverPosition = popOverRect => {
+  return (
+    <div ref={ref}>
+      {children}
+    </div>
+  );
+
+};
+
+const UserProfileTab = observer(({className, size=30}) => {
+  const classes = useStyles();
+  const [showPopOver, setShowPopOver] = useState(false);
+  const [popOverPosition, setPopOverPosition] = useState("bottom");
+  const [tokenCopied, setTokenCopied] = useState(null);
+  const buttonRef = useRef();
+
+  const handlePopOverPosition = popOverRect => {
     if (!popOverRect) { return null; }
-    const buttonRect = this.buttonRef.current.getBoundingClientRect();
+    const buttonRect = buttonRef.current.getBoundingClientRect();
     const position = (buttonRect.bottom + popOverRect.height + 5) >= windowHeight()?"top":"bottom";
-    if (this.state.popOverPosition !== position) {
-      this.setState({popOverPosition: position});
+    if (popOverPosition !== position) {
+      setPopOverPosition(popOverPosition);
     }
+  };
+
+  const handleButtonClick = e => {
+    e.stopPropagation();
+    setShowPopOver(showPopOver => !showPopOver);
+  };
+
+  const handlePopOverClose = e => {
+    e.stopPropagation();
+    setPopOverPosition(false);
+  };
+
+  const handleCopyToken = () => {
+    clearTimeout(tokenCopied);
+    const timer = setTimeout(() => setTokenCopied(null), 2000);
+    setTokenCopied(timer);
+  };
+
+  const handleLogout = () => authStore.logout();
+
+  if (!authStore.isAuthenticated || !authStore.isUserAuthorized || !authStore.user) {
+    return null;
   }
 
-  handleButtonClick(event) {
-    event.stopPropagation();
-    this.setState(state => ({showPopOver: !state.showPopOver }));
-  }
-
-  handlePopOverClose = event => {
-    event && event.stopPropagation();
-    this.setState({showPopOver: false });
-  }
-
-  handleCopyToken = () => {
-    clearTimeout(this.state.tokenCopied);
-    const timer = setTimeout(() => this.setState({tokenCopied:null}), 2000);
-    this.setState({tokenCopied: timer});
-  }
-
-  handleLogout = () => authStore.logout();
-
-  componentWillUnmount() {
-    if (this.state.showPopOver) {
-      this.handlePopOverClose();
-    }
-  }
-
-  render(){
-    if (!authStore.isAuthenticated || !authStore.isUserAuthorized || !authStore.user) {
-      return null;
-    }
-    const { classes, className, size=30 } = this.props;
-
-    return(
-      <div className={`${classes.container} ${className?className:""}`}>
-        <button className={classes.button} onClick={this.handleButtonClick.bind(this)} title="Account" ref={this.buttonRef}>
-          <Avatar user={authStore.user} size={size} />
-        </button>
-        <Overlay
-          show={this.state.showPopOver}
-          target={this.buttonRef.current}
-          placement={this.state.popOverPosition}
-          outOfBoundaries={false}
-          container={document.body}
-          rootClose={true}
-          onHide={this.handlePopOverClose}
-        >
-          <Popover id={this.popOverId} className={classes.popOver}>
-            <PopOverContent onSizeChange={this.handlePopOverPosition.bind(this)}>
-              <div className={classes.popOverContent}>
-                <Avatar user={authStore.user} size={100} />
-                <div>
-                  <div className={classes.name}>{authStore.user.name}</div>
-                  <div className={classes.email}>{authStore.user.email}</div>
-                  <Button bsStyle="primary" className={classes.accountBtn} href="https://collab.humanbrainproject.eu/#/me" title="https://collab.humanbrainproject.eu/#/me" rel="noopener noreferrer" target="_blank">Account</Button>
-                </div>
+  return(
+    <div className={`${classes.container} ${className?className:""}`}>
+      <button className={classes.button} onClick={handleButtonClick} title="Account" ref={buttonRef}>
+        <Avatar user={authStore.user} size={size} />
+      </button>
+      <Overlay
+        show={showPopOver}
+        target={buttonRef.current}
+        placement={popOverPosition}
+        outOfBoundaries={false}
+        container={document.body}
+        rootClose={true}
+        onHide={handlePopOverClose}
+      >
+        <Popover id={uniqueId("popover")} className={classes.popOver}>
+          <PopOverContent onSizeChange={handlePopOverPosition}>
+            <div className={classes.popOverContent}>
+              <Avatar user={authStore.user} size={100} />
+              <div>
+                <div className={classes.name}>{authStore.user.name}</div>
+                <div className={classes.email}>{authStore.user.email}</div>
+                <Button bsStyle="primary" className={classes.accountBtn} href="https://collab.humanbrainproject.eu/#/me" title="https://collab.humanbrainproject.eu/#/me" rel="noopener noreferrer" target="_blank">Account</Button>
               </div>
-              <div className={classes.popOverFooterBar}>
-                <div>
-                  <CopyToClipboard text={authStore.accessToken} onCopy={this.handleCopyToken}>
-                    <Button>Copy token to clipboard</Button>
-                  </CopyToClipboard>
-                </div>
-                <div>
-                  <Button onClick={this.handleLogout}>Logout</Button>
-                </div>
+            </div>
+            <div className={classes.popOverFooterBar}>
+              <div>
+                <CopyToClipboard text={authStore.accessToken} onCopy={handleCopyToken}>
+                  <Button>Copy token to clipboard</Button>
+                </CopyToClipboard>
               </div>
-              <div className={`${classes.tokenCopiedBar} ${this.state.tokenCopied?"show":""}`}>
-                <div className={classes.tokenCopied}><FontAwesomeIcon icon={"check"} />&nbsp;Token copied to clipboard!</div>
+              <div>
+                <Button onClick={handleLogout}>Logout</Button>
               </div>
-            </PopOverContent>
-          </Popover>
-        </Overlay>
-      </div>
-    );
-  }
-}
+            </div>
+            <div className={`${classes.tokenCopiedBar} ${tokenCopied?"show":""}`}>
+              <div className={classes.tokenCopied}><FontAwesomeIcon icon={"check"} />&nbsp;Token copied to clipboard!</div>
+            </div>
+          </PopOverContent>
+        </Popover>
+      </Overlay>
+    </div>
+  );
+
+});
 
 export default UserProfileTab;

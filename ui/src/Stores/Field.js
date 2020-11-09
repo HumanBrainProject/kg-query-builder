@@ -64,6 +64,11 @@ class Field {
     }
   }
 
+  @action
+  setCurrentFieldFlattened(value) {
+    this.isFlattened = !!value;
+  }
+
   @computed
   get isRootMerge() {
     return this.isMerge && (!this.parent || !this.parent.isMerge);

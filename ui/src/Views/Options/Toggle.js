@@ -1,8 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
+import MultiToggle from "../Components/MultiToggle";
 import { createUseStyles } from "react-jss";
-import { FormControl } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const useStyles = createUseStyles({
   option: {
@@ -58,42 +57,31 @@ const useStyles = createUseStyles({
 });
 
 
-const Name = observer(({ field, rootField }) => {
+const Toggle = observer(({ option, label, comment, show, onChange }) => {
 
   const classes = useStyles();
 
-  const { isMerge, isRootMerge, alias, defaultAlias, aliasError, parent, setAlias } = field;
+  const { name, value } = option;
 
-  const handleChangeName = e => setAlias(e.target.value);
+  const handleChange = newValue => onChange(name, newValue);
 
-  if (field == rootField
-    || parent.isFlattened
-    || (isMerge && !isRootMerge)
-  ) {
+  if (!show) {
     return null;
   }
 
   return (
-    <div className={classes.option} >
-      {isRootMerge ?
-        <div className={classes.optionLabel}>
-          <strong><FontAwesomeIcon transform="shrink-8" icon="asterisk" /></strong>Merge name
-        </div>
-        :
-        <div className={classes.optionLabel}>
-            Target name <small>(only applicable if parent field is not flattened)</small>
-        </div>
-      }
+    <div className={classes.option}>
+      <div className={classes.optionLabel}>
+        {label} <small>({comment})</small>
+      </div>
       <div>
-        <FormControl type="text" required={isRootMerge} value={alias || ""} placeholder={defaultAlias()} onChange={handleChangeName} />
-        {aliasError && (
-          <div className={classes.aliasError}>
-            <FontAwesomeIcon icon="exclamation-triangle" />&nbsp;Empty value is not accepted
-          </div>
-        )}
+        <MultiToggle selectedValue={value} onChange={handleChange}>
+          <MultiToggle.Toggle color={"var(--ft-color-loud)"} icon={"check"} value={true} />
+          <MultiToggle.Toggle color={"var(--ft-color-loud)"} icon={"times"} value={undefined} />
+        </MultiToggle>
       </div>
     </div>
   );
 });
 
-export default Name;
+export default Toggle;

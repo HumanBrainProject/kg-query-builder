@@ -1,5 +1,5 @@
 import React from "react";
-import injectStyles from "react-jss";
+import { createUseStyles } from "react-jss";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { observer } from "mobx-react";
