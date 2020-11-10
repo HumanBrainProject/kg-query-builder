@@ -125,11 +125,13 @@ class AppStore{
     }
   }
 
+  @action
   setTheme(theme){
     this.currentTheme = this.availableThemes[theme]? theme: "default";
     localStorage.setItem("currentTheme", this.currentTheme);
   }
 
+  @action
   toggleTheme(){
     if(this.currentTheme === "bright"){
       this.setTheme("default");
@@ -138,6 +140,7 @@ class AppStore{
     }
   }
 
+  @action
   handleGlobalShortcuts = e => {
     if ((e.ctrlKey || e.metaKey) && e.altKey && e.keyCode === 84) {
       this.toggleTheme();

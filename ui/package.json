@@ -11,6 +11,7 @@
     "@fortawesome/react-fontawesome": "^0.1.12",
     "@sentry/browser": "^5.27.3",
     "axios": "^0.21.0",
+    "bootstrap": "^4.5.3",
     "diff": "^5.0.0",
     "jsonld": "^3.2.0",
     "lodash": "^4.17.20",
