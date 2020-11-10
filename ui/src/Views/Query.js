@@ -58,8 +58,10 @@ const useStyles = createUseStyles({
     color: "var(--ft-color-loud)",
     width:"100%",
     border:"1px solid transparent",
-    "&:focus":{
-      borderColor: "rgba(64, 169, 243, 0.5)"
+    "&:focus": {
+      color: "var(--ft-color-loud)",
+      borderColor: "rgba(64, 169, 243, 0.5)",
+      backgroundColor: "transparent"
     },
     "&.disabled,&:disabled":{
       backgroundColor: "var(--bg-color-blend-contrast1)",

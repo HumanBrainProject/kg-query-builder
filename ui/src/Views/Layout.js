@@ -29,7 +29,7 @@ import WorkspaceModal from "./WorkspaceModal";
 import QueryBuilder from "./QueryBuilder";
 
 const useStyles = createUseStyles(theme => {
-  console.log("Layout createUseStyles: " + theme.name);
+  //console.log("Layout createUseStyles: " + theme.name);
   return {
     "@global": {
       ":root": {
@@ -141,7 +141,7 @@ const useStyles = createUseStyles(theme => {
 const Layout = observer(() => {
 
   const theme = useTheme();
-  console.log("Layout useTheme: " + theme.name);
+  //console.log("Layout useTheme: " + theme.name);
 
   const classes = useStyles({ theme });
 

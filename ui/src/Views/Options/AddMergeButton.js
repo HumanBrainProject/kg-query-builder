@@ -63,7 +63,7 @@ const AddMergeButton = ({ show, onClick }) => {
   return (
     <div className={classes.option}>
       <div className={classes.optionLabel}>
-        <Button onClick={onClick}>Add a merge field</Button>
+        <Button variant="secondary" onClick={onClick}>Add a merge field</Button>
       </div>
     </div>
   );

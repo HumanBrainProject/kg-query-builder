@@ -25,6 +25,9 @@ const useStyles = createUseStyles({
       height:"20px",
       background:"var(--bg-color-ui-contrast3)",
       transform:"rotate(45deg)"
+    },
+    "& select$input:hover": {
+      backgroundColor: "var(--bg-color-ui-contrast2)"
     }
   },
   input: {
@@ -32,7 +35,12 @@ const useStyles = createUseStyles({
     width: "calc(100% - 20px)",
     border: "1px solid transparent",
     borderRadius: "2px",
-    backgroundColor: "var(--bg-color-blend-contrast1)"
+    backgroundColor: "var(--bg-color-blend-contrast1)",
+    "&:focus": {
+      color: "var(--ft-color-loud)",
+      borderColor: "rgba(64, 169, 243, 0.5)",
+      backgroundColor: "transparent"
+    }
   }
 });
 
