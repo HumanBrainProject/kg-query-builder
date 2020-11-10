@@ -83,7 +83,7 @@ const ResultOptions = observer(() => {
           <Col xs={6}>
             <Form.Group>
               <Form.Label>Select space</Form.Label>
-              <Form.Control className={classes.input} componentClass="select" placeholder="minds" value={queryBuilderStore.stage} onChange={handleChangeStage} >
+              <Form.Control className={classes.input} as="select" placeholder="minds" value={queryBuilderStore.stage} onChange={handleChangeStage} >
                 {scopeOptions.map(space => (
                   <option value={space.value} key={space.value}>{space.label}</option>
                 ))}

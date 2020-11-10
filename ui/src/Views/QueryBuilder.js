@@ -80,7 +80,12 @@ const useStyles = createUseStyles({
     border: "1px solid transparent",
     paddingLeft: "30px",
     borderRadius: "2px",
-    backgroundColor: "var(--bg-color-blend-contrast1)"
+    backgroundColor: "var(--bg-color-blend-contrast1)",
+    "&:focus":{
+      color: "var(--ft-color-loud)",
+      borderColor: "rgba(64, 169, 243, 0.5)",
+      backgroundColor: "transparent"
+    }
   },
   filterType: {
     position: "relative",

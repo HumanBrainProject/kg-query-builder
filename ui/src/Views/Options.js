@@ -24,22 +24,8 @@ const useStyles = createUseStyles({
     }
   },
   fieldOptions: {
-    background: "var(--bg-color-ui-contrast3)",
-    margin: "-10px -10px 30px -10px",
-    padding: "10px",
     position: "relative",
-    "&::after": {
-      display: "block",
-      content: "''",
-      position: "absolute",
-      bottom: "-10px",
-      left: "50%",
-      marginLeft: "-10px",
-      width: "20px",
-      height: "20px",
-      background: "var(--bg-color-ui-contrast3)",
-      transform: "rotate(45deg)"
-    }
+    marginTop: "10px"
   }
 });
 

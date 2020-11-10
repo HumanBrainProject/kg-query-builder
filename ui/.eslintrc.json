@@ -1,5 +1,5 @@
 {
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "settings": {
     "react": {
       "version": "detect"
@@ -12,7 +12,8 @@
   },
   "extends": [
     "eslint:recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
   ],
   "parserOptions": {
     "ecmaFeatures": {
@@ -23,12 +24,12 @@
     "sourceType": "module"
   },
   "plugins": [
+    "@babel",
     "react"
   ],
-  "globals": {
-    "DataWorkbench": true
-  },
   "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
     "indent": [
       "warn",
       2

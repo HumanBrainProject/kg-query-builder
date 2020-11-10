@@ -1,11 +1,29 @@
+/*
+*   Copyright (c) 2020, EPFL/Human Brain Project PCO
+*
+*   Licensed under the Apache License, Version 2.0 (the "License");
+*   you may not use this file except in compliance with the License.
+*   You may obtain a copy of the License at
+*
+*       http://www.apache.org/licenses/LICENSE-2.0
+*
+*   Unless required by applicable law or agreed to in writing, software
+*   distributed under the License is distributed on an "AS IS" BASIS,
+*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*   See the License for the specific language governing permissions and
+*   limitations under the License.
+*/
+
 import React from "react";
 import { observer } from "mobx-react";
 import Dropdown from "react-bootstrap/Dropdown";
 import { createUseStyles } from "react-jss";
+
 import authStore from "../Stores/AuthStore";
-import CustomDropdownToggle from "./CustomDropdownToggle";
 import appStore from "../Stores/AppStore";
 
+import CustomDropdownToggle from "./CustomDropdownToggle";
+import CustomDropdownMenu from "./CustomDropdownMenu";
 
 const useStyles = createUseStyles({
   container: {
@@ -22,30 +40,29 @@ const useStyles = createUseStyles({
     "& .btn-group": {
       margin: "-2px"
     }
-  },
-  dropdownMenu: {
-    background: "var(--ft-color-loud)",
-    margin: "0 0 0 -20px",
-    fontSize: "0.9em"
   }
 });
 
 const WorkspaceSelector = observer(() => {
   const classes = useStyles();
 
-  const selectWorkspace = eventKey => appStore.setCurrentWorkspace(eventKey);
+  const handleSelectWorkspace = eventKey => appStore.setCurrentWorkspace(eventKey);
 
   return (
     <div className={classes.container} title={`${appStore.currentWorkspace} workspace`}>
       {authStore.workspaces.length > 1 ?
-        <Dropdown id="dropdown-custom-1">
-          <CustomDropdownToggle bsRole="toggle">{appStore.currentWorkspace}</CustomDropdownToggle>
-          <Dropdown.Menu className={classes.dropdownMenu}>
+        <Dropdown>
+          <Dropdown.Toggle as={CustomDropdownToggle}>
+            {appStore.currentWorkspace}
+          </Dropdown.Toggle>
+          <Dropdown.Menu as={CustomDropdownMenu}>
             {authStore.workspaces.map(workspace =>
-              <Dropdown.Item key={workspace}
+              <Dropdown.Item
+                key={workspace}
                 eventKey={workspace}
-                onSelect={selectWorkspace}>
-                {workspace}</Dropdown.Item>
+                onSelect={handleSelectWorkspace}>
+                {workspace}
+              </Dropdown.Item>
             )}
           </Dropdown.Menu>
         </Dropdown>

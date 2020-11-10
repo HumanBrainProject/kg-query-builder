@@ -1132,21 +1132,24 @@ class QueryBuilderStore {
               try {
                 const expanded = await jsonld.expand(jsonSpec);
                 const compacted = await jsonld.compact(expanded, jsonSpec["@context"]);
-              
-                this.specifications.push({
-                  id: queryId,
-                  user: normalizeUser(jsonSpec["https://core.kg.ebrains.eu/vocab/meta/user"]),
-                  context: compacted["@context"],
-                  merge: compacted.merge,
-                  structure: compacted.structure,
-                  properties: getProperties(compacted),
-                  label: label,
-                  description: jsonSpec["https://core.kg.ebrains.eu/vocab/query/description"] ? jsonSpec["https://core.kg.ebrains.eu/vocab/query/description"] : "",
-                  isDeleting: false,
-                  deleteError: null
+                runInAction(() => {
+                  this.specifications.push({
+                    id: queryId,
+                    user: normalizeUser(jsonSpec["https://core.kg.ebrains.eu/vocab/meta/user"]),
+                    context: compacted["@context"],
+                    merge: compacted.merge,
+                    structure: compacted.structure,
+                    properties: getProperties(compacted),
+                    label: label,
+                    description: jsonSpec["https://core.kg.ebrains.eu/vocab/query/description"] ? jsonSpec["https://core.kg.ebrains.eu/vocab/query/description"] : "",
+                    isDeleting: false,
+                    deleteError: null
+                  });
                 });
               } catch (e) {
+                runInAction(() => {
                   this.fetchQueriesError = `Error while trying to expand/compact JSON-LD (${e})`;
+                });
               };
             });
             if (this.sourceQuery) {

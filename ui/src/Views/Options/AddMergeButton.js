@@ -5,6 +5,7 @@ import { createUseStyles } from "react-jss";
 
 const useStyles = createUseStyles({
   option: {
+    marginTop: "20px",
     marginBottom: "20px",
     "&:last-child": {
       marginBottom: 0

@@ -91,7 +91,7 @@ const theme = {
   info: {
     color: "#24282a",
     normal: {
-      color: "#ffc107"
+      color: "#dfc36f"
     }
   },
   pane: {

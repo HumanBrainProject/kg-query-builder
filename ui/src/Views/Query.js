@@ -34,7 +34,7 @@ const useStyles = createUseStyles({
         gridRowStart: "span 2"
       }
     },
-    "& h4": {
+    "& h5": {
       display: "inline-block",
       marginTop: 0,
       marginBottom: "8px"
@@ -180,7 +180,7 @@ const useStyles = createUseStyles({
       background: "white",
       textAlign: "center",
       boxShadow: "2px 2px 4px #7f7a7a",
-      "& h4": {
+      "& h5": {
         margin: "0",
         paddingBottom: "20px",
         color: "red"
@@ -235,8 +235,7 @@ const useStyles = createUseStyles({
   tip: {
     padding: "10px",
     borderRadius: "4px",
-    background:"var(--bg-color-ui-contrast4)",
-    color: "var(--ft-color-normal)"
+    color: "var(--bg-color-info-normal)"
   },
   newQueryButton: {
     position:"absolute",
@@ -252,7 +251,7 @@ const useStyles = createUseStyles({
         transform: "rotateX(180deg)"
       }
     },
-    "& h4": {
+    "& h5": {
       display: "inline",
       alignSelf: "center",
       margin: 0,
@@ -325,13 +324,13 @@ const Query = observer(() => {
                   <button className={classes.fontAwesomeIconButton} onClick={handleHeaderToggle}><FontAwesomeIcon icon="angle-down"/></button>&nbsp;&nbsp;
                 </React.Fragment>
               )}
-              <h4>Query :</h4>
+              <h5>Query :</h5>
               <span className={`form-control ${classes.input}`}>
                 {(queryBuilderStore.isQuerySaved && !queryBuilderStore.saveAsMode)?queryBuilderStore.sourceQuery.id:queryBuilderStore.queryId}
               </span>
             </div>
             <div>
-              <h4>Label :</h4>
+              <h5>Label :</h5>
               <input
                 className={`form-control ${classes.input}`}
                 disabled={!(queryBuilderStore.saveAsMode || queryBuilderStore.isOneOfMySavedQueries)}
@@ -341,7 +340,7 @@ const Query = observer(() => {
                 onChange={handleChangeLabel} />
             </div>
             <div className={classes.description}>
-              <h4>Description :</h4>
+              <h5>Description :</h5>
               <textarea
                 className={`form-control ${classes.input}`}
                 disabled={!(queryBuilderStore.saveAsMode || queryBuilderStore.isOneOfMySavedQueries)}
@@ -379,7 +378,7 @@ const Query = observer(() => {
               queryBuilderStore.saveAsMode?
                 <React.Fragment>
                   <div></div>
-                  <Button variant="default" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError} onClick={handleHideSaveDialog}>Cancel</Button>
+                  <Button variant="secondary" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError} onClick={handleHideSaveDialog}>Cancel</Button>
                   <Button variant="primary" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} onClick={handleSave}><FontAwesomeIcon icon="save"/>&nbsp;Save</Button>
                 </React.Fragment>
                 :
@@ -388,7 +387,7 @@ const Query = observer(() => {
                     {!queryBuilderStore.showHeader && (
                       <div className={classes.collapsedHeader}>
                         <button className={classes.fontAwesomeIconButton} onClick={handleHeaderToggle}><FontAwesomeIcon icon="angle-down"/></button>
-                          &nbsp;&nbsp;<h4>Query :</h4>
+                          &nbsp;&nbsp;<h5>Query :</h5>
                           &nbsp;&nbsp;<input
                           className={`form-control ${classes.input}`}
                           disabled={true}
@@ -404,16 +403,16 @@ const Query = observer(() => {
                     <Button disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || !queryBuilderStore.hasQueryChanged}  onClick={handleToggleCompareChanges}><FontAwesomeIcon icon="glasses"/>&nbsp;Compare</Button>
                   )}
                   {queryBuilderStore.hasChanged && !queryBuilderStore.savedQueryHasInconsistencies &&  (
-                    <Button variant="default" onClick={handleRevertChanges}><FontAwesomeIcon icon="undo-alt"/>&nbsp;Undo changes</Button>
+                    <Button variant="secondary" onClick={handleRevertChanges}><FontAwesomeIcon icon="undo-alt"/>&nbsp;Undo changes</Button>
                   )}
-                  <Button variant="default" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} onClick={handleShowSaveDialog}><FontAwesomeIcon icon="save"/>&nbsp;Save As</Button>
+                  <Button variant="secondary" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} onClick={handleShowSaveDialog}><FontAwesomeIcon icon="save"/>&nbsp;Save As</Button>
                   <Button variant="primary" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || !queryBuilderStore.hasChanged || queryBuilderStore.isQueryEmpty || (queryBuilderStore.sourceQuery && queryBuilderStore.sourceQuery.isDeleting)} onClick={handleSave}><FontAwesomeIcon icon="save"/>&nbsp;Save</Button>
                 </React.Fragment>
               :
               queryBuilderStore.saveAsMode?
                 <React.Fragment>
                   <div></div>
-                  <Button variant="default" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError} onClick={handleHideSaveDialog}>Cancel</Button>
+                  <Button variant="secondary" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError} onClick={handleHideSaveDialog}>Cancel</Button>
                   <Button variant="primary" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} onClick={handleSave}><FontAwesomeIcon icon="save"/>&nbsp;Save</Button>
                 </React.Fragment>
                 :
@@ -422,7 +421,7 @@ const Query = observer(() => {
                     {!queryBuilderStore.showHeader && (
                       <div className={classes.collapsedHeader}>
                         <button className={classes.fontAwesomeIconButton} onClick={handleHeaderToggle}><FontAwesomeIcon icon="angle-down"/></button>
-                          &nbsp;&nbsp;<h4>Query :</h4>
+                          &nbsp;&nbsp;<h5>Query :</h5>
                           &nbsp;&nbsp;<input
                           className={`form-control ${classes.input}`}
                           disabled={true}
@@ -438,22 +437,22 @@ const Query = observer(() => {
                     <Button disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || !queryBuilderStore.hasQueryChanged}  onClick={handleToggleCompareChanges}><FontAwesomeIcon icon="glasses"/>&nbsp;Compare</Button>
                   )}
                   {queryBuilderStore.hasChanged && !queryBuilderStore.savedQueryHasInconsistencies && (
-                    <Button variant="default" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError} onClick={handleRevertChanges}><FontAwesomeIcon icon="undo-alt"/>&nbsp;Undo changes</Button>
+                    <Button variant="secondary" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError} onClick={handleRevertChanges}><FontAwesomeIcon icon="undo-alt"/>&nbsp;Undo changes</Button>
                   )}
-                  <Button variant="default" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} onClick={handleShowSaveDialog}><FontAwesomeIcon icon="save"/>&nbsp;Save As</Button>
+                  <Button variant="secondary" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} onClick={handleShowSaveDialog}><FontAwesomeIcon icon="save"/>&nbsp;Save As</Button>
                 </React.Fragment>
             :
             queryBuilderStore.saveAsMode?
               <React.Fragment>
                 <div></div>
-                <Button variant="default" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError} onClick={handleHideSaveDialog}>Cancel</Button>
+                <Button variant="secondary" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError} onClick={handleHideSaveDialog}>Cancel</Button>
                 <Button variant="primary" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || !queryBuilderStore.hasChanged || queryBuilderStore.isQueryEmpty} onClick={handleSave}><FontAwesomeIcon icon="save"/>&nbsp;Save</Button>
               </React.Fragment>
               :
               <React.Fragment>
                 <span><span className={classes.tip}><FontAwesomeIcon icon={"lightbulb"} />&nbsp;&nbsp;Click on &quot;Save As&quot; to save your query.</span></span>
-                <Button variant="default" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError} onClick={handleResetQuery}><FontAwesomeIcon icon="undo-alt"/>&nbsp;Reset</Button>
-                <Button variant="default" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || !queryBuilderStore.hasChanged} onClick={handleShowSaveDialog}><FontAwesomeIcon icon="save"/>&nbsp;Save As</Button>
+                <Button variant="secondary" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError} onClick={handleResetQuery}><FontAwesomeIcon icon="undo-alt"/>&nbsp;Reset</Button>
+                <Button variant="secondary" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || !queryBuilderStore.hasChanged} onClick={handleShowSaveDialog}><FontAwesomeIcon icon="save"/>&nbsp;Save As</Button>
               </React.Fragment>
           }
         </div>
@@ -478,9 +477,9 @@ const Query = observer(() => {
       {queryBuilderStore.saveError && (
         <div className={classes.saveErrorPanel}>
           <div>
-            <h4>{queryBuilderStore.saveError}</h4>
+            <h5>{queryBuilderStore.saveError}</h5>
             <div>
-              <Button variant="default" onClick={handleCancelSave}>Cancel</Button>
+              <Button variant="secondary" onClick={handleCancelSave}>Cancel</Button>
               <Button variant="primary" onClick={handleSave}>Retry</Button>
             </div>
           </div>

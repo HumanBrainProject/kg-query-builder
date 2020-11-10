@@ -7,8 +7,7 @@ import Property from "./Property";
 const useStyles = createUseStyles({
   container: {
     color: "var(--ft-color-loud)",
-    "& h3": {
-      fontSize: "1.5em",
+    "& h5": {
       margin: "18px 0 6px 5px",
       "& small": {
         color: "var(--ft-color-quiet)",
@@ -16,7 +15,7 @@ const useStyles = createUseStyles({
       }
     },
     "& .merge": {
-      "& h3": {
+      "& h5": {
         "& strong": {
           color: "greenyellow"
         }
@@ -32,7 +31,7 @@ const Link = ({ link, label: prefix, isMerge=false, onClick }) => {
 
   return (
     <div className={`${classes.container} ${isMerge?"merge":""}`}>
-      <h3>{isMerge?(<strong>Merge</strong> ):""}{prefix} <Icon icon="circle" color={color}/> {label} <small> - {id}</small></h3>
+      <h5>{isMerge?(<strong>Merge</strong> ):""}{prefix} <Icon icon="circle" color={color}/> {label} <small> - {id}</small></h5>
       {properties.map(property => (
         <Property key={property.attribute + (property.reverse ? "reverse" : "")} property={property} onClick={onClick} />
       ))}

@@ -54,6 +54,18 @@ const useStyles = createUseStyles({
   aliasError: {
     marginTop: "6px",
     color: "var(--ft-color-error)"
+  },
+  targetInput: {
+    color: "var(--ft-color-loud)",
+    width: "calc(100% - 20px)",
+    border: "1px solid transparent",
+    borderRadius: "2px",
+    backgroundColor: "var(--bg-color-blend-contrast1)",
+    "&:focus":{
+      color: "var(--ft-color-loud)",
+      borderColor: "rgba(64, 169, 243, 0.5)",
+      backgroundColor: "transparent"
+    }
   }
 });
 
@@ -83,7 +95,7 @@ const Name = observer(({ field, rootField }) => {
         </div>
       }
       <div>
-        <Form.Control type="text" required={field.isRootMerge} value={field.alias || ""} placeholder={field.defaultAlias} onChange={handleChangeName} />
+        <Form.Control className={classes.targetInput} type="text" required={field.isRootMerge} value={field.alias || ""} placeholder={field.defaultAlias} onChange={handleChangeName} />
         {field.aliasError && (
           <div className={classes.aliasError}>
             <FontAwesomeIcon icon="exclamation-triangle" />&nbsp;Empty value is not accepted

@@ -155,7 +155,7 @@ const Option = observer(({ field, rootField, lookupsLinks, option, onChange }) =
   if (value !== undefined && (!field.isMerge || field.isRootMerge)) {
     return (
       <div className={`${classes.option} unsupported`}>
-        <Button size="sm" variant="default" onClick={handleDelete} title={name === "merge" ? `"${name}" property cannot be deleted` : `delete property "${name}"`} disabled={name === "merge"} >
+        <Button size="sm" variant="secondary" onClick={handleDelete} title={name === "merge" ? `"${name}" property cannot be deleted` : `delete property "${name}"`} disabled={name === "merge"} >
           <FontAwesomeIcon icon="times" />
         </Button>
         <div className={classes.optionLabel}>{name}:&nbsp;</div>

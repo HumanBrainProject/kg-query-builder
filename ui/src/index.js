@@ -18,8 +18,6 @@ import React from "react";
 import { render } from "react-dom";
 // import { configure } from "mobx";
 
-import "@babel/polyfill";
-
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import "./Services/IconsImport";
