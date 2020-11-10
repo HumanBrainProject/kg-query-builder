@@ -15,24 +15,35 @@
 */
 
 import React from "react";
-import { render } from "react-dom";
-// import { configure } from "mobx";
+import * as Sentry from "@sentry/browser";
+import Cookies from "universal-cookie";
 
-import "bootstrap/dist/css/bootstrap.min.css";
+import appStore from "../Stores/AppStore";
 
-import "./Services/IconsImport";
+class ErrorBoundary extends React.Component {
 
-import App from "./Views/App";
+  componentDidMount() {
+    const cookies = new Cookies();
+    const sentryUrl = cookies.get("sentry_url");
+    if (sentryUrl) {
+      Sentry.init({
+        dsn: sentryUrl
+      });
+    }
+  }
 
-// configure({
-//   enforceActions: "always",
-//   computedRequiresReaction: true,
-//   reactionRequiresObservable: true,
-//   observableRequiresReaction: false,
-//   disableErrorBoundaries: false // help to debug only
-// });
+  static getDerivedStateFromError() {
+    return null;
+  }
 
-render(
-  <React.StrictMode>
-    <App/>
-  </React.StrictMode>, document.getElementById("root"));
+  componentDidCatch(error, info) {
+    appStore.setGlobalError(error, info);
+  }
+
+  render() {
+    const { children } = this.props;
+    return children;
+  }
+}
+
+export default ErrorBoundary;

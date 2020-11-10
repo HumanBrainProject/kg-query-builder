@@ -1,14 +1,14 @@
-import React from "react";
-import injectStyles from "react-jss";
-import {observer} from "mobx-react";
+import React, {useState} from "react";
+import { createUseStyles } from "react-jss";
+import {observer} from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
 
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 import PopOverButton from "../Components/PopOverButton";
 import User from "../Components/User";
 
-let styles = {
+const useStyles = createUseStyles({
   container:{
     position:"relative",
     cursor:"pointer",
@@ -100,101 +100,91 @@ let styles = {
     textOverflow:"ellipsis",
     fontSize:"0.9em",
   }
-};
+});
 
-@injectStyles(styles)
-@observer
-class SavedQuery extends React.Component{
-  constructor(props){
-    super(props);
-    this.editBookmarkNameRef = React.createRef();
-    this.state = {showDeleteDialog: false};
-  }
 
-  handleSelect(event) {
-    const { query } = this.props;
-    event && event.stopPropagation();
+const SavedQuery = observer(({query, showUser, enableDelete}) => {
+  const classes = useStyles();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const handleSelect = e => {
+    e.stopPropagation();
     if (!query.deleteError && !query.isDeleting) {
       queryBuilderStore.selectQuery(query);
     }
-  }
+  };
 
-  handleConfirmDelete(event) {
-    event && event.stopPropagation();
-    this.setState({ showDeleteDialog: true });
-  }
+  const handleConfirmDelete = e => {
+    e.stopPropagation();
+    setShowDeleteDialog(true);
+  };
 
-  handleDelete(event) {
-    const { query } = this.props;
-    event && event.stopPropagation();
-    this.setState({ showDeleteDialog: false });
+  const handleDelete = e => {
+    e.stopPropagation();
+    setShowDeleteDialog(false);
     queryBuilderStore.deleteQuery(query);
-  }
+  };
 
-  handleCloseDeleteDialog(event) {
-    event && event.stopPropagation();
-    this.setState({ showDeleteDialog: false });
-  }
+  const handleCloseDeleteDialog = e => {
+    e.stopPropagation();
+    setShowDeleteDialog(false);
+  };
 
-  handleCancelDelete(event) {
-    const { query } = this.props;
-    event && event.stopPropagation();
+  const handleCancelDelete = e => {
+    e.stopPropagation();
     queryBuilderStore.cancelDeleteQuery(query);
-  }
-
-  render(){
-    const {classes, query, showUser, enableDelete } = this.props;
-    return (
-      <div className={`${classes.container} ${query.isDeleting?"is-deleting":""}`} key={query.id} onClick={this.handleSelect.bind(this)} onMouseLeave={this.handleCloseDeleteDialog.bind(this)} ref={ref=>this.wrapperRef = ref} >
-        <div className={classes.name}>
-          <span>{query.label?query.label:query.id} - <small title="queryId">{query.id}</small></span>
-          {showUser && query.user && (
-            <span className={`author ${enableDelete?"extra-padding":""}`}>by user <User user={query.user} />
-            </span>
-          )}
-          {enableDelete && !query.deleteError && !query.isDeleting && !this.state.showDeleteDialog && (
-            <button className={classes.deleteButton} title="delete" onClick={this.handleConfirmDelete.bind(this)}><FontAwesomeIcon icon="times"/></button>
-          )}
-          {enableDelete && !query.deleteError && !query.isDeleting && (
-            <div className={`${classes.deleteDialog} ${this.state.showDeleteDialog?"show":""}`}>
-              <Button bsStyle="danger" bsSize="small" onClick={this.handleDelete.bind(this)}><FontAwesomeIcon icon="trash-alt"/>&nbsp;Delete</Button>
-            </div>
-          )}
-          {enableDelete && !query.deleteError && query.isDeleting && (
-            <div className={classes.deleting} title={`deleting query ${query.id}...`}>
-              <FontAwesomeIcon icon={"circle-notch"} spin/>
-            </div>
-          )}
-          {enableDelete && query.deleteError && (
-            <PopOverButton
-              className={classes.error}
-              buttonClassName={classes.errorButton}
-              buttonTitle={query.deleteError}
-              iconComponent={FontAwesomeIcon}
-              iconProps={{icon: "exclamation-triangle"}}
-              okComponent={() => (
-                <React.Fragment>
-                  <FontAwesomeIcon icon="redo-alt"/>&nbsp;Retry
-                </React.Fragment>
-              )}
-              onOk={this.handleDelete.bind(this)}
-              cancelComponent={() => (
-                <React.Fragment>
-                  <FontAwesomeIcon icon="undo-alt"/>&nbsp;Cancel
-                </React.Fragment>
-              )}
-              onCancel={this.handleCancelDelete.bind(this)}
-            >
-              <h5 className={classes.textError}>{query.deleteError}</h5>
-            </PopOverButton>
-          )}
-        </div>
-        {query.description && (
-          <div className={classes.description} title={query.description}>{query.description}</div>
+  };
+  return (
+    <div className={`${classes.container} ${query.isDeleting?"is-deleting":""}`} key={query.id} onClick={handleSelect} onMouseLeave={handleCloseDeleteDialog} >
+      <div className={classes.name}>
+        <span>{query.label?query.label:query.id} - <small title="queryId">{query.id}</small></span>
+        {showUser && query.user && (
+          <span className={`author ${enableDelete?"extra-padding":""}`}>by user <User user={query.user} />
+          </span>
+        )}
+        {enableDelete && !query.deleteError && !query.isDeleting && !showDeleteDialog && (
+          <button className={classes.deleteButton} title="delete" onClick={handleConfirmDelete}><FontAwesomeIcon icon="times"/></button>
+        )}
+        {enableDelete && !query.deleteError && !query.isDeleting && (
+          <div className={`${classes.deleteDialog} ${showDeleteDialog?"show":""}`}>
+            <Button variant="danger" size="sm" onClick={handleDelete}><FontAwesomeIcon icon="trash-alt"/>&nbsp;Delete</Button>
+          </div>
+        )}
+        {enableDelete && !query.deleteError && query.isDeleting && (
+          <div className={classes.deleting} title={`deleting query ${query.id}...`}>
+            <FontAwesomeIcon icon={"circle-notch"} spin/>
+          </div>
+        )}
+        {enableDelete && query.deleteError && (
+          <PopOverButton
+            className={classes.error}
+            buttonClassName={classes.errorButton}
+            buttonTitle={query.deleteError}
+            iconComponent={FontAwesomeIcon}
+            iconProps={{icon: "exclamation-triangle"}}
+            okComponent={() => (
+              <React.Fragment>
+                <FontAwesomeIcon icon="redo-alt"/>&nbsp;Retry
+              </React.Fragment>
+            )}
+            onOk={handleDelete}
+            cancelComponent={() => (
+              <React.Fragment>
+                <FontAwesomeIcon icon="undo-alt"/>&nbsp;Cancel
+              </React.Fragment>
+            )}
+            onCancel={handleCancelDelete}
+          >
+            <h5 className={classes.textError}>{query.deleteError}</h5>
+          </PopOverButton>
         )}
       </div>
-    );
-  }
-}
+      {query.description && (
+        <div className={classes.description} title={query.description}>{query.description}</div>
+      )}
+    </div>
+  );
+
+});
 
 export default SavedQuery;

@@ -1,6 +1,6 @@
 import React from "react";
-import { observer } from "mobx-react";
-import injectStyles from "react-jss";
+import { observer } from "mobx-react-lite";
+import { createUseStyles } from "react-jss";
 
 import appStore from "../Stores/AppStore";
 import authStore from "../Stores/AuthStore";
@@ -8,7 +8,7 @@ import authStore from "../Stores/AuthStore";
 import UserProfileTab from "./UserProfileTab";
 import WorkspaceSelector from "../Components/WorkspaceSelector";
 
-const styles = {
+const useStyles = createUseStyles({
   container: {
     background: "var(--bg-color-ui-contrast1)",
     display: "grid",
@@ -47,20 +47,18 @@ const styles = {
     border: "1px solid var(--border-color-ui-contrast2)",
     borderLeft: "none"
   }
-};
+});
 
-@injectStyles(styles)
-@observer
-class Tabs extends React.Component {
-  render() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.container}>
-        <div className={`${classes.logo} layout-logo`} onClick={this.handleGoToDashboard}>
-          <img src={`${window.rootPath}/assets/ebrains.svg`} alt="" width="30" height="30" />
-          <span>Knowledge Graph Query Builder</span>
-        </div>
-        {!appStore.globalError &&
+const Tabs = observer(() => {
+
+  const classes = useStyles();
+  return (
+    <div className={classes.container}>
+      <div className={`${classes.logo} layout-logo`}>
+        <img src={`${window.rootPath}/assets/ebrains.svg`} alt="" width="30" height="30" />
+        <span>Knowledge Graph Query Builder</span>
+      </div>
+      {!appStore.globalError &&
           <React.Fragment>
             <div className={classes.fixedTabsLeft}>
               {authStore.isAuthenticated && authStore.isUserAuthorized && authStore.hasUserWorkspaces && appStore.currentWorkspace?
@@ -70,17 +68,14 @@ class Tabs extends React.Component {
             </div>
             <div className={classes.fixedTabsRight}>
               {authStore.isAuthenticated && authStore.isUserAuthorized && (
-                <React.Fragment>
-                  {/* <Tab icon={"question-circle"} current={matchPath(this.state.currentLocationPathname, { path: "/help", exact: "true" })} path={"/help"} hideLabel label={"Help"} /> */}
-                  <UserProfileTab className={classes.userProfileTab} size={32} />
-                </React.Fragment>
+                <UserProfileTab className={classes.userProfileTab} size={32} />
               )}
             </div>
           </React.Fragment>
-        }
-      </div>
-    );
-  }
-}
+      }
+    </div>
+  );
+
+});
 
 export default Tabs;

@@ -1,15 +1,15 @@
 import React from "react";
-import injectStyles from "react-jss";
-import { observer } from "mobx-react";
+import { createUseStyles } from "react-jss";
+import { observer } from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
 
 import Fields from "./Fields";
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 import typesStore from "../Stores/TypesStore";
 import Icon from "../Components/Icon";
 
-let styles = {
+const useStyles = createUseStyles({
   container: {
     position: "relative",
     "&::before": {
@@ -128,89 +128,58 @@ let styles = {
   },
   optionsButton: {
     position: "absolute",
-    right: "10px",
-    top: "9px",
+    right: "6px",
+    top: "6px",
     opacity: 0.25
   }
-};
+});
 
-@injectStyles(styles)
-@observer
-class Field extends React.Component {
-  handleSelectField = () => {
-    queryBuilderStore.selectField(this.props.field);
-  }
+const Field = observer(({ field }) => {
 
-  handleRemoveField = (e) => {
+  const classes = useStyles();
+
+  const handleSelectField = () => {
+    queryBuilderStore.selectField(field);
+  };
+
+  const handleRemoveField = e => {
     e.stopPropagation();
-    queryBuilderStore.removeField(this.props.field);
-  }
+    queryBuilderStore.removeField(field);
+  };
 
-  render() {
-    const { classes, field } = this.props;
+  const isFlattened = field.isFlattened;
+  const hasFlattenedParent = field.parent && field.parent.isFlattened;
 
-    const isFlattened = field.isFlattened;
-    const hasFlattenedParent = field.parent && field.parent.isFlattened;
-
-    return (
-      <div className={`${classes.container} ${field.isMerge ? "is-merge" : ""} ${field.isRootMerge ? "is-root-merge" : ""} ${field.isMerge && !field.isRootMerge ? "is-child-merge" : ""} ${(field.isMerge && field.parentIsRootMerge) ? "parent-is-root-merge" : ""} ${isFlattened ? "flattened" : ""} ${hasFlattenedParent ? "has-flattened-parent" : ""}`}>
-        {hasFlattenedParent &&
-          <div className={classes.verticalLineExtraPath}></div>
-        }
-        <div className={`${classes.label} ${field.isUnknown ? "is-unknown" : ""} ${(field.isInvalid || field.aliasError) ? "is-invalid" : ""} ${field === queryBuilderStore.currentField ? "selected" : ""}`} onClick={this.handleSelectField}>
-          {field.isMerge && field.parentIsRootMerge && (
-            <div className={classes.parentIsRootMerge}>
-              <FontAwesomeIcon icon="long-arrow-alt-right" />
-            </div>
-          )}
-          {field.isFlattened && (!field.isMerge || (field.structure && !!field.structure.length)) && (
-            <span className={classes.required}>
-              <FontAwesomeIcon transform="flip-h" icon="level-down-alt" />&nbsp;&nbsp;
+  return (
+    <div className={`${classes.container} ${field.isMerge ? "is-merge" : ""} ${field.isRootMerge ? "is-root-merge" : ""} ${field.isMerge && !field.isRootMerge ? "is-child-merge" : ""} ${(field.isMerge && field.parentIsRootMerge) ? "parent-is-root-merge" : ""} ${isFlattened ? "flattened" : ""} ${hasFlattenedParent ? "has-flattened-parent" : ""}`}>
+      {hasFlattenedParent &&
+        <div className={classes.verticalLineExtraPath}></div>
+      }
+      <div className={`${classes.label} ${field.isUnknown ? "is-unknown" : ""} ${(field.isInvalid || field.aliasError) ? "is-invalid" : ""} ${field === queryBuilderStore.currentField ? "selected" : ""}`} onClick={handleSelectField}>
+        {field.isMerge && field.parentIsRootMerge && (
+          <div className={classes.parentIsRootMerge}>
+            <FontAwesomeIcon icon="long-arrow-alt-right" />
+          </div>
+        )}
+        {field.isFlattened && (!field.isMerge || (field.structure && !!field.structure.length)) && (
+          <span className={classes.required}>
+            <FontAwesomeIcon transform="flip-h" icon="level-down-alt" />&nbsp;&nbsp;
+          </span>
+        )}
+        {field.getOption("required") && (
+          <span className={classes.required}>
+            <FontAwesomeIcon transform="shrink-8" icon="asterisk" />&nbsp;&nbsp;
+          </span>
+        )}
+        {field.isRootMerge ?
+          <React.Fragment>
+            <span className={classes.merge} title="merge">
+              <FontAwesomeIcon transform="shrink-8" icon="sitemap" />
             </span>
-          )}
-          {field.getOption("required") && (
-            <span className={classes.required}>
-              <FontAwesomeIcon transform="shrink-8" icon="asterisk" />&nbsp;&nbsp;
-            </span>
-          )}
-          {field.isRootMerge ?
-            <React.Fragment>
-              <span className={classes.merge} title="merge">
-                <FontAwesomeIcon transform="shrink-8" icon="sitemap" />
-              </span>
-              {!field.parent && (
-                <React.Fragment>
-                  &nbsp;&nbsp;{field.schema.label}&nbsp;
-                  {field.schema.canBe && !!field.schema.canBe.length && (
-                    <span className={classes.canBe}>
-                      ( {field.schema.canBe.map(t => {
-                        const type = typesStore.types[t];
-                        const label = type?type.label:t;
-                        const color = type?type.color:null;
-                        return (
-                          <React.Fragment key={label} >
-                            <Icon icon="circle" color={color} />{label}
-                          </React.Fragment>
-                        );
-                      })} )
-                    </span>
-                  )}
-                </React.Fragment>
-              )}
-            </React.Fragment>
-            :
-            field.isUnknown ?
-              field.schema.simpleAttributeName ?
-                <React.Fragment>
-                  {field.schema.simpleAttributeName}&nbsp;
-                  <span className={classes.canBe} title={field.schema.attribute}>( {field.schema.attributeNamespace ? field.schema.attributeNamespace : field.schema.attribute} )</span>
-                </React.Fragment>
-                :
-                field.schema.attribute
-              :
+            {!field.parent && (
               <React.Fragment>
-                {field.schema.label}&nbsp;
-                {!field.isRootMerge && field.schema.canBe && !!field.schema.canBe.length && (
+                &nbsp;&nbsp;{field.schema.label}&nbsp;
+                {field.schema.canBe && !!field.schema.canBe.length && (
                   <span className={classes.canBe}>
                     ( {field.schema.canBe.map(t => {
                       const type = typesStore.types[t];
@@ -225,31 +194,59 @@ class Field extends React.Component {
                   </span>
                 )}
               </React.Fragment>
-          }
-          {field.parent && !field.parent.isFlattened && (!field.isMerge || field.isRootMerge) && (
-            field.alias ?
-              <span className={classes.rename}>
-                &nbsp;&nbsp;<FontAwesomeIcon icon="long-arrow-alt-right" />&nbsp;&nbsp;
-                {field.alias}
-              </span>
+            )}
+          </React.Fragment>
+          :
+          field.isUnknown ?
+            field.schema.simpleAttributeName ?
+              <React.Fragment>
+                {field.schema.simpleAttributeName}&nbsp;
+                <span className={classes.canBe} title={field.schema.attribute}>( {field.schema.attributeNamespace ? field.schema.attributeNamespace : field.schema.attribute} )</span>
+              </React.Fragment>
               :
-              <span className={classes.defaultname}>
-                &nbsp;&nbsp;<FontAwesomeIcon icon="long-arrow-alt-right" />&nbsp;&nbsp;
-                {field.getDefaultAlias()}
-              </span>
-          )}
-          <div className={classes.optionsButton}>
-            <Button bsSize={"xsmall"} bsStyle={"primary"} onClick={this.handleRemoveField}>
-              <FontAwesomeIcon icon="times" />
-            </Button>
-          </div>
-        </div>
-        <div className={classes.subFields}>
-          <Fields field={field} />
+              field.schema.attribute
+            :
+            <React.Fragment>
+              {field.schema.label}&nbsp;
+              {!field.isRootMerge && field.schema.canBe && !!field.schema.canBe.length && (
+                <span className={classes.canBe}>
+                  ( {field.schema.canBe.map(t => {
+                    const type = typesStore.types[t];
+                    const label = type?type.label:t;
+                    const color = type?type.color:null;
+                    return (
+                      <React.Fragment key={label} >
+                        <Icon icon="circle" color={color} />{label}
+                      </React.Fragment>
+                    );
+                  })} )
+                </span>
+              )}
+            </React.Fragment>
+        }
+        {field.parent && !field.parent.isFlattened && (!field.isMerge || field.isRootMerge) && (
+          field.alias ?
+            <span className={classes.rename}>
+              &nbsp;&nbsp;<FontAwesomeIcon icon="long-arrow-alt-right" />&nbsp;&nbsp;
+              {field.alias}
+            </span>
+            :
+            <span className={classes.defaultname}>
+              &nbsp;&nbsp;<FontAwesomeIcon icon="long-arrow-alt-right" />&nbsp;&nbsp;
+              {field.defaultAlias}
+            </span>
+        )}
+        <div className={classes.optionsButton}>
+          <Button size="sm" variant="primary" onClick={handleRemoveField}>
+            <FontAwesomeIcon icon="times" />
+          </Button>
         </div>
       </div>
-    );
-  }
-}
+      <div className={classes.subFields}>
+        <Fields field={field} />
+      </div>
+    </div>
+  );
+});
 
 export default Field;

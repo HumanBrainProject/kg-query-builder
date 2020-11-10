@@ -1,22 +1,10 @@
 {
     "presets": [
-        ["env", { "modules": false }],
-        "react"
+        ["@babel/preset-env", { "modules": false }],
+         "@babel/preset-react"
     ],
     "plugins": [
-        "transform-decorators-legacy",
-        "transform-class-properties",
-        "transform-object-rest-spread",
-        ["transform-imports", {
-            "react-bootstrap": {
-                "transform": "react-bootstrap/lib/${member}",
-                "preventFullImport": true
-            },
-            "lodash": {
-                "transform": "lodash/${member}",
-                "preventFullImport": true
-            }
-        }]
+        "@babel/plugin-proposal-class-properties"
     ],
     "sourceMaps": true,
     "retainLines": true

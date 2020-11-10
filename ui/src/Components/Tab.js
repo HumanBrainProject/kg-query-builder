@@ -1,11 +1,10 @@
 import React from "react";
-import injectStyles from "react-jss";
+import { createUseStyles } from "react-jss";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { observer } from "mobx-react";
-import { isFunction } from "lodash";
+import { observer } from "mobx-react-lite";
 
-let styles = {
+const useStyles = createUseStyles({
   container:{
     height:"50px",
     lineHeight:"50px",
@@ -58,40 +57,31 @@ let styles = {
       color:"var(--ft-color-loud)"
     }
   }
-};
+});
 
-@injectStyles(styles)
-@observer
-class Tab extends React.Component {
-  handleClick = e => {
+const Tab = observer(({ current, label, icon, iconColor, hideLabel, onClick}) => {
+  const classes = useStyles();
+
+  const handleClick = e => {
     e.preventDefault();
-    if(isFunction(this.props.onClick)){
-      this.props.onClick(e);
+    if (typeof onClick === "function") {
+      onClick(e);
     }
-  }
+  };
 
-  handleClose = e => {
-    e.stopPropagation();
-    if(isFunction(this.props.onClose)){
-      this.props.onClose();
-    }
-  }
-
-  render(){
-    const {classes, current, icon, iconColor, hideLabel} = this.props;
-    return (
-      <div className={`${classes.container} ${current? classes.current: ""}`} onClick={this.handleClick}>
-        <div className={classes.icon} style={iconColor?{color:iconColor}:{}} title={this.props.label}>
-          {icon && <FontAwesomeIcon fixedWidth icon={icon} />}
-        </div>
-        {hideLabel?null:
-          <div className={classes.text} title={this.props.label}>
-            {this.props.label}
-          </div>
-        }
+  return (
+    <div className={`${classes.container} ${current? classes.current: ""}`} onClick={handleClick}>
+      <div className={classes.icon} style={iconColor?{color:iconColor}:{}} title={label}>
+        {icon && <FontAwesomeIcon fixedWidth icon={icon} />}
       </div>
-    );
-  }
-}
+      {hideLabel?null:
+        <div className={classes.text} title={label}>
+          {label}
+        </div>
+      }
+    </div>
+  );
+
+});
 
 export default Tab;

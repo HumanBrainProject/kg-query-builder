@@ -1,4 +1,4 @@
-import { observable, action, computed, toJS } from "mobx";
+import { observable, action, computed, toJS, makeObservable } from "mobx";
 
 const defaultOptions = [
   {
@@ -17,30 +17,51 @@ const defaultOptions = [
 
 
 class Field {
-  @observable schema = null;
-  @observable merge = [];
-  @observable structure = [];
-  @observable alias = null;
-  @observable isFlattened = false;
-  @observable isMerge = false;
-  @observable optionsMap = new Map();
-  @observable isUnknown = null;;
-  @observable isInvalid = null;
-  @observable aliasError = null;
+  schema = null;
+  merge = [];
+  structure = [];
+  alias = null;
+  isFlattened = false;
+  isMerge = false;
+  optionsMap = new Map();
+  isUnknown = null;;
+  isInvalid = null;
+  aliasError = null;
 
   constructor(schema, parent) {
+    makeObservable(this, {
+      schema: observable,
+      merge: observable,
+      structure: observable,
+      alias: observable,
+      isFlattened: observable,
+      isMerge: observable,
+      optionsMap: observable,
+      isUnknown: observable,
+      isInvalid: observable,
+      aliasError: observable,
+      setAlias: action,
+      options: computed,
+      setOption: action,
+      setCurrentFieldFlattened: action,
+      isRootMerge: computed,
+      parentIsRootMerge: computed,
+      rootMerge: computed,
+      hasMergeChild: computed,
+      lookups: computed,
+      defaultAlias: computed
+    });
+
     this.schema = schema;
     this.parent = parent;
     defaultOptions.forEach(option => this.optionsMap.set(option.name, option.value));
   }
 
-  @action
   setAlias(value) {
     this.alias = value;
     this.aliasError = (value.trim() === "" && this.isRootMerge);
   }
 
-  @computed
   get options() {
     return Array.from(this.optionsMap).map(([name, value]) => ({
       name: name,
@@ -52,7 +73,6 @@ class Field {
     return this.optionsMap.has(name) ? this.optionsMap.get(name) : undefined;
   }
 
-  @action
   setOption(name, value, preventRecursivity) {
     this.optionsMap.set(name, value);
     if (name === "sort" && value && !preventRecursivity) {
@@ -64,17 +84,18 @@ class Field {
     }
   }
 
-  @computed
+  setCurrentFieldFlattened(value) {
+    this.isFlattened = !!value;
+  }
+
   get isRootMerge() {
     return this.isMerge && (!this.parent || !this.parent.isMerge);
   }
 
-  @computed
   get parentIsRootMerge() {
     return !this.isRootMerge && this.parent && this.parent.isRootMerge;
   }
 
-  @computed
   get rootMerge() {
     if (!this.isMerge) {
       return null;
@@ -86,12 +107,10 @@ class Field {
     return field;
   }
 
-  @computed
   get hasMergeChild() {
     return this.isRootMerge ? (this.merge && !!this.merge.length) : (this.structure && !!this.structure.length);
   }
 
-  @computed
   get lookups() {
     if (this.merge && !!this.merge.length) {
       const canBe = [];
@@ -117,7 +136,7 @@ class Field {
     return (this.schema && this.schema.canBe && !!this.schema.canBe) ? this.schema.canBe : [];
   }
 
-  getDefaultAlias() {
+  get defaultAlias() {
     let currentField = this;
     while (currentField.isFlattened && currentField.structure[0] && currentField.structure[0].schema && currentField.structure[0].schema.canBe) {
       currentField = currentField.structure[0];
@@ -125,7 +144,7 @@ class Field {
     if (!currentField.schema) {
       return "";
     }
-    return currentField.schema.simpleAttributeName || currentField.schema.simplePropertyName || currentField.schema.label || "";
+    return currentField.schema.simpleAttributeName || currentField.schema.label || "";
   }
 }
 

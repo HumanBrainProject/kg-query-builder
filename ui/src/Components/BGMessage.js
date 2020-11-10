@@ -1,8 +1,8 @@
 import React from "react";
-import injectStyles from "react-jss";
+import { createUseStyles } from "react-jss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-const styles = {
+const useStyles = createUseStyles({
   container:{
     position:"absolute !important",
     top:"50%",
@@ -22,23 +22,22 @@ const styles = {
     fontWeight:"300",
     fontSize:"1.2em"
   }
-};
+});
 
-@injectStyles(styles)
-class BGMessage extends React.Component{
-  render(){
-    const { classes } = this.props;
-    return(
-      <div className={classes.container}>
-        <div className={classes.icon}>
-          <FontAwesomeIcon icon={this.props.icon} transform={this.props.transform}/>
-        </div>
-        <div className={classes.text}>
-          {this.props.children}
-        </div>
+const BGMessage = ({ children, icon, transform }) => {
+
+  const classes = useStyles();
+
+  return(
+    <div className={classes.container}>
+      <div className={classes.icon}>
+        <FontAwesomeIcon icon={icon} transform={transform}/>
       </div>
-    );
-  }
-}
+      <div className={classes.text}>
+        {children}
+      </div>
+    </div>
+  );
+};
 
 export default BGMessage;
