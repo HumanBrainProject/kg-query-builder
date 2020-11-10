@@ -1,5 +1,5 @@
 import React, {useRef, useEffect, useState} from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "react-bootstrap/Button";

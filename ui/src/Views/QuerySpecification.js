@@ -1,6 +1,6 @@
 import React from "react";
 import ReactJson from "react-json-view";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import ThemeRJV from "./ThemeRJV";
 
 import queryBuilderStore from "../Stores/QueryBuilderStore";

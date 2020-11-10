@@ -1,7 +1,7 @@
 import React from "react";
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 import typesStore from "../Stores/TypesStore";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import Icon from "../Components/Icon";
 

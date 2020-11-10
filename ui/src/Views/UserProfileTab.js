@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import Overlay from "react-bootstrap/Overlay";
 import Popover from "react-bootstrap/Popover";

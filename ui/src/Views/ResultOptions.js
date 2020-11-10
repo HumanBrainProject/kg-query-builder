@@ -1,6 +1,6 @@
 import React from "react";
 import queryBuilderStore from "../Stores/QueryBuilderStore";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";

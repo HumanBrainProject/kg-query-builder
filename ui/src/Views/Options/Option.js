@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import ReactJson from "react-json-view";
 import Button from "react-bootstrap/Button";

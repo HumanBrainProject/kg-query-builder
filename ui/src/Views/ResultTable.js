@@ -1,5 +1,5 @@
 import React from "react";
-import { observer } from "mobx-react";
+import { observer } from "mobx-react-lite";
 import { toJS } from "mobx";
 import { createUseStyles } from "react-jss";
 import Button from "react-bootstrap/Button";
