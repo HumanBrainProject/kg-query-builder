@@ -2,13 +2,12 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react";
 import { Scrollbars } from "react-custom-scrollbars";
-import { Modal } from "react-bootstrap";
+import Modal from "react-bootstrap/Modal";
 
 import appStore from "../Stores/AppStore";
 import authStore from "../Stores/AuthStore";
 
 const rootPath = window.rootPath || "";
-
 const useStyles = createUseStyles({
   container: {
     width: "100%",
@@ -21,9 +20,7 @@ const useStyles = createUseStyles({
     fontSize: "1.5em",
     padding: "30px 0",
     "& h1": {
-      padding: "0 30px 20px 30px",
-      marginBottom: ".5rem",
-      marginTop: 0
+      padding: "0 30px 20px 30px"
     },
     "& p": {
       padding: "0 30px",

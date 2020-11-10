@@ -105,7 +105,7 @@ const Options = observer(() => {
         onClick={handleAddMergeChildField}
       />
       <Links
-        attributes={parentLookupsLinks}
+        links={parentLookupsLinks}
         label="links valid for"
         isMerge={true}
         show={field.isRootMerge && field !== rootField}
@@ -136,7 +136,7 @@ const Options = observer(() => {
         onClick={handleAddField}
       />
       <Links
-        attributes={lookupsLinks}
+        links={lookupsLinks}
         label="Links valid for"
         show={!field.isFlattened
           || (field.isMerge

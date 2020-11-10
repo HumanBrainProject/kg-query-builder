@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { createUseStyles } from "react-jss";
-import { Button } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import appStore from "../Stores/AppStore";
@@ -72,7 +72,7 @@ const Login = observer(() => {
             <BGMessage icon={"ban"}>
               {`There was a problem initializing (${appStore.initializationError}).
               If the problem persists, please contact the support.`}<br /><br />
-              <Button bsStyle={"primary"} onClick={handleRetryToInitialize}>
+              <Button variant="primary" onClick={handleRetryToInitialize}>
                 <FontAwesomeIcon icon={"redo-alt"} /> &nbsp; Retry
               </Button>
             </BGMessage>
@@ -87,7 +87,7 @@ const Login = observer(() => {
               <h3>You are logged out of the application</h3>
               <p></p>
               <div>
-                <Button bsStyle={"primary"} onClick={handleLogin}>Login</Button>
+                <Button variant="primary" onClick={handleLogin}>Login</Button>
               </div>
             </div>
         :
@@ -99,7 +99,7 @@ const Login = observer(() => {
               Click on the following button to ask a new one and continue with your session.
             </p>
             <div>
-              <Button bsStyle={"primary"} onClick={handleLogin}>Re-Login</Button>
+              <Button variant="primary" onClick={handleLogin}>Re-Login</Button>
             </div>
           </div>
           :

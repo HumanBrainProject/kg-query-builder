@@ -2,9 +2,15 @@ import React from "react";
 import { observer } from "mobx-react";
 import { toJS } from "mobx";
 import { createUseStyles } from "react-jss";
-import { Button, Table, OverlayTrigger, Tooltip } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import Table from "react-bootstrap/Table";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { get, isObject, isArray, isString, isInteger } from "lodash";
+import get from "lodash/get";
+import isObject from "lodash/isObject";
+import isString from "lodash/isString";
+import isInteger from "lodash/isInteger";
 
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 import BGMessage from "../Components/BGMessage";
@@ -128,14 +134,14 @@ const ResultValue = observer(({name, index, value}) => {
     return null;
   };
 
-  if (isArray(value)) {
+  if (Array.isArray(value)) {
     if (!value.length) {
       return (
         <em>empty collection</em>
       );
     }
     return (
-      <Button bsSize={"xsmall"} bsStyle={"primary"} onClick={handleOpenCollection}>
+      <Button size="sm" variant="primary" onClick={handleOpenCollection}>
           Collection ({value.length})
       </Button>
     );
@@ -208,11 +214,11 @@ const ResultTable = observer(() => {
               If the problem persists, please contact the support.<br/>
             <small>{queryBuilderStore.runError}</small><br/><br/>
             {queryBuilderStore.isQueryEmpty?
-              <Button bsStyle={"primary"} onClick={handlClearError}>
+              <Button variant="primary" onClick={handlClearError}>
                 <FontAwesomeIcon icon={"redo-alt"}/>&nbsp;&nbsp; OK
               </Button>
               :
-              <Button bsStyle={"primary"} onClick={handlExecuteQuery}>
+              <Button variant="primary" onClick={handlExecuteQuery}>
                 <FontAwesomeIcon icon={"redo-alt"}/>&nbsp;&nbsp; Retry
               </Button>
             }

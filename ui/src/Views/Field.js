@@ -2,7 +2,7 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
 
 import Fields from "./Fields";
 import queryBuilderStore from "../Stores/QueryBuilderStore";
@@ -128,8 +128,8 @@ const useStyles = createUseStyles({
   },
   optionsButton: {
     position: "absolute",
-    right: "10px",
-    top: "9px",
+    right: "6px",
+    top: "6px",
     opacity: 0.25
   }
 });
@@ -144,7 +144,7 @@ const Field = observer(({ field }) => {
 
   const handleRemoveField = e => {
     e.stopPropagation();
-    queryBuilderStore.removeFieldfield(field);
+    queryBuilderStore.removeField(field);
   };
 
   const isFlattened = field.isFlattened;
@@ -233,11 +233,11 @@ const Field = observer(({ field }) => {
             :
             <span className={classes.defaultname}>
               &nbsp;&nbsp;<FontAwesomeIcon icon="long-arrow-alt-right" />&nbsp;&nbsp;
-              {field.getDefaultAlias()}
+              {field.defaultAlias}
             </span>
         )}
         <div className={classes.optionsButton}>
-          <Button bsSize={"xsmall"} bsStyle={"primary"} onClick={handleRemoveField}>
+          <Button size="sm" variant="primary" onClick={handleRemoveField}>
             <FontAwesomeIcon icon="times" />
           </Button>
         </div>

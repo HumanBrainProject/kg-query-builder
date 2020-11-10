@@ -1,4 +1,4 @@
-import { observable, action, runInAction } from "mobx";
+import { observable, action, runInAction, makeObservable } from "mobx";
 import { matchPath } from "react-router-dom";
 
 import DefaultTheme from "../Themes/Default";
@@ -7,14 +7,14 @@ import authStore from "./AuthStore";
 import typesStore from "./TypesStore";
 
 class AppStore{
-  @observable globalError = null;
-  @observable currentTheme;
-  @observable historySettings;
-  @observable initializingMessage = null;
-  @observable initializationError = null;
-  @observable canLogin = true;
-  @observable currentWorkspace = null;
-  @observable isInitialized = false;
+  globalError = null;
+  currentTheme;
+  historySettings;
+  initializingMessage = null;
+  initializationError = null;
+  canLogin = true;
+  currentWorkspace = null;
+  isInitialized = false;
 
 
   availableThemes = {
@@ -23,12 +23,31 @@ class AppStore{
   }
 
   constructor(){
+    makeObservable(this, {
+      globalError: observable,
+      currentTheme: observable,
+      historySettings: observable,
+      initializingMessage: observable,
+      initializationError: observable,
+      canLogin: observable,
+      currentWorkspace: observable,
+      isInitialized: observable,
+      initialize: action,
+      initializeWorkspace: action,
+      setCurrentWorkspace: action,
+      setGlobalError: action,
+      dismissGlobalError: action,
+      login: action,
+      setTheme: action,
+      toggleTheme: action,
+      handleGlobalShortcuts: action
+    });
+
     this.canLogin = !matchPath(window.location.pathname, { path: "/logout", exact: "true" });
     let savedTheme = localStorage.getItem("currentTheme");
     this.currentTheme = savedTheme === "bright"? "bright": "default";
   }
 
-  @action
   async initialize() {
     if (this.canLogin && !this.isInitialized) {
       this.initializingMessage = "Initializing the application...";
@@ -80,15 +99,11 @@ class AppStore{
     }
   }
 
-  @action
   initializeWorkspace() {
-    let workspace = null;
-    workspace = localStorage.getItem("currentWorkspace");
+    const workspace = localStorage.getItem("currentWorkspace");
     this.setCurrentWorkspace(workspace);
-    return this.currentWorkspace;
   }
 
-  @action
   setCurrentWorkspace = workspace => {
     if (!workspace || !authStore.hasWorkspaces || !authStore.workspaces.includes(workspace)) {
       if (authStore.hasUserWorkspaces && authStore.workspaces.length === 1) {
@@ -102,19 +117,16 @@ class AppStore{
       localStorage.setItem("currentWorkspace", workspace);
       typesStore.fetch(true);
     }
-  }
+  };
 
-  @action
-  setGlobalError(error, info){
+  setGlobalError(error, info) {
     this.globalError = {error, info};
   }
 
-  @action
-  dismissGlobalError(){
+  dismissGlobalError() {
     this.globalError = null;
   }
 
-  @action
   login = () => {
     if (this.canLogin) {
       authStore.login();
@@ -123,16 +135,14 @@ class AppStore{
       this.canLogin = true;
       this.initialize(true);
     }
-  }
+  };
 
-  @action
-  setTheme(theme){
+  setTheme(theme) {
     this.currentTheme = this.availableThemes[theme]? theme: "default";
     localStorage.setItem("currentTheme", this.currentTheme);
   }
 
-  @action
-  toggleTheme(){
+  toggleTheme() {
     if(this.currentTheme === "bright"){
       this.setTheme("default");
     } else {
@@ -140,12 +150,11 @@ class AppStore{
     }
   }
 
-  @action
   handleGlobalShortcuts = e => {
     if ((e.ctrlKey || e.metaKey) && e.altKey && e.keyCode === 84) {
       this.toggleTheme();
     }
-  }
+  };
 }
 
 export default new AppStore();

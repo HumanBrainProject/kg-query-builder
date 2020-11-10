@@ -1,7 +1,8 @@
 import React, { useRef, useEffect} from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react";
-import { Button, FormControl} from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Scrollbars } from "react-custom-scrollbars";
 
@@ -108,7 +109,7 @@ const QueryBuilder = observer(() => {
 
   const handleSelectTab = tab => {
     queryBuilderStore.selectTab(tab);
-    scrolledPanel.current.scrollToTop();
+    scrolledPanel.current && scrolledPanel.current.scrollToTop();
   };
 
   const handleCloseField = () => queryBuilderStore.closeFieldOptions();
@@ -131,7 +132,7 @@ const QueryBuilder = observer(() => {
               There was a network problem fetching the api structure.<br />
               If the problem persists, please contact the support.<br />
             <small>{typesStore.fetchError}</small><br /><br />
-            <Button bsStyle={"primary"} onClick={handleRetryFetchStructure}>
+            <Button variant="primary" onClick={handleRetryFetchStructure}>
               <FontAwesomeIcon icon={"redo-alt"} />&nbsp;&nbsp; Retry
             </Button>
           </BGMessage>
@@ -140,7 +141,7 @@ const QueryBuilder = observer(() => {
             <BGMessage icon={"tools"}>
                 No types available.<br />
                 If the problem persists, please contact the support.<br /><br />
-              <Button bsStyle={"primary"} onClick={handleRetryFetchStructure}>
+              <Button variant="primary" onClick={handleRetryFetchStructure}>
                 <FontAwesomeIcon icon={"redo-alt"} />&nbsp;&nbsp; Retry
               </Button>
             </BGMessage>
@@ -158,14 +159,14 @@ const QueryBuilder = observer(() => {
                 <div className={classes.tabs}>
                   {queryBuilderStore.hasRootSchema ?
                     <React.Fragment>
-                      {queryBuilderStore.currentField && <Tab icon={"cog"} current={queryBuilderStore.currentTab === "fieldOptions"} label={"Field options"} onClose={handleCloseField} onClick={handleSelectTab("fieldOptions")} />}
-                      <Tab icon={"shopping-cart"} current={queryBuilderStore.currentTab === "query"} label={"Query specification"} onClick={handleSelectTab("query")} />
-                      <Tab icon={"poll-h"} current={queryBuilderStore.currentTab === "result"} label={"Results: JSON View"} onClick={handleSelectTab("result")} />
-                      <Tab icon={"table"} current={queryBuilderStore.currentTab === "resultTable"} label={"Results: Table View"} onClick={handleSelectTab("resultTable")} />
+                      {queryBuilderStore.currentField && <Tab icon={"cog"} current={queryBuilderStore.currentTab === "fieldOptions"} label={"Field options"} onClose={handleCloseField} onClick={() => handleSelectTab("fieldOptions")} />}
+                      <Tab icon={"shopping-cart"} current={queryBuilderStore.currentTab === "query"} label={"Query specification"} onClick={() => handleSelectTab("query")} />
+                      <Tab icon={"poll-h"} current={queryBuilderStore.currentTab === "result"} label={"Results: JSON View"} onClick={() => handleSelectTab("result")} />
+                      <Tab icon={"table"} current={queryBuilderStore.currentTab === "resultTable"} label={"Results: Table View"} onClick={() => handleSelectTab("resultTable")} />
                     </React.Fragment>
                     :
                     <div className={classes.filterType}>
-                      <FormControl
+                      <Form.Control
                         className={classes.filterTypeInput}
                         type="text"
                         onChange={handleFilterTypes}

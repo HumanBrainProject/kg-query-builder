@@ -14,18 +14,18 @@ const useStyles = createUseStyles({
   }
 });
 
-const CustomDropdownToggle = () => {
+const CustomDropdownToggle = ({ children, onClick }) => {
 
   const classes = useStyles();
 
   const handleClick = e => {
     e.preventDefault();
-    this.props.onClick(e);
-  }
+    onClick(e);
+  };
 
   return (
     <a onClick={handleClick} className={classes.dropdownLink}>
-      {this.props.children} <FontAwesomeIcon icon={"caret-down"} />
+      {children} <FontAwesomeIcon icon={"caret-down"} />
     </a>
   );
 };

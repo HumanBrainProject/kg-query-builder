@@ -1,4 +1,4 @@
-import { observable, computed, action, runInAction } from "mobx";
+import { observable, computed, action, runInAction, makeObservable } from "mobx";
 import API from "../Services/API";
 
 const rootPath = window.rootPath || "";
@@ -26,54 +26,75 @@ const mapUserProfile = data => {
 };
 
 class AuthStore {
-  @observable isUserAuthorized = false;
-  @observable user = null;
-  @observable workspaces = null;
-  @observable isRetrievingUserProfile = false;
-  @observable userProfileError = null;
-  @observable isRetrievingWorkspaces = false;
-  @observable workspacesError = null;
-  @observable authError = null;
-  @observable authSuccess = false;
-  @observable isTokenExpired = false;
-  @observable isInitializing = true;
-  @observable initializationError = null;
-  @observable isLogout = false;
+  isUserAuthorized = false;
+  user = null;
+  workspaces = null;
+  isRetrievingUserProfile = false;
+  userProfileError = null;
+  isRetrievingWorkspaces = false;
+  workspacesError = null;
+  authError = null;
+  authSuccess = false;
+  isTokenExpired = false;
+  isInitializing = true;
+  initializationError = null;
+  isLogout = false;
   keycloak = null;
   endpoint = null;
 
   constructor() {
+    makeObservable(this, {
+      isUserAuthorized: observable,
+      user: observable,
+      workspaces: observable,
+      isRetrievingUserProfile: observable,
+      userProfileError: observable,
+      isRetrievingWorkspaces: observable,
+      workspacesError: observable,
+      authError: observable,
+      authSuccess: observable,
+      isTokenExpired: observable,
+      isInitializing: observable,
+      initializationError: observable,
+      isLogout: observable,
+      accessToken: computed,
+      isAuthenticated: computed,
+      hasUserProfile: computed,
+      hasWorkspaces: computed,
+      hasUserWorkspaces: computed,
+      logout: action,
+      retrieveUserProfile: action,
+      retrieveUserWorkspaces: action,
+      initializeKeycloak: action,
+      login: action,
+      authenticate: action
+    });
+
     if (Storage === undefined) {
       throw "The browser must support WebStorage API";
     }
   }
 
-  @computed
   get accessToken() {
     return this.isAuthenticated ? this.keycloak.token: "";
   }
 
-  @computed
   get isAuthenticated() {
     return this.authSuccess;
   }
 
-  @computed
   get hasUserProfile() {
     return !!this.user;
   }
 
-  @computed
   get hasWorkspaces() {
     return !!this.workspaces;
   }
 
-  @computed
   get hasUserWorkspaces() {
     return this.workspaces instanceof Array && !!this.workspaces.length;
   }
 
-  @action
   logout() {
     this.authSuccess = false;
     this.isTokenExpired = true;
@@ -84,7 +105,6 @@ class AuthStore {
     this.isLogout = true;
   }
 
-  @action
   async retrieveUserProfile() {
     if (this.isAuthenticated && !this.user) {
       this.userProfileError = null;
@@ -112,7 +132,6 @@ class AuthStore {
     }
   }
 
-  @action
   async retrieveUserWorkspaces() {
     if(this.isAuthenticated && this.isUserAuthorized && !this.isRetrievingWorkspaces) {
       try {
@@ -138,7 +157,6 @@ class AuthStore {
     }
   }
 
-  @action
   initializeKeycloak(resolve, reject) {
     const keycloak = window.Keycloak({
       "realm": "hbp",
@@ -168,14 +186,12 @@ class AuthStore {
     keycloak.init({ onLoad: "login-required", flow: "implicit" });
   }
 
-  @action
   login() {
     if(!this.isAuthenticated && this.keycloak) {
       this.keycloak.login();
     }
   }
 
-  @action
   async authenticate() {
     this.isLogout = false;
     this.isInitializing = true;

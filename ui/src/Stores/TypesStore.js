@@ -1,42 +1,58 @@
-import { observable, action, computed, runInAction } from "mobx";
-import { debounce } from "lodash";
+import { observable, action, computed, runInAction, makeObservable } from "mobx";
+import debounce from "lodash/debounce";
+
 import API from "../Services/API";
 
 class TypesStore {
-  @observable filterValue = "";
-  @observable types = {};
-  @observable workspaceTypeList = [];
-  @observable fetchError = null;
-  @observable isFetching = false;
+  filterValue = "";
+  types = {};
+  workspaceTypeList = [];
+  fetchError = null;
+  isFetching = false;
   typesQueue = new Set();
   queueThreshold = 5000;
   queueTimeout = 250;
-  @observable fetchingQueueError = null;
-  @observable isFetchingQueue = false;
+  fetchingQueueError = null;
+  isFetchingQueue = false;
 
-  @computed
+  constructor() {
+    makeObservable(this, {
+      filterValue: observable,
+      types: observable,
+      workspaceTypeList: observable,
+      fetchError: observable,
+      isFetching: observable,
+      fetchingQueueError: observable,
+      isFetchingQueue: observable,
+      isFetched: computed,
+      filteredWorkspaceTypeList: computed,
+      hasTypes: computed,
+      setFilterValue: action,
+      fetch: action,
+      addTypesToTetch: action,
+      processQueue: action,
+      fetchQueue: action
+    });
+  }
+
   get isFetched() {
     return !this.fetchError && this.workspaceTypeList.length;
   }
 
-  @computed
   get filteredWorkspaceTypeList() {
     return this.workspaceTypeList.filter(type => type.label.toLowerCase().indexOf(this.filterValue.trim().toLowerCase()) !== -1);
   }
 
-  @computed
   get hasTypes() {
     return (
       !!this.workspaceTypeList.length
     );
   }
 
-  @action
   setFilterValue(value) {
     this.filterValue = value;
   }
 
-  @action
   async fetch(forceFetch=false) {
     if (!this.isFetching && (!this.types.length || !!forceFetch)) {
       this.isFetching = true;
@@ -65,14 +81,15 @@ class TypesStore {
           this.isFetching = false;
         });
       } catch (e) {
-        const message = e.message ? e.message : e;
-        this.fetchError = `Error while fetching types (${message})`;
-        this.isFetching = false;
+        runInAction(() => {
+          const message = e.message ? e.message : e;
+          this.fetchError = `Error while fetching types (${message})`;
+          this.isFetching = false;
+        });
       }
     }
   }
 
-  @action
   addTypesToTetch(types) {
     types
       .filter(id => !this.types[id])
@@ -80,8 +97,7 @@ class TypesStore {
     this.processQueue();
   }
 
-  @action
-  processQueue(){
+  processQueue() {
     if(this.typesQueue.size <= 0){
       this._debouncedFetchQueue.cancel();
     } else if(this.typesQueue.size < this.queueThreshold){
@@ -94,8 +110,7 @@ class TypesStore {
 
   _debouncedFetchQueue = debounce(()=>{this.fetchQueue();}, this.queueTimeout);
 
-  @action
-  async fetchQueue(){
+  async fetchQueue() {
     if(this.isFetchingQueue){
       return;
     }
@@ -123,7 +138,6 @@ class TypesStore {
       });
     }
   }
-
 }
 
 export default new TypesStore();

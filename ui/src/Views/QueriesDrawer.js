@@ -1,7 +1,7 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import {observer} from "mobx-react";
-import { Button } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import queryBuilderStore from "../Stores/QueryBuilderStore";
@@ -109,6 +109,7 @@ const useStyles = createUseStyles({
     },
     "& > button": {
       display: "inline-block",
+      color: "var(--ft-color-normal)",
       margin: 0,
       padding: 0,
       border: 0,
@@ -149,7 +150,7 @@ const QueriesDrawer = observer(() => {
                 <FontAwesomeIcon icon="exclamation-triangle"/><span>{queryBuilderStore.fetchQueriesError}</span>
                 <div>
                   <Button onClick={handleCancelFetchSavedQueries}><FontAwesomeIcon icon="times"/>&nbsp;Cancel</Button>
-                  <Button bsStyle="primary" onClick={handleFetchSavedQueries}><FontAwesomeIcon icon="redo-alt"/>&nbsp;Retry</Button>
+                  <Button variant="primary" onClick={handleFetchSavedQueries}><FontAwesomeIcon icon="redo-alt"/>&nbsp;Retry</Button>
                 </div>
               </div>
               :

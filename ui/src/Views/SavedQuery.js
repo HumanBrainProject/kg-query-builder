@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import { createUseStyles } from "react-jss";
 import {observer} from "mobx-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
 
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 import PopOverButton from "../Components/PopOverButton";
@@ -147,7 +147,7 @@ const SavedQuery = observer(({query, showUser, enableDelete}) => {
         )}
         {enableDelete && !query.deleteError && !query.isDeleting && (
           <div className={`${classes.deleteDialog} ${showDeleteDialog?"show":""}`}>
-            <Button bsStyle="danger" bsSize="small" onClick={handleDelete}><FontAwesomeIcon icon="trash-alt"/>&nbsp;Delete</Button>
+            <Button variant="danger" size="sm" onClick={handleDelete}><FontAwesomeIcon icon="trash-alt"/>&nbsp;Delete</Button>
           </div>
         )}
         {enableDelete && !query.deleteError && query.isDeleting && (

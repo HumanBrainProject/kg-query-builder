@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { createUseStyles } from "react-jss";
-import { FormControl } from "react-bootstrap";
+import Form from "react-bootstrap/Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const useStyles = createUseStyles({
@@ -62,20 +62,18 @@ const Name = observer(({ field, rootField }) => {
 
   const classes = useStyles();
 
-  const { isMerge, isRootMerge, alias, defaultAlias, aliasError, parent, setAlias } = field;
-
-  const handleChangeName = e => setAlias(e.target.value);
+  const handleChangeName = e => field.setAlias(e.target.value);
 
   if (field == rootField
     || parent.isFlattened
-    || (isMerge && !isRootMerge)
+    || (field.isMerge && !field.isRootMerge)
   ) {
     return null;
   }
 
   return (
     <div className={classes.option} >
-      {isRootMerge ?
+      {field.isRootMerge ?
         <div className={classes.optionLabel}>
           <strong><FontAwesomeIcon transform="shrink-8" icon="asterisk" /></strong>Merge name
         </div>
@@ -85,8 +83,8 @@ const Name = observer(({ field, rootField }) => {
         </div>
       }
       <div>
-        <FormControl type="text" required={isRootMerge} value={alias || ""} placeholder={defaultAlias()} onChange={handleChangeName} />
-        {aliasError && (
+        <Form.Control type="text" required={field.isRootMerge} value={field.alias || ""} placeholder={field.defaultAlias} onChange={handleChangeName} />
+        {field.aliasError && (
           <div className={classes.aliasError}>
             <FontAwesomeIcon icon="exclamation-triangle" />&nbsp;Empty value is not accepted
           </div>

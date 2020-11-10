@@ -3,7 +3,6 @@ import { createUseStyles } from "react-jss";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { observer } from "mobx-react";
-import { isFunction } from "lodash";
 
 const useStyles = createUseStyles({
   container:{
@@ -60,24 +59,24 @@ const useStyles = createUseStyles({
   }
 });
 
-const Tab = observer(({ current, icon, iconColor, hideLabel}) => {
+const Tab = observer(({ current, label, icon, iconColor, hideLabel, onClick}) => {
   const classes = useStyles();
 
   const handleClick = e => {
     e.preventDefault();
-    if(isFunction(this.props.onClick)){
-      this.props.onClick(e);
+    if (typeof onClick === "function") {
+      onClick(e);
     }
   };
 
   return (
     <div className={`${classes.container} ${current? classes.current: ""}`} onClick={handleClick}>
-      <div className={classes.icon} style={iconColor?{color:iconColor}:{}} title={this.props.label}>
+      <div className={classes.icon} style={iconColor?{color:iconColor}:{}} title={label}>
         {icon && <FontAwesomeIcon fixedWidth icon={icon} />}
       </div>
       {hideLabel?null:
-        <div className={classes.text} title={this.props.label}>
-          {this.props.label}
+        <div className={classes.text} title={label}>
+          {label}
         </div>
       }
     </div>

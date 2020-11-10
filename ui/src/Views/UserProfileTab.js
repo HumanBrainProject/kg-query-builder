@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createUseStyles } from "react-jss";
-import { Overlay, Popover, Button } from "react-bootstrap";
-import {uniqueId} from "lodash";
+import Overlay from "react-bootstrap/Overlay";
+import Popover from "react-bootstrap/Popover";
+import Button from "react-bootstrap/Button";
+import uniqueId from "lodash/uniqueId";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
@@ -188,7 +190,7 @@ const UserProfileTab = observer(({className, size=30}) => {
               <div>
                 <div className={classes.name}>{authStore.user.name}</div>
                 <div className={classes.email}>{authStore.user.email}</div>
-                <Button bsStyle="primary" className={classes.accountBtn} href="https://collab.humanbrainproject.eu/#/me" title="https://collab.humanbrainproject.eu/#/me" rel="noopener noreferrer" target="_blank">Account</Button>
+                <Button variant="primary" className={classes.accountBtn} href="https://collab.humanbrainproject.eu/#/me" title="https://collab.humanbrainproject.eu/#/me" rel="noopener noreferrer" target="_blank">Account</Button>
               </div>
             </div>
             <div className={classes.popOverFooterBar}>

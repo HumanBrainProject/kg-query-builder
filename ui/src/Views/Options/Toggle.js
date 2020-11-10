@@ -1,7 +1,8 @@
 import React from "react";
 import { observer } from "mobx-react";
-import MultiToggle from "../Components/MultiToggle";
 import { createUseStyles } from "react-jss";
+
+import MultiToggle from "../../Components/MultiToggle";
 
 const useStyles = createUseStyles({
   option: {

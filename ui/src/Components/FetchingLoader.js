@@ -19,7 +19,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const FetchingLoader = () => {
+const FetchingLoader = ({ children }) => {
 
   const classes = useStyles();
 
@@ -27,7 +27,7 @@ const FetchingLoader = () => {
     <div className={`${classes.fetchingPanel} fetchingPanel`}>
       <FontAwesomeIcon icon="circle-notch" spin/>
       <span className={`${classes.fetchingLabel} fetchingLabel`}>
-        {this.props.children}
+        {children}
       </span>
     </div>
   );

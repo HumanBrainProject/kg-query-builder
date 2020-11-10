@@ -24,17 +24,17 @@ const useStyles = createUseStyles({
   }
 });
 
-const BGMessage = () => {
+const BGMessage = ({ children, icon, transform }) => {
 
   const classes = useStyles();
 
   return(
     <div className={classes.container}>
       <div className={classes.icon}>
-        <FontAwesomeIcon icon={this.props.icon} transform={this.props.transform}/>
+        <FontAwesomeIcon icon={icon} transform={transform}/>
       </div>
       <div className={classes.text}>
-        {this.props.children}
+        {children}
       </div>
     </div>
   );

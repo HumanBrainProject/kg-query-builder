@@ -42,7 +42,7 @@ const RootSchemaChoice = observer(() =>  {
   return (
     <div className={classes.container}>
       {typesStore.filteredWorkspaceTypeList.map(type => (
-        <div className={classes.schemaSelectSchema} key={type.id} onClick={handleSelectRootSchema(type)}>
+        <div className={classes.schemaSelectSchema} key={type.id} onClick={()=>handleSelectRootSchema(type)}>
           <Icon icon="circle" color={type.color}/>
           {type.label} - <small>{type.id}</small>
         </div>

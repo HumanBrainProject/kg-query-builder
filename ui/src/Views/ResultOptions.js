@@ -1,7 +1,10 @@
 import React from "react";
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 import { observer } from "mobx-react";
-import { Button, Row, Col, FormGroup, FormControl, ControlLabel, Checkbox } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Form from "react-bootstrap/Form";
 import { createUseStyles } from "react-jss";
 
 const useStyles = createUseStyles({
@@ -54,46 +57,46 @@ const ResultOptions = observer(() => {
       <form>
         <Row>
           <Col xs={3}>
-            <FormGroup>
-              <ControlLabel>Size</ControlLabel>
-              <FormControl
+            <Form.Group>
+              <Form.Label>Size</Form.Label>
+              <Form.Control
                 className={classes.input}
                 type="number"
                 value={queryBuilderStore.resultSize}
                 placeholder="20"
                 onChange={handleChangeSize}
               />
-            </FormGroup>
+            </Form.Group>
           </Col>
           <Col xs={3}>
-            <FormGroup>
-              <ControlLabel>Start</ControlLabel>
-              <FormControl
+            <Form.Group>
+              <Form.Label>Start</Form.Label>
+              <Form.Control
                 className={classes.input}
                 type="number"
                 value={queryBuilderStore.resultStart}
                 placeholder="0"
                 onChange={handleChangeStart}
               />
-            </FormGroup>
+            </Form.Group>
           </Col>
           <Col xs={6}>
-            <FormGroup>
-              <ControlLabel>Select space</ControlLabel>
-              <FormControl className={classes.input} componentClass="select" placeholder="minds" value={queryBuilderStore.stage} onChange={handleChangeStage} >
+            <Form.Group>
+              <Form.Label>Select space</Form.Label>
+              <Form.Control className={classes.input} componentClass="select" placeholder="minds" value={queryBuilderStore.stage} onChange={handleChangeStage} >
                 {scopeOptions.map(space => (
                   <option value={space.value} key={space.value}>{space.label}</option>
                 ))}
-              </FormControl>
-            </FormGroup>
+              </Form.Control>
+            </Form.Group>
           </Col>
         </Row>
         <Row>
           <Col xs={9}>
-            <Checkbox  onChange={handleToggleRunStripVocab} checked={queryBuilderStore.runStripVocab}>Strip vocab</Checkbox>
+            <Form.Check onChange={handleToggleRunStripVocab} checked={queryBuilderStore.runStripVocab}>Strip vocab</Form.Check>
           </Col>
           <Col xs={3}>
-            <Button bsStyle={"primary"} className={"btn-block"} disabled={queryBuilderStore.isQueryEmpty} onClick={handlExecuteQuery} title={!queryBuilderStore.isQueryEmpty?"Run it":"The current query specification is not valid/complete. Please select at least one field."}>
+            <Button variant="primary" className={"btn-block"} disabled={queryBuilderStore.isQueryEmpty} onClick={handlExecuteQuery} title={!queryBuilderStore.isQueryEmpty?"Run it":"The current query specification is not valid/complete. Please select at least one field."}>
               Run it
             </Button>
           </Col>

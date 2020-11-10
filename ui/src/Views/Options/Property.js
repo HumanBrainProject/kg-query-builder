@@ -52,7 +52,7 @@ const Property = ({ property, onClick }) => {
 
   const { attribute, label, canBe } = property;
 
-  const handleClick = e => onClick(property, e);
+  const handleClick = e => onClick(e, property);
 
   return (
     <div className={classes.property} onClick={handleClick}>

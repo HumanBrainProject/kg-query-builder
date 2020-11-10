@@ -2,9 +2,9 @@ import React from "react";
 import { observer } from "mobx-react";
 import { createUseStyles } from "react-jss";
 import ReactJson from "react-json-view";
-import { Button } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ThemeRJV from "./ThemeRJV";
+import ThemeRJV from "../ThemeRJV";
 
 import Toggle from "./Toggle";
 
@@ -155,7 +155,7 @@ const Option = observer(({ field, rootField, lookupsLinks, option, onChange }) =
   if (value !== undefined && (!field.isMerge || field.isRootMerge)) {
     return (
       <div className={`${classes.option} unsupported`}>
-        <Button bsSize="xsmall" bsStyle="default" onClick={handleDelete} title={name === "merge" ? `"${name}" property cannot be deleted` : `delete property "${name}"`} disabled={name === "merge"} >
+        <Button size="sm" variant="default" onClick={handleDelete} title={name === "merge" ? `"${name}" property cannot be deleted` : `delete property "${name}"`} disabled={name === "merge"} >
           <FontAwesomeIcon icon="times" />
         </Button>
         <div className={classes.optionLabel}>{name}:&nbsp;</div>

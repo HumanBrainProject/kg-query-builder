@@ -95,7 +95,8 @@ const useStyles = createUseStyles(theme => {
       textRendering: "optimizeLegibility",
       "-webkit-font-smoothing": "antialiased",
       "-webkit-tap-highlight-color": "transparent",
-      fontFamily: "Lato, sans-serif"
+      fontFamily: "Lato, sans-serif",
+      fontSize: "14px"
     },
     "@global *": {
       boxSizing: "border-box"

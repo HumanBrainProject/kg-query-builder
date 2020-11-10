@@ -8,9 +8,8 @@ const useStyles = createUseStyles({
   container: {
     color: "var(--ft-color-loud)",
     "& h3": {
-      fontSize: "1.7em",
-      marginBottom: "10px",
-      marginLeft: "10px",
+      fontSize: "1.5em",
+      margin: "18px 0 6px 5px",
       "& small": {
         color: "var(--ft-color-quiet)",
         fontStyle: "italic"

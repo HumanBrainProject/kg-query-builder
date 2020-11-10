@@ -2,7 +2,7 @@ import React from "react";
 import ReactJson from "react-json-view";
 import { observer } from "mobx-react";
 import { createUseStyles } from "react-jss";
-import { Button } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import ThemeRJV from "./ThemeRJV";
@@ -54,11 +54,11 @@ const Result = observer(() => {
               If the problem persists, please contact the support.<br/>
             <small>{queryBuilderStore.runError}</small><br/><br/>
             {queryBuilderStore.isQueryEmpty?
-              <Button bsStyle={"primary"} onClick={handlClearError}>
+              <Button variant="primary" onClick={handlClearError}>
                 <FontAwesomeIcon icon={"redo-alt"}/>&nbsp;&nbsp; OK
               </Button>
               :
-              <Button bsStyle={"primary"} onClick={handlExecuteQuery}>
+              <Button variant="primary" onClick={handlExecuteQuery}>
                 <FontAwesomeIcon icon={"redo-alt"}/>&nbsp;&nbsp; Retry
               </Button>
             }

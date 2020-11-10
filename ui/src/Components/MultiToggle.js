@@ -12,7 +12,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const MultiToggle = ({ children, onChange }) => {
+const MultiToggle = ({ children, selectedValue, onChange }) => {
 
   const classes = useStyles();
 
@@ -22,7 +22,7 @@ const MultiToggle = ({ children, onChange }) => {
     }
   };
 
-  const childrenWithProps = React.Children.map(children, child => child && React.cloneElement(child, { selectedValue: this.props.selectedValue, onSelect: handleSelect }));
+  const childrenWithProps = React.Children.map(children, child => child && React.cloneElement(child, { selectedValue: selectedValue, onSelect: handleSelect }));
 
   return(
     <div className={classes.container} style={{gridTemplateColumns:`repeat(${childrenWithProps.length}, 24px)`}}>

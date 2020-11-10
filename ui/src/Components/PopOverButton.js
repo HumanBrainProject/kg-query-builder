@@ -2,8 +2,10 @@ import React, {useRef, useEffect, useState} from "react";
 import { observer } from "mobx-react";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Overlay, Popover, Button } from "react-bootstrap";
-import {uniqueId} from "lodash";
+import Button from "react-bootstrap/Button";
+import Overlay from "react-bootstrap/Overlay";
+import Popover from "react-bootstrap/Popover";
+import uniqueId from "lodash/uniqueId";
 
 const useStyles = createUseStyles({
   container: {
@@ -146,10 +148,10 @@ const PopOverButton = observer(({className, buttonClassName, buttonTitle, iconCo
             {(CancelComponent || OkComponent) && (
               <div className={classes.popOverFooterBar}>
                 {CancelComponent && (
-                  <Button bsSize="small" onClick={handleCancelClick}><CancelComponent {...cancelProps} /></Button>
+                  <Button size="sm" onClick={handleCancelClick}><CancelComponent {...cancelProps} /></Button>
                 )}
                 {OkComponent && (
-                  <Button bsStyle="primary" bsSize="small" onClick={handleOkClick}><OkComponent {...okProps}  /></Button>
+                  <Button variant="primary" size="sm" onClick={handleOkClick}><OkComponent {...okProps}  /></Button>
                 )}
               </div>
             )}
