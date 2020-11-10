@@ -26,6 +26,7 @@ import Tabs from "./Tabs";
 import Login from "./Login";
 import GlobalError from "./GlobalError";
 import WorkspaceModal from "./WorkspaceModal";
+import QueryBuilder from "./QueryBuilder";
 
 const useStyles = createUseStyles(theme => {
   console.log("Layout createUseStyles: " + theme.name);
@@ -143,52 +144,47 @@ const Layout = observer(() => {
 
   const classes = useStyles({ theme });
 
-  const handleRetryDeleteInstance = () => appStore.retryDeleteInstance();
-
-  const handleCancelDeleteInstance = () => appStore.cancelDeleteInstance();
-
   return (
     <div className={classes.layout}>
-        <Theme />
-        <Tabs />
-        <div className={classes.body}>
-          {appStore.globalError ?
-            <GlobalError />
+      <Tabs />
+      <div className={classes.body}>
+        {appStore.globalError ?
+          <GlobalError />
+          :
+          (!appStore.isInitialized || !authStore.isAuthenticated ?
+            <Login />
             :
-            (!appStore.isInitialized || !authStore.isAuthenticated ?
-              <Login />
-              :
-              (authStore.isUserAuthorized?
-                (authStore.hasUserWorkspaces?
-                  (appStore.currentWorkspace?
-                    <QueryBuilder />
-                    :
-                    <WorkspaceModal />)
+            (authStore.isUserAuthorized?
+              (authStore.hasUserWorkspaces?
+                (appStore.currentWorkspace?
+                  <QueryBuilder />
                   :
-                  <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
-                    <Modal.Body>
-                      <h1>Welcome <span title={name}>{name}</span></h1>
-                      <p>You are currently not granted permission to acccess any workspaces.</p>
-                      <p>Please contact our team by email at : <a href={"mailto:kg@ebrains.eu"}>kg@ebrains.eu</a></p>
-                    </Modal.Body>
-                  </Modal>
-                )
+                  <WorkspaceModal />)
                 :
                 <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
                   <Modal.Body>
-                    <h1>Welcome</h1>
-                    <p>You are currently not granted permission to acccess the application.</p>
+                    <h1>Welcome <span title={name}>{name}</span></h1>
+                    <p>You are currently not granted permission to acccess any workspaces.</p>
                     <p>Please contact our team by email at : <a href={"mailto:kg@ebrains.eu"}>kg@ebrains.eu</a></p>
                   </Modal.Body>
                 </Modal>
               )
+              :
+              <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
+                <Modal.Body>
+                  <h1>Welcome</h1>
+                  <p>You are currently not granted permission to acccess the application.</p>
+                  <p>Please contact our team by email at : <a href={"mailto:kg@ebrains.eu"}>kg@ebrains.eu</a></p>
+                </Modal.Body>
+              </Modal>
             )
-          }
-        </div>
-        <div className={`${classes.status} layout-status`}>
-              Copyright &copy; {new Date().getFullYear()} EBRAINS. All rights reserved.
-        </div>
+          )
+        }
       </div>
+      <div className={`${classes.status} layout-status`}>
+              Copyright &copy; {new Date().getFullYear()} EBRAINS. All rights reserved.
+      </div>
+    </div>
   );
 });
 
