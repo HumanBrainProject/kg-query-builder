@@ -1,4 +1,4 @@
-import { observable, action, computed, runInAction, toJS, isAction, makeObservable } from "mobx";
+import { observable, action, computed, runInAction, toJS, makeObservable } from "mobx";
 import uniqueId from "lodash/uniqueId";
 import isEqual from "lodash/isEqual";
 import remove from "lodash/remove";
@@ -67,7 +67,6 @@ class QueryBuilderStore {
   saveError = null;
   isRunning = false;
   runError = null;
-  saveAsMode = false;
   showHeader = true;
   showQueries = false;
   showMyQueries = true;
@@ -101,7 +100,6 @@ class QueryBuilderStore {
       saveError: observable,
       isRunning: observable,
       runError: observable,
-      saveAsMode: observable,
       showHeader: observable,
       showQueries: observable,
       showMyQueries: observable,
@@ -1150,7 +1148,7 @@ class QueryBuilderStore {
                 runInAction(() => {
                   this.fetchQueriesError = `Error while trying to expand/compact JSON-LD (${e})`;
                 });
-              };
+              }
             });
             if (this.sourceQuery) {
               const query = this.specifications.find(spec => spec.id === this.sourceQuery.id);

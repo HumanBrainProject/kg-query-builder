@@ -34,7 +34,7 @@ const App = observer(() => {
     return () => {
       document.removeEventListener("keydown", appStore.handleGlobalShortcuts);
     };
-  }, [appStore]);
+  }, []);
 
   return (
     <ErrorBoundary>

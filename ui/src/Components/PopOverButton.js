@@ -89,6 +89,7 @@ const PopOverButton = observer(({className, buttonClassName, buttonTitle, iconCo
         handlePopOverClose();
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showPopOver]);
 
   const handlePopOverPosition = popOverRect => {
