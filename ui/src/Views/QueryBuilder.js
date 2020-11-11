@@ -2,15 +2,14 @@ import React, { useRef, useEffect} from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Scrollbars } from "react-custom-scrollbars";
 
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 import typesStore from "../Stores/TypesStore";
+
 import Query from "./Query";
 import QueriesDrawer from "./QueriesDrawer";
-
 import RootSchemaChoice from "./RootSchemaChoice";
 import QuerySpecification from "./QuerySpecification";
 import Options from "./Options";
@@ -19,6 +18,7 @@ import ResultTable from "./ResultTable";
 import Tab from "../Components/Tab";
 import BGMessage from "../Components/BGMessage";
 import FetchingLoader from "../Components/FetchingLoader";
+import Filter from "./Filter";
 
 const rootPath = window.rootPath || "";
 
@@ -72,34 +72,6 @@ const useStyles = createUseStyles({
   },
   tabBodyInner: {
     padding: "10px"
-  },
-  filterTypeInput: {
-    color: "var(--ft-color-loud)",
-    width: "calc(100% - 20px)",
-    margin: "10px",
-    border: "1px solid transparent",
-    paddingLeft: "30px",
-    borderRadius: "2px",
-    backgroundColor: "var(--bg-color-blend-contrast1)",
-    "&:focus":{
-      color: "var(--ft-color-loud)",
-      borderColor: "rgba(64, 169, 243, 0.5)",
-      backgroundColor: "transparent"
-    }
-  },
-  filterType: {
-    position: "relative",
-    color: "var(--ft-color-loud)",
-    backgroundColor: "var(--bg-color-ui-contrast3)",
-    border: "1px solid var(--border-color-ui-contrast2)",
-    borderLeft: 0,
-    borderBottom: 0
-  },
-  searchIcon: {
-    position: "absolute",
-    top: "20px",
-    left: "20px",
-    color: "var(--ft-color-normal)"
   }
 });
 
@@ -120,8 +92,6 @@ const QueryBuilder = observer(() => {
   const handleCloseField = () => queryBuilderStore.closeFieldOptions();
 
   const handleRetryFetchStructure = () => fetchStructure(true);
-
-  const handleFilterTypes = e => typesStore.setFilterValue(e.target.value);
 
   return (
     <div className={classes.container}>
@@ -170,15 +140,7 @@ const QueryBuilder = observer(() => {
                       <Tab icon={"table"} current={queryBuilderStore.currentTab === "resultTable"} label={"Results: Table View"} onClick={() => handleSelectTab("resultTable")} />
                     </React.Fragment>
                     :
-                    <div className={classes.filterType}>
-                      <Form.Control
-                        className={classes.filterTypeInput}
-                        type="text"
-                        onChange={handleFilterTypes}
-                        value={typesStore.filterValue}
-                        placeholder="Filter types" />
-                      <FontAwesomeIcon icon="search" className={classes.searchIcon} />
-                    </div>
+                    <Filter />
                   }
                 </div>
                 <div className={classes.tabBody}>
