@@ -58,7 +58,7 @@ const useStyles = createUseStyles({
 });
 
 
-const Toggle = observer(({ option, label, comment, show, onChange }) => {
+const Toggle = ({ option, label, comment, show, onChange }) => {
 
   const classes = useStyles();
 
@@ -83,6 +83,6 @@ const Toggle = observer(({ option, label, comment, show, onChange }) => {
       </div>
     </div>
   );
-});
+};
 
 export default Toggle;

@@ -59,7 +59,6 @@ class AuthStore {
       isLogout: observable,
       accessToken: computed,
       isAuthenticated: computed,
-      hasUserProfile: computed,
       hasWorkspaces: computed,
       hasUserWorkspaces: computed,
       logout: action,

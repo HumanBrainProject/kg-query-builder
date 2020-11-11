@@ -1,5 +1,4 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import ReactJson from "react-json-view";
 import Button from "react-bootstrap/Button";
@@ -81,7 +80,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const Option = observer(({ field, rootField, lookupsLinks, option, onChange }) => {
+const Option = ({ field, rootField, lookupsLinks, option, onChange }) => {
 
   const classes = useStyles();
 
@@ -179,6 +178,6 @@ const Option = observer(({ field, rootField, lookupsLinks, option, onChange }) =
     );
   }
   return null;
-});
+};
 
 export default Option;
