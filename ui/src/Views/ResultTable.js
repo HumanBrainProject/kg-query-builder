@@ -10,12 +10,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import get from "lodash/get";
 import isObject from "lodash/isObject";
 import isString from "lodash/isString";
-import isInteger from "lodash/isInteger";
 
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 import BGMessage from "../Components/BGMessage";
 import FetchingLoader from "../Components/FetchingLoader";
 import ResultOptions from "./ResultOptions";
+import Breadcrumb from "../Components/Breadcrumb";
 
 const useStyles = createUseStyles({
   container:{
@@ -63,51 +63,12 @@ const useStyles = createUseStyles({
       wordBreak:"break-all"
     }
   },
-
   breadcrumb:{
     overflow:"hidden",
     marginBottom:"20px"
   },
-  breadcrumbItem:{
-    float:"left",
-    background:"var(--list-bg-hover)",
-    height:"36px",
-    lineHeight:"36px",
-    padding:"0 20px 0 30px",
-    position:"relative",
-    border:"1px solid var(--border-color-ui-contrast2)",
-    "&::before":{
-      display:"block",
-      content:"''",
-      position:"absolute",
-      top:"5px",
-      left:"-13px",
-      height:"24px",
-      width:"24px",
-      transform:"rotate(45deg)",
-      background:"var(--list-bg-hover)",
-      borderTop:"1px solid var(--border-color-ui-contrast2)",
-      borderRight:"1px solid var(--border-color-ui-contrast2)",
-    },
-    "&:first-child::before":{
-      display:"none",
-    },
-    "&:first-child":{
-      padding:"0 20px 0 20px",
-    },
-    "&.clickable":{
-      cursor:"pointer",
-    },
-    "&.clickable:hover":{
-      background:"var(--list-bg-selected)",
-      "& + ::before":{
-        background:"var(--list-bg-selected)",
-      }
-    },
-    "&:last-child":{
-      background:"var(--list-bg-selected)",
-      cursor:"default",
-    }
+  table: {
+    color: "var(--ft-color-loud)"
   }
 });
 
@@ -198,6 +159,7 @@ const ResultTable = observer(() => {
     subResult = get(queryBuilderStore.result, toJS(queryBuilderStore.tableViewRoot));
     objectKeys = !subResult.length || isString(subResult[0])?[""]:Object.keys(subResult[0]);
   }
+
   return(
     <div className={classes.container}>
       <ResultOptions/>
@@ -226,14 +188,8 @@ const ResultTable = observer(() => {
           :
           queryBuilderStore.result && (
             <React.Fragment>
-              <div className={classes.breadcrumb}>
-                {queryBuilderStore.tableViewRoot.map((item, index) =>
-                  <div className={`${classes.breadcrumbItem}${!isInteger(item)?" clickable":""}`} key={index} onClick={isString(item)?handleBreadcrumbClick(index):undefined}>
-                    {isInteger(item)?"#"+item:item} {index === 0?`(${queryBuilderStore.result.total})`:""}
-                  </div>
-                )}
-              </div>
-              <Table>
+              <Breadcrumb className={classes.breadcrumb} breadcrumb={queryBuilderStore.tableViewRoot} total={queryBuilderStore.result.total} onClick={handleBreadcrumbClick}/>
+              <Table className={classes.table}>
                 <thead>
                   <tr>
                     <th>#</th>

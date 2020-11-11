@@ -2,7 +2,6 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { observer } from "mobx-react-lite";
 
 const useStyles = createUseStyles({
   container:{
@@ -59,7 +58,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const Tab = observer(({ current, label, icon, iconColor, hideLabel, onClick}) => {
+const Tab = ({ current, label, icon, iconColor, hideLabel, onClick}) => {
   const classes = useStyles();
 
   const handleClick = e => {
@@ -81,7 +80,6 @@ const Tab = observer(({ current, label, icon, iconColor, hideLabel, onClick}) =>
       }
     </div>
   );
-
-});
+};
 
 export default Tab;

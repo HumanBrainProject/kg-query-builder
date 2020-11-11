@@ -942,10 +942,12 @@ class QueryBuilderStore {
           this.isRunning = false;
         });
       } catch (e) {
-        const message = e.message ? e.message : e;
-        this.result = null;
-        this.runError = `Error while executing query (${message})`;
-        this.isRunning = false;
+        runInAction(() => {
+          const message = e.message ? e.message : e;
+          this.result = null;
+          this.runError = `Error while executing query (${message})`;
+          this.isRunning = false;
+        });
       }
     }
   }
@@ -1048,8 +1050,8 @@ class QueryBuilderStore {
               id: queryId,
               user: {
                 id: authStore.user.id,
-                name:authStore.user.displayName,
-                picture:authStore.user.picture
+                name: authStore.user.displayName,
+                picture: authStore.user.picture
               },
               context: payload["@context"],
               merge: payload.merge,

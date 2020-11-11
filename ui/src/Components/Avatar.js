@@ -1,4 +1,5 @@
 import React from "react";
+import {observer} from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -15,7 +16,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const Avatar = ({ user, size=20 }) => {
+const Avatar = observer(({ user, size=20 }) => {
 
   const classes = useStyles();
 
@@ -32,6 +33,6 @@ const Avatar = ({ user, size=20 }) => {
   return (
     <FontAwesomeIcon icon="user" title={user.name?user.name:user.id} className={`${classes.avatar} avatar default`} />
   );
-};
+});
 
 export default Avatar;

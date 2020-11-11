@@ -236,7 +236,6 @@ class AuthStore {
         this.authError = `Failed to load service endpoints configuration (${e && e.message?e.message:e})`;
       });
     }
-    return this.authSuccess;
   }
 }
 

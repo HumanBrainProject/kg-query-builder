@@ -16,7 +16,7 @@
 
 import React from "react";
 import { render } from "react-dom";
-import { configure } from "mobx";
+// import { configure } from "mobx";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -24,13 +24,13 @@ import "./Services/IconsImport";
 
 import App from "./Views/App";
 
-configure({
-  enforceActions: "always",
-  computedRequiresReaction: false,
-  reactionRequiresObservable: true,
-  observableRequiresReaction: false,
-  disableErrorBoundaries: false // help to debug only
-});
+// configure({
+//   enforceActions: "always",
+//   computedRequiresReaction: true,
+//   reactionRequiresObservable: true,
+//   observableRequiresReaction: true,
+//   disableErrorBoundaries: false // help to debug only
+// });
 
 render(
   <React.StrictMode>
