@@ -28,9 +28,8 @@ import GlobalError from "./GlobalError";
 import WorkspaceModal from "./WorkspaceModal";
 import QueryBuilder from "./QueryBuilder";
 
-const useStyles = createUseStyles(theme => {
-  //console.log("Layout createUseStyles: " + theme.name);
-  return {
+const getGlobalUseStyles = () => createUseStyles(theme => {
+  const styles = {
     "@global": {
       ":root": {
         "--bg-gradient-start": theme.background.gradient.colorStart,
@@ -105,45 +104,79 @@ const useStyles = createUseStyles(theme => {
       "-webkit-touch-callout": "none",
       userSelect: "none"
     },
-    layout: {
-      height: "100vh",
-      display: "grid",
-      overflow: "hidden",
-      gridTemplateColumns: "1fr",
-      gridTemplateRows: "auto 1fr 20px"
-    },
-    body: {
-      position: "relative",
-      overflow: "hidden",
-      background: "linear-gradient(var(--bg-gradient-angle), var(--bg-gradient-start), var(--bg-gradient-end))",
-      backgroundSize: "200%"
-    },
-    status: {
-      background: "var(--bg-color-ui-contrast1)",
-      color: "var(--ft-color-loud)",
-      paddingLeft: "10px"
-    },
-    noAccessModal: {
-      "&.modal-dialog": {
-        marginTop: "40vh",
-        "& .modal-body": {
-          padding: "0 30px 15px 30px",
-          fontSize: "1.6rem",
-          "@media screen and (min-width:768px)": {
-            whiteSpace: "nowrap"
-          }
+  };
+
+  if (theme.name === "cupcake") {
+    return {
+      ...styles,
+      ".layout-status": {
+        "background": "linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3) !important",
+        "background-size": "180% 180% !important",
+        animation: "rainbow 3s linear infinite !important",
+        "border-top":"1px solid var(--border-color-ui-contrast2)"
+      },
+      "@keyframes rainbow": {
+        "0%":{"background-position":"0% 82%"},
+        "50%":{"background-position":"100% 19%"},
+        "100%":{"background-position":"0% 82%"}
+      },
+      ".layout-logo": {
+        backgroundImage:"url(https://vignette.wikia.nocookie.net/nyancat/images/f/fd/Taxac_Naxayn.gif/revision/latest/scale-to-width-down/2000?cb=20180518022723)",
+        "background-size": "50px 30px",
+        "background-repeat": "no-repeat",
+        "background-position": "5px 9px",
+        "padding-left": "50px !important",
+        "padding-top": "14px !important",
+        "& img":{
+          display:"none"
+        }
+      }
+    };
+  }
+
+  return styles;
+});
+
+const useStyles = createUseStyles({
+  layout: {
+    height: "100vh",
+    display: "grid",
+    overflow: "hidden",
+    gridTemplateColumns: "1fr",
+    gridTemplateRows: "auto 1fr 20px"
+  },
+  body: {
+    position: "relative",
+    overflow: "hidden",
+    background: "linear-gradient(var(--bg-gradient-angle), var(--bg-gradient-start), var(--bg-gradient-end))",
+    backgroundSize: "200%"
+  },
+  status: {
+    background: "var(--bg-color-ui-contrast1)",
+    color: "var(--ft-color-loud)",
+    paddingLeft: "10px"
+  },
+  noAccessModal: {
+    "&.modal-dialog": {
+      marginTop: "40vh",
+      "& .modal-body": {
+        padding: "0 30px 15px 30px",
+        fontSize: "1.6rem",
+        "@media screen and (min-width:768px)": {
+          whiteSpace: "nowrap"
         }
       }
     }
-  };
+  }
 });
 
 const Layout = observer(() => {
 
   const theme = useTheme();
-  //console.log("Layout useTheme: " + theme.name);
+  const useGlobalStyles = getGlobalUseStyles();
+  useGlobalStyles({ theme });
 
-  const classes = useStyles({ theme });
+  const classes = useStyles();
 
   return (
     <div className={classes.layout}>

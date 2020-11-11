@@ -1,4 +1,4 @@
-import { observable, action, runInAction, makeObservable } from "mobx";
+import { observable, action, computed, runInAction, makeObservable } from "mobx";
 import { matchPath } from "react-router-dom";
 
 import DefaultTheme from "../Themes/Default";
@@ -6,9 +6,13 @@ import BrightTheme from "../Themes/Bright";
 import authStore from "./AuthStore";
 import typesStore from "./TypesStore";
 
+const themes = {};
+themes[DefaultTheme.name] = DefaultTheme;
+themes[BrightTheme.name] = BrightTheme;
+
 class AppStore{
   globalError = null;
-  currentTheme;
+  _currentThemeName = DefaultTheme.name;
   historySettings;
   initializingMessage = null;
   initializationError = null;
@@ -16,16 +20,11 @@ class AppStore{
   currentWorkspace = null;
   isInitialized = false;
 
-
-  availableThemes = {
-    "default": DefaultTheme,
-    "bright": BrightTheme
-  }
-
   constructor(){
     makeObservable(this, {
       globalError: observable,
-      currentTheme: observable,
+      _currentThemeName: observable,
+      currentTheme: computed,
       historySettings: observable,
       initializingMessage: observable,
       initializationError: observable,
@@ -44,8 +43,7 @@ class AppStore{
     });
 
     this.canLogin = !matchPath(window.location.pathname, { path: "/logout", exact: "true" });
-    let savedTheme = localStorage.getItem("currentTheme");
-    this.currentTheme = savedTheme === "bright"? "bright": "default";
+    this.setTheme(localStorage.getItem("theme"));
   }
 
   async initialize() {
@@ -100,7 +98,7 @@ class AppStore{
   }
 
   initializeWorkspace() {
-    const workspace = localStorage.getItem("currentWorkspace");
+    const workspace = localStorage.getItem("workspace");
     this.setCurrentWorkspace(workspace);
   }
 
@@ -114,7 +112,7 @@ class AppStore{
     }
     if(this.currentWorkspace !== workspace) {
       this.currentWorkspace = workspace;
-      localStorage.setItem("currentWorkspace", workspace);
+      localStorage.setItem("workspace", workspace);
       typesStore.fetch(true);
     }
   };
@@ -137,16 +135,20 @@ class AppStore{
     }
   };
 
-  setTheme(theme) {
-    this.currentTheme = this.availableThemes[theme]? theme: "default";
-    localStorage.setItem("currentTheme", this.currentTheme);
+  get currentTheme() {
+    return themes[this._currentThemeName];
   }
 
-  toggleTheme() {
-    if(this.currentTheme === "bright"){
-      this.setTheme("default");
+  setTheme(name){
+    this._currentThemeName = themes[name]? name: DefaultTheme.name;
+    localStorage.setItem("theme", this._currentThemeName);
+  }
+
+  toggleTheme(){
+    if(this.currentThemeName === BrightTheme.name){
+      this.setTheme(DefaultTheme.name);
     } else {
-      this.setTheme("bright");
+      this.setTheme(BrightTheme.name);
     }
   }
 
