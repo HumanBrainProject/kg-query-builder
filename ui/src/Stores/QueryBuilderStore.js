@@ -35,6 +35,13 @@ const namespaceReg = /^(.+):(.+)$/;
 const attributeReg = /^https?:\/\/.+\/(.+)$/;
 const modelReg = /^\/?((.+)\/(.+)\/(.+)\/(.+))$/;
 
+const isChildOfField = (node, parent, root) => {
+  while (node && node !== parent && node !== root) {
+    node = node.parent;
+  }
+  return node === parent;
+}
+
 const getProperties = query => {
   if (!query) {
     return {};
@@ -492,7 +499,7 @@ class QueryBuilderStore {
       this.savedQueryHasInconsistencies = false;
       this.resetField();
     } else {
-      if (field === this.currentField) {
+      if (isChildOfField(this.currentField, field, this.rootField)) {
         this.resetField();
       }
       if (field.isMerge && field.parentIsRootMerge) {
