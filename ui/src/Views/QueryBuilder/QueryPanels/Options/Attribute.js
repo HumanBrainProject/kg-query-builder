@@ -1,5 +1,5 @@
 import React from "react";
-import Icon from "../../Components/Icon";
+import Icon from "../../../../Components/Icon";
 import { createUseStyles } from "react-jss";
 
 import Property from "./Property";

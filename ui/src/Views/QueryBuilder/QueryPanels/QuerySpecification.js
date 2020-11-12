@@ -1,9 +1,10 @@
 import React from "react";
 import ReactJson from "react-json-view";
 import { observer } from "mobx-react-lite";
-import ThemeRJV from "./ThemeRJV";
 
-import queryBuilderStore from "../Stores/QueryBuilderStore";
+import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+
+import ThemeRJV from "../../ThemeRJV";
 
 const QuerySpecification = observer(() => (
   queryBuilderStore.rootField &&

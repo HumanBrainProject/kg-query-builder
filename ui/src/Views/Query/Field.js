@@ -4,10 +4,11 @@ import { observer } from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "react-bootstrap/Button";
 
+import queryBuilderStore from "../../Stores/QueryBuilderStore";
+import typesStore from "../../Stores/TypesStore";
+
 import Fields from "./Fields";
-import queryBuilderStore from "../Stores/QueryBuilderStore";
-import typesStore from "../Stores/TypesStore";
-import Icon from "../Components/Icon";
+import Icon from "../../Components/Icon";
 
 const useStyles = createUseStyles({
   container: {

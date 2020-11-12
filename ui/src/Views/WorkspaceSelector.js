@@ -21,9 +21,10 @@ import { createUseStyles } from "react-jss";
 
 import authStore from "../Stores/AuthStore";
 import appStore from "../Stores/AppStore";
+import queryBuilderStore from "../Stores/QueryBuilderStore";
 
-import CustomDropdownToggle from "./CustomDropdownToggle";
-import CustomDropdownMenu from "./CustomDropdownMenu";
+import CustomDropdownToggle from "../Components/CustomDropdownToggle";
+import CustomDropdownMenu from "../Components/CustomDropdownMenu";
 
 const useStyles = createUseStyles({
   container: {
@@ -46,7 +47,10 @@ const useStyles = createUseStyles({
 const WorkspaceSelector = observer(() => {
   const classes = useStyles();
 
-  const handleSelectWorkspace = eventKey => appStore.setCurrentWorkspace(eventKey);
+  const handleSelectWorkspace = workspace => {
+    queryBuilderStore.clearRootSchema();
+    appStore.setCurrentWorkspace(workspace);
+  };
 
   return (
     <div className={classes.container} title={`${appStore.currentWorkspace} workspace`}>

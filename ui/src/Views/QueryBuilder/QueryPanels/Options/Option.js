@@ -3,7 +3,7 @@ import { createUseStyles } from "react-jss";
 import ReactJson from "react-json-view";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ThemeRJV from "../ThemeRJV";
+import ThemeRJV from "../../../ThemeRJV";
 
 import Toggle from "./Toggle";
 

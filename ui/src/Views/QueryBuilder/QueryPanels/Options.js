@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
-import queryBuilderStore from "../Stores/QueryBuilderStore";
+import queryBuilderStore from "../../../Stores/QueryBuilderStore";
 
 import Name from "./Options/Name";
 import Flatten from "./Options/Flatten";
@@ -59,6 +59,10 @@ const Options = observer(() => {
   const handleChangeFlatten = value => field.setCurrentFieldFlattened(value);
 
   const handleChangeOption = (name, value) => field.setOption(name, value);
+
+  if (!field) {
+    return null;
+  }
 
   return (
     <div className={classes.container}>

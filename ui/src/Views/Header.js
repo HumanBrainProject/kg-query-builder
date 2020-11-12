@@ -6,7 +6,7 @@ import appStore from "../Stores/AppStore";
 import authStore from "../Stores/AuthStore";
 
 import UserProfileTab from "./UserProfileTab";
-import WorkspaceSelector from "../Components/WorkspaceSelector";
+import WorkspaceSelector from "./WorkspaceSelector";
 
 const useStyles = createUseStyles({
   container: {
@@ -49,7 +49,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const Tabs = observer(() => {
+const Header = observer(() => {
 
   const classes = useStyles();
   return (
@@ -78,4 +78,4 @@ const Tabs = observer(() => {
 
 });
 
-export default Tabs;
+export default Header;

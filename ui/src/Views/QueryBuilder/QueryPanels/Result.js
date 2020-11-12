@@ -5,10 +5,11 @@ import { createUseStyles } from "react-jss";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import ThemeRJV from "./ThemeRJV";
-import queryBuilderStore from "../Stores/QueryBuilderStore";
-import BGMessage from "../Components/BGMessage";
-import FetchingLoader from "../Components/FetchingLoader";
+import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+
+import ThemeRJV from "../../ThemeRJV";
+import BGMessage from "../../../Components/BGMessage";
+import FetchingLoader from "../../../Components/FetchingLoader";
 import ResultOptions from "./ResultOptions";
 
 const useStyles = createUseStyles({

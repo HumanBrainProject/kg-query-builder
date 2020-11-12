@@ -16,7 +16,29 @@ const useStyles = createUseStyles({
     backgroundPosition: "50% 50%",
     color: "var(--ft-color-normal)"
   },
-  workspacesSelection: {
+  modal: {
+    overflow: "hidden",
+    width: "90%",
+    margin: "auto",
+    "@media screen and (min-width:1024px)": {
+      width: "900px"
+    },
+    "&.modal-dialog": {
+      marginTop: "25vh",
+      maxWidth: "unset",
+      "& .modal-content": {
+        background: "var(--bg-color-ui-contrast2)",
+        color: "var(--ft-color-normal)",
+        border: "1px solid var(--border-color-ui-contrast1)",
+        "& .modal-body": {
+          padding: "0",
+          maxHeight: "calc(100vh - 30vh -80px)",
+          overflowY: "hidden"
+        }
+      }
+    }
+  },
+  panel: {
     fontSize: "1.5em",
     padding: "30px 0",
     "& h1": {
@@ -27,7 +49,7 @@ const useStyles = createUseStyles({
       fontWeight: "300"
     }
   },
-  workspaces: {
+  content: {
     display: "grid",
     padding: "0 30px",
     gridGap: "15px",
@@ -42,35 +64,20 @@ const useStyles = createUseStyles({
   workspace: {
     position: "relative",
     padding: "20px",
-    fontWeight: "300",
-    textAlign: "center",
-    border: "1px solid #ccc",
-    borderRadius: "3px",
+    background: "var(--bg-color-ui-contrast3)",
+    borderRadius: "10px",
     cursor: "pointer",
     fontSize: "1.2em",
+    fontWeight: "300",
+    textAlign: "center",
     wordBreak: "break-word",
+    transition: "background .3s ease-in-out, color .3s ease-in-out",
     "@media screen and (min-width:768px)": {
       whiteSpace: "nowrap"
     },
     "&:hover": {
-      background: "#f3f3f3"
-    }
-  },
-  workspaceSelectionModal: {
-    overflow: "hidden",
-    width: "90%",
-    margin: "auto",
-    "@media screen and (min-width:1024px)": {
-      width: "900px"
-    },
-    "&.modal-dialog": {
-      marginTop: "25vh",
-      maxWidth: "unset",
-      "& .modal-body": {
-        padding: "0",
-        maxHeight: "calc(100vh - 30vh -80px)",
-        overflowY: "hidden"
-      }
+      background: "var(--bg-color-blend-contrast1)",
+      color: "var(--ft-color-loud)",
     }
   }
 });
@@ -97,14 +104,14 @@ const WorkspaceModal = observer(() => {
         "";
   return (
     <div className={classes.container}>
-      <Modal dialogClassName={classes.workspaceSelectionModal} show={true} onHide={() => {}} >
+      <Modal dialogClassName={classes.modal} show={true} onHide={() => {}} >
         <Modal.Body>
-          <div className={classes.workspacesSelection}>
+          <div className={classes.panel}>
             <h1>Welcome <span title={name}>{name}</span></h1>
             <p>Please select a workspace:</p>
             <div style={{height: `${Math.round(Math.min(window.innerHeight * 0.5 - 140, Math.ceil(authStore.workspaces.length / 3) * 90))}px`}}>
               <Scrollbars>
-                <div className={classes.workspaces}>
+                <div className={classes.content}>
                   {authStore.workspaces.map(workspace =>
                     <div className={classes.workspace} key={workspace} onClick={() => handleClick(workspace)}>{workspace}</div>
                   )}

@@ -22,7 +22,7 @@ import { createUseStyles, useTheme } from "react-jss";
 import appStore from "../Stores/AppStore";
 import authStore from "../Stores/AuthStore";
 
-import Tabs from "./Tabs";
+import Header from "./Header";
 import Login from "./Login";
 import GlobalError from "./GlobalError";
 import WorkspaceModal from "./WorkspaceModal";
@@ -180,7 +180,7 @@ const Layout = observer(() => {
 
   return (
     <div className={classes.layout}>
-      <Tabs />
+      <Header />
       <div className={classes.body}>
         {appStore.globalError ?
           <GlobalError />

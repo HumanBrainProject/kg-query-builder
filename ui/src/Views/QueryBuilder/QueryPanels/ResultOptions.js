@@ -1,11 +1,12 @@
 import React from "react";
-import queryBuilderStore from "../Stores/QueryBuilderStore";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import { createUseStyles } from "react-jss";
+
+import queryBuilderStore from "../../../Stores/QueryBuilderStore";
 
 const useStyles = createUseStyles({
   container:{

@@ -1,7 +1,7 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
-import Icon from "../../Components/Icon";
-import typesStore from "../../Stores/TypesStore";
+import Icon from "../../../../Components/Icon";
+import typesStore from "../../../../Stores/TypesStore";
 
 const Type = ({ type: t }) => {
   const type = typesStore.types[t];

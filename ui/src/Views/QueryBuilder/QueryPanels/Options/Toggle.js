@@ -1,7 +1,7 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 
-import MultiToggle from "../../Components/MultiToggle";
+import MultiToggle from "../../../../Components/MultiToggle";
 
 const useStyles = createUseStyles({
   option: {

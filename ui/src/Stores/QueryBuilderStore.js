@@ -82,7 +82,6 @@ class QueryBuilderStore {
   result = null;
   tableViewRoot = ["data"];
 
-  currentTab = "query";
   currentField = null;
 
   constructor() {
@@ -112,7 +111,6 @@ class QueryBuilderStore {
       resultStart: observable,
       result: observable.shallow,
       tableViewRoot: observable,
-      currentTab: observable,
       currentField: observable,
       setQueryId: action,
       currentFieldLookups: computed,
@@ -124,6 +122,7 @@ class QueryBuilderStore {
       currentFieldParentLookupsLinks: computed,
       selectRootSchema: action,
       resetRootSchema: action,
+      clearRootSchema: action,
       setAsNewQuery: action,
       hasRootSchema: computed,
       rootSchema: computed,
@@ -142,9 +141,8 @@ class QueryBuilderStore {
       addMergeChildField: action,
       removeField: action,
       toggleRunStripVocab: action,
-      selectTab: action,
       selectField: action,
-      closeFieldOptions: action,
+      resetField: action,
       JSONQueryFields: computed,
       JSONQueryProperties: computed,
       JSONMetaProperties: computed,
@@ -281,13 +279,23 @@ class QueryBuilderStore {
 
   resetRootSchema() {
     if (!this.isSaving) {
+      const rootField = this.rootField;
+      this.clearRootSchema();
+      if (rootField) {
+        this.rootField = new Field(rootField.schema);
+        this.selectField(this.rootField);
+      }
+    }
+  }
+
+  clearRootSchema() {
+    if (!this.isSaving) {
       this.queryId = "";
       this.label = "";
       this.description = "";
       this.context = toJS(defaultContext);
       this.sourceQuery = null;
       this.savedQueryHasInconsistencies = false;
-      this.rootField = new Field(this.rootField.schema);
       this.isSaving = false;
       this.saveError = null;
       this.isRunning = false;
@@ -298,7 +306,8 @@ class QueryBuilderStore {
       this.showMyQueries = true;
       this.showOthersQueries = true;
       this.result = null;
-      this.selectField(this.rootField);
+      this.rootField = null;
+      this.resetField();
     }
   }
 
@@ -481,10 +490,10 @@ class QueryBuilderStore {
       this.saveAsMode = false;
       this.sourceQuery = null;
       this.savedQueryHasInconsistencies = false;
-      this.closeFieldOptions();
+      this.resetField();
     } else {
       if (field === this.currentField) {
-        this.closeFieldOptions();
+        this.resetField();
       }
       if (field.isMerge && field.parentIsRootMerge) {
         remove(field.parent.merge, parentField => field === parentField);
@@ -504,19 +513,13 @@ class QueryBuilderStore {
     this.runStripVocab = state !== undefined ? !!state : !this.runStripVocab;
   }
 
-  selectTab(tab) {
-    this.currentTab = tab;
-  }
-
   selectField(field) {
     this.currentField = field;
-    this.currentTab = "fieldOptions";
     typesStore.addTypesToTetch(this.currentField.lookups);
   }
 
-  closeFieldOptions() {
+  resetField() {
     this.currentField = null;
-    this.currentTab = "query";
   }
 
   get JSONQueryFields() {

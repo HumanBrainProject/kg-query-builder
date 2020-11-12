@@ -1,24 +1,18 @@
-import React, { useRef, useEffect} from "react";
+import React, { useEffect} from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Scrollbars } from "react-custom-scrollbars";
 
 import queryBuilderStore from "../Stores/QueryBuilderStore";
 import typesStore from "../Stores/TypesStore";
 
-import Query from "./Query";
-import QueriesDrawer from "./QueriesDrawer";
-import RootSchemaChoice from "./RootSchemaChoice";
-import QuerySpecification from "./QuerySpecification";
-import Options from "./Options";
-import Result from "./Result";
-import ResultTable from "./ResultTable";
-import Tab from "../Components/Tab";
+import RootSchema from "./QueryBuilder/RootSchema";
+import Query from "./QueryBuilder/Query";
+import QueryPanels from "./QueryBuilder/QueryPanels";
+import QueriesDrawer from "./QueryBuilder/QueriesDrawer";
 import BGMessage from "../Components/BGMessage";
 import FetchingLoader from "../Components/FetchingLoader";
-import Filter from "./Filter";
 
 const rootPath = window.rootPath || "";
 
@@ -29,7 +23,7 @@ const useStyles = createUseStyles({
     color: "var(--ft-color-normal)",
     backgroundImage: `url('${window.location.protocol}//${window.location.host}${rootPath}/assets/graph.png')`,
   },
-  structureLoader: {
+  fetchingPanel: {
     position: "fixed",
     top: 0,
     left: 0,
@@ -52,122 +46,78 @@ const useStyles = createUseStyles({
     gridGap: "10px",
     padding: "10px",
     height: "100%"
-  },
-  leftPanel: {
-    position: "relative"
-  },
-  tabbedPanel: {
-    display: "grid",
-    gridTemplateRows: "auto 1fr"
-  },
-  tabs: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
-    borderLeft: "1px solid var(--border-color-ui-contrast2)"
-  },
-  tabBody: {
-    border: "1px solid var(--border-color-ui-contrast2)",
-    borderTop: "none",
-    background: "var(--bg-color-ui-contrast2)"
-  },
-  tabBodyInner: {
-    padding: "10px"
   }
 });
 
-
 const QueryBuilder = observer(() => {
+
   const classes = useStyles();
-  const scrolledPanel = useRef();
 
   useEffect(() => fetchStructure(true), []);
 
   const fetchStructure = (forceFetch=false) => typesStore.fetch(forceFetch);
 
-  const handleSelectTab = tab => {
-    queryBuilderStore.selectTab(tab);
-    scrolledPanel.current && scrolledPanel.current.scrollToTop();
-  };
-
-  const handleCloseField = () => queryBuilderStore.closeFieldOptions();
-
   const handleRetryFetchStructure = () => fetchStructure(true);
 
-  return (
-    <div className={classes.container}>
-      {typesStore.isFetching ?
-        <div className={classes.structureLoader}>
+  if (typesStore.isFetching) {
+    return (
+      <div className={classes.container}>
+        <div className={classes.fetchingPanel}>
           <FetchingLoader>
               Fetching api structure...
           </FetchingLoader>
         </div>
-        :
-        typesStore.fetchError ?
-          <BGMessage icon={"ban"}>
-              There was a network problem fetching the api structure.<br />
-              If the problem persists, please contact the support.<br />
-            <small>{typesStore.fetchError}</small><br /><br />
-            <Button variant="primary" onClick={handleRetryFetchStructure}>
-              <FontAwesomeIcon icon={"redo-alt"} />&nbsp;&nbsp; Retry
-            </Button>
-          </BGMessage>
-          :
-          !typesStore.hasTypes ?
-            <BGMessage icon={"tools"}>
-                No types available.<br />
-                If the problem persists, please contact the support.<br /><br />
-              <Button variant="primary" onClick={handleRetryFetchStructure}>
-                <FontAwesomeIcon icon={"redo-alt"} />&nbsp;&nbsp; Retry
-              </Button>
-            </BGMessage>
-            :
-            <div className={classes.layout}>
-              <div className={classes.leftPanel}>
-                {queryBuilderStore.hasRootSchema ?
-                  <Query />
-                  :
-                  <BGMessage icon={"tools"}>
-                      Please choose a type in the right panel
-                  </BGMessage>}
-              </div>
-              <div className={classes.tabbedPanel}>
-                <div className={classes.tabs}>
-                  {queryBuilderStore.hasRootSchema ?
-                    <React.Fragment>
-                      {queryBuilderStore.currentField && <Tab icon={"cog"} current={queryBuilderStore.currentTab === "fieldOptions"} label={"Field options"} onClose={handleCloseField} onClick={() => handleSelectTab("fieldOptions")} />}
-                      <Tab icon={"shopping-cart"} current={queryBuilderStore.currentTab === "query"} label={"Query specification"} onClick={() => handleSelectTab("query")} />
-                      <Tab icon={"poll-h"} current={queryBuilderStore.currentTab === "result"} label={"Results: JSON View"} onClick={() => handleSelectTab("result")} />
-                      <Tab icon={"table"} current={queryBuilderStore.currentTab === "resultTable"} label={"Results: Table View"} onClick={() => handleSelectTab("resultTable")} />
-                    </React.Fragment>
-                    :
-                    <Filter />
-                  }
-                </div>
-                <div className={classes.tabBody}>
-                  <Scrollbars autoHide ref={scrolledPanel}>
-                    <div className={classes.tabBodyInner}>
-                      {!queryBuilderStore.hasRootSchema ?
-                        <RootSchemaChoice />
-                        : queryBuilderStore.currentTab === "query" ?
-                          <QuerySpecification />
-                          : queryBuilderStore.currentTab === "result" ?
-                            <Result />
-                            : queryBuilderStore.currentTab === "resultTable" ?
-                              <ResultTable />
-                              : queryBuilderStore.currentTab === "fieldOptions" ?
-                                <Options />
-                                : null}
-                    </div>
-                  </Scrollbars>
-                </div>
-              </div>
-              {queryBuilderStore.hasRootSchema && (
-                <QueriesDrawer />
-              )}
-            </div>
-      }
+      </div>
+    );
+  }
+
+  if (typesStore.fetchError) {
+    return (
+      <div className={classes.container}>
+        <BGMessage icon={"ban"}>
+          There was a network problem fetching the api structure.<br />
+          If the problem persists, please contact the support.<br />
+          <small>{typesStore.fetchError}</small><br /><br />
+          <Button variant="primary" onClick={handleRetryFetchStructure}>
+            <FontAwesomeIcon icon={"redo-alt"} />&nbsp;&nbsp; Retry
+          </Button>
+        </BGMessage>
+      </div>
+    );
+  }
+
+  if (!typesStore.hasTypes) {
+    return (
+      <div className={classes.container}>
+        <BGMessage icon={"tools"}>
+            No types available.<br />
+            If the problem persists, please contact the support.<br /><br />
+          <Button variant="primary" onClick={handleRetryFetchStructure}>
+            <FontAwesomeIcon icon={"redo-alt"} />&nbsp;&nbsp; Retry
+          </Button>
+        </BGMessage>
+      </div>
+    );
+  }
+
+  if (!queryBuilderStore.hasRootSchema) {
+    return (
+      <div className={classes.container}>
+        <RootSchema />
+      </div>
+    );
+  }
+
+  return (
+    <div className={classes.container}>
+      <div className={classes.layout}>
+        <Query />
+        <QueryPanels />
+        <QueriesDrawer />
+      </div>
     </div>
   );
+
 });
 
 export default QueryBuilder;

@@ -11,11 +11,12 @@ import get from "lodash/get";
 import isObject from "lodash/isObject";
 import isString from "lodash/isString";
 
-import queryBuilderStore from "../Stores/QueryBuilderStore";
-import BGMessage from "../Components/BGMessage";
-import FetchingLoader from "../Components/FetchingLoader";
+import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+
+import BGMessage from "../../../Components/BGMessage";
+import FetchingLoader from "../../../Components/FetchingLoader";
+import Breadcrumb from "../../../Components/Breadcrumb";
 import ResultOptions from "./ResultOptions";
-import Breadcrumb from "../Components/Breadcrumb";
 
 const useStyles = createUseStyles({
   container:{

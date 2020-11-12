@@ -7,13 +7,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Scrollbars } from "react-custom-scrollbars";
 const jsdiff = require("diff");
 
-import queryBuilderStore from "../Stores/QueryBuilderStore";
-import FetchingLoader from "../Components/FetchingLoader";
-import User from "../Components/User";
-import Field from "./Field";
+import queryBuilderStore from "../../Stores/QueryBuilderStore";
+
+import FetchingLoader from "../../Components/FetchingLoader";
+import User from "../../Components/User";
+import Field from "../Query/Field";
 
 const useStyles = createUseStyles({
   container:{
+    position: "relative",
     display: "grid",
     gridTemplateRows: "auto 1fr",
     gridTemplateColumns: "1fr",
@@ -488,27 +490,27 @@ const Query = observer(() => {
         </div>
       )}
       {queryBuilderStore.compareChanges &&
-              <Modal show={true} dialogClassName={classes.compareModal} onHide={handleToggleCompareChanges}>
-                <Modal.Header closeButton>
-                  <strong>{queryBuilderStore.queryId}</strong>
-                </Modal.Header>
-                <Modal.Body>
-                  <div className={classes.comparison}>
-                    <Scrollbars autoHide>
-                      <pre>
-                        {diff.map(part => {
-                          if (!part.value) {
-                            return null;
-                          }
-                          return (
-                            <span key={part.value} className={part.added?classes.added:part.removed?classes.removed:classes.unchanged}>{part.value}</span>
-                          );
-                        })}
-                      </pre>
-                    </Scrollbars>
-                  </div>
-                </Modal.Body>
-              </Modal>
+        <Modal show={true} dialogClassName={classes.compareModal} onHide={handleToggleCompareChanges}>
+          <Modal.Header closeButton>
+            <strong>{queryBuilderStore.queryId}</strong>
+          </Modal.Header>
+          <Modal.Body>
+            <div className={classes.comparison}>
+              <Scrollbars autoHide>
+                <pre>
+                  {diff.map(part => {
+                    if (!part.value) {
+                      return null;
+                    }
+                    return (
+                      <span key={part.value} className={part.added?classes.added:part.removed?classes.removed:classes.unchanged}>{part.value}</span>
+                    );
+                  })}
+                </pre>
+              </Scrollbars>
+            </div>
+          </Modal.Body>
+        </Modal>
       }
     </div>
   );

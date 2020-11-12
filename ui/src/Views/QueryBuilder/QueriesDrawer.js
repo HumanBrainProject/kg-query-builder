@@ -4,8 +4,9 @@ import {observer} from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import queryBuilderStore from "../Stores/QueryBuilderStore";
-import SavedQueries from "./SavedQueries";
+import queryBuilderStore from "../../Stores/QueryBuilderStore";
+
+import SavedQueries from "./QueriesDrawer/SavedQueries";
 
 const useStyles = createUseStyles({
   container:{
