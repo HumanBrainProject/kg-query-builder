@@ -17,16 +17,22 @@ const useStyles = createUseStyles({
     display: "grid",
     gridTemplateRows: "auto 1fr"
   },
-  body: {
-    padding: "10px",
-    border: "1px solid var(--border-color-ui-contrast2)",
-    borderTop: "none",
-    background: "var(--bg-color-ui-contrast2)"
-  },
   tabs: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
     borderLeft: "1px solid var(--border-color-ui-contrast2)"
+  },
+  body: {
+    padding: "10px 0",
+    border: "1px solid var(--border-color-ui-contrast2)",
+    borderTop: "none",
+    background: "var(--bg-color-ui-contrast2)",
+    "& > div > div": {
+      overflowX: "hidden !important"
+    }
+  },
+  content: {
+    padding: "0 10px"
   }
 });
 
@@ -91,7 +97,9 @@ const QueryPanels = observer(() => {
       </div>
       <div className={classes.body}>
         <Scrollbars autoHide ref={scrollRef}>
-          <View name={tab} />
+          <div className={classes.content}>
+            <View name={tab} />
+          </div>
         </Scrollbars>
       </div>
     </div>

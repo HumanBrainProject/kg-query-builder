@@ -40,7 +40,7 @@ const isChildOfField = (node, parent, root) => {
     node = node.parent;
   }
   return node === parent;
-}
+};
 
 const getProperties = query => {
   if (!query) {
