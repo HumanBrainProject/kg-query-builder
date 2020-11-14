@@ -15,13 +15,18 @@
 */
 
 import React from "react";
+import { observer } from "mobx-react-lite";
 
-import Option from "./Option";
+import queryBuilderStore from "../../../Stores/QueryBuilderStore";
 
-const Options = ({ field, rootField, lookupsLinks, options, onChange }) => (
-  options.map(option => (
-    <Option key={option.name} field={field} rootField={rootField} lookupsLinks={lookupsLinks} option={option} onChange={onChange} />
-  ))
-);
+import ComparePart from "./ComparePart";
 
-export default Options;
+const CompareChanges = observer(() => (
+  <pre>
+    {queryBuilderStore.JSONQueryDiff.map(part => (
+      <ComparePart key={part.value} part={part} />
+    ))}
+  </pre>
+));
+
+export default CompareChanges;

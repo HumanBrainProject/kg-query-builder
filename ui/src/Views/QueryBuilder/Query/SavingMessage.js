@@ -16,44 +16,45 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { observer } from "mobx-react-lite";
+
+import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+
+import FetchingLoader from "../../../Components/FetchingLoader";
 
 const useStyles = createUseStyles({
-  container:{
-    position:"absolute !important",
-    top:"50%",
-    left:"50%",
-    transform:"translate(-50%,-200px)",
-    textAlign:"center"
-  },
-  icon:{
-    fontSize:"10em",
-    "& path":{
-      fill:"var(--bg-color-blend-contrast1)",
-      stroke:"rgba(200,200,200,.1)",
-      strokeWidth:"3px"
+  container: {
+    position:"fixed",
+    top:0,
+    left:0,
+    width: "100%",
+    height: "100%",
+    zIndex: 10000,
+    background: "var(--bg-color-blend-contrast1)",
+    "& .fetchingPanel": {
+      width: "auto",
+      padding: "30px",
+      border: "1px solid var(--border-color-ui-contrast1)",
+      borderRadius: "4px",
+      color: "var(--ft-color-loud)",
+      background: "var(--list-bg-hover)"
     }
   },
-  text:{
-    fontWeight:"300",
-    fontSize:"1.2em"
-  }
 });
 
-const BGMessage = ({ children, icon, transform }) => {
+const SavingMessage = observer(() => {
 
   const classes = useStyles();
 
-  return(
+  if (!queryBuilderStore.isSaving) {
+    return null;
+  }
+
+  return (
     <div className={classes.container}>
-      <div className={classes.icon}>
-        <FontAwesomeIcon icon={icon} transform={transform}/>
-      </div>
-      <div className={classes.text}>
-        {children}
-      </div>
+      <FetchingLoader>{`Saving query "${queryBuilderStore.queryId}"...`}</FetchingLoader>
     </div>
   );
-};
+});
 
-export default BGMessage;
+export default SavingMessage;

@@ -15,13 +15,40 @@
 */
 
 import React from "react";
+import { createUseStyles } from "react-jss";
 
-import Option from "./Option";
+const useStyles = createUseStyles({
+  removed:{
+    background: "#FADBD7",
+    textDecoration: "line-through",
+    "& + $added": {
+      marginLeft: "3px"
+    }
+  },
+  added:{
+    background: "#A5EBC3",
+    "& + $removed": {
+      marginLeft: "3px"
+    }
+  },
+  unchanged: {
 
-const Options = ({ field, rootField, lookupsLinks, options, onChange }) => (
-  options.map(option => (
-    <Option key={option.name} field={field} rootField={rootField} lookupsLinks={lookupsLinks} option={option} onChange={onChange} />
-  ))
-);
+  },
+});
 
-export default Options;
+const ComparePart = ({ part }) => {
+
+  const classes = useStyles();
+
+  if (!part.value) {
+    return null;
+  }
+
+  const className = part.added?classes.added:part.removed?classes.removed:classes.unchanged;
+
+  return (
+    <span className={className}>{part.value}</span>
+  );
+};
+
+export default ComparePart;

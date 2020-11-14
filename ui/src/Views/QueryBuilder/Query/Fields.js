@@ -15,13 +15,24 @@
 */
 
 import React from "react";
+import {observer} from "mobx-react-lite";
+import Field from "./Field";
+import uniqueId from "lodash/uniqueId";
 
-import Option from "./Option";
 
-const Options = ({ field, rootField, lookupsLinks, options, onChange }) => (
-  options.map(option => (
-    <Option key={option.name} field={field} rootField={rootField} lookupsLinks={lookupsLinks} option={option} onChange={onChange} />
-  ))
-);
+const Fields = observer(({ field }) => (
+  <div>
+    {field.merge && !!field.merge.length && field.merge.map(field => {
+      return(
+        <Field field={field} key={uniqueId("merge_")} />
+      );
+    })}
+    {field.structure && !!field.structure.length && field.structure.map(field => {
+      return(
+        <Field field={field} key={uniqueId("field_")} />
+      );
+    })}
+  </div>
+));
 
-export default Options;
+export default Fields;

@@ -15,40 +15,34 @@
 */
 
 import React from "react";
-import {observer} from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { observer } from "mobx-react-lite";
+import { Scrollbars } from "react-custom-scrollbars";
+
+import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+
+import Field from "./Field";
 
 const useStyles = createUseStyles({
-  avatar: {
-    verticalAlign: "middle",
-    "&.picture": {
-      border: 0,
-      borderRadius: "50%"
-    },
-    "&.default": {
-      transform: "scale(1.35)"
-    }
-  }
+  container: {
+    position:"relative",
+    background: "var(--bg-color-ui-contrast2)",
+    border: "1px solid var(--border-color-ui-contrast1)",
+    color:"var(--ft-color-normal)"
+  },
 });
 
-const Avatar = observer(({ user, size=20 }) => {
+const Representation = observer(({ className }) => {
 
   const classes = useStyles();
 
-  if (!user) {
-    return null;
-  }
-
-  if (user.picture) {
-    return (
-      <img alt={user.name?user.name:user.id} width={size} height={size} src={user.picture} title={user.name?user.name:user.id} className={`${classes.avatar} avatar picture`} />
-    );
-  }
-
   return (
-    <FontAwesomeIcon icon="user" title={user.name?user.name:user.id} className={`${classes.avatar} avatar default`} />
+    <div className={`${classes.container} ${className}`}>
+      <Scrollbars autoHide>
+        <Field field={queryBuilderStore.rootField} />
+      </Scrollbars>
+    </div>
   );
 });
 
-export default Avatar;
+export default Representation;
