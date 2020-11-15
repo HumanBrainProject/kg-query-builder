@@ -43,8 +43,9 @@ const useStyles = createUseStyles({
   },
   icon: {
     position: "absolute",
-    top: "20px",
+    top: "50%",
     left: "20px",
+    transform: "translateY(-50%)",
     color: "var(--ft-color-normal)"
   }
 });
