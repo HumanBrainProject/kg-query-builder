@@ -18,12 +18,14 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { ThemeProvider } from "react-jss";
 
-import appStore from "../Stores/AppStore";
+import { useStores } from "../Hooks/UseStores";
 
 import ErrorBoundary from "./ErrorBoundary";
 import Layout from "./Layout";
 
 const App = observer(() => {
+
+  const { appStore } = useStores();
 
   const theme = appStore.currentTheme;
 
@@ -33,6 +35,7 @@ const App = observer(() => {
     return () => {
       document.removeEventListener("keydown", appStore.handleGlobalShortcuts);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

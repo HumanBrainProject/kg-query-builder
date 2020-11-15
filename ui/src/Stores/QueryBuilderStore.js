@@ -24,10 +24,6 @@ const jsdiff = require("diff");
 
 import Field from "./Field";
 
-import API from "../Services/API";
-import authStore from "./AuthStore";
-import typesStore from "./TypesStore";
-
 const defaultContext = {
   "@vocab": "https://core.kg.ebrains.eu/vocab/query/",
   "query": "https://schema.hbp.eu/myQuery/",
@@ -77,7 +73,7 @@ const normalizeUser = user => ({
   picture: user["https://schema.hbp.eu/users/picture"]
 });
 
-class QueryBuilderStore {
+export class QueryBuilderStore {
   queryId = "";
   label = "";
   description = "";
@@ -108,7 +104,10 @@ class QueryBuilderStore {
 
   currentField = null;
 
-  constructor() {
+  transportLayer = null;
+  rootStore = null;
+
+  constructor(transportLayer, rootStore) {
     makeObservable(this, {
       queryId: observable,
       label: observable,
@@ -197,6 +196,9 @@ class QueryBuilderStore {
       fetchQueries: action,
       setDescription: action
     });
+
+    this.transportLayer = transportLayer;
+    this.rootStore = rootStore;
   }
 
   getLookupsAttributes(lookups, advanced=false) {
@@ -204,7 +206,7 @@ class QueryBuilderStore {
       return [];
     }
     return lookups.reduce((acc, id) => {
-      const type = typesStore.types[id];
+      const type = this.rootStore.typesStore.types[id];
       if (type) {
         const properties = type.properties.filter(prop => (!prop.canBe || !prop.canBe.length) && ((advanced && prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) || (!advanced && !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))));
         if (properties.length) {
@@ -225,7 +227,7 @@ class QueryBuilderStore {
       return [];
     }
     return lookups.reduce((acc, id) => {
-      const type = typesStore.types[id];
+      const type = this.rootStore.typesStore.types[id];
       if (type) {
         const properties = type.properties.filter(prop => prop.canBe && !!prop.canBe.length);
         if (properties.length) {
@@ -368,7 +370,7 @@ class QueryBuilderStore {
   }
 
   get isOneOfMySavedQueries() {
-    return this.sourceQuery !== null && this.sourceQuery.user.id === authStore.user.id;
+    return this.sourceQuery !== null && this.sourceQuery.user.id === this.rootStore.authStore.user.id;
   }
 
   get isQueryEmpty() {
@@ -400,15 +402,15 @@ class QueryBuilderStore {
   }
 
   get myQueries() {
-    if (authStore.user) {
-      return this.specifications.filter(spec => spec.user && (spec.user.id === authStore.user.id)).sort((a, b) => a.label - b.label);
+    if (this.rootStore.authStore.user) {
+      return this.specifications.filter(spec => spec.user && (spec.user.id === this.rootStore.authStore.user.id)).sort((a, b) => a.label - b.label);
     }
     return [];
   }
 
   get othersQueries() {
-    if (authStore.user) {
-      return this.specifications.filter(spec =>  !spec.user || (spec.user.id !== authStore.user.id)).sort((a, b) => a.label - b.label);
+    if (this.rootStore.authStore.user) {
+      return this.specifications.filter(spec =>  !spec.user || (spec.user.id !== this.rootStore.authStore.user.id)).sort((a, b) => a.label - b.label);
     }
     return this.specifications.sort((a, b) => a.label - b.label);
   }
@@ -466,7 +468,7 @@ class QueryBuilderStore {
       parent.structure.forEach(field => {
         let isUnknown = true;
         parent.lookups.some(id => {
-          const type = typesStore.types[id];
+          const type = this.rootStore.typesStore.types[id];
           if (type) {
             if (type.properties.find(property => property.attribute === field.schema.attribute && ((!field.schema.canBe && !property.canBe) || (isEqual(toJS(field.schema.canBe), toJS(property.canBe)))))) {
               isUnknown = false;
@@ -540,7 +542,7 @@ class QueryBuilderStore {
 
   selectField(field) {
     this.currentField = field;
-    typesStore.addTypesToTetch(this.currentField.lookups);
+    this.rootStore.typesStore.addTypesToTetch(this.currentField.lookups);
   }
 
   resetField() {
@@ -741,7 +743,7 @@ class QueryBuilderStore {
           let property = null;
           if (attribute) {
             parentField.lookups.some(id => {
-              const type = typesStore.types[id];
+              const type = this.rootStore.typesStore.types[id];
               if (type) {
                 property = type.properties.find(property => property.attribute === attribute && (!jsonField.structure || (jsonField.structure && property.canBe)));
                 if (property) {
@@ -856,7 +858,7 @@ class QueryBuilderStore {
           const parentFieldLookup = (parentField.isRootMerge && parentField.parent) ? parentField.parent : parentField;
           if (attribute && parentFieldLookup.schema && parentFieldLookup.schema.canBe && parentFieldLookup.schema.canBe.length) {
             parentFieldLookup.schema.canBe.some(id => {
-              const type = typesStore.types[id];
+              const type = this.rootStore.typesStore.types[id];
               if (type) {
                 property = type.properties.find(property => property.attribute === attribute && (!jsonField.structure || (jsonField.structure && property.canBe)));
                 if (property) {
@@ -966,8 +968,8 @@ class QueryBuilderStore {
       this.runError = false;
       this.result = null;
       try {
-        const payload = this.JSONQuery;
-        const response = await API.axios.post(API.endpoints.performQuery(this.runStripVocab ? "https://schema.hbp.eu/myQuery/" : undefined, this.resultSize, this.resultStart, this.stage), payload);
+        const query = this.JSONQuery;
+        const response = await this.transportLayer.performQuery(query, this.stage, this.runStripVocab ? "https://schema.hbp.eu/myQuery/" : undefined, this.resultStart, this.resultSize);
         runInAction(() => {
           this.tableViewRoot = ["data"];
           this.result = response.data;
@@ -980,6 +982,7 @@ class QueryBuilderStore {
           this.runError = `Error while executing query (${message})`;
           this.isRunning = false;
         });
+        this.transportLayer.captureException(e);
       }
     }
   }
@@ -1060,37 +1063,36 @@ class QueryBuilderStore {
         this.sourceQuery.deleteError = null;
       }
       const queryId = this.saveAsMode ? this.queryId : this.sourceQuery.id;
-
-      const payload = this.JSONQuery;
+      const query = this.JSONQuery;
       try {
-        await API.axios.put(API.endpoints.query(queryId), payload);
+        await this.transportLayer.saveQuery(this.rootStore.appStore.currentWorkspace, queryId, query);
         runInAction(() => {
-          if (!this.saveAsMode && this.sourceQuery && this.sourceQuery.user.id === authStore.user.id) {
-            this.sourceQuery.label = payload.label;
-            this.sourceQuery.description = payload.description;
-            this.sourceQuery.context = payload["@context"];
-            this.sourceQuery.merge = payload.merge,
-            this.sourceQuery.structure = payload.structure;
-            this.sourceQuery.properties = getProperties(payload);
+          if (!this.saveAsMode && this.sourceQuery && this.sourceQuery.user.id === this.rootStore.authStore.user.id) {
+            this.sourceQuery.label = query.label;
+            this.sourceQuery.description = query.description;
+            this.sourceQuery.context = query["@context"];
+            this.sourceQuery.merge = query.merge,
+            this.sourceQuery.structure = query.structure;
+            this.sourceQuery.properties = getProperties(query);
           } else if (!this.saveAsMode) {
             this.sourceQuery = this.specifications.find(spec => spec.id === queryId);
-            this.sourceQuery.label = payload.label;
-            this.sourceQuery.description = payload.description;
-            this.sourceQuery.specification = payload;
+            this.sourceQuery.label = query.label;
+            this.sourceQuery.description = query.description;
+            this.sourceQuery.specification = query;
           } else {
             this.sourceQuery = {
               id: queryId,
               user: {
-                id: authStore.user.id,
-                name: authStore.user.displayName,
-                picture: authStore.user.picture
+                id: this.rootStore.authStore.user.id,
+                name: this.rootStore.authStore.user.displayName,
+                picture: this.rootStore.authStore.user.picture
               },
-              context: payload["@context"],
-              merge: payload.merge,
-              structure: payload.structure,
-              properties: getProperties(payload),
-              label: payload.label,
-              description: payload.description,
+              context: query["@context"],
+              merge: query.merge,
+              structure: query.structure,
+              properties: getProperties(query),
+              label: query.label,
+              description: query.description,
               isDeleting: false,
               deleteError: null
             };
@@ -1101,8 +1103,11 @@ class QueryBuilderStore {
         });
       } catch (e) {
         const message = e.message ? e.message : e;
-        this.saveError = `Error while saving query "${queryId}" (${message})`;
-        this.isSaving = false;
+        runInAction(() => {
+          this.saveError = `Error while saving query "${queryId}" (${message})`;
+          this.isSaving = false;
+        });
+        this.transportLayer.captureException(e);
       }
     }
   }
@@ -1117,7 +1122,7 @@ class QueryBuilderStore {
     if (query && !query.isDeleting && !query.deleteError && !(query === this.sourceQuery && this.isSaving)) {
       query.isDeleting = true;
       try {
-        await API.axios.delete(API.endpoints.query(query.id));
+        await this.transportLayer.deleteQuery(this.rootStore.appStore.currentWorkspace, query.id);
         runInAction(() => {
           query.isDeleting = false;
           if (query === this.sourceQuery) {
@@ -1134,6 +1139,7 @@ class QueryBuilderStore {
           query.deleteError = `Error while deleting query "${query.id}" (${message})`;
           query.isDeleting = false;
         });
+        this.transportLayer.captureException(e);
       }
     }
   }
@@ -1151,7 +1157,7 @@ class QueryBuilderStore {
       if (this.rootField && this.rootField.schema && this.rootField.schema.id) {
         this.isFetchingQueries = true;
         try {
-          const response = await API.axios.get(API.endpoints.listQueries(this.rootField.schema.id));
+          const response = await this.transportLayer.listQueries(this.rootField.schema.id);
           runInAction(() => {
             this.specifications = [];
             this.showMyQueries = true;
@@ -1182,6 +1188,7 @@ class QueryBuilderStore {
                 runInAction(() => {
                   this.fetchQueriesError = `Error while trying to expand/compact JSON-LD (${e})`;
                 });
+                this.transportLayer.captureException(e);
               }
             });
             if (this.sourceQuery) {
@@ -1207,4 +1214,4 @@ class QueryBuilderStore {
   }
 }
 
-export default new QueryBuilderStore();
+export default QueryBuilderStore;

@@ -24,7 +24,7 @@ import uniqueId from "lodash/uniqueId";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
-import authStore from "../Stores/AuthStore";
+import { useStores } from "../Hooks/UseStores";
 
 import Avatar from "../Components/Avatar";
 
@@ -153,6 +153,8 @@ const UserProfileTab = observer(({className, size=30}) => {
   const [popOverPosition, setPopOverPosition] = useState("bottom");
   const [tokenCopied, setTokenCopied] = useState(null);
   const buttonRef = useRef();
+
+  const { authStore } = useStores();
 
   const handlePopOverPosition = popOverRect => {
     if (!popOverRect) { return null; }

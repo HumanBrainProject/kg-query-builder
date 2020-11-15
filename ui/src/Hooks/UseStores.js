@@ -15,24 +15,13 @@
 */
 
 import React from "react";
-import ReactJson from "react-json-view";
-import { observer } from "mobx-react-lite";
 
-import { useStores } from "../../../Hooks/UseStores";
+import { storesContext } from "../Contexts/StoresContext";
 
-import ThemeRJV from "../../../Themes/ThemeRJV";
-
-const QuerySpecification = observer(() => {
-
-  const { queryBuilderStore } = useStores();
-
-  if (!queryBuilderStore.rootField) {
-    return null;
+export const useStores = () => {
+  const store = React.useContext(storesContext);
+  if (!store) {
+    throw new Error("useStores must be used within a StoreProvider.");
   }
-
-  return (
-    <ReactJson collapsed={false} name={false} theme={ThemeRJV} src={queryBuilderStore.JSONQuery} />
-  );
-});
-
-export default QuerySpecification;
+  return store;
+};

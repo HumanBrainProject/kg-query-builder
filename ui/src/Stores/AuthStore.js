@@ -15,7 +15,6 @@
 */
 
 import { observable, computed, action, runInAction, makeObservable } from "mobx";
-import API from "../Services/API";
 
 const rootPath = window.rootPath || "";
 
@@ -41,7 +40,7 @@ const mapUserProfile = data => {
   return user;
 };
 
-class AuthStore {
+export class AuthStore {
   isUserAuthorized = false;
   user = null;
   workspaces = null;
@@ -58,7 +57,9 @@ class AuthStore {
   keycloak = null;
   endpoint = null;
 
-  constructor() {
+  transportLayer = null;
+
+  constructor(transportLayer) {
     makeObservable(this, {
       isUserAuthorized: observable,
       user: observable,
@@ -84,6 +85,8 @@ class AuthStore {
       login: action,
       authenticate: action
     });
+
+    this.transportLayer = transportLayer;
 
     if (Storage === undefined) {
       throw "The browser must support WebStorage API";
@@ -125,7 +128,7 @@ class AuthStore {
       this.userProfileError = null;
       this.isRetrievingUserProfile = true;
       try {
-        const { data } = await API.axios.get(API.endpoints.user());
+        const { data } = await this.transportLayer.getUserProfile();
         //throw {response: { status: 403}};
         runInAction(() => {
           this.isUserAuthorized = true;
@@ -143,6 +146,7 @@ class AuthStore {
             this.isRetrievingUserProfile = false;
           }
         });
+        this.transportLayer.captureException(e);
       }
     }
   }
@@ -152,7 +156,7 @@ class AuthStore {
       try {
         this.workspacesError = null;
         this.isRetrievingWorkspaces = true;
-        const { data } = await API.axios.get(API.endpoints.workspaces());
+        const { data } = await this.transportLayer.getWorkspaces();
         //throw {response: { status: 403}};
         runInAction(() => {
           this.workspaces = data && data.data ? data.data.map(workspace => workspace["http://schema.org/name"]) : [];
@@ -168,6 +172,7 @@ class AuthStore {
             this.isRetrievingWorkspaces = false;
           }
         });
+        this.transportLayer.captureException(e);
       }
     }
   }
@@ -212,7 +217,7 @@ class AuthStore {
     this.isInitializing = true;
     this.authError = null;
     try {
-      const { data } = await API.axios.get(API.endpoints.auth());
+      const { data } = await this.transportLayer.getAuthEndpoint();
       runInAction(() => {
         this.endpoint =  data && data.data? data.data.endpoint :null;
       });
@@ -239,6 +244,7 @@ class AuthStore {
         } catch (e) {
           // error are already set in the store so no need to do anything here
           // window.console.log(e);
+          this.transportLayer.captureException(e);
         }
       } else {
         runInAction(() => {
@@ -255,4 +261,4 @@ class AuthStore {
   }
 }
 
-export default new AuthStore();
+export default AuthStore;

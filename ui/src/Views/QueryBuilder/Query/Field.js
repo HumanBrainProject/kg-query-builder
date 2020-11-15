@@ -20,8 +20,7 @@ import { observer } from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "react-bootstrap/Button";
 
-import queryBuilderStore from "../../../Stores/QueryBuilderStore";
-import typesStore from "../../../Stores/TypesStore";
+import { useStores } from "../../../Hooks/UseStores";
 
 import Fields from "./Fields";
 import Icon from "../../../Components/Icon";
@@ -154,6 +153,8 @@ const useStyles = createUseStyles({
 const Field = observer(({ field }) => {
 
   const classes = useStyles();
+
+  const { queryBuilderStore, typesStore } = useStores();
 
   const handleSelectField = () => {
     queryBuilderStore.selectField(field);

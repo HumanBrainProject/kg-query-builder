@@ -17,16 +17,21 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 
-import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+import { useStores } from "../../../Hooks/UseStores";
 
 import ComparePart from "./ComparePart";
 
-const CompareChanges = observer(() => (
-  <pre>
-    {queryBuilderStore.JSONQueryDiff.map(part => (
-      <ComparePart key={part.value} part={part} />
-    ))}
-  </pre>
-));
+const CompareChanges = observer(() => {
+
+  const { queryBuilderStore } = useStores();
+
+  return (
+    <pre>
+      {queryBuilderStore.JSONQueryDiff.map(part => (
+        <ComparePart key={part.value} part={part} />
+      ))}
+    </pre>
+  );
+});
 
 export default CompareChanges;

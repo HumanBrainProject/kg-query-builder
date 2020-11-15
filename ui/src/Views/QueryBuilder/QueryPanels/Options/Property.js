@@ -16,10 +16,15 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
+
+import { useStores } from "../../../../Hooks/UseStores";
+
 import Icon from "../../../../Components/Icon";
-import typesStore from "../../../../Stores/TypesStore";
 
 const Type = ({ type: t }) => {
+
+  const { typesStore } = useStores();
+
   const type = typesStore.types[t];
   const label = type?type.label:t;
   const color = type?type.color:null;

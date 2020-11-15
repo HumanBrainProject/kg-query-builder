@@ -18,8 +18,7 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
-import appStore from "../Stores/AppStore";
-import authStore from "../Stores/AuthStore";
+import { useStores } from "../Hooks/UseStores";
 
 import UserProfileTab from "./UserProfileTab";
 import WorkspaceSelector from "./WorkspaceSelector";
@@ -68,6 +67,9 @@ const useStyles = createUseStyles({
 const Header = observer(() => {
 
   const classes = useStyles();
+
+  const { appStore, authStore } = useStores();
+
   return (
     <div className={classes.container}>
       <div className={`${classes.logo} layout-logo`}>

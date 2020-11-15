@@ -20,8 +20,8 @@ import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import queryBuilderStore from "../Stores/QueryBuilderStore";
-import typesStore from "../Stores/TypesStore";
+
+import { useStores } from "../Hooks/UseStores";
 
 import RootSchema from "./QueryBuilder/RootSchema";
 import Query from "./QueryBuilder/Query";
@@ -69,6 +69,9 @@ const QueryBuilder = observer(() => {
 
   const classes = useStyles();
 
+  const { queryBuilderStore, typesStore } = useStores();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => fetchStructure(true), []);
 
   const fetchStructure = (forceFetch=false) => typesStore.fetch(forceFetch);

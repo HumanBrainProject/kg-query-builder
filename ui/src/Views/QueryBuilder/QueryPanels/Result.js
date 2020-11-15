@@ -21,7 +21,7 @@ import { createUseStyles } from "react-jss";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+import { useStores } from "../../../Hooks/UseStores";
 
 import ThemeRJV from "../../../Themes/ThemeRJV";
 import BGMessage from "../../../Components/BGMessage";
@@ -46,6 +46,8 @@ const useStyles = createUseStyles({
 
 const Result = observer(() => {
   const classes = useStyles();
+
+  const { queryBuilderStore } = useStores();
 
   const handlExecuteQuery = () => {
     queryBuilderStore.executeQuery();

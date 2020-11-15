@@ -27,7 +27,7 @@ import get from "lodash/get";
 import isObject from "lodash/isObject";
 import isString from "lodash/isString";
 
-import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+import { useStores } from "../../../Hooks/UseStores";
 
 import BGMessage from "../../../Components/BGMessage";
 import FetchingLoader from "../../../Components/FetchingLoader";
@@ -90,7 +90,10 @@ const useStyles = createUseStyles({
 });
 
 const ResultValue = observer(({name, index, value}) => {
+
   const classes = useStyles();
+
+  const { queryBuilderStore } = useStores();
 
   const handleOpenCollection = () => queryBuilderStore.appendTableViewRoot(index,name);
 
@@ -162,7 +165,10 @@ const ResultValue = observer(({name, index, value}) => {
 });
 
 const ResultTable = observer(() => {
+
   const classes = useStyles();
+
+  const { queryBuilderStore } = useStores();
 
   const handleBreadcrumbClick = index => queryBuilderStore.returnToTableViewRoot(index);
 

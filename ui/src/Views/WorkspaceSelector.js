@@ -19,9 +19,7 @@ import { observer } from "mobx-react-lite";
 import Dropdown from "react-bootstrap/Dropdown";
 import { createUseStyles } from "react-jss";
 
-import authStore from "../Stores/AuthStore";
-import appStore from "../Stores/AppStore";
-import queryBuilderStore from "../Stores/QueryBuilderStore";
+import { useStores } from "../Hooks/UseStores";
 
 import CustomDropdownToggle from "../Components/CustomDropdownToggle";
 import CustomDropdownMenu from "../Components/CustomDropdownMenu";
@@ -46,6 +44,8 @@ const useStyles = createUseStyles({
 
 const WorkspaceSelector = observer(() => {
   const classes = useStyles();
+
+  const { appStore, authStore, queryBuilderStore } = useStores();
 
   const handleSelectWorkspace = workspace => {
     queryBuilderStore.clearRootSchema();

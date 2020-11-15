@@ -18,9 +18,9 @@ import React from "react";
 import * as Sentry from "@sentry/browser";
 import Cookies from "universal-cookie";
 
-import appStore from "../Stores/AppStore";
+import { useStores } from "../Hooks/UseStores";
 
-class ErrorBoundary extends React.Component {
+class ErrorBoundaryComponent extends React.Component {
 
   componentDidMount() {
     const cookies = new Cookies();
@@ -37,6 +37,7 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, info) {
+    const { stores:{ appStore } } = this.props;
     appStore.setGlobalError(error, info);
   }
 
@@ -45,5 +46,16 @@ class ErrorBoundary extends React.Component {
     return children;
   }
 }
+
+const ErrorBoundary = ({ children }) => {
+
+  const stores = useStores();
+
+  return (
+    <ErrorBoundaryComponent stores={stores} >
+      {children}
+    </ErrorBoundaryComponent>
+  );
+};
 
 export default ErrorBoundary;

@@ -19,14 +19,12 @@ import { matchPath } from "react-router-dom";
 
 import DefaultTheme from "../Themes/Default";
 import BrightTheme from "../Themes/Bright";
-import authStore from "./AuthStore";
-import typesStore from "./TypesStore";
 
 const themes = {};
 themes[DefaultTheme.name] = DefaultTheme;
 themes[BrightTheme.name] = BrightTheme;
 
-class AppStore{
+export class AppStore{
   globalError = null;
   _currentThemeName = DefaultTheme.name;
   historySettings;
@@ -36,7 +34,9 @@ class AppStore{
   currentWorkspace = null;
   isInitialized = false;
 
-  constructor(){
+  rootStore = null;
+
+  constructor(rootStore) {
     makeObservable(this, {
       globalError: observable,
       _currentThemeName: observable,
@@ -58,6 +58,8 @@ class AppStore{
       handleGlobalShortcuts: action
     });
 
+    this.rootStore = rootStore;
+
     this.canLogin = !matchPath(window.location.pathname, { path: "/logout", exact: "true" });
     this.setTheme(localStorage.getItem("theme"));
   }
@@ -66,44 +68,44 @@ class AppStore{
     if (this.canLogin && !this.isInitialized) {
       this.initializingMessage = "Initializing the application...";
       this.initializationError = null;
-      if(!authStore.isAuthenticated) {
+      if(!this.rootStore.authStore.isAuthenticated) {
         this.initializingMessage = "User authenticating...";
-        await authStore.authenticate();
-        if (authStore.authError) {
+        await this.rootStore.authStore.authenticate();
+        if (this.rootStore.authStore.authError) {
           runInAction(() => {
-            this.initializationError = authStore.authError;
+            this.initializationError = this.rootStore.authStore.authError;
             this.initializingMessage = null;
           });
         }
       }
-      if(authStore.isAuthenticated && !authStore.hasUserProfile) {
+      if(this.rootStore.authStore.isAuthenticated && !this.rootStore.authStore.hasUserProfile) {
         runInAction(() => {
           this.initializingMessage = "Retrieving user profile...";
         });
-        await authStore.retrieveUserProfile();
+        await this.rootStore.authStore.retrieveUserProfile();
         runInAction(() => {
-          if (authStore.userProfileError) {
-            this.initializationError = authStore.userProfileError;
+          if (this.rootStore.authStore.userProfileError) {
+            this.initializationError = this.rootStore.authStore.userProfileError;
             this.initializingMessage = null;
-          } else if (!authStore.isUserAuthorized && !authStore.isRetrievingUserProfile) {
+          } else if (!this.rootStore.authStore.isUserAuthorized && !this.rootStore.authStore.isRetrievingUserProfile) {
             this.isInitialized = true;
             this.initializingMessage = null;
           }
         });
       }
-      if(authStore.isAuthenticated && authStore.isUserAuthorized && !authStore.hasUserWorkspaces) {
+      if(this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && !this.rootStore.authStore.hasUserWorkspaces) {
         runInAction(() => {
           this.initializingMessage = "Retrieving workspaces...";
         });
-        await authStore.retrieveUserWorkspaces();
-        if (authStore.workspacesError) {
+        await this.rootStore.authStore.retrieveUserWorkspaces();
+        if (this.rootStore.authStore.workspacesError) {
           runInAction(() => {
-            this.initializationError = authStore.workspacesError;
+            this.initializationError = this.rootStore.authStore.workspacesError;
             this.initializingMessage = null;
           });
         }
       }
-      if (authStore.isAuthenticated && authStore.isUserAuthorized && authStore.hasUserWorkspaces) {
+      if (this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && this.rootStore.authStore.hasUserWorkspaces) {
         this.initializeWorkspace();
         runInAction(() => {
           this.initializingMessage = null;
@@ -119,9 +121,9 @@ class AppStore{
   }
 
   setCurrentWorkspace = workspace => {
-    if (!workspace || !authStore.hasWorkspaces || !authStore.workspaces.includes(workspace)) {
-      if (authStore.hasUserWorkspaces && authStore.workspaces.length === 1) {
-        workspace = authStore.workspaces[0];
+    if (!workspace || !this.rootStore.authStore.hasWorkspaces || !this.rootStore.authStore.workspaces.includes(workspace)) {
+      if (this.rootStore.authStore.hasUserWorkspaces && this.rootStore.authStore.workspaces.length === 1) {
+        workspace = this.rootStore.authStore.workspaces[0];
       } else {
         workspace = null;
       }
@@ -129,7 +131,7 @@ class AppStore{
     if(this.currentWorkspace !== workspace) {
       this.currentWorkspace = workspace;
       localStorage.setItem("workspace", workspace);
-      typesStore.fetch(true);
+      this.rootStore.typesStore.fetch(true);
     }
   };
 
@@ -143,7 +145,7 @@ class AppStore{
 
   login = () => {
     if (this.canLogin) {
-      authStore.login();
+      this.rootStore.authStore.login();
     } else {
       window.history.replaceState(window.history.state, "Knowledge Graph Query Builder", "/");
       this.canLogin = true;
@@ -175,4 +177,4 @@ class AppStore{
   };
 }
 
-export default new AppStore();
+export default AppStore;

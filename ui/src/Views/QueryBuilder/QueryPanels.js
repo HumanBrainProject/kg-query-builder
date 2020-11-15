@@ -19,7 +19,7 @@ import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import { Scrollbars } from "react-custom-scrollbars";
 
-import queryBuilderStore from "../../Stores/QueryBuilderStore";
+import { useStores } from "../../Hooks/UseStores";
 
 import Tab from "../../Components/Tab";
 import QuerySpecification from "./QueryPanels/QuerySpecification";
@@ -78,6 +78,8 @@ const View = ({name}) => {
 const QueryPanels = observer(() => {
 
   const classes = useStyles();
+
+  const { queryBuilderStore } = useStores();
 
   const scrollRef = useRef();
 

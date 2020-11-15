@@ -18,7 +18,7 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
-import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+import { useStores } from "../../../Hooks/UseStores";
 
 import Name from "./Options/Name";
 import Flatten from "./Options/Flatten";
@@ -48,6 +48,8 @@ const useStyles = createUseStyles({
 const Options = observer(() => {
 
   const classes = useStyles();
+
+  const { queryBuilderStore } = useStores();
 
   const field = queryBuilderStore.currentField;
   const rootField = queryBuilderStore.rootField;

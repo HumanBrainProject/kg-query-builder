@@ -31,7 +31,6 @@ const defaultOptions = [
   }
 ];
 
-
 class Field {
   schema = null;
   merge = [];

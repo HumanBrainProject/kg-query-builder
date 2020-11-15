@@ -20,7 +20,7 @@ import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+import { useStores } from "../../../Hooks/UseStores";
 
 import User from "../../../Components/User";
 
@@ -190,6 +190,8 @@ const useStyles = createUseStyles({
 const Form = observer(({ className }) => {
 
   const classes = useStyles();
+
+  const { queryBuilderStore } = useStores();
 
   const handleChangeLabel = e => queryBuilderStore.setLabel(e.target.value);
 

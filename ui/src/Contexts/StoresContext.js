@@ -15,24 +15,11 @@
 */
 
 import React from "react";
-import ReactJson from "react-json-view";
-import { observer } from "mobx-react-lite";
 
-import { useStores } from "../../../Hooks/UseStores";
+import { RootStore } from "../Stores/RootStore";
+import { TransportLayer } from "../Services/TransportLayer";
 
-import ThemeRJV from "../../../Themes/ThemeRJV";
+const transportLayer = new TransportLayer();
+const stores = new RootStore(transportLayer);
 
-const QuerySpecification = observer(() => {
-
-  const { queryBuilderStore } = useStores();
-
-  if (!queryBuilderStore.rootField) {
-    return null;
-  }
-
-  return (
-    <ReactJson collapsed={false} name={false} theme={ThemeRJV} src={queryBuilderStore.JSONQuery} />
-  );
-});
-
-export default QuerySpecification;
+export const storesContext = React.createContext(stores);

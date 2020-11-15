@@ -19,7 +19,7 @@ import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import { Scrollbars } from "react-custom-scrollbars";
 
-import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+import { useStores } from "../../../Hooks/UseStores";
 
 import Field from "./Field";
 
@@ -35,6 +35,8 @@ const useStyles = createUseStyles({
 const Representation = observer(({ className }) => {
 
   const classes = useStyles();
+
+  const { queryBuilderStore } = useStores();
 
   return (
     <div className={`${classes.container} ${className}`}>

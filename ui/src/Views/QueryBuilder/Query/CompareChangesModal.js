@@ -22,7 +22,7 @@ import { Scrollbars } from "react-custom-scrollbars";
 
 import CompareChanges from "./CompareChanges";
 
-import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+import { useStores } from "../../../Hooks/UseStores";
 
 const useStyles = createUseStyles({
   modal:{
@@ -56,6 +56,8 @@ const useStyles = createUseStyles({
 const CompareChangesModal = observer(() => {
 
   const classes = useStyles();
+
+  const { queryBuilderStore } = useStores();
 
   const handleHide = () => queryBuilderStore.toggleCompareChanges();
 

@@ -17,9 +17,7 @@
 import { observable, action, computed, runInAction, makeObservable } from "mobx";
 import debounce from "lodash/debounce";
 
-import API from "../Services/API";
-
-class TypesStore {
+export class TypesStore {
   filterValue = "";
   types = {};
   workspaceTypeList = [];
@@ -31,7 +29,10 @@ class TypesStore {
   fetchingQueueError = null;
   isFetchingQueue = false;
 
-  constructor() {
+  transportLayer = null;
+  rootStore = null;
+
+  constructor(transportLayer, rootStore) {
     makeObservable(this, {
       filterValue: observable,
       types: observable,
@@ -49,6 +50,9 @@ class TypesStore {
       processQueue: action,
       fetchQueue: action
     });
+
+    this.transportLayer = transportLayer;
+    this.rootStore = rootStore;
   }
 
   get isFetched() {
@@ -74,7 +78,7 @@ class TypesStore {
       this.isFetching = true;
       this.fetchError = null;
       try {
-        const response = await API.axios.get(API.endpoints.workspaceTypes());
+        const response = await this.transportLayer.getWorkspaceTypes(this.rootStore.appStore.currentWorkspace);
         runInAction(() => {
           const types = (Array.isArray(response.data)?response.data:[]).map(type => ({
             id: type.id,
@@ -97,8 +101,8 @@ class TypesStore {
           this.isFetching = false;
         });
       } catch (e) {
+        const message = e.message ? e.message : e;
         runInAction(() => {
-          const message = e.message ? e.message : e;
           this.fetchError = `Error while fetching types (${message})`;
           this.isFetching = false;
         });
@@ -131,9 +135,9 @@ class TypesStore {
       return;
     }
     this.isFetchingQueue = true;
-    let toProcess = Array.from(this.typesQueue).splice(0, this.queueThreshold);
+    const toProcess = Array.from(this.typesQueue).splice(0, this.queueThreshold);
     try{
-      let response = await API.axios.post(API.endpoints.types(), toProcess);
+      const response = await this.transportLayer.getTypes(toProcess);
       runInAction(() =>{
         toProcess.forEach(identifier => {
           const type =  response && response.data && response.data && response.data[identifier];
@@ -152,8 +156,9 @@ class TypesStore {
         this.isFetchingQueue = false;
         this.processQueue();
       });
+      this.transportLayer.captureException(e);
     }
   }
 }
 
-export default new TypesStore();
+export default TypesStore;

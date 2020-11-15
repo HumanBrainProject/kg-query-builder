@@ -22,7 +22,7 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import { createUseStyles } from "react-jss";
 
-import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+import { useStores } from "../../../Hooks/UseStores";
 
 const useStyles = createUseStyles({
   container:{
@@ -64,7 +64,10 @@ const useStyles = createUseStyles({
 const scopeOptions =  [{label: "Released", value: "RELEASED" }, {label: "Curated", value: "IN_PROGRESS"}];
 
 const ResultOptions = observer(() => {
+
   const classes = useStyles();
+
+  const { queryBuilderStore } = useStores();
 
   const handleToggleRunStripVocab = () => queryBuilderStore.toggleRunStripVocab();
 

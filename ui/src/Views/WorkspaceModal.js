@@ -20,8 +20,7 @@ import { observer } from "mobx-react-lite";
 import { Scrollbars } from "react-custom-scrollbars";
 import Modal from "react-bootstrap/Modal";
 
-import appStore from "../Stores/AppStore";
-import authStore from "../Stores/AuthStore";
+import { useStores } from "../Hooks/UseStores";
 
 const rootPath = window.rootPath || "";
 const useStyles = createUseStyles({
@@ -99,7 +98,10 @@ const useStyles = createUseStyles({
 });
 
 const WorkspaceModal = observer(() => {
+
   const classes = useStyles();
+
+  const { appStore, authStore } = useStores();
 
   const handleClick = workspace => appStore.setCurrentWorkspace(workspace);
 

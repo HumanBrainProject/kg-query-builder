@@ -19,8 +19,7 @@ import { observer } from "mobx-react-lite";
 import Modal from "react-bootstrap/Modal";
 import { createUseStyles, useTheme } from "react-jss";
 
-import appStore from "../Stores/AppStore";
-import authStore from "../Stores/AuthStore";
+import { useStores } from "../Hooks/UseStores";
 
 import Header from "./Header";
 import Login from "./Login";
@@ -177,6 +176,8 @@ const Layout = observer(() => {
   useGlobalStyles({ theme });
 
   const classes = useStyles();
+
+  const { appStore, authStore } = useStores();
 
   return (
     <div className={classes.layout}>

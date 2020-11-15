@@ -18,7 +18,7 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
-import typesStore from "../../../Stores/TypesStore";
+import { useStores } from "../../../Hooks/UseStores";
 
 import Schema from "./Schema";
 
@@ -31,6 +31,8 @@ const useStyles = createUseStyles({
 const Schemas = observer(() =>  {
 
   const classes = useStyles();
+
+  const { typesStore } = useStores();
 
   return (
     <div className={classes.container}>

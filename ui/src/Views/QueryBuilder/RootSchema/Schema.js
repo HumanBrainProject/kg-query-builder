@@ -20,7 +20,7 @@ import { createUseStyles } from "react-jss";
 
 import Icon from "../../../Components/Icon";
 
-import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+import { useStores } from "../../../Hooks/UseStores";
 
 const useStyles = createUseStyles({
   container: {
@@ -45,6 +45,8 @@ const useStyles = createUseStyles({
 const Schemas = observer(({ type }) =>  {
 
   const classes = useStyles();
+
+  const { queryBuilderStore } = useStores();
 
   const handleClick = () => queryBuilderStore.selectRootSchema(type);
 

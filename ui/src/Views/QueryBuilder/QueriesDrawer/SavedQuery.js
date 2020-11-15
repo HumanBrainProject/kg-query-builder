@@ -20,7 +20,8 @@ import {observer} from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "react-bootstrap/Button";
 
-import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+import { useStores } from "../../../Hooks/UseStores";
+
 import PopOverButton from "../../../Components/PopOverButton";
 import User from "../../../Components/User";
 
@@ -121,6 +122,9 @@ const useStyles = createUseStyles({
 
 const SavedQuery = observer(({query, showUser, enableDelete}) => {
   const classes = useStyles();
+
+  const { queryBuilderStore } = useStores();
+
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleSelect = e => {

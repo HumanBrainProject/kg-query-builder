@@ -18,7 +18,7 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 
-import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+import { useStores } from "../../../Hooks/UseStores";
 
 import FetchingLoader from "../../../Components/FetchingLoader";
 
@@ -45,6 +45,8 @@ const useStyles = createUseStyles({
 const SavingMessage = observer(() => {
 
   const classes = useStyles();
+
+  const { queryBuilderStore } = useStores();
 
   if (!queryBuilderStore.isSaving) {
     return null;

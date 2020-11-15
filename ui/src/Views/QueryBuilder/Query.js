@@ -18,7 +18,7 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 
-import queryBuilderStore from "../../Stores/QueryBuilderStore";
+import { useStores } from "../../Hooks/UseStores";
 
 import Form from "./Query/Form";
 import Representation from "./Query/Representation";
@@ -48,6 +48,8 @@ const useStyles = createUseStyles({
 
 const Query = observer(() => {
   const classes = useStyles();
+
+  const { queryBuilderStore } = useStores();
 
   if (!queryBuilderStore.rootField) {
     return null;

@@ -19,7 +19,8 @@ import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { Scrollbars } from "react-custom-scrollbars";
 
-import typesStore from "../../Stores/TypesStore";
+
+import { useStores } from "../../Hooks/UseStores";
 
 import Filter from "../../Components/Filter";
 import Schemas from "./RootSchema/Schemas";
@@ -58,6 +59,8 @@ const useStyles = createUseStyles({
 const RootSchemaModal = observer(() => {
 
   const classes = useStyles();
+
+  const { typesStore } = useStores();
 
   const handleChange = value => typesStore.setFilterValue(value);
 

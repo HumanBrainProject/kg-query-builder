@@ -19,7 +19,7 @@ import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 
-import queryBuilderStore from "../../../Stores/QueryBuilderStore";
+import { useStores } from "../../../Hooks/UseStores";
 
 const useStyles = createUseStyles({
   container: {
@@ -56,6 +56,8 @@ const useStyles = createUseStyles({
 const SaveError = observer(() => {
 
   const classes = useStyles();
+
+  const { queryBuilderStore } = useStores();
 
   const handleSave = () => queryBuilderStore.saveQuery();
 
