@@ -60,14 +60,14 @@ const RootSchemaModal = observer(() => {
 
   const classes = useStyles();
 
-  const { typesStore } = useStores();
+  const { typeStore } = useStores();
 
-  const handleChange = value => typesStore.setFilterValue(value);
+  const handleChange = value => typeStore.setFilterValue(value);
 
   return (
     <div className={classes.container}>
       <div className={classes.panel}>
-        <Filter value={typesStore.filterValue} placeholder="Filter types" onChange={handleChange} />
+        <Filter value={typeStore.filterValue} placeholder="Filter types" onChange={handleChange} />
         <div className={classes.body}>
           <Scrollbars autoHide>
             <div className={classes.content}>

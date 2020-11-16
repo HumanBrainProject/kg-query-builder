@@ -16,13 +16,13 @@
 
 import { AppStore } from "./AppStore";
 import { AuthStore } from "./AuthStore";
-import { TypesStore } from "./TypesStore";
+import { TypeStore } from "./TypeStore";
 import { QueryBuilderStore } from "./QueryBuilderStore";
 
 export class RootStore {
 
   authStore= null
-  typesStore= null
+  typeStore= null
   queryBuilderStore= null
 
   constructor(transportLayer) {
@@ -32,7 +32,7 @@ export class RootStore {
     }
 
     // Domain stores
-    this.typesStore = new TypesStore(transportLayer, this);
+    this.typeStore = new TypeStore(transportLayer, this);
     this.queryBuilderStore = new QueryBuilderStore(transportLayer, this);
 
     this.authStore = new AuthStore(transportLayer);

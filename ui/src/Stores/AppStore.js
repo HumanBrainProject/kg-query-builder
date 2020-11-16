@@ -131,7 +131,7 @@ export class AppStore{
     if(this.currentWorkspace !== workspace) {
       this.currentWorkspace = workspace;
       localStorage.setItem("workspace", workspace);
-      this.rootStore.typesStore.fetch(true);
+      this.rootStore.typeStore.fetch(true);
     }
   };
 

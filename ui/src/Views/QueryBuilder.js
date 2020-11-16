@@ -69,16 +69,16 @@ const QueryBuilder = observer(() => {
 
   const classes = useStyles();
 
-  const { queryBuilderStore, typesStore } = useStores();
+  const { queryBuilderStore, typeStore } = useStores();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => fetchStructure(true), []);
 
-  const fetchStructure = (forceFetch=false) => typesStore.fetch(forceFetch);
+  const fetchStructure = (forceFetch=false) => typeStore.fetch(forceFetch);
 
   const handleRetryFetchStructure = () => fetchStructure(true);
 
-  if (typesStore.isFetching) {
+  if (typeStore.isFetching) {
     return (
       <div className={classes.container}>
         <div className={classes.fetchingPanel}>
@@ -90,13 +90,13 @@ const QueryBuilder = observer(() => {
     );
   }
 
-  if (typesStore.fetchError) {
+  if (typeStore.fetchError) {
     return (
       <div className={classes.container}>
         <BGMessage icon={"ban"}>
           There was a network problem fetching the api structure.<br />
           If the problem persists, please contact the support.<br />
-          <small>{typesStore.fetchError}</small><br /><br />
+          <small>{typeStore.fetchError}</small><br /><br />
           <Button variant="primary" onClick={handleRetryFetchStructure}>
             <FontAwesomeIcon icon={"redo-alt"} />&nbsp;&nbsp; Retry
           </Button>
@@ -105,7 +105,7 @@ const QueryBuilder = observer(() => {
     );
   }
 
-  if (!typesStore.hasTypes) {
+  if (!typeStore.hasTypes) {
     return (
       <div className={classes.container}>
         <BGMessage icon={"tools"}>

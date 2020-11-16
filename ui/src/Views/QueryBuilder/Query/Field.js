@@ -154,7 +154,7 @@ const Field = observer(({ field }) => {
 
   const classes = useStyles();
 
-  const { queryBuilderStore, typesStore } = useStores();
+  const { queryBuilderStore, typeStore } = useStores();
 
   const handleSelectField = () => {
     queryBuilderStore.selectField(field);
@@ -200,7 +200,7 @@ const Field = observer(({ field }) => {
                 {field.schema.canBe && !!field.schema.canBe.length && (
                   <span className={classes.canBe}>
                     ( {field.schema.canBe.map(t => {
-                      const type = typesStore.types[t];
+                      const type = typeStore.types[t];
                       const label = type?type.label:t;
                       const color = type?type.color:null;
                       return (
@@ -229,7 +229,7 @@ const Field = observer(({ field }) => {
               {!field.isRootMerge && field.schema.canBe && !!field.schema.canBe.length && (
                 <span className={classes.canBe}>
                   ( {field.schema.canBe.map(t => {
-                    const type = typesStore.types[t];
+                    const type = typeStore.types[t];
                     const label = type?type.label:t;
                     const color = type?type.color:null;
                     return (

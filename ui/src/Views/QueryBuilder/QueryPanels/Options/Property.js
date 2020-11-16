@@ -23,9 +23,9 @@ import Icon from "../../../../Components/Icon";
 
 const Type = ({ type: t }) => {
 
-  const { typesStore } = useStores();
+  const { typeStore } = useStores();
 
-  const type = typesStore.types[t];
+  const type = typeStore.types[t];
   const label = type?type.label:t;
   const color = type?type.color:null;
   return (

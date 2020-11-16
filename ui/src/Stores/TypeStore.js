@@ -17,7 +17,7 @@
 import { observable, action, computed, runInAction, makeObservable } from "mobx";
 import debounce from "lodash/debounce";
 
-export class TypesStore {
+export class TypeStore {
   filterValue = "";
   types = {};
   workspaceTypeList = [];
@@ -161,4 +161,4 @@ export class TypesStore {
   }
 }
 
-export default TypesStore;
+export default TypeStore;

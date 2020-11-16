@@ -32,11 +32,11 @@ const Schemas = observer(() =>  {
 
   const classes = useStyles();
 
-  const { typesStore } = useStores();
+  const { typeStore } = useStores();
 
   return (
     <div className={classes.container}>
-      {typesStore.filteredWorkspaceTypeList.map(type => (
+      {typeStore.filteredWorkspaceTypeList.map(type => (
         <Schema key={type.id} type={type} />
       ))}
     </div>

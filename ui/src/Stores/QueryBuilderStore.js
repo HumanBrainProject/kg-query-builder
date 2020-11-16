@@ -206,7 +206,7 @@ export class QueryBuilderStore {
       return [];
     }
     return lookups.reduce((acc, id) => {
-      const type = this.rootStore.typesStore.types[id];
+      const type = this.rootStore.typeStore.types[id];
       if (type) {
         const properties = type.properties.filter(prop => (!prop.canBe || !prop.canBe.length) && ((advanced && prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) || (!advanced && !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))));
         if (properties.length) {
@@ -227,7 +227,7 @@ export class QueryBuilderStore {
       return [];
     }
     return lookups.reduce((acc, id) => {
-      const type = this.rootStore.typesStore.types[id];
+      const type = this.rootStore.typeStore.types[id];
       if (type) {
         const properties = type.properties.filter(prop => prop.canBe && !!prop.canBe.length);
         if (properties.length) {
@@ -468,7 +468,7 @@ export class QueryBuilderStore {
       parent.structure.forEach(field => {
         let isUnknown = true;
         parent.lookups.some(id => {
-          const type = this.rootStore.typesStore.types[id];
+          const type = this.rootStore.typeStore.types[id];
           if (type) {
             if (type.properties.find(property => property.attribute === field.schema.attribute && ((!field.schema.canBe && !property.canBe) || (isEqual(toJS(field.schema.canBe), toJS(property.canBe)))))) {
               isUnknown = false;
@@ -542,7 +542,7 @@ export class QueryBuilderStore {
 
   selectField(field) {
     this.currentField = field;
-    this.rootStore.typesStore.addTypesToTetch(this.currentField.lookups);
+    this.rootStore.typeStore.addTypesToTetch(this.currentField.lookups);
   }
 
   resetField() {
@@ -743,7 +743,7 @@ export class QueryBuilderStore {
           let property = null;
           if (attribute) {
             parentField.lookups.some(id => {
-              const type = this.rootStore.typesStore.types[id];
+              const type = this.rootStore.typeStore.types[id];
               if (type) {
                 property = type.properties.find(property => property.attribute === attribute && (!jsonField.structure || (jsonField.structure && property.canBe)));
                 if (property) {
@@ -858,7 +858,7 @@ export class QueryBuilderStore {
           const parentFieldLookup = (parentField.isRootMerge && parentField.parent) ? parentField.parent : parentField;
           if (attribute && parentFieldLookup.schema && parentFieldLookup.schema.canBe && parentFieldLookup.schema.canBe.length) {
             parentFieldLookup.schema.canBe.some(id => {
-              const type = this.rootStore.typesStore.types[id];
+              const type = this.rootStore.typeStore.types[id];
               if (type) {
                 property = type.properties.find(property => property.attribute === attribute && (!jsonField.structure || (jsonField.structure && property.canBe)));
                 if (property) {
