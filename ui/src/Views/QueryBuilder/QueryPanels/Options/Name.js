@@ -121,5 +121,6 @@ const Name = observer(({ field, rootField }) => {
     </div>
   );
 });
+Name.displayName = "Name";
 
 export default Name;

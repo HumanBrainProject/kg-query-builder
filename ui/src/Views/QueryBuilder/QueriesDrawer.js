@@ -213,5 +213,6 @@ const QueriesDrawer = observer(() => {
     </div>
   );
 });
+QueriesDrawer.displayName = "QueriesDrawer";
 
 export default QueriesDrawer;

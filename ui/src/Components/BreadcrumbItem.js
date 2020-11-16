@@ -84,6 +84,7 @@ const BreadcrumbItem = observer(({ item, index, onClick, total }) => {
     </div>
   );
 });
+BreadcrumbItem.displayName = "BreadcrumbItem";
 
 export default BreadcrumbItem;
 

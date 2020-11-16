@@ -138,5 +138,6 @@ const QueryBuilder = observer(() => {
   );
 
 });
+QueryBuilder.displayName = "QueryBuilder";
 
 export default QueryBuilder;

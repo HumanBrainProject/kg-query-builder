@@ -158,5 +158,6 @@ const Options = observer(() => {
     </div>
   );
 });
+Options.displayName = "Options";
 
 export default Options;

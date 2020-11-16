@@ -123,5 +123,6 @@ const QueryPanels = observer(() => {
     </div>
   );
 });
+QueryPanels.displayName = "QueryPanels";
 
 export default QueryPanels;

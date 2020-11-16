@@ -126,5 +126,6 @@ const Login = observer(() => {
     </div>
   );
 });
+Login.displayName = "Login";
 
 export default Login;

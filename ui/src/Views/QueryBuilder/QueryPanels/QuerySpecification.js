@@ -34,5 +34,6 @@ const QuerySpecification = observer(() => {
     <ReactJson collapsed={false} name={false} theme={ThemeRJV} src={queryBuilderStore.JSONQuery} />
   );
 });
+QuerySpecification.displayName = "QuerySpecification";
 
 export default QuerySpecification;

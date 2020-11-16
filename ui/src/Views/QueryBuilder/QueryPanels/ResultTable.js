@@ -163,6 +163,7 @@ const ResultValue = observer(({name, index, value}) => {
   );
 
 });
+ResultValue.displayName = "ResultValue";
 
 const ResultTable = observer(() => {
 
@@ -243,7 +244,7 @@ const ResultTable = observer(() => {
       }
     </div>
   );
-
 });
+ResultTable.displayName = "ResultTable";
 
 export default ResultTable;

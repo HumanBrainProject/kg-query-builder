@@ -79,5 +79,6 @@ const RootSchemaModal = observer(() => {
     </div>
   );
 });
+RootSchemaModal.displayName = "RootSchemaModal";
 
 export default RootSchemaModal;

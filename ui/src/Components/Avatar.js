@@ -50,5 +50,6 @@ const Avatar = observer(({ user, size=20 }) => {
     <FontAwesomeIcon icon="user" title={user.name?user.name:user.id} className={`${classes.avatar} avatar default`} />
   );
 });
+Avatar.displayName = "Avatar";
 
 export default Avatar;

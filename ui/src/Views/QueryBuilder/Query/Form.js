@@ -368,5 +368,6 @@ const Form = observer(({ className }) => {
     </div>
   );
 });
+Form.displayName = "Form";
 
 export default Form;

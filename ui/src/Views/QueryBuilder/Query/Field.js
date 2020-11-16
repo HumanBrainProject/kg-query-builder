@@ -266,5 +266,6 @@ const Field = observer(({ field }) => {
     </div>
   );
 });
+Field.displayName = "Field";
 
 export default Field;

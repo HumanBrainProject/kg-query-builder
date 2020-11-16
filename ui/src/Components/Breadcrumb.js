@@ -25,5 +25,6 @@ const Breadcrumb = observer(({classname, breadcrumb, total, onClick}) => (
     )}
   </div>
 ));
+Breadcrumb.displayName = "Breadcrumb";
 
 export default Breadcrumb;

@@ -132,7 +132,7 @@ const ResultOptions = observer(() => {
       </form>
     </div>
   );
-
 });
+ResultOptions.displayName = "ResultOptions";
 
 export default ResultOptions;

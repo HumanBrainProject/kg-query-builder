@@ -229,7 +229,7 @@ const UserProfileTab = observer(({className, size=30}) => {
       </Overlay>
     </div>
   );
-
 });
+UserProfileTab.displayName = "UserProfileTab";
 
 export default UserProfileTab;

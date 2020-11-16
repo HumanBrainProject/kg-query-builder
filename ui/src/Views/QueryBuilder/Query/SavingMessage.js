@@ -58,5 +58,6 @@ const SavingMessage = observer(() => {
     </div>
   );
 });
+SavingMessage.displayName = "SavingMessage";
 
 export default SavingMessage;

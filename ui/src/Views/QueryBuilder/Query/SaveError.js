@@ -79,5 +79,6 @@ const SaveError = observer(() => {
     </div>
   );
 });
+SaveError.displayName = "SaveError";
 
 export default SaveError;

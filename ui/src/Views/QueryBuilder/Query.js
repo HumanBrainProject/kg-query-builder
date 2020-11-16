@@ -64,7 +64,7 @@ const Query = observer(() => {
       <CompareChangesModal />
     </div>
   );
-
 });
+Query.displayName = "Query";
 
 export default Query;

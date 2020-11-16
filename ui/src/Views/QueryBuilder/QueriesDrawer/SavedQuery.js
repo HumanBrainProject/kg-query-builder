@@ -204,7 +204,7 @@ const SavedQuery = observer(({query, showUser, enableDelete}) => {
       )}
     </div>
   );
-
 });
+SavedQuery.displayName = "SavedQuery";
 
 export default SavedQuery;

@@ -141,7 +141,7 @@ const WorkspaceModal = observer(() => {
       </Modal>
     </div>
   );
-
 });
+WorkspaceModal.displayName = "WorkspaceModal";
 
 export default WorkspaceModal;

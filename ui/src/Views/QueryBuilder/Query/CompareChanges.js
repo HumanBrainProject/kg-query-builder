@@ -33,5 +33,6 @@ const CompareChanges = observer(() => {
     </pre>
   );
 });
+CompareChanges.displayName = "CompareChanges";
 
 export default CompareChanges;

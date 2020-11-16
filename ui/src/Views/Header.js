@@ -93,7 +93,7 @@ const Header = observer(() => {
       }
     </div>
   );
-
 });
+Header.displayName = "Header";
 
 export default Header;

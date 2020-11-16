@@ -123,5 +123,6 @@ const SavedQueries = observer(({title, subTitle, list, expanded, onExpandToggle,
     </div>
   );
 });
+SavedQueries.displayName = "SavedQueries";
 
 export default SavedQueries;

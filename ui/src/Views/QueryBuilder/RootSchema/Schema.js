@@ -42,7 +42,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const Schemas = observer(({ type }) =>  {
+const Schema = observer(({ type }) =>  {
 
   const classes = useStyles();
 
@@ -57,5 +57,6 @@ const Schemas = observer(({ type }) =>  {
     </div>
   );
 });
+Schema.displayName = "Schema";
 
-export default Schemas;
+export default Schema;

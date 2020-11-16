@@ -89,7 +89,7 @@ const Result = observer(() => {
       }
     </div>
   );
-
 });
+Result.displayName = "Result";
 
 export default Result;

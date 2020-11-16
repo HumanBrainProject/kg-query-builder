@@ -34,5 +34,6 @@ const Fields = observer(({ field }) => (
     })}
   </div>
 ));
+Fields.displayName = "Fields";
 
 export default Fields;

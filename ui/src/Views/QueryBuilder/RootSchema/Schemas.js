@@ -41,7 +41,7 @@ const Schemas = observer(() =>  {
       ))}
     </div>
   );
-
 });
+Schemas.displayName = "Schemas";
 
 export default Schemas;

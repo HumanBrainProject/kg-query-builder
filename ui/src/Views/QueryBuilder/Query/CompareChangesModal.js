@@ -80,5 +80,6 @@ const CompareChangesModal = observer(() => {
     </Modal>
   );
 });
+CompareChangesModal.displayName = "CompareChangesModal";
 
 export default CompareChangesModal;

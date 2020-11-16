@@ -46,5 +46,6 @@ const Representation = observer(({ className }) => {
     </div>
   );
 });
+Representation.displayName = "Representation";
 
 export default Representation;

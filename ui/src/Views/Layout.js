@@ -222,5 +222,6 @@ const Layout = observer(() => {
     </div>
   );
 });
+Layout.displayName = "Layout";
 
 export default Layout;
