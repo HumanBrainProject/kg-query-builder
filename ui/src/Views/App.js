@@ -31,12 +31,18 @@ const App = observer(() => {
 
   useEffect(() => {
     appStore.initialize();
-    document.addEventListener("keydown", appStore.handleGlobalShortcuts);
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.removeEventListener("keydown", appStore.handleGlobalShortcuts);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleKeyDown = e => {
+    if ((e.ctrlKey || e.metaKey) && e.altKey && e.keyCode === 84) {
+      appStore.toggleTheme();
+    }
+  };
 
   return (
     <ErrorBoundary>

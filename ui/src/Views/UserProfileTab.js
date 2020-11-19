@@ -208,7 +208,7 @@ const UserProfileTab = observer(({className, size=30}) => {
               <div>
                 <div className={classes.name}>{authStore.user.name}</div>
                 <div className={classes.email}>{authStore.user.email}</div>
-                <Button variant="primary" className={classes.accountBtn} href="https://collab.humanbrainproject.eu/#/me" title="https://collab.humanbrainproject.eu/#/me" rel="noopener noreferrer" target="_blank">Account</Button>
+                <Button variant="primary" className={classes.accountBtn} href="https://iam.ebrains.eu/auth/realms/hbp/account/" title="https://iam.ebrains.eu/auth/realms/hbp/account/" rel="noopener noreferrer" target="_blank">Account</Button>
               </div>
             </div>
             <div className={classes.popOverFooterBar}>

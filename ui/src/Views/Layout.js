@@ -156,14 +156,12 @@ const useStyles = createUseStyles({
     paddingLeft: "10px"
   },
   noAccessModal: {
+    maxWidth: "min(max(500px, 50%),750px)",
     "&.modal-dialog": {
       marginTop: "40vh",
       "& .modal-body": {
-        padding: "0 30px 15px 30px",
-        fontSize: "1.6rem",
-        "@media screen and (min-width:768px)": {
-          whiteSpace: "nowrap"
-        }
+        padding: "15px 30px",
+        fontSize: "1.6rem"
       }
     }
   }
@@ -198,7 +196,7 @@ const Layout = observer(() => {
                 :
                 <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
                   <Modal.Body>
-                    <h1>Welcome <span title={name}>{name}</span></h1>
+                    <h1>Welcome <span title={authStore.firstName}>{authStore.firstName}</span></h1>
                     <p>You are currently not granted permission to acccess any workspaces.</p>
                     <p>Please contact our team by email at : <a href={"mailto:kg@ebrains.eu"}>kg@ebrains.eu</a></p>
                   </Modal.Body>

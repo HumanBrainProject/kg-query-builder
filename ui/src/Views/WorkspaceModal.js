@@ -105,27 +105,12 @@ const WorkspaceModal = observer(() => {
 
   const handleClick = workspace => appStore.setCurrentWorkspace(workspace);
 
-  const firstNameReg = /^([^ ]+) .*$/;
-  const name = authStore.user
-      && authStore.user.givenName?
-    authStore.user.givenName
-    :
-    authStore.user.displayName?
-      (firstNameReg.test(authStore.user.displayName)?
-        authStore.user.displayName.match(firstNameReg)[1]
-        :
-        authStore.user.displayName)
-      :
-      authStore.user.username?
-        authStore.user.username
-        :
-        "";
   return (
     <div className={classes.container}>
       <Modal dialogClassName={classes.modal} show={true} onHide={() => {}} >
         <Modal.Body>
           <div className={classes.panel}>
-            <h1>Welcome <span title={name}>{name}</span></h1>
+            <h1>Welcome <span title={authStore.firstName}>{authStore.firstName}</span></h1>
             <p>Please select a workspace:</p>
             <div style={{height: `${Math.round(Math.min(window.innerHeight * 0.5 - 140, Math.ceil(authStore.workspaces.length / 3) * 90))}px`}}>
               <Scrollbars>

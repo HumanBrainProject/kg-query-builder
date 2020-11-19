@@ -78,12 +78,14 @@ export class AuthStore {
       isAuthenticated: computed,
       hasWorkspaces: computed,
       hasUserWorkspaces: computed,
+      areUserWorkspacesRetrieved: computed,
       logout: action,
       retrieveUserProfile: action,
       retrieveUserWorkspaces: action,
       initializeKeycloak: action,
       login: action,
-      authenticate: action
+      authenticate: action,
+      firstName: computed
     });
 
     this.transportLayer = transportLayer;
@@ -110,7 +112,30 @@ export class AuthStore {
   }
 
   get hasUserWorkspaces() {
-    return this.workspaces instanceof Array && !!this.workspaces.length;
+    return this.areUserWorkspacesRetrieved && !!this.workspaces.length;
+  }
+
+  get areUserWorkspacesRetrieved() {
+    return this.workspaces instanceof Array;
+  }
+
+  get firstName() {
+    const firstNameReg = /^([^ ]+) .*$/;
+    if (this.user) {
+      if (this.user.givenName) {
+        return this.user.givenName;
+      }
+      if (this.user.displayName) {
+        if (firstNameReg.test(this.user.displayName)) {
+          return this.user.displayName.match(firstNameReg)[1];
+        }
+        return this.user.displayName;
+      }
+      if (this.user.username) {
+        return this.user.username;
+      }
+    }
+    return "";
   }
 
   logout() {
@@ -159,7 +184,7 @@ export class AuthStore {
         const { data } = await this.transportLayer.getWorkspaces();
         //throw {response: { status: 403}};
         runInAction(() => {
-          this.workspaces = data && data.data ? data.data.map(workspace => workspace["http://schema.org/name"]) : [];
+          this.workspaces = data && data.data ? data.data.map(workspace => workspace["http://schema.org/name"]).sort() : [];
           this.isRetrievingWorkspaces = false;
         });
       } catch(e) {

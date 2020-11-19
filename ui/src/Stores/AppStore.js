@@ -54,8 +54,7 @@ export class AppStore{
       dismissGlobalError: action,
       login: action,
       setTheme: action,
-      toggleTheme: action,
-      handleGlobalShortcuts: action
+      toggleTheme: action
     });
 
     this.rootStore = rootStore;
@@ -93,7 +92,7 @@ export class AppStore{
           }
         });
       }
-      if(this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && !this.rootStore.authStore.hasUserWorkspaces) {
+      if(this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && !this.rootStore.authStore.areUserWorkspacesRetrieved) {
         runInAction(() => {
           this.initializingMessage = "Retrieving workspaces...";
         });
@@ -105,7 +104,7 @@ export class AppStore{
           });
         }
       }
-      if (this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && this.rootStore.authStore.hasUserWorkspaces) {
+      if (this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && this.rootStore.authStore.areUserWorkspacesRetrieved) {
         this.initializeWorkspace();
         runInAction(() => {
           this.initializingMessage = null;
@@ -169,12 +168,6 @@ export class AppStore{
       this.setTheme(BrightTheme.name);
     }
   }
-
-  handleGlobalShortcuts = e => {
-    if ((e.ctrlKey || e.metaKey) && e.altKey && e.keyCode === 84) {
-      this.toggleTheme();
-    }
-  };
 }
 
 export default AppStore;
