@@ -24,35 +24,6 @@ const useStyles = createUseStyles({
     marginBottom: "20px",
     "&:last-child": {
       marginBottom: 0
-    },
-    "&.unsupported": {
-      display: "flex",
-      "& button": {
-        alignSelf: "flex-start",
-        display: "inline-block",
-        margin: "0 5px 0 0",
-        background: "var(--bg-color-ui-contrast1)",
-        color: "var(--ft-color-loud)",
-        borderColor: "var(--bg-color-ui-contrast1)",
-        "&:hover": {
-          background: "var(--bg-color-ui-contrast1)",
-          color: "var(--ft-color-louder)",
-          borderColor: "var(--bg-color-ui-contrast1)"
-        }
-      },
-      "& $optionLabel": {
-        alignSelf: "flex-start",
-        display: "inline"
-      },
-      "& strong": {
-        flex: 1,
-        display: "inline-block",
-        fontWeight: "normal",
-        color: "var(--ft-color-loud)",
-        "& .react-json-view": {
-          backgroundColor: "transparent !important"
-        }
-      }
     }
   },
   optionLabel: {
@@ -65,10 +36,6 @@ const useStyles = createUseStyles({
     "& strong": {
       color: "var(--ft-color-loud)"
     }
-  },
-  aliasError: {
-    marginTop: "6px",
-    color: "var(--ft-color-error)"
   }
 });
 
