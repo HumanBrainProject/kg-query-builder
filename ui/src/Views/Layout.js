@@ -136,7 +136,7 @@ const getGlobalUseStyles = () => createUseStyles(theme => {
   return styles;
 });
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles(theme => ({
   layout: {
     height: "100vh",
     display: "grid",
@@ -148,7 +148,9 @@ const useStyles = createUseStyles({
     position: "relative",
     overflow: "hidden",
     background: "linear-gradient(var(--bg-gradient-angle), var(--bg-gradient-start), var(--bg-gradient-end))",
-    backgroundSize: "200%"
+    backgroundSize: theme.background.size?theme.background.size:(theme.background.image?"unset":"200%"),
+    backgroundImage: theme.background.image?`url('${theme.background.image}')`:"unset",
+    backgroundPosition: theme.background.position?theme.background.position:"unset"
   },
   status: {
     background: "var(--bg-color-ui-contrast1)",
@@ -165,7 +167,7 @@ const useStyles = createUseStyles({
       }
     }
   }
-});
+}));
 
 const Layout = observer(() => {
 
@@ -173,7 +175,7 @@ const Layout = observer(() => {
   const useGlobalStyles = getGlobalUseStyles();
   useGlobalStyles({ theme });
 
-  const classes = useStyles();
+  const classes = useStyles({ theme });
 
   const { appStore, authStore } = useStores();
 

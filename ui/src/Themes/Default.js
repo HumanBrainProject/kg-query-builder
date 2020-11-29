@@ -21,7 +21,9 @@ const theme = {
       colorStart: "#1C2022",
       colorEnd: "#4895a4",
       angle: "165deg"
-    }
+    },
+    image: `${window.rootPath}/assets/background-default.jpg`,
+    size: "cover"
   },
   contrast1: {
     backgroundColor: "#141618",
