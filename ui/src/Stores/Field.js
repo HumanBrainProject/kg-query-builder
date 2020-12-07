@@ -32,6 +32,10 @@ const defaultOptions = [
   {
     name: "filter",
     value: undefined
+  },
+  {
+    name: "singleValue",
+    value: undefined
   }
 ];
 

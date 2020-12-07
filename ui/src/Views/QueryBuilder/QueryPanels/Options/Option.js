@@ -17,6 +17,7 @@
 import React from "react";
 import Toggle from "./Toggle";
 import Filter from "./Filter";
+import SingleItemStrategy from "./SingleItemStrategy";
 import UnsupportedOption from "./UnsupportedOption";
 
 const Option = ({ field, rootField, lookupsLinks, option, onChange }) => {
@@ -74,6 +75,20 @@ const Option = ({ field, rootField, lookupsLinks, option, onChange }) => {
         filter={option.value}
         show={field !== rootField
           && !(lookupsLinks && !!lookupsLinks.length)
+        }
+        onChange={onChange}
+      />
+    );
+  }
+
+  if (name === "singleValue") {
+    return (
+      <SingleItemStrategy
+        strategy={option.value}
+        show={field !== rootField
+          && (lookupsLinks && !!lookupsLinks.length)
+          && !field.parent.isFlattened
+          && (!field.isMerge || field.isRootMerge)
         }
         onChange={onChange}
       />
