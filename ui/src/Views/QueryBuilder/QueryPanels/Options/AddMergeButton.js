@@ -16,6 +16,7 @@
 
 import React from "react";
 import Button from "react-bootstrap/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { createUseStyles } from "react-jss";
 
 
@@ -37,6 +38,10 @@ const useStyles = createUseStyles({
     "& strong": {
       color: "var(--ft-color-loud)"
     }
+  },
+  button: {
+    borderRadius: "15px",
+    padding: "3px 9px"
   }
 });
 
@@ -50,7 +55,7 @@ const AddMergeButton = ({ show, onClick }) => {
   return (
     <div className={classes.option}>
       <div className={classes.optionLabel}>
-        <Button variant="secondary" onClick={onClick}>Add a merge field</Button>
+        <Button variant="secondary" className={classes.button} onClick={onClick}><FontAwesomeIcon icon="plus"></FontAwesomeIcon>&nbsp;Add a merge field</Button>
       </div>
     </div>
   );

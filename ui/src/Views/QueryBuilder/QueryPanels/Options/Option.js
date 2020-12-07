@@ -16,6 +16,7 @@
 
 import React from "react";
 import Toggle from "./Toggle";
+import Filter from "./Filter";
 import UnsupportedOption from "./UnsupportedOption";
 
 const Option = ({ field, rootField, lookupsLinks, option, onChange }) => {
@@ -61,6 +62,18 @@ const Option = ({ field, rootField, lookupsLinks, option, onChange }) => {
           && (lookupsLinks && !!lookupsLinks.length)
           && !field.parent.isFlattened
           && (!field.isMerge || field.isRootMerge)
+        }
+        onChange={onChange}
+      />
+    );
+  }
+
+  if (name === "filter") {
+    return (
+      <Filter
+        filter={option.value}
+        show={field !== rootField
+          && !(lookupsLinks && !!lookupsLinks.length)
         }
         onChange={onChange}
       />

@@ -43,7 +43,7 @@ const useStyles = createUseStyles({
     color: "var(--ft-color-error)"
   },
   targetInput: {
-    color: "var(--ft-color-loud)",
+    color: "var(--ft-color-loud) !important",
     width: "calc(100% - 20px)",
     border: "1px solid transparent",
     borderRadius: "2px",

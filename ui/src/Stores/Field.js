@@ -28,6 +28,10 @@ const defaultOptions = [
   {
     name: "ensure_order",
     value: undefined
+  },
+  {
+    name: "filter",
+    value: undefined
   }
 ];
 
