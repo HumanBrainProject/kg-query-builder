@@ -19,6 +19,8 @@ package eu.hbp.kg.queryBuilder.api;
 import eu.hbp.kg.queryBuilder.controller.ServiceCallWithClientSecret;
 import eu.hbp.kg.queryBuilder.model.AuthContext;
 import eu.hbp.kg.queryBuilder.model.TypeEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -29,13 +31,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static eu.hbp.kg.queryBuilder.constants.SchemaFieldsConsts.META_USER;
+import static eu.hbp.kg.queryBuilder.constants.SchemaFieldsConsts.USER_PICTURE;
+
 @RequestMapping("/query")
 @RestController
 public class Query {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Value("${kgcore.endpoint}")
     String kgCoreEndpoint;
-
 
     @Value("${api.version}")
     String apiVersion;
@@ -48,17 +54,42 @@ public class Query {
 
     @GetMapping
     public Map<?, ?> getQueries(@RequestParam("type") String type) {
-         Map result = serviceCall.get(
+         Map queriesResult = serviceCall.get(
                 String.format("%s/%s/queries?type=%s", kgCoreEndpoint, apiVersion, type),
                 authContext.getAuthTokens(),
                 Map.class);
-        if(result != null){
-            List<Map<String, Object>> data = (List<Map<String, Object>>) result.get("data");
-            data.forEach(d -> {
-              String[] splitId = d.get("@id").toString().split("/");
-              d.put("@id", splitId[splitId.length - 1]);
-            });
-            return result;
+        if(queriesResult != null){
+            List<Map<String, Object>> data = (List<Map<String, Object>>) queriesResult.get("data");
+            List<String> userIds = data.stream().map(query -> {
+                String[] splitQueryId = query.get("@id").toString().split("/");
+                String queryId = splitQueryId[splitQueryId.length - 1];
+                query.put("@id", queryId);
+                Map<String, Object> user = (Map<String, Object>) query.get(META_USER);
+                String[] splitUserId = user.get("@id").toString().split("/");
+                String userId = splitUserId[splitUserId.length - 1];
+                user.put("@id", userId);
+              return userId;
+            }).distinct().collect(Collectors.toList());
+            try {
+                Map<String, String> picturesResult = serviceCall.post(
+                        String.format("%s/%s/users/pictures", kgCoreEndpoint, apiVersion),
+                        userIds,
+                        authContext.getAuthTokens(),
+                        Map.class);
+                if(picturesResult != null) {
+                    data.forEach(query -> {
+                        Map<String, Object> user = (Map<String, Object>) query.get(META_USER);
+                        String userId = (String) user.get("@id");
+                        String picture = picturesResult.get(userId);
+                        if (picture != null) {
+                            user.put(USER_PICTURE, picture);
+                        }
+                    });
+                }
+            } catch (RuntimeException e) {
+                logger.info(String.format("Could not fetch users' pictures. Error:\n%s\n", e.getMessage()));
+            }
+            return queriesResult;
         }
         return Collections.emptyMap();
     }

@@ -67,14 +67,11 @@ const getProperties = query => {
     }, {});
 };
 
-const normalizeUser = user => {
-  const idSeg = user["@id"].split("/");
-  return {
-    id: idSeg[idSeg.length-1],
-    name: user["http://schema.org/name"],
-    picture: user["https://schema.hbp.eu/users/picture"]
-  };
-};
+const normalizeUser = user => ({
+  id: user["@id"],
+  name: user["http://schema.org/name"],
+  picture: user["https://schema.hbp.eu/users/picture"]
+});
 
 export class QueryBuilderStore {
   queryId = "";

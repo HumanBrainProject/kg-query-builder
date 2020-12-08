@@ -8,6 +8,7 @@ public class SchemaFieldsConsts {
     public static final String EBRAINS = "https://core.kg.ebrains.eu/";
     public static final String VOCAB = EBRAINS + "vocab/";
     public static final String META = VOCAB + "meta/";
+    public static final String META_USER = META + "user";
     public static final String META_SPACE = META + "space";
     public static final String META_SPACES = META + "spaces";
     public static final String META_COLOR = META + "color";
