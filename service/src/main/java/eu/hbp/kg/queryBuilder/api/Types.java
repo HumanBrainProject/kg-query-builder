@@ -21,11 +21,9 @@ import eu.hbp.kg.queryBuilder.model.AuthContext;
 import eu.hbp.kg.queryBuilder.model.TypeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +48,21 @@ public class Types {
 
     private Map<?, ?> getData(Map.Entry data) {
         return (Map<?, ?>)((Map<?, ?>) data.getValue()).get("data");
+    }
+
+    @GetMapping
+    public List<TypeEntity> getTypes() {
+        Map result = serviceCall.get(
+                String.format("%s/%s/types?stage=IN_PROGRESS&withProperties=true", kgCoreEndpoint, apiVersion),
+                authContext.getAuthTokens(),
+                Map.class);
+        if(result!=null){
+            Object data = result.get("data");
+            if(data instanceof Collection){
+                return ((Collection<?>) data).stream().filter(d -> d instanceof Map).map(d -> (Map<?,?>) d).map(TypeEntity::fromMap).collect(Collectors.toList());
+            }
+        }
+        return Collections.emptyList();
     }
 
     @PostMapping

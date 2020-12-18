@@ -19,7 +19,6 @@ const API = {
     "auth": () => "/service/api/auth/endpoint",
     "user": () => "/service/api/user",
     "workspaces": () => "/service/api/workspaces",
-    "workspaceTypes": workspace => `/service/api/workspaces/${workspace}/types`,
     "types": () => "/service/api/types",
     "structure": () => "/service/api/structure?withLinks=true",
     "performQuery": (stage, vocab, from, size) => `/service/api/query?${

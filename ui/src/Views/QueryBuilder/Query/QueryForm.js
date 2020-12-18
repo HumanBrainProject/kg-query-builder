@@ -18,6 +18,7 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useStores } from "../../../Hooks/UseStores";
@@ -38,6 +39,12 @@ const useStyles = createUseStyles({
       display: "inline-block",
       marginTop: 0,
       marginBottom: "8px"
+    }
+  },
+  workspace: {
+    marginTop: "20px",
+    "& form-group": {
+      marginBottom: 0
     }
   },
   description: {
@@ -187,13 +194,16 @@ const useStyles = createUseStyles({
   }
 });
 
-const Form = observer(({ className }) => {
+const QueryForm = observer(({ className }) => {
 
   const classes = useStyles();
 
-  const { queryBuilderStore } = useStores();
+  const { queryBuilderStore, authStore } = useStores();
 
   const handleChangeLabel = e => queryBuilderStore.setLabel(e.target.value);
+
+
+  const handleChangeWorkspace = e => queryBuilderStore.setWorkspace(e.target.value);
 
   const handleChangeDescription = e => queryBuilderStore.setDescription(e.target.value);
 
@@ -240,6 +250,16 @@ const Form = observer(({ className }) => {
               type="text"
               value={queryBuilderStore.label}
               onChange={handleChangeLabel} />
+          </div>
+          <div className={classes.workspace}>
+            <Form.Group>
+              <h5>Workspace :</h5>
+              <Form.Control className={classes.input} as="select" value={queryBuilderStore.workspace} onChange={handleChangeWorkspace} >
+                {authStore.workspaces.map(workspace => (
+                  <option value={workspace} key={workspace}>{workspace}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
           </div>
           <div className={classes.description}>
             <h5>Description :</h5>
@@ -368,6 +388,6 @@ const Form = observer(({ className }) => {
     </div>
   );
 });
-Form.displayName = "Form";
+QueryForm.displayName = "QueryForm";
 
-export default Form;
+export default QueryForm;

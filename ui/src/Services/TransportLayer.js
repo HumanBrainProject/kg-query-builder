@@ -69,11 +69,11 @@ export class TransportLayer {
     return this._axios.get(API.endpoints.workspaces());
   }
 
-  async getWorkspaceTypes(workspace) {
-    return this._axios.get(API.endpoints.workspaceTypes(workspace));
+  async getTypes() {
+    return this._axios.get(API.endpoints.types());
   }
 
-  async geTypes(types) {
+  async getTypesByName(types) {
     return this._axios.post(API.endpoints.types(), types);
   }
 

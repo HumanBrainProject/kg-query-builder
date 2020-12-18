@@ -30,6 +30,7 @@ const useStyles = createUseStyles({
   select: {
     display: "inline-block",
     minWidth: "100px",
+    paddingLeft: "4px",
     paddingRight: "20px",
     backgroundColor: "rgb(108, 117, 125)",
     borderColor: "transparent",

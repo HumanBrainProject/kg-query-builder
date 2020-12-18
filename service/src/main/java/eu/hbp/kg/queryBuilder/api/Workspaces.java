@@ -56,19 +56,4 @@ public class Workspaces {
                 Map.class);
     }
 
-    @GetMapping("/{workspace}/types")
-    public List<TypeEntity> getWorkspaceTypes(@PathVariable("workspace") String workspace) {
-        Map result = serviceCall.get(
-                String.format("%s/%s/types?stage=IN_PROGRESS&withProperties=true&space=%s", kgCoreEndpoint, apiVersion, workspace),
-                authContext.getAuthTokens(),
-                Map.class);
-        if(result!=null){
-            Object data = result.get("data");
-            if(data instanceof Collection){
-                return ((Collection<?>) data).stream().filter(d -> d instanceof Map).map(d -> (Map<?,?>) d).map(TypeEntity::fromMap).collect(Collectors.toList());
-            }
-        }
-        return Collections.emptyList();
-    }
-
 }

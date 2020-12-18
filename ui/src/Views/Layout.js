@@ -24,7 +24,6 @@ import { useStores } from "../Hooks/UseStores";
 import Header from "./Header";
 import Login from "./Login";
 import GlobalError from "./GlobalError";
-import WorkspaceModal from "./WorkspaceModal";
 import QueryBuilder from "./QueryBuilder";
 
 const getGlobalUseStyles = () => createUseStyles(theme => {
@@ -191,10 +190,7 @@ const Layout = observer(() => {
             :
             (authStore.isUserAuthorized?
               (authStore.hasUserWorkspaces?
-                (appStore.currentWorkspace?
-                  <QueryBuilder />
-                  :
-                  <WorkspaceModal />)
+                <QueryBuilder />
                 :
                 <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
                   <Modal.Body>
@@ -204,8 +200,7 @@ const Layout = observer(() => {
                   </Modal.Body>
                 </Modal>
               )
-              :
-              <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
+              :              <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
                 <Modal.Body>
                   <h1>Welcome</h1>
                   <p>You are currently not granted permission to acccess the application.</p>

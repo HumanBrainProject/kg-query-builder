@@ -20,7 +20,7 @@ import { observer } from "mobx-react-lite";
 
 import { useStores } from "../../Hooks/UseStores";
 
-import Form from "./Query/Form";
+import QueryForm from "./Query/QueryForm";
 import Representation from "./Query/Representation";
 import CompareChangesModal from "./Query/CompareChangesModal";
 import SaveError from "./Query/SaveError";
@@ -57,7 +57,7 @@ const Query = observer(() => {
 
   return (
     <div className={classes.container}>
-      <Form className={`${classes.form} ${queryBuilderStore.isQuerySaved || !queryBuilderStore.isQueryEmpty?"available":""}`} />
+      <QueryForm className={`${classes.form} ${queryBuilderStore.isQuerySaved || !queryBuilderStore.isQueryEmpty?"available":""}`} />
       <Representation className={classes.representation} />
       <SavingMessage />
       <SaveError />

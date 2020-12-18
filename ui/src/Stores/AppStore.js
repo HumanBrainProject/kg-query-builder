@@ -31,7 +31,6 @@ export class AppStore{
   initializingMessage = null;
   initializationError = null;
   canLogin = true;
-  currentWorkspace = null;
   isInitialized = false;
 
   rootStore = null;
@@ -45,11 +44,8 @@ export class AppStore{
       initializingMessage: observable,
       initializationError: observable,
       canLogin: observable,
-      currentWorkspace: observable,
       isInitialized: observable,
       initialize: action,
-      initializeWorkspace: action,
-      setCurrentWorkspace: action,
       setGlobalError: action,
       dismissGlobalError: action,
       login: action,
@@ -105,7 +101,6 @@ export class AppStore{
         }
       }
       if (this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && this.rootStore.authStore.areUserWorkspacesRetrieved) {
-        this.initializeWorkspace();
         runInAction(() => {
           this.initializingMessage = null;
           this.isInitialized = true;
@@ -113,26 +108,6 @@ export class AppStore{
       }
     }
   }
-
-  initializeWorkspace() {
-    const workspace = localStorage.getItem("workspace");
-    this.setCurrentWorkspace(workspace);
-  }
-
-  setCurrentWorkspace = workspace => {
-    if (!workspace || !this.rootStore.authStore.hasWorkspaces || !this.rootStore.authStore.workspaces.includes(workspace)) {
-      if (this.rootStore.authStore.hasUserWorkspaces && this.rootStore.authStore.workspaces.length === 1) {
-        workspace = this.rootStore.authStore.workspaces[0];
-      } else {
-        workspace = null;
-      }
-    }
-    if(this.currentWorkspace !== workspace) {
-      this.currentWorkspace = workspace;
-      localStorage.setItem("workspace", workspace);
-      this.rootStore.typeStore.fetch(true);
-    }
-  };
 
   setGlobalError(error, info) {
     this.globalError = {error, info};

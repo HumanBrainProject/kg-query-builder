@@ -49,7 +49,6 @@ const useStyles = createUseStyles({
   },
   input: {
     color: "var(--ft-color-loud)",
-    width: "calc(100% - 20px)",
     border: "1px solid transparent",
     borderRadius: "2px",
     backgroundColor: "var(--bg-color-blend-contrast1)",
@@ -110,8 +109,8 @@ const ResultOptions = observer(() => {
           </Col>
           <Col xs={6}>
             <Form.Group>
-              <Form.Label>Select space</Form.Label>
-              <Form.Control className={classes.input} as="select" placeholder="minds" value={queryBuilderStore.stage} onChange={handleChangeStage} >
+              <Form.Label>Select the scope</Form.Label>
+              <Form.Control className={classes.input} as="select" value={queryBuilderStore.stage} onChange={handleChangeStage} >
                 {scopeOptions.map(space => (
                   <option value={space.value} key={space.value}>{space.label}</option>
                 ))}

@@ -21,7 +21,6 @@ import { createUseStyles } from "react-jss";
 import { useStores } from "../Hooks/UseStores";
 
 import UserProfileTab from "./UserProfileTab";
-import WorkspaceSelector from "./WorkspaceSelector";
 
 const useStyles = createUseStyles({
   container: {
@@ -78,12 +77,7 @@ const Header = observer(() => {
       </div>
       {!appStore.globalError &&
           <React.Fragment>
-            <div className={classes.fixedTabsLeft}>
-              {authStore.isAuthenticated && authStore.isUserAuthorized && authStore.hasUserWorkspaces && appStore.currentWorkspace?
-                <WorkspaceSelector />
-                : null
-              }
-            </div>
+            <div className={classes.fixedTabsLeft}></div>
             <div className={classes.fixedTabsRight}>
               {authStore.isAuthenticated && authStore.isUserAuthorized && (
                 <UserProfileTab className={classes.userProfileTab} size={32} />

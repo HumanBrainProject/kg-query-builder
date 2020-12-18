@@ -78,7 +78,7 @@ export class TypeStore {
       this.isFetching = true;
       this.fetchError = null;
       try {
-        const response = await this.transportLayer.getWorkspaceTypes(this.rootStore.appStore.currentWorkspace);
+        const response = await this.transportLayer.getTypes();
         runInAction(() => {
           const types = (Array.isArray(response.data)?response.data:[]).map(type => ({
             id: type.id,
@@ -137,7 +137,7 @@ export class TypeStore {
     this.isFetchingQueue = true;
     const toProcess = Array.from(this.typesQueue).splice(0, this.queueThreshold);
     try{
-      const response = await this.transportLayer.getTypes(toProcess);
+      const response = await this.transportLayer.getTypesByName(toProcess);
       runInAction(() =>{
         toProcess.forEach(identifier => {
           const type =  response && response.data && response.data && response.data[identifier];

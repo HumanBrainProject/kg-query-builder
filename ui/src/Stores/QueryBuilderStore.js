@@ -76,6 +76,7 @@ const normalizeUser = user => ({
 export class QueryBuilderStore {
   queryId = "";
   label = "";
+  workspace = "";
   description = "";
   stage = "RELEASED";
   sourceQuery = null;
@@ -111,6 +112,7 @@ export class QueryBuilderStore {
     makeObservable(this, {
       queryId: observable,
       label: observable,
+      workspace: observable,
       description: observable,
       stage: observable,
       sourceQuery: observable,
@@ -189,6 +191,7 @@ export class QueryBuilderStore {
       toggleMyQueries: action,
       toggleHeader: action,
       setLabel: action,
+      setWorkspace: action,
       saveQuery: action,
       cancelSaveQuery: action,
       deleteQuery: action,
@@ -299,6 +302,7 @@ export class QueryBuilderStore {
       this.showMyQueries = true;
       this.showOthersQueries = true;
       this.result = null;
+      this.workspace = this.rootStore.authStore.workspaces[0];
       this.selectField(this.rootField);
       this.fetchQueries();
     }
@@ -943,6 +947,7 @@ export class QueryBuilderStore {
       && query && !query.isDeleting) {
       this.queryId = query.id + "-Copy";
       this.label = query.label;
+      this.workspace = query.workspace;
       this.description = query.description;
       if (this.sourceQuery !== query) { // reset
         this.showHeader = true;
@@ -1052,6 +1057,10 @@ export class QueryBuilderStore {
     this.label = label;
   }
 
+  setWorkspace(workspace) {
+    this.workspace = workspace;
+  }
+
   setDescription(description) {
     this.description = description;
   }
@@ -1065,7 +1074,7 @@ export class QueryBuilderStore {
       const queryId = this.saveAsMode ? this.queryId : this.sourceQuery.id;
       const query = this.JSONQuery;
       try {
-        await this.transportLayer.saveQuery(this.rootStore.appStore.currentWorkspace, queryId, query);
+        await this.transportLayer.saveQuery(this.workspace, queryId, query);
         runInAction(() => {
           if (!this.saveAsMode && this.sourceQuery && this.sourceQuery.user.id === this.rootStore.authStore.user.id) {
             this.sourceQuery.label = query.label;
@@ -1092,6 +1101,7 @@ export class QueryBuilderStore {
               structure: query.structure,
               properties: getProperties(query),
               label: query.label,
+              workspace: query.workspace,
               description: query.description,
               isDeleting: false,
               deleteError: null
@@ -1122,7 +1132,7 @@ export class QueryBuilderStore {
     if (query && !query.isDeleting && !query.deleteError && !(query === this.sourceQuery && this.isSaving)) {
       query.isDeleting = true;
       try {
-        await this.transportLayer.deleteQuery(this.rootStore.appStore.currentWorkspace, query.id);
+        await this.transportLayer.deleteQuery(this.workspace, query.id);
         runInAction(() => {
           query.isDeleting = false;
           if (query === this.sourceQuery) {
@@ -1179,6 +1189,7 @@ export class QueryBuilderStore {
                     structure: compacted.structure,
                     properties: getProperties(compacted),
                     label: label,
+                    workspace: jsonSpec["https://core.kg.ebrains.eu/vocab/meta/space"],
                     description: jsonSpec["https://core.kg.ebrains.eu/vocab/query/description"] ? jsonSpec["https://core.kg.ebrains.eu/vocab/query/description"] : "",
                     isDeleting: false,
                     deleteError: null
