@@ -41,6 +41,19 @@ const defaultContext = {
   }
 };
 
+const queryCompare = (a, b) => {
+  if (a.label && b.label) {
+    return a.label.localeCompare(b.label);
+  }
+  if (a.label) {
+    return -1;
+  }
+  if (b.label) {
+    return 1;
+  }
+  return a.id.localeCompare(b.id);
+};
+
 const rootFieldReservedProperties = ["root_schema", "schema:root_schema", "http://schema.org/root_schema", "identifier", "schema:identifier", "http://schema.org/identifier", "@id", "@type", "https://core.kg.ebrains.eu/vocab/meta/revision", "https://core.kg.ebrains.eu/vocab/meta/space", "https://core.kg.ebrains.eu/vocab/meta/user", "@context", "structure", "merge", "label", "description"];
 const fieldReservedProperties = ["propertyName", "path", "merge", "structure"];
 
@@ -407,16 +420,16 @@ export class QueryBuilderStore {
 
   get myQueries() {
     if (this.rootStore.authStore.user) {
-      return this.specifications.filter(spec => spec.user && (spec.user.id === this.rootStore.authStore.user.id)).sort((a, b) => a.label - b.label);
+      return this.specifications.filter(spec => spec.user && (spec.user.id === this.rootStore.authStore.user.id)).sort((a, b) => queryCompare(a, b));
     }
     return [];
   }
 
   get othersQueries() {
     if (this.rootStore.authStore.user) {
-      return this.specifications.filter(spec =>  !spec.user || (spec.user.id !== this.rootStore.authStore.user.id)).sort((a, b) => a.label - b.label);
+      return this.specifications.filter(spec =>  !spec.user || (spec.user.id !== this.rootStore.authStore.user.id)).sort((a, b) =>queryCompare(a, b));
     }
-    return this.specifications.sort((a, b) => a.label - b.label);
+    return this.specifications.sort((a, b) => queryCompare(a, b));
   }
 
   addField(schema, parent, gotoField = true) {
@@ -660,7 +673,7 @@ export class QueryBuilderStore {
     const jsonFields = [];
     field.structure && !!field.structure.length && field.structure.forEach(field => {
       let jsonField = {};
-      jsonField.propertyName = {"@id": (field.namespace ? field.namespace : "query") + ":" + ((field.alias && field.alias.trim()) || field.schema.simpleAttributeName || field.schema.label || uniqueId("field"))};
+      jsonField.propertyName = (field.namespace ? field.namespace : "query") + ":" + ((field.alias && field.alias.trim()) || field.schema.simpleAttributeName || field.schema.label || uniqueId("field"));
       if (field.schema.attribute) {
         const attribute = (!attributeReg.test(field.schema.attribute) && modelReg.test(field.schema.attribute)) ? field.schema.attribute.match(modelReg)[1] : field.schema.attribute;
         const relativePath = field.schema.attributeNamespace && field.schema.simpleAttributeName ? `${field.schema.attributeNamespace}:${field.schema.simpleAttributeName}` : attribute;
@@ -694,7 +707,7 @@ export class QueryBuilderStore {
             jsonField.path.push(relativePath);
           }
           if (field.structure && field.structure.length) {
-            jsonField.propertyName = {"@id":(topField.namespace ? topField.namespace : "query") + ":" + (topField.alias || field.schema.simpleAttributeName || field.schema.label)};
+            jsonField.propertyName = (topField.namespace ? topField.namespace : "query") + ":" + (topField.alias || field.schema.simpleAttributeName || field.schema.label);
           }
           if (field.optionsMap.get("sort")) {
             jsonField["sort"] = true;
