@@ -9,10 +9,11 @@ public class SchemaFieldsConsts {
     public static final String VOCAB = EBRAINS + "vocab/";
     public static final String META = VOCAB + "meta/";
     public static final String META_USER = META + "user";
-    public static final String META_SPACE = META + "space";
-    public static final String META_SPACES = META + "spaces";
+    public static final String META_SPACE = META + "space/";
     public static final String META_COLOR = META + "color";
     public static final String META_PROPERTIES = META + "properties";
     public static final String META_OCCURRENCES = META + "occurrences";
     public static final String META_TARGET_TYPES = META + "targetTypes";
+    public static final String META_CLIENT_SPACE = META_SPACE + "clientSpace";
+    public static final String META_INTERNAL_SPACE = META_SPACE + "internalSpace";
 }

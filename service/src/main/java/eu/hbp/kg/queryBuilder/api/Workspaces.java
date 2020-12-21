@@ -32,6 +32,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static eu.hbp.kg.queryBuilder.constants.SchemaFieldsConsts.META_CLIENT_SPACE;
+import static eu.hbp.kg.queryBuilder.constants.SchemaFieldsConsts.META_INTERNAL_SPACE;
+
 @RequestMapping("/workspaces")
 @RestController
 public class Workspaces {
@@ -50,10 +53,21 @@ public class Workspaces {
 
     @GetMapping
     public Map<?, ?> getWorkspaces() {
-        return serviceCall.get(
+        Map<String, Object> result = serviceCall.get(
                 String.format("%s/%s/spaces?stage=IN_PROGRESS", kgCoreEndpoint, apiVersion),
                 authContext.getAuthTokens(),
                 Map.class);
+        List<Map<String, Object>> spaces = ((List<Map<String, Object>>) result.get("data")).stream()
+                .filter(space -> {
+                    boolean isClientSpace = space.containsKey(META_CLIENT_SPACE) && ((boolean) space.get(META_CLIENT_SPACE));
+                    boolean isInternalSpace = space.containsKey(META_INTERNAL_SPACE) && ((boolean) space.get(META_INTERNAL_SPACE));
+                    return !(isClientSpace || isInternalSpace);
+                }
+        ).collect(Collectors.toList());
+        result.put("data", spaces);
+        result.put("size", spaces.size());
+        result.put("total", spaces.size());
+        return result;
     }
 
 }
