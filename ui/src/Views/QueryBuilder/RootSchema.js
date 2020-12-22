@@ -27,7 +27,7 @@ import Schemas from "./RootSchema/Schemas";
 
 const useStyles = createUseStyles({
   container: {
-    position: "relatif",
+    position: "relative",
     display: "grid",
     gridTemplateRows: "auto 1fr"
   },

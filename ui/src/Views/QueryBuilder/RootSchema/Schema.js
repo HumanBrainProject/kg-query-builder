@@ -17,6 +17,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Icon from "../../../Components/Icon";
 
@@ -24,6 +25,7 @@ import { useStores } from "../../../Hooks/UseStores";
 
 const useStyles = createUseStyles({
   container: {
+    position: "relative",
     margin: "4px 1px",
     padding: "15px 10px",
     background: "var(--bg-color-ui-contrast1)",
@@ -37,8 +39,17 @@ const useStyles = createUseStyles({
       fontStyle: "italic"
     },
     "&:hover": {
-      background: "var(--bg-color-ui-contrast4)"
+      background: "var(--bg-color-ui-contrast4)",
+      "& $nextIcon": {
+        color: "var(--ft-color-loud)"
+      }
     }
+  },
+  nextIcon: {
+    position: "absolute",
+    top: "16px",
+    right: "15px",
+    color: "var(--ft-color-quiet)"
   }
 });
 
@@ -54,6 +65,9 @@ const Schema = observer(({ type }) =>  {
     <div className={classes.container} onClick={handleClick}>
       <Icon icon="circle" color={type.color}/>
       {type.label} - <small>{type.id}</small>
+      <div className={classes.nextIcon} >
+        <FontAwesomeIcon icon={"chevron-right"} size="lg" />
+      </div>
     </div>
   );
 });

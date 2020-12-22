@@ -17,37 +17,7 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 
-import { useStores } from "../../../../Hooks/UseStores";
-
-import Icon from "../../../../Components/Icon";
-
-const Type = ({ type: t }) => {
-
-  const { typeStore } = useStores();
-
-  const type = typeStore.types[t];
-  const label = type?type.label:t;
-  const color = type?type.color:null;
-  return (
-    <React.Fragment key={label} >
-      <Icon icon="circle" color={color} />{label}
-    </React.Fragment>
-  );
-};
-
-const Types = ({ types }) => {
-  if (!Array.isArray(types)) {
-    return null;
-  }
-
-  return (
-    <span>&nbsp;&nbsp;
-      {types.map(type => (
-        <Type key={type} type={type} />
-      ))}
-    </span>
-  );
-};
+import Types from "../../Types";
 
 const useStyles = createUseStyles({
   property: {

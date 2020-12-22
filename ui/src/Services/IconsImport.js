@@ -29,6 +29,8 @@ import {faSearch} from "@fortawesome/free-solid-svg-icons/faSearch";
 import {faCamera} from "@fortawesome/free-solid-svg-icons/faCamera";
 import {faCaretRight} from "@fortawesome/free-solid-svg-icons/faCaretRight";
 import {faCaretDown} from "@fortawesome/free-solid-svg-icons/faCaretDown";
+import {faChevronLeft} from "@fortawesome/free-solid-svg-icons/faChevronLeft";
+import {faChevronRight} from "@fortawesome/free-solid-svg-icons/faChevronRight";
 import {faCircleNotch} from "@fortawesome/free-solid-svg-icons/faCircleNotch";
 import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
 import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
@@ -94,6 +96,8 @@ library.add(
   faSearch,
   faCamera,
   faCaretRight,
+  faChevronLeft,
+  faChevronRight,
   faUndo,
   faUndoAlt,
   faSave,

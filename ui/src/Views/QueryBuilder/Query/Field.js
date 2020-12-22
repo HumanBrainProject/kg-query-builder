@@ -21,9 +21,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "react-bootstrap/Button";
 
 import { useStores } from "../../../Hooks/UseStores";
+import Types from "../Types";
 
 import Fields from "./Fields";
-import Icon from "../../../Components/Icon";
 
 const useStyles = createUseStyles({
   container: {
@@ -154,7 +154,7 @@ const Field = observer(({ field }) => {
 
   const classes = useStyles();
 
-  const { queryBuilderStore, typeStore } = useStores();
+  const { queryBuilderStore } = useStores();
 
   const handleSelectField = () => {
     queryBuilderStore.selectField(field);
@@ -194,25 +194,15 @@ const Field = observer(({ field }) => {
             <span className={classes.merge} title="merge">
               <FontAwesomeIcon transform="shrink-8" icon="sitemap" />
             </span>
-            {!field.parent && (
+            {field.parent?
               <React.Fragment>
-                &nbsp;&nbsp;{field.schema.label}&nbsp;
-                {field.schema.canBe && !!field.schema.canBe.length && (
-                  <span className={classes.canBe}>
-                    ( {field.schema.canBe.map(t => {
-                      const type = typeStore.types[t];
-                      const label = type?type.label:t;
-                      const color = type?type.color:null;
-                      return (
-                        <React.Fragment key={label} >
-                          <Icon icon="circle" color={color} />{label}
-                        </React.Fragment>
-                      );
-                    })} )
-                  </span>
-                )}
+                &nbsp;&nbsp;{field.schema.label}&nbsp;( <Types types={field.schema.canBe} /> )
               </React.Fragment>
-            )}
+              :
+              <React.Fragment>
+                &nbsp;&nbsp;<Types types={field.schema.canBe} />
+              </React.Fragment>
+            }
           </React.Fragment>
           :
           field.isUnknown ?
@@ -224,23 +214,17 @@ const Field = observer(({ field }) => {
               :
               field.schema.attribute
             :
-            <React.Fragment>
-              {field.schema.label}&nbsp;
-              {!field.isRootMerge && field.schema.canBe && !!field.schema.canBe.length && (
-                <span className={classes.canBe}>
-                  ( {field.schema.canBe.map(t => {
-                    const type = typeStore.types[t];
-                    const label = type?type.label:t;
-                    const color = type?type.color:null;
-                    return (
-                      <React.Fragment key={label} >
-                        <Icon icon="circle" color={color} />{label}
-                      </React.Fragment>
-                    );
-                  })} )
-                </span>
-              )}
-            </React.Fragment>
+            field.parent?
+              <React.Fragment>
+                {field.schema.label}&nbsp;
+                {!field.isRootMerge && (
+                  <React.Fragment>
+                    ( <Types types={field.schema.canBe} /> )
+                  </React.Fragment>
+                )}
+              </React.Fragment>
+              :
+              <Types types={field.schema.canBe} />
         }
         {field.parent && !field.parent.isFlattened && (!field.isMerge || field.isRootMerge) && (
           field.alias ?
@@ -254,11 +238,13 @@ const Field = observer(({ field }) => {
               {field.defaultAlias}
             </span>
         )}
-        <div className={classes.optionsButton}>
-          <Button size="sm" variant="primary" onClick={handleRemoveField}>
-            <FontAwesomeIcon icon="times" />
-          </Button>
-        </div>
+        {field.parent && (
+          <div className={classes.optionsButton}>
+            <Button size="sm" variant="primary" onClick={handleRemoveField}>
+              <FontAwesomeIcon icon="times" />
+            </Button>
+          </div>
+        )}
       </div>
       <div className={classes.subFields}>
         <Fields field={field} />

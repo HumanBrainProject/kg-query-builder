@@ -29,7 +29,7 @@ import ResultTable from "./QueryPanels/ResultTable";
 
 const useStyles = createUseStyles({
   container: {
-    position: "relatif",
+    position: "relative",
     display: "grid",
     gridTemplateRows: "auto 1fr"
   },

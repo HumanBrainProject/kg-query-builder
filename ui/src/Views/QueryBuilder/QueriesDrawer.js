@@ -28,10 +28,10 @@ const useStyles = createUseStyles({
   container:{
     "--container-width": "40%",
     position: "absolute",
-    top: "15px",
+    top: "10px",
     right: "calc(0px - var(--container-width))",
     width: "var(--container-width)",
-    height: "calc(100% - 30px)",
+    height: "calc(100% - 20px)",
     padding: "15px 15px",
     border: "1px solid var(--border-color-ui-contrast5)",
     borderRadius: "0 0 0 10px",
@@ -46,7 +46,7 @@ const useStyles = createUseStyles({
   },
   toggle: {
     position: "absolute",
-    top: "-1px",
+    top: "8px",
     left: "-40px",
     width: "40px",
     height: "40px",
@@ -61,7 +61,10 @@ const useStyles = createUseStyles({
     outline: "none",
     fontSize: "20px",
     color: "var(--ft-color-loud)",
-    textAlign: "center"
+    textAlign: "center",
+    "&:focus": {
+      outline: "none"
+    }
   },
   panel: {
     position: "relative",

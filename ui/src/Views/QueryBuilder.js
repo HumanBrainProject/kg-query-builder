@@ -23,6 +23,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useStores } from "../Hooks/UseStores";
 
+import Types from "./QueryBuilder/Types";
 import RootSchema from "./QueryBuilder/RootSchema";
 import Query from "./QueryBuilder/Query";
 import QueryPanels from "./QueryBuilder/QueryPanels";
@@ -53,11 +54,58 @@ const useStyles = createUseStyles({
       background: "var(--list-bg-hover)"
     }
   },
+  panel: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    transition: "transform 0.5s cubic-bezier(.34,1.06,.63,.93)"
+  },
   layout: {
+    display: "flex",
+    flexDirection: "column",
+    position: "relative",
+    height: "100%",
+    padding: "10px"
+  },
+  header: {
+    position: "relative",
+    background: "var(--bg-color-ui-contrast2)",
+    border: "1px solid var(--border-color-ui-contrast1)",
+    color: "var(--ft-color-loud)",
+    fontSize: "1.2em",
+    marginBottom: "10px",
+    padding: "15px 10px",
+    "& small": {
+      color: "var(--ft-color-quiet)",
+      fontStyle: "italic"
+    }
+  },
+  title: {
+    marginLeft: "35px"
+  },
+  closeQueryButton: {
+    "-webkit-appearance": "none",
+    position: "absolute",
+    top: "14px",
+    left: "9px",
+    background: "transparent",
+    border: 0,
+    boxShadow: "none",
+    color: "var(--ft-color-quiet)",
+    outline: "none",
+    "&:hover": {
+      color: "var(--ft-color-loud)"
+    },
+    "&:focus": {
+      outline: "none"
+    }
+  },
+  body: {
+    position: "relative",
+    flex: 1,
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
     gridGap: "10px",
-    padding: "10px",
     height: "100%"
   }
 });
@@ -74,6 +122,11 @@ const QueryBuilder = observer(() => {
   const fetchStructure = (forceFetch=false) => typeStore.fetch(forceFetch);
 
   const handleRetryFetchStructure = () => fetchStructure(true);
+
+  const handleCloseQuery = e => {
+    e.stopPropagation();
+    queryBuilderStore.removeField(queryBuilderStore.rootField);
+  };
 
   if (typeStore.isFetching) {
     return (
@@ -116,20 +169,32 @@ const QueryBuilder = observer(() => {
     );
   }
 
-  if (!queryBuilderStore.hasRootSchema) {
-    return (
-      <div className={classes.container}>
-        <RootSchema />
-      </div>
-    );
-  }
+  const panel1Style = queryBuilderStore.hasRootSchema?{transform: "translateX(-200%)"}:{};
+  const panel2Style = !queryBuilderStore.hasRootSchema?{transform: "translateX(200%)"}:{};
 
   return (
     <div className={classes.container}>
-      <div className={classes.layout}>
-        <Query />
-        <QueryPanels />
-        <QueriesDrawer />
+      <div className={classes.panel} style={panel1Style}>
+        <RootSchema />
+      </div>
+      <div className={classes.panel} style={panel2Style}>
+        <div className={classes.layout}>
+          <div className={classes.header}>
+            {queryBuilderStore.hasRootSchema && (
+              <div className={classes.title}>
+                <Types types={queryBuilderStore.rootSchema.canBe} /> - <small>{queryBuilderStore.rootSchema.id}</small>
+              </div>
+            )}
+            <button className={classes.closeQueryButton} onClick={handleCloseQuery} title="back to type selection">
+              <FontAwesomeIcon icon={"chevron-left"} size="lg" />
+            </button>
+          </div>
+          <div className={classes.body}>
+            <Query />
+            <QueryPanels />
+          </div>
+          <QueriesDrawer />
+        </div>
       </div>
     </div>
   );
