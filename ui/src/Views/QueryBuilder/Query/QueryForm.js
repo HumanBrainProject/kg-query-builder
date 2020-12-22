@@ -254,10 +254,13 @@ const QueryForm = observer(({ className }) => {
           <div className={classes.workspace}>
             <Form.Group>
               <h5>Workspace :</h5>
-              <Form.Control className={classes.input} as="select" value={queryBuilderStore.workspace} onChange={handleChangeWorkspace} >
-                {authStore.workspaces.map(workspace => (
-                  <option value={workspace} key={workspace}>{workspace}</option>
-                ))}
+              <Form.Control className={classes.input} as="select" disabled={!queryBuilderStore.saveAsMode} value={queryBuilderStore.workspace} onChange={handleChangeWorkspace}>
+                {!queryBuilderStore.saveAsMode && queryBuilderStore.workspace ?
+                  <option value={queryBuilderStore.workspace} >{queryBuilderStore.workspace}</option> :
+                  authStore.workspaces.map(workspace => (
+                    <option value={workspace} key={workspace}>{workspace}</option>
+                  ))
+                }
               </Form.Control>
             </Form.Group>
           </div>
