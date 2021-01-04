@@ -23,7 +23,7 @@ import Button from "react-bootstrap/Button";
 import { useStores } from "../../../Hooks/UseStores";
 
 import PopOverButton from "../../../Components/PopOverButton";
-import User from "../../../Components/User";
+//import User from "../../../Components/User";
 
 const useStyles = createUseStyles({
   container:{
@@ -120,7 +120,8 @@ const useStyles = createUseStyles({
 });
 
 
-const SavedQuery = observer(({query, showUser, enableDelete}) => {
+const SavedQuery = observer(({query, enableDelete}) => {
+// const SavedQuery = observer(({query, showUser, enableDelete}) => {
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
@@ -158,10 +159,10 @@ const SavedQuery = observer(({query, showUser, enableDelete}) => {
     <div className={`${classes.container} ${query.isDeleting?"is-deleting":""}`} key={query.id} onClick={handleSelect} onMouseLeave={handleCloseDeleteDialog} >
       <div className={classes.name}>
         <span>{query.label?query.label:query.id} - <small title="queryId">{query.id}</small></span>
-        {showUser && query.user && (
+        {/* {showUser && query.user && ( //TODO: Enable this when new user endpoint available
           <span className={`author ${enableDelete?"extra-padding":""}`}>by user <User user={query.user} />
           </span>
-        )}
+        )} */}
         {enableDelete && !query.deleteError && !query.isDeleting && !showDeleteDialog && (
           <button className={classes.deleteButton} title="delete" onClick={handleConfirmDelete}><FontAwesomeIcon icon="times"/></button>
         )}

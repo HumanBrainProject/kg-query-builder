@@ -54,44 +54,51 @@ public class Query {
 
     @GetMapping
     public Map<?, ?> getQueries(@RequestParam("type") String type) {
-         Map queriesResult = serviceCall.get(
+        Map queriesResult = serviceCall.get(
                 String.format("%s/%s/queries?type=%s", kgCoreEndpoint, apiVersion, type),
                 authContext.getAuthTokens(),
                 Map.class);
-        if(queriesResult != null){
-            List<Map<String, Object>> data = (List<Map<String, Object>>) queriesResult.get("data");
-            List<String> userIds = data.stream().map(query -> {
-                String[] splitQueryId = query.get("@id").toString().split("/");
-                String queryId = splitQueryId[splitQueryId.length - 1];
-                query.put("@id", queryId);
-                Map<String, Object> user = (Map<String, Object>) query.get(META_USER);
-                String[] splitUserId = user.get("@id").toString().split("/");
-                String userId = splitUserId[splitUserId.length - 1];
-                user.put("@id", userId);
-              return userId;
-            }).distinct().collect(Collectors.toList());
-            try {
-                Map<String, String> picturesResult = serviceCall.post(
-                        String.format("%s/%s/users/pictures", kgCoreEndpoint, apiVersion),
-                        userIds,
-                        authContext.getAuthTokens(),
-                        Map.class);
-                if(picturesResult != null) {
-                    data.forEach(query -> {
-                        Map<String, Object> user = (Map<String, Object>) query.get(META_USER);
-                        String userId = (String) user.get("@id");
-                        String picture = picturesResult.get(userId);
-                        if (picture != null) {
-                            user.put(USER_PICTURE, picture);
-                        }
-                    });
-                }
-            } catch (RuntimeException e) {
-                logger.info(String.format("Could not fetch users' pictures. Error:\n%s\n", e.getMessage()));
-            }
-            return queriesResult;
-        }
-        return Collections.emptyMap();
+        List<Map<String, Object>> data = (List<Map<String, Object>>) queriesResult.get("data");
+        data.forEach(query -> {
+            String[] splitQueryId = query.get("@id").toString().split("/");
+            String queryId = splitQueryId[splitQueryId.length - 1];
+            query.put("@id", queryId);
+        });
+        return queriesResult;
+//        if(queriesResult != null){ //TODO: Fetch user info from new alternatives endpoint (not ready yet)
+//            List<Map<String, Object>> data = (List<Map<String, Object>>) queriesResult.get("data");
+//            List<String> userIds = data.stream().map(query -> {
+//                String[] splitQueryId = query.get("@id").toString().split("/");
+//                String queryId = splitQueryId[splitQueryId.length - 1];
+//                query.put("@id", queryId);
+//                Map<String, Object> user = (Map<String, Object>) query.get(META_USER);
+//                String[] splitUserId = user.get("@id").toString().split("/");
+//                String userId = splitUserId[splitUserId.length - 1];
+//                user.put("@id", userId);
+//              return userId;
+//            }).distinct().collect(Collectors.toList());
+//            try {
+//                Map<String, String> picturesResult = serviceCall.post(
+//                        String.format("%s/%s/users/pictures", kgCoreEndpoint, apiVersion),
+//                        userIds,
+//                        authContext.getAuthTokens(),
+//                        Map.class);
+//                if(picturesResult != null) {
+//                    data.forEach(query -> {
+//                        Map<String, Object> user = (Map<String, Object>) query.get(META_USER);
+//                        String userId = (String) user.get("@id");
+//                        String picture = picturesResult.get(userId);
+//                        if (picture != null) {
+//                            user.put(USER_PICTURE, picture);
+//                        }
+//                    });
+//                }
+//            } catch (RuntimeException e) {
+//                logger.info(String.format("Could not fetch users' pictures. Error:\n%s\n", e.getMessage()));
+//            }
+//            return queriesResult;
+//        }
+//        return Collections.emptyMap();
     }
 
     @GetMapping("/{workspace}/{queryId}")

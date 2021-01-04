@@ -23,7 +23,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useStores } from "../../../Hooks/UseStores";
 
-import User from "../../../Components/User";
+// import User from "../../../Components/User";
 
 const useStyles = createUseStyles({
   container: {
@@ -202,7 +202,6 @@ const QueryForm = observer(({ className }) => {
 
   const handleChangeLabel = e => queryBuilderStore.setLabel(e.target.value);
 
-
   const handleChangeWorkspace = e => queryBuilderStore.setWorkspace(e.target.value);
 
   const handleChangeDescription = e => queryBuilderStore.setDescription(e.target.value);
@@ -274,11 +273,11 @@ const QueryForm = observer(({ className }) => {
               value={queryBuilderStore.description}
               onChange={handleChangeDescription} />
           </div>
-          {queryBuilderStore.isQuerySaved && !queryBuilderStore.saveAsMode && !queryBuilderStore.isOneOfMySavedQueries && queryBuilderStore.sourceQuery.user && (
+          {/* {queryBuilderStore.isQuerySaved && !queryBuilderStore.saveAsMode && !queryBuilderStore.isOneOfMySavedQueries && queryBuilderStore.sourceQuery.user && ( //TODO: Enable this when new user endpoint available
             <div className={classes.author} >
               <span>by user<User user={queryBuilderStore.sourceQuery.user} /></span>
             </div>
-          )}
+          )} */}
         </React.Fragment>
       )}
       {false && queryBuilderStore.isQuerySaved && !queryBuilderStore.saveAsMode && queryBuilderStore.showHeader && !queryBuilderStore.hasQueryChanged && (
