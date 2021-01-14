@@ -14,6 +14,8 @@ public class SchemaFieldsConsts {
     public static final String META_PROPERTIES = META + "properties";
     public static final String META_OCCURRENCES = META + "occurrences";
     public static final String META_TARGET_TYPES = META + "targetTypes";
+    public static final String META_SOURCE_TYPES = META + "sourceTypes";
+    public static final String META_INCOMING_LINKS = META + "incomingLinks";
     public static final String META_CLIENT_SPACE = META_SPACE + "clientSpace";
     public static final String META_INTERNAL_SPACE = META_SPACE + "internalSpace";
 }

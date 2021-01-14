@@ -47,19 +47,19 @@ public class Types {
     private AuthContext authContext;
 
     private Map<?, ?> getData(Map.Entry data) {
-        return (Map<?, ?>)((Map<?, ?>) data.getValue()).get("data");
+        return (Map<?, ?>) ((Map<?, ?>) data.getValue()).get("data");
     }
 
     @GetMapping
     public List<TypeEntity> getTypes() {
         Map result = serviceCall.get(
-                String.format("%s/%s/types?stage=IN_PROGRESS&withProperties=true", kgCoreEndpoint, apiVersion),
+                String.format("%s/%s/types?stage=IN_PROGRESS&withProperties=true&withIncomingLinks=true", kgCoreEndpoint, apiVersion),
                 authContext.getAuthTokens(),
                 Map.class);
-        if(result!=null){
+        if (result != null) {
             Object data = result.get("data");
-            if(data instanceof Collection){
-                return ((Collection<?>) data).stream().filter(d -> d instanceof Map).map(d -> (Map<?,?>) d).map(TypeEntity::fromMap).collect(Collectors.toList());
+            if (data instanceof Collection) {
+                return ((Collection<?>) data).stream().filter(d -> d instanceof Map).map(d -> (Map<?, ?>) d).map(TypeEntity::fromMap).collect(Collectors.toList());
             }
         }
         return Collections.emptyList();
@@ -72,7 +72,7 @@ public class Types {
                 payload,
                 authContext.getAuthTokens(),
                 Map.class);
-        if(result != null){
+        if (result != null) {
             Map<?, ?> data = (Map<?, ?>) result.get("data");
             return data.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, d -> TypeEntity.fromMap(this.getData(d))));
         }

@@ -22,17 +22,21 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TypeEntity {
     private String id;
     private String label;
-
-    public String getColor() { return color; }
-
-    public void setColor(String color) { this.color = color; }
-
     private String color;
     private List<Property> properties;
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
 
     public String getId() {
         return id;
@@ -69,7 +73,15 @@ public class TypeEntity {
         String id = (String) (d.get(SchemaFieldsConsts.ID));
         String name = (String) (d.get(SchemaFieldsConsts.NAME));
         String color = (String) (d.get(SchemaFieldsConsts.META_COLOR));
-        List<Property> properties = ((Collection<?>) d.get(SchemaFieldsConsts.META_PROPERTIES)).stream().filter(p -> p instanceof Map).map(p -> (Map<?,?>) p).map(Property::fromMap).collect(Collectors.toList());
+        List<Property> properties = ((Collection<?>) d.get(SchemaFieldsConsts.META_PROPERTIES)).stream()
+                .filter(p -> p instanceof Map)
+                .map(p -> Property.fromMap((Map<?, ?>) p))
+                .collect(Collectors.toList());
+        List<Property> incomingLinksProperties = ((Collection<?>) d.get(SchemaFieldsConsts.META_INCOMING_LINKS)).stream()
+                .filter(p -> p instanceof Map)
+                .map(p -> Property.fromIncomingLinksMap((Map<?, ?>) p))
+                .collect(Collectors.toList());
+        properties.addAll(incomingLinksProperties);
         return new TypeEntity(id, name, color, properties);
     }
 }
