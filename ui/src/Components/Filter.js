@@ -50,7 +50,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const Filter = ({ value, placeholder="filter...", icon="search", onChange }) => {
+const Filter = ({ value, placeholder="filter...", icon="search", onChange, onKeyDown }) => {
 
   const classes = useStyles();
 
@@ -68,6 +68,8 @@ const Filter = ({ value, placeholder="filter...", icon="search", onChange }) => 
 
   const handleChange = e => onChange(e.target.value);
 
+  const handleKeyDown = e => onKeyDown(e);
+
   return (
     <div className={classes.container}>
       <Form.Control
@@ -75,6 +77,7 @@ const Filter = ({ value, placeholder="filter...", icon="search", onChange }) => 
         className={classes.input}
         type="text"
         onChange={handleChange}
+        onKeyDown={handleKeyDown}
         value={value}
         placeholder={placeholder} />
       <FontAwesomeIcon icon={icon} className={classes.icon} />

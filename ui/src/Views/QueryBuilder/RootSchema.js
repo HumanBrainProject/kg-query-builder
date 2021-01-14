@@ -14,7 +14,7 @@
 *   limitations under the License.
 */
 
-import React from "react";
+import React, {useState} from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { Scrollbars } from "react-custom-scrollbars";
@@ -57,21 +57,36 @@ const useStyles = createUseStyles({
 });
 
 const RootSchemaModal = observer(() => {
+  const [cursor, setCursor] = useState(undefined);
 
   const classes = useStyles();
 
   const { typeStore } = useStores();
 
-  const handleChange = value => typeStore.setFilterValue(value);
+  const handleChange = value => {
+    typeStore.setFilterValue(value);
+    setCursor(undefined);
+  };
+
+  const handleKeyDown = e => {
+    if(cursor === undefined && (e.keyCode === 38 || e.keyCode === 40)) {
+      setCursor(0);
+    }
+    if (e.keyCode === 38 && cursor > 0) {
+      setCursor(prevCursor => prevCursor - 1);
+    } else if (e.keyCode === 40 && cursor < typeStore.filteredWorkspaceTypeList.length - 1) {
+      setCursor(prevCursor => prevCursor + 1);
+    }
+  };
 
   return (
     <div className={classes.container}>
       <div className={classes.panel}>
-        <Filter value={typeStore.filterValue} placeholder="Filter types" onChange={handleChange} />
+        <Filter value={typeStore.filterValue} placeholder="Filter types" onChange={handleChange} onKeyDown={handleKeyDown} />
         <div className={classes.body}>
           <Scrollbars autoHide>
             <div className={classes.content}>
-              <Schemas />
+              <Schemas cursor={cursor} onKeyDown={handleKeyDown} />
             </div>
           </Scrollbars>
         </div>

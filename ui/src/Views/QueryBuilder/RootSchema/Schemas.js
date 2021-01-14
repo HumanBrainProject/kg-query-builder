@@ -25,10 +25,18 @@ import Schema from "./Schema";
 const useStyles = createUseStyles({
   container: {
     position: "relative"
+  },
+  activeSchema: {
+    "& > div": {
+      background: "var(--bg-color-ui-contrast4)",
+      "&:focus": {
+        outline: 0
+      }
+    }
   }
 });
 
-const Schemas = observer(() =>  {
+const Schemas = observer(({cursor, onKeyDown}) =>  {
 
   const classes = useStyles();
 
@@ -36,9 +44,11 @@ const Schemas = observer(() =>  {
 
   return (
     <div className={classes.container}>
-      {typeStore.filteredWorkspaceTypeList.map(type => (
-        <Schema key={type.id} type={type} />
-      ))}
+      {typeStore.filteredWorkspaceTypeList.map((type, index) =>
+        (<div className={cursor === index ? classes.activeSchema: ""} key={type.id}>
+          <Schema key={type.id} type={type} enableFocus={cursor === index} onKeyDown={onKeyDown}/>
+        </div>)
+      )}
     </div>
   );
 });

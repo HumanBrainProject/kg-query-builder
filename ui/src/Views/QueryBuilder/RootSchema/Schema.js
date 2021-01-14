@@ -14,7 +14,7 @@
 *   limitations under the License.
 */
 
-import React from "react";
+import React, {useEffect, useRef} from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -53,16 +53,32 @@ const useStyles = createUseStyles({
   }
 });
 
-const Schema = observer(({ type }) =>  {
+const Schema = observer(({ type, enableFocus, onKeyDown }) =>  {
 
   const classes = useStyles();
+
+  const ref = useRef();
+
+  useEffect(() => {
+    if (enableFocus && ref.current) {
+      ref.current.focus();
+    }
+  });
+
 
   const { queryBuilderStore } = useStores();
 
   const handleClick = () => queryBuilderStore.selectRootSchema(type);
 
+  const handleKeyDown= e => {
+    if(e.keyCode === 13) {
+      queryBuilderStore.selectRootSchema(type);
+    }
+    onKeyDown(e);
+  };
+
   return (
-    <div className={classes.container} onClick={handleClick}>
+    <div tabIndex={-1} ref={ref} className={classes.container} onClick={handleClick} onKeyDown={handleKeyDown}>
       <Icon icon="circle" color={type.color}/>
       {type.label} - <small>{type.id}</small>
       <div className={classes.nextIcon} >
