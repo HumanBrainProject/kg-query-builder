@@ -119,7 +119,7 @@ public class Query {
             @RequestBody Map<?, ?> query,
             @RequestParam("from") Integer from,
             @RequestParam("size") Integer size,
-            @RequestParam("vocab") String vocab,
+            @RequestParam(value = "vocab", required = false) String vocab,
             @RequestParam("stage") String stage) {
         return serviceCall.post(
                 String.format("%s/%s/queries?from=%d&size=%d&vocab=%s&stage=%s", kgCoreEndpoint, apiVersion, from, size, vocab, stage),

@@ -81,7 +81,7 @@ const ResultOptions = observer(() => {
 
   return(
     <div className={classes.container}>
-      <form>
+      <Form>
         <Row>
           <Col xs={3}>
             <Form.Group>
@@ -120,7 +120,7 @@ const ResultOptions = observer(() => {
         </Row>
         <Row>
           <Col xs={9}>
-            <Form.Check onChange={handleToggleRunStripVocab} checked={queryBuilderStore.runStripVocab}>Strip vocab</Form.Check>
+            <Form.Check onChange={handleToggleRunStripVocab} type="checkbox" checked={queryBuilderStore.runStripVocab} label="Strip vocab" />
           </Col>
           <Col xs={3}>
             <Button variant="primary" className={"btn-block"} disabled={queryBuilderStore.isQueryEmpty} onClick={handlExecuteQuery} title={!queryBuilderStore.isQueryEmpty?"Run it":"The current query specification is not valid/complete. Please select at least one field."}>
@@ -128,7 +128,7 @@ const ResultOptions = observer(() => {
             </Button>
           </Col>
         </Row>
-      </form>
+      </Form>
     </div>
   );
 });
