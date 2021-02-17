@@ -154,7 +154,7 @@ const QueriesDrawer = observer(() => {
 
   const handleCancelFetchSavedQueries = () => queryBuilderStore.setFetchQueriesError(null);
 
-  // const handleMyQueriesExpandToggle = () => queryBuilderStore.toggleMyQueries();
+  const handleMyQueriesExpandToggle = () => queryBuilderStore.toggleMyQueries();
 
   const handleOthersQueriesExpandToggle = () => queryBuilderStore.toggleOtherQueries();
 
@@ -184,7 +184,7 @@ const QueriesDrawer = observer(() => {
                 </div>
                 :
                 <React.Fragment>
-                  {/* {queryBuilderStore.hasMyQueries && ( //TODO: Remove my queries and apply contribution logic based on permissions
+                  {queryBuilderStore.hasMyQueries && (
                     <div className={`${queryBuilderStore.showMyQueries?" show":""}`} >
                       <SavedQueries
                         title={`My saved queries for ${queryBuilderStore.rootSchema.label}`}
@@ -195,14 +195,13 @@ const QueriesDrawer = observer(() => {
                         onRefresh={handleFetchSavedQueries}
                         enableDelete={true} />
                     </div>
-                  )} */}
-                  {(queryBuilderStore.hasMyQueries || queryBuilderStore.hasOthersQueries) && (
+                  )}
+                  {queryBuilderStore.hasOthersQueries && (
                     <div className={`${queryBuilderStore.showOthersQueries?" show":""}`} >
                       <SavedQueries
-                        //title={`Other users' queries for ${queryBuilderStore.rootSchema.label}`}
-                        title={`Queries for ${queryBuilderStore.rootSchema.label}`} //TODO: Temporarily change the title to apply to all queries
+                        title={`Other users queries for ${queryBuilderStore.rootSchema.label}`}
                         subTitle={queryBuilderStore.rootSchema.id}
-                        list={[...queryBuilderStore.myQueries, ...queryBuilderStore.othersQueries]} // Combine
+                        list={queryBuilderStore.othersQueries}
                         expanded={queryBuilderStore.showOthersQueries}
                         onExpandToggle={handleOthersQueriesExpandToggle}
                         onRefresh={handleFetchSavedQueries}

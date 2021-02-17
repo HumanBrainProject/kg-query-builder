@@ -60,9 +60,11 @@ public class Query {
                 Map.class);
         List<Map<String, Object>> data = (List<Map<String, Object>>) queriesResult.get("data");
         data.forEach(query -> {
-            String[] splitQueryId = query.get("@id").toString().split("/");
-            String queryId = splitQueryId[splitQueryId.length - 1];
+            String queryId = getQueryId(query);
+            List userList = (List<Map<String, String>>) query.get(META_USER);
+            String userId = getQueryId((Map<String, Object>)userList.get(0));
             query.put("@id", queryId);
+            query.put(META_USER, Map.of("@id", userId));
         });
         return queriesResult;
 //        if(queriesResult != null){ //TODO: Fetch user info from new alternatives endpoint (not ready yet)
@@ -99,6 +101,11 @@ public class Query {
 //            return queriesResult;
 //        }
 //        return Collections.emptyMap();
+    }
+
+    private String getQueryId(Map<String, Object> query) {
+        String[] splitQueryId = query.get("@id").toString().split("/");
+        return splitQueryId[splitQueryId.length - 1];
     }
 
     @GetMapping("/{workspace}/{queryId}")
