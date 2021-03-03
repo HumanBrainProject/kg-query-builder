@@ -54,7 +54,7 @@ const queryCompare = (a, b) => {
   return a.id.localeCompare(b.id);
 };
 
-const rootFieldReservedProperties = ["root_schema", "schema:root_schema", "http://schema.org/root_schema", "identifier", "schema:identifier", "http://schema.org/identifier", "@id", "@type", "https://core.kg.ebrains.eu/vocab/meta/revision", "https://core.kg.ebrains.eu/vocab/meta/space", "https://core.kg.ebrains.eu/vocab/meta/user", "@context", "structure", "merge", "label", "description"];
+const rootFieldReservedProperties = ["root_schema", "schema:root_schema", "http://schema.org/root_schema", "identifier", "schema:identifier", "http://schema.org/identifier", "@id", "@type", "https://core.kg.ebrains.eu/vocab/meta/revision", "https://core.kg.ebrains.eu/vocab/meta/space", "https://core.kg.ebrains.eu/vocab/meta/user", "@context", "meta", "structure", "merge"];
 const fieldReservedProperties = ["propertyName", "path", "merge", "structure"];
 
 const namespaceReg = /^(.+):(.+)$/;
@@ -87,6 +87,9 @@ const normalizeUser = user => ({
 });
 
 export class QueryBuilderStore {
+  meta = null;
+  defaultResponseVocab = defaultContext.query;
+  responseVocab = null;
   queryId = "";
   label = "";
   workspace = "";
@@ -110,7 +113,6 @@ export class QueryBuilderStore {
 
   specifications = [];
 
-  runStripVocab = true;
   resultSize = 20;
   resultStart = 0;
   result = null;
@@ -130,6 +132,9 @@ export class QueryBuilderStore {
       stage: observable,
       sourceQuery: observable,
       context: observable,
+      meta: observable,
+      defaultResponseVocab: observable,
+      responseVocab: observable,
       rootField: observable,
       fetchQueriesError: observable,
       isFetchingQueries: observable,
@@ -144,7 +149,6 @@ export class QueryBuilderStore {
       saveAsMode: observable,
       compareChanges: observable,
       specifications: observable,
-      runStripVocab: observable,
       resultSize: observable,
       resultStart: observable,
       result: observable.shallow,
@@ -178,7 +182,7 @@ export class QueryBuilderStore {
       addMergeField: action,
       addMergeChildField: action,
       removeField: action,
-      toggleRunStripVocab: action,
+      setResponseVocab: action,
       selectField: action,
       resetField: action,
       JSONQueryFields: computed,
@@ -298,6 +302,9 @@ export class QueryBuilderStore {
       this.label = "";
       this.description = "";
       this.context = toJS(defaultContext);
+      this.meta = null;
+      this.defaultResponseVocab = this.context.query;
+      this.responseVocab = null;
       this.sourceQuery = null;
       this.savedQueryHasInconsistencies = false;
       this.rootField = new Field({
@@ -338,6 +345,9 @@ export class QueryBuilderStore {
       this.label = "";
       this.description = "";
       this.context = toJS(defaultContext);
+      this.meta = null;
+      this.defaultResponseVocab = this.context.query;
+      this.responseVocab = null;
       this.sourceQuery = null;
       this.savedQueryHasInconsistencies = false;
       this.isSaving = false;
@@ -553,8 +563,13 @@ export class QueryBuilderStore {
     }
   }
 
-  toggleRunStripVocab(state) {
-    this.runStripVocab = state !== undefined ? !!state : !this.runStripVocab;
+  setResponseVocab(vocab) {
+    this.responseVocab = vocab;
+    if (vocab) {
+      this.context.query = vocab;
+    } else {
+      this.context.query = this.defaultResponseVocab;
+    }
   }
 
   selectField(field) {
@@ -587,27 +602,37 @@ export class QueryBuilderStore {
         json[name] = cleanValue;
       }
     });
-    const label = this.label ? this.label.trim() : "";
-    const description = this.description ? this.description.trim() : "";
-    if (label) {
-      json["label"] = label;
-    }
-    if (description) {
-      json["description"] = description;
-    }
     return json;
   }
 
   get JSONMetaProperties() {
-    return {
-      name: this.rootField.schema.label,
-      alias: this.rootField.alias,
+    let meta = {
+      ...this.meta,
       type: this.rootField.schema.id
     };
+    const name = this.label ? this.label.trim() : "";
+    const description = this.description ? this.description.trim() : "";
+    if (name) {
+      meta.name = name;
+    }
+    if (description) {
+      meta.description = description;
+    }
+    if (this.responseVocab) {
+      meta.responseVocab = this.responseVocab;
+    }
+    return meta;
   }
 
   get JSONQuery() {
-    return Object.assign({}, { "@context": toJS(this.context) }, {"meta": this.JSONMetaProperties }, this.JSONQueryProperties, this.JSONQueryFields ? { structure: this.JSONQueryFields } : {});
+    let query = {
+      "@context": toJS(this.context),
+      "meta": this.JSONMetaProperties
+    };
+    if (this.JSONQueryProperties && this.JSONQueryFields) {
+      query["structure"] = this.JSONQueryFields;
+    }
+    return query;
   }
 
   get JSONSourceQuery() {
@@ -615,15 +640,12 @@ export class QueryBuilderStore {
       return null;
     }
     const json = toJS(this.sourceQuery.properties);
-    if (this.sourceQuery.label) {
-      json["label"] = this.sourceQuery.label;
-    }
-    if (this.sourceQuery.description) {
-      json["description"] = this.sourceQuery.description;
-    }
     json["@context"] = toJS(this.sourceQuery.context);
     if (this.sourceQuery.structure) {
       json.structure = toJS(this.sourceQuery.structure);
+    }
+    if (this.sourceQuery.meta) {
+      json["meta"] = toJS(this.sourceQuery.meta);
     }
     return json;
   }
@@ -958,15 +980,34 @@ export class QueryBuilderStore {
     if (!this.isSaving
       && this.rootField && this.rootField.schema && this.rootField.schema.id
       && query && !query.isDeleting) {
-      this.queryId = query.id + "-Copy";
-      this.label = query.label;
+      this.queryId = _.uuid();
       this.workspace = query.workspace;
-      this.description = query.description;
       if (this.sourceQuery !== query) { // reset
         this.showHeader = true;
       }
       this.sourceQuery = query;
       this.context = toJS(query.context);
+      if (!this.context) {
+        this.context = toJS(defaultContext);
+      }
+      if (!this.context.query) {
+        this.context.query = defaultContext.query;
+      }
+      this.meta = toJS(query.meta);
+      if (this.meta) {
+        this.label = this.meta.name?(this.meta.name + "-Copy"):"";
+        this.description = this.meta.description?this.meta.description:"";
+        if (this.meta.responseVocab) {
+          this.defaultVocab = this.meta.responseVocab;
+          delete this.meta.responseVocab;
+        } else {
+          this.defaultResponseVocab = this.context.query;
+          this.responseVocab = null;
+        }
+      } else {
+        this.defaultResponseVocab = this.context.query;
+        this.responseVocab = null;
+      }
       this.rootField = this._processJsonSpecification(toJS(this.rootField.schema), toJS(query.merge), toJS(query.structure), toJS(query.properties));
       this.isSaving = false;
       this.saveError = null;
@@ -987,7 +1028,7 @@ export class QueryBuilderStore {
       this.result = null;
       try {
         const query = this.JSONQuery;
-        const response = await this.transportLayer.performQuery(query, this.stage, this.runStripVocab ? "https://schema.hbp.eu/myQuery/" : undefined, this.resultStart, this.resultSize);
+        const response = await this.transportLayer.performQuery(query, this.stage, this.resultStart, this.resultSize);
         runInAction(() => {
           this.tableViewRoot = ["data"];
           this.result = response.data;
@@ -1090,17 +1131,19 @@ export class QueryBuilderStore {
         await this.transportLayer.saveQuery(this.workspace, queryId, query);
         runInAction(() => {
           if (!this.saveAsMode && this.sourceQuery && this.sourceQuery.user.id === this.rootStore.authStore.user.id) {
-            this.sourceQuery.label = query.label;
-            this.sourceQuery.description = query.description;
+            this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
+            this.sourceQuery.description = query.meta && query.meta.description?query.meta.description:"";
             this.sourceQuery.context = query["@context"];
             this.sourceQuery.merge = query.merge,
             this.sourceQuery.structure = query.structure;
+            this.sourceQuery.meta = query.meta;
             this.sourceQuery.properties = getProperties(query);
           } else if (!this.saveAsMode) {
             this.sourceQuery = this.specifications.find(spec => spec.id === queryId);
-            this.sourceQuery.label = query.label;
-            this.sourceQuery.description = query.description;
+            this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
+            this.sourceQuery.description = query.meta && query.meta.description?query.meta.description:"";
             this.sourceQuery.specification = query;
+            this.sourceQuery.meta = query.meta;
           } else {
             this.sourceQuery = {
               id: queryId,
@@ -1113,9 +1156,10 @@ export class QueryBuilderStore {
               merge: query.merge,
               structure: query.structure,
               properties: getProperties(query),
-              label: query.label,
+              meta: query.meta,
+              label: query.meta && query.meta.name?query.meta.name:"",
+              description: query.meta && query.meta.description?query.meta.description:"",
               workspace: query.workspace,
-              description: query.description,
               isDeleting: false,
               deleteError: null
             };
@@ -1188,7 +1232,6 @@ export class QueryBuilderStore {
             const jsonSpecifications = response && response.data && response.data.data && response.data.data.length ? response.data.data : [];
             jsonSpecifications.forEach(async jsonSpec => {
               let queryId = jsonSpec["@id"];
-              const label = jsonSpec["https://core.kg.ebrains.eu/vocab/query/label"] ? jsonSpec["https://core.kg.ebrains.eu/vocab/query/label"] : "";
               jsonSpec["@context"] = toJS(defaultContext);
               try {
                 const expanded = await jsonld.expand(jsonSpec);
@@ -1201,9 +1244,10 @@ export class QueryBuilderStore {
                     merge: compacted.merge,
                     structure: compacted.structure,
                     properties: getProperties(compacted),
-                    label: label,
+                    meta: compacted.meta,
+                    label: compacted.meta && compacted.meta.name?compacted.meta.name:"",
+                    description: compacted.meta && compacted.meta.description?compacted.meta.description:"",
                     workspace: jsonSpec["https://core.kg.ebrains.eu/vocab/meta/space"],
-                    description: jsonSpec["https://core.kg.ebrains.eu/vocab/query/description"] ? jsonSpec["https://core.kg.ebrains.eu/vocab/query/description"] : "",
                     isDeleting: false,
                     deleteError: null
                   });

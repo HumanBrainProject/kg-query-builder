@@ -21,6 +21,7 @@ import { createUseStyles } from "react-jss";
 import { useStores } from "../../../Hooks/UseStores";
 
 import Name from "./Options/Name";
+import Vocab from "./Options/Vocab";
 import Flatten from "./Options/Flatten";
 import AddMergeButton from "./Options/AddMergeButton";
 import FieldOptions from "./Options/Options";
@@ -78,12 +79,22 @@ const Options = observer(() => {
 
   const handleChangeOption = (name, value) => field.setOption(name, value);
 
+  const handleChangeVocab = value => queryBuilderStore.setResponseVocab(value);
+
   if (!field) {
     return null;
   }
 
   return (
     <div className={classes.container}>
+      {field === rootField && (
+        <Vocab
+          defaultValue={queryBuilderStore.defaultResponseVocab}
+          value={queryBuilderStore.responseVocab}
+          show={field === rootField}
+          onChange={handleChangeVocab}
+        />
+      )}
       <div className={classes.fieldOptions}>
         <Name field={field} rootField={rootField} />
         <FieldOptions field={field} rootField={rootField} lookupsLinks={lookupsLinks} options={field.options} onChange={handleChangeOption} />

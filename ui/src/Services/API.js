@@ -21,8 +21,7 @@ const API = {
     "workspaces": () => "/service/api/workspaces",
     "types": () => "/service/api/types",
     "structure": () => "/service/api/structure?withLinks=true",
-    "performQuery": (stage, vocab, from, size) => `/service/api/query?${
-      ""}${vocab!==undefined && vocab!==null?`vocab=${encodeURIComponent(vocab)}&`:""}${
+    "performQuery": (stage, from, size) => `/service/api/query?${
       ""}${size!==undefined && size!==null?`size=${encodeURIComponent(size)}&`:""}${
       ""}${from!==undefined && from!==null?`from=${encodeURIComponent(from)}&`:""}${
       ""}${stage?`stage=${stage}`:"" }`,

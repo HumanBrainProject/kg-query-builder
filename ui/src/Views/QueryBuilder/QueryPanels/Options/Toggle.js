@@ -55,7 +55,9 @@ const Toggle = ({ option, label, comment, show, onChange }) => {
   return (
     <div className={classes.option}>
       <div className={classes.optionLabel}>
-        {label} <small>({comment})</small>
+        {label}{comment && (
+          <small>({comment})</small>
+        )}
       </div>
       <div>
         <MultiToggle selectedValue={value} onChange={handleChange}>

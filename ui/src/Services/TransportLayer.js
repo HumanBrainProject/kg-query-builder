@@ -77,8 +77,8 @@ export class TransportLayer {
     return this._axios.post(API.endpoints.types(), types);
   }
 
-  async performQuery(query, stage, vocab, from, size) {
-    return this._axios.post(API.endpoints.performQuery(stage, vocab, from, size), query);
+  async performQuery(query, stage, from, size) {
+    return this._axios.post(API.endpoints.performQuery(stage, from, size), query);
   }
 
   async listQueries(type) {

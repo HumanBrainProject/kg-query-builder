@@ -196,7 +196,11 @@ const Field = observer(({ field }) => {
             </span>
             {field.parent?
               <React.Fragment>
-                &nbsp;&nbsp;{field.schema.label}&nbsp;( <Types types={field.schema.canBe} /> )
+                &nbsp;&nbsp;{field.schema.label}{field.schema.canBe && !!field.schema.canBe.length && (
+                  <React.Fragment>
+                    &nbsp;( <Types types={field.schema.canBe} /> )
+                  </React.Fragment>
+                )}
               </React.Fragment>
               :
               <React.Fragment>
@@ -216,10 +220,10 @@ const Field = observer(({ field }) => {
             :
             field.parent?
               <React.Fragment>
-                {field.schema.label}&nbsp;
-                {!field.isRootMerge && (
+                {field.schema.label}
+                {!field.isRootMerge && field.schema.canBe && !!field.schema.canBe.length && (
                   <React.Fragment>
-                    ( <Types types={field.schema.canBe} /> )
+                    &nbsp;( <Types types={field.schema.canBe} /> )
                   </React.Fragment>
                 )}
               </React.Fragment>

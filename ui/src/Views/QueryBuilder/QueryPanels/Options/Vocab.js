@@ -18,9 +18,9 @@ import React from "react";
 
 import Toggle from "./Toggle";
 
-const Flatten = ({ field, show, onChange}) => {
+const Vocab = ({ defaultValue, value, show, onChange}) => {
 
-  const handleOnChange = (name, value) => onChange(value);
+  const handleOnChange = (name, newValue) => onChange(newValue?defaultValue:null);
 
   if (!show) {
     return null;
@@ -29,14 +29,14 @@ const Flatten = ({ field, show, onChange}) => {
   return (
     <Toggle
       option={{
-        value: field.isFlattened?true:undefined
+        value: value?true:undefined
       }}
-      label="Flatten"
-      comment="only applicable if this field has only one child field"
+      label="Strip vocab"
+      comment={defaultValue}
       show={true}
       onChange={handleOnChange}
     />
   );
 };
 
-export default Flatten;
+export default Vocab;

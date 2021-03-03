@@ -68,8 +68,6 @@ const ResultOptions = observer(() => {
 
   const { queryBuilderStore } = useStores();
 
-  const handleToggleRunStripVocab = () => queryBuilderStore.toggleRunStripVocab();
-
   const handleChangeSize = e => queryBuilderStore.setResultSize(e.target.value);
 
   const handleChangeStart = e => queryBuilderStore.setResultStart(e.target.value);
@@ -119,9 +117,7 @@ const ResultOptions = observer(() => {
           </Col>
         </Row>
         <Row>
-          <Col xs={9}>
-            <Form.Check onChange={handleToggleRunStripVocab} type="checkbox" checked={queryBuilderStore.runStripVocab} label="Strip vocab" />
-          </Col>
+          <Col xs={9} />
           <Col xs={3}>
             <Button variant="primary" className={"btn-block"} disabled={queryBuilderStore.isQueryEmpty} onClick={handlExecuteQuery} title={!queryBuilderStore.isQueryEmpty?"Run it":"The current query specification is not valid/complete. Please select at least one field."}>
               Run it
