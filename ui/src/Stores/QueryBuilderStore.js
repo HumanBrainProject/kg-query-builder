@@ -1013,7 +1013,8 @@ export class QueryBuilderStore {
         this.label = this.meta.name?this.meta.name:"";
         this.description = this.meta.description?this.meta.description:"";
         if (this.meta.responseVocab) {
-          this.defaultVocab = this.meta.responseVocab;
+          this.defaultResponseVocab = this.meta.responseVocab;
+          this.responseVocab = this.defaultResponseVocab;
           delete this.meta.responseVocab;
         } else {
           this.defaultResponseVocab = this.context.query;

@@ -176,20 +176,23 @@ const useStyles = createUseStyles({
       display: "inline",
       width: "auto",
       padding: "6px",
+      transform: "translateY(3px)",
       "& + button": {
         margin: "6px !important"
       }
     }
   },
-  fontAwesomeIconButton: {
+  queryToggleButton: {
     display: "inline-block",
-    margin: 0,
+    margin: "0 0 0 3px",
     padding: 0,
     border: 0,
     background: "transparent",
     outline: 0,
+    color: "var(--ft-color-normal)",
     "&:hover": {
-      outline: 0
+      outline: 0,
+      color: "var(--ft-color-loud)"
     }
   }
 });
@@ -231,7 +234,7 @@ const QueryForm = observer(({ className }) => {
           <div>
             {!queryBuilderStore.saveAsMode && (
               <React.Fragment>
-                <button className={classes.fontAwesomeIconButton} onClick={handleHeaderToggle}><FontAwesomeIcon icon="angle-down"/></button>&nbsp;&nbsp;
+                <button className={classes.queryToggleButton} onClick={handleHeaderToggle}><FontAwesomeIcon icon="angle-down" size="lg" /></button>&nbsp;&nbsp;
               </React.Fragment>
             )}
             <h5>Query :</h5>
@@ -309,7 +312,7 @@ const QueryForm = observer(({ className }) => {
                 <div>
                   {!queryBuilderStore.showHeader && (
                     <div className={classes.collapsedHeader}>
-                      <button className={classes.fontAwesomeIconButton} onClick={handleHeaderToggle}><FontAwesomeIcon icon="angle-down"/></button>
+                      <button className={classes.queryToggleButton} onClick={handleHeaderToggle}><FontAwesomeIcon icon="angle-down" size="lg" /></button>
                   &nbsp;&nbsp;<h5>Query :</h5>
                   &nbsp;&nbsp;<input
                         className={`form-control ${classes.input}`}
@@ -343,7 +346,7 @@ const QueryForm = observer(({ className }) => {
                 <div>
                   {!queryBuilderStore.showHeader && (
                     <div className={classes.collapsedHeader}>
-                      <button className={classes.fontAwesomeIconButton} onClick={handleHeaderToggle}><FontAwesomeIcon icon="angle-down"/></button>
+                      <button className={classes.queryToggleButton} onClick={handleHeaderToggle}><FontAwesomeIcon icon="angle-down" size="lg" /></button>
                   &nbsp;&nbsp;<h5>Query :</h5>
                   &nbsp;&nbsp;<input
                         className={`form-control ${classes.input}`}

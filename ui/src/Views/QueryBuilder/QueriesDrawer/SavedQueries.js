@@ -78,10 +78,17 @@ const useStyles = createUseStyles({
       }
     },
     "& button.refresh-btn": {
-      color: "var(--ft-color-normal)"
+      color: "var(--ft-color-normal)",
+      "&:hover": {
+        color: "var(--ft-color-loud)"
+      }
     }
   },
   toggleButton: {
+    color: "var(--ft-color-normal)",
+    "&:hover": {
+      color: "var(--ft-color-loud)"
+    },
     "& svg": {
       transition: "transform 0.3s ease"
     },
