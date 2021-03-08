@@ -90,7 +90,7 @@ export class QueryBuilderStore {
   meta = null;
   defaultResponseVocab = defaultContext.query;
   responseVocab = null;
-  queryId = "";
+  queryId = null;
   label = "";
   workspace = "";
   description = "";
@@ -110,6 +110,9 @@ export class QueryBuilderStore {
   showOthersQueries = true;
   saveAsMode = false;
   compareChanges = false;
+  fromQueryId = null;
+  fromLabel = "";
+  fromDescription = "";
 
   specifications = [];
 
@@ -154,7 +157,6 @@ export class QueryBuilderStore {
       result: observable.shallow,
       tableViewRoot: observable,
       currentField: observable,
-      setQueryId: action,
       currentFieldLookups: computed,
       currentFieldLookupsAttributes: computed,
       currentFieldLookupsAdvancedAttributes: computed,
@@ -214,7 +216,10 @@ export class QueryBuilderStore {
       deleteQuery: action,
       cancelDeleteQuery: action,
       fetchQueries: action,
-      setDescription: action
+      setDescription: action,
+      fromQueryId: observable,
+      fromLabel: observable,
+      fromDescription: observable
     });
 
     this.transportLayer = transportLayer;
@@ -263,8 +268,6 @@ export class QueryBuilderStore {
     }, []);
   }
 
-  setQueryId = () => this.queryId = _.uuid();
-
   get currentFieldLookups() {
     return this.currentField?this.currentField.lookups:[];
   }
@@ -298,7 +301,7 @@ export class QueryBuilderStore {
 
   selectRootSchema(schema) {
     if (!this.isSaving) {
-      this.queryId = "";
+      this.queryId = null;
       this.label = "";
       this.description = "";
       this.context = toJS(defaultContext);
@@ -322,6 +325,9 @@ export class QueryBuilderStore {
       this.showMyQueries = true;
       this.showOthersQueries = true;
       this.result = null;
+      this.fromQueryId = null;
+      this.fromLabel = "";
+      this.fromDescription = "";
       this.workspace = this.rootStore.authStore.workspaces[0];
       this.selectField(this.rootField);
       this.fetchQueries();
@@ -341,7 +347,7 @@ export class QueryBuilderStore {
 
   clearRootSchema() {
     if (!this.isSaving) {
-      this.queryId = "";
+      this.queryId = null;
       this.label = "";
       this.description = "";
       this.context = toJS(defaultContext);
@@ -361,13 +367,16 @@ export class QueryBuilderStore {
       this.showOthersQueries = true;
       this.result = null;
       this.rootField = null;
+      this.fromQueryId = null;
+      this.fromLabel = "";
+      this.fromDescription = "";
       this.resetField();
     }
   }
 
   setAsNewQuery() {
     if (!this.isSaving) {
-      this.queryId = "";
+      this.queryId = null;
       this.label = "";
       this.description = "";
       this.sourceQuery = null;
@@ -381,6 +390,12 @@ export class QueryBuilderStore {
       this.showQueries = false;
       this.showMyQueries = true;
       this.showOthersQueries = true;
+      this.fromQueryId = null;
+      this.fromLabel = "";
+      this.fromDescription = "";
+      this.fromQueryId = null;
+      this.fromLabel = "";
+      this.fromDescription = "";
     }
   }
 
@@ -995,7 +1010,7 @@ export class QueryBuilderStore {
       }
       this.meta = toJS(query.meta);
       if (this.meta) {
-        this.label = this.meta.name?(this.meta.name + "-Copy"):"";
+        this.label = this.meta.name?this.meta.name:"";
         this.description = this.meta.description?this.meta.description:"";
         if (this.meta.responseVocab) {
           this.defaultVocab = this.meta.responseVocab;
@@ -1016,6 +1031,9 @@ export class QueryBuilderStore {
       this.saveAsMode = false;
       this.showQueries = false;
       this.result = null;
+      this.fromQueryId = null;
+      this.fromLabel = "";
+      this.fromDescription = "";
       this.selectField(this.rootField);
       this.savedQueryHasInconsistencies = this.hasQueryChanged;
     }
@@ -1070,8 +1088,14 @@ export class QueryBuilderStore {
   cancelChanges() {
     if (this.sourceQuery) {
       this.selectQuery(this.sourceQuery);
+      this.fromQueryId = this.queryId;
+      this.fromLabel = this.label;
+      this.fromDescription = this.description;
     } else if (!this.isSaving) {
       this.rootField.structure = [];
+      this.fromQueryId = null;
+      this.fromLabel = "";
+      this.fromDescription = "";
     }
   }
 
@@ -1085,6 +1109,21 @@ export class QueryBuilderStore {
 
   setSaveAsMode(mode) {
     this.saveAsMode = mode;
+    if (mode) {
+      this.fromQueryId = this.queryId;
+      this.fromLabel = this.label;
+      this.fromDescription = this.description;
+      this.queryId = _.uuid();
+      this.label = this.label?(this.label.endsWith("-Copy")?this.label:(this.label + "-Copy")):"";
+    } else {
+      this.queryId = this.fromQueryId;
+      this.label = this.fromLabel;
+      this.description = this.fromDescription;
+      this.fromQueryId = null;
+      this.fromLabel = "";
+      this.fromDescription = "";
+    }
+
   }
 
   toggleCompareChanges() {
@@ -1167,6 +1206,9 @@ export class QueryBuilderStore {
           }
           this.saveAsMode = false;
           this.isSaving = false;
+          this.fromQueryId = null;
+          this.fromLabel = "";
+          this.fromDescription = "";
         });
       } catch (e) {
         const message = e.message ? e.message : e;

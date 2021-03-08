@@ -214,7 +214,6 @@ const QueryForm = observer(({ className }) => {
 
   const handleShowSaveDialog = () => {
     queryBuilderStore.setSaveAsMode(true);
-    queryBuilderStore.setQueryId();
   };
 
   const handleHideSaveDialog = () => queryBuilderStore.setSaveAsMode(false);

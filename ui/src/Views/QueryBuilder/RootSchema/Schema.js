@@ -77,10 +77,27 @@ const Schema = observer(({ type, enableFocus, onKeyDown }) =>  {
     onKeyDown(e);
   };
 
+
+  const getTypeLabel = type => {
+    if (!type) {
+      return "";
+    }
+    if (type.label) {
+      return type.label;
+    }
+    if (!type.id) {
+      return "";
+    }
+    const parts = type.id.split("/");
+    return parts[parts.length-1];
+  };
+
+  const label = getTypeLabel(type);
+
   return (
     <div tabIndex={-1} ref={ref} className={classes.container} onClick={handleClick} onKeyDown={handleKeyDown}>
       <Icon icon="circle" color={type.color}/>
-      {type.label} - <small>{type.id}</small>
+      {label} - <small>{type.id}</small>
       <div className={classes.nextIcon} >
         <FontAwesomeIcon icon={"chevron-right"} size="lg" />
       </div>
