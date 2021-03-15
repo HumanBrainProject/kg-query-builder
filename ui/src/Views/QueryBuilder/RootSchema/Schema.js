@@ -17,7 +17,9 @@
 import React, {useEffect, useRef} from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
+import { useHistory } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import _  from "lodash-uuid";
 
 import Icon from "../../../Components/Icon";
 
@@ -59,6 +61,8 @@ const Schema = observer(({ type, enableFocus, onKeyDown }) =>  {
 
   const ref = useRef();
 
+  const history = useHistory();
+
   useEffect(() => {
     if (enableFocus && ref.current) {
       ref.current.focus();
@@ -68,7 +72,11 @@ const Schema = observer(({ type, enableFocus, onKeyDown }) =>  {
 
   const { queryBuilderStore } = useStores();
 
-  const handleClick = () => queryBuilderStore.selectRootSchema(type);
+  const handleClick = () => {
+    queryBuilderStore.selectRootSchema(type);
+    const uuid = _.uuid();
+    history.push(`/query/${uuid}`);
+  };
 
   const handleKeyDown= e => {
     if(e.keyCode === 13) {

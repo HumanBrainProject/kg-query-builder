@@ -14,6 +14,8 @@
 *   limitations under the License.
 */
 
+import { createBrowserHistory } from "history";
+
 import { AppStore } from "./AppStore";
 import { AuthStore } from "./AuthStore";
 import { TypeStore } from "./TypeStore";
@@ -21,15 +23,20 @@ import { QueryBuilderStore } from "./QueryBuilderStore";
 
 export class RootStore {
 
-  authStore= null
-  typeStore= null
-  queryBuilderStore= null
+  history= null
+  authStore= null;
+  typeStore= null;
+  queryBuilderStore= null;
+  transportLayer = null;
 
   constructor(transportLayer) {
 
     if (!transportLayer) {
       throw new Error("no transport layer provided!");
     }
+
+    this.transportLayer = transportLayer;
+    this.history = createBrowserHistory({basename:window.rootPath});
 
     // Domain stores
     this.typeStore = new TypeStore(transportLayer, this);

@@ -14,29 +14,18 @@
 *   limitations under the License.
 */
 
-import React, { useEffect} from "react";
+import React from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
 import { useStores } from "../Hooks/UseStores";
 
 import Types from "./QueryBuilder/Types";
-import RootSchema from "./QueryBuilder/RootSchema";
 import Query from "./QueryBuilder/Query";
 import QueryPanels from "./QueryBuilder/QueryPanels";
-import QueriesDrawer from "./QueryBuilder/QueriesDrawer";
-import BGMessage from "../Components/BGMessage";
-import FetchingLoader from "../Components/FetchingLoader";
 
 const useStyles = createUseStyles({
-  container: {
-    width: "100%",
-    height: "100%",
-    color: "var(--ft-color-normal)",
-  },
   fetchingPanel: {
     position: "fixed",
     top: 0,
@@ -114,91 +103,23 @@ const QueryBuilder = observer(() => {
 
   const classes = useStyles();
 
-  const { queryBuilderStore, typeStore } = useStores();
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => fetchStructure(true), []);
-
-  const fetchStructure = (forceFetch=false) => typeStore.fetch(forceFetch);
-
-  const handleRetryFetchStructure = () => fetchStructure(true);
-
-  const handleCloseQuery = e => {
-    e.stopPropagation();
-    queryBuilderStore.removeField(queryBuilderStore.rootField);
-  };
-
-  if (typeStore.isFetching) {
-    return (
-      <div className={classes.container}>
-        <div className={classes.fetchingPanel}>
-          <FetchingLoader>
-              Fetching api structure...
-          </FetchingLoader>
-        </div>
-      </div>
-    );
-  }
-
-  if (typeStore.fetchError) {
-    return (
-      <div className={classes.container}>
-        <BGMessage icon={"ban"}>
-          There was a network problem fetching the api structure.<br />
-          If the problem persists, please contact the support.<br />
-          <small>{typeStore.fetchError}</small><br /><br />
-          <Button variant="primary" onClick={handleRetryFetchStructure}>
-            <FontAwesomeIcon icon={"redo-alt"} />&nbsp;&nbsp; Retry
-          </Button>
-        </BGMessage>
-      </div>
-    );
-  }
-
-  if (!typeStore.hasTypes) {
-    return (
-      <div className={classes.container}>
-        <BGMessage icon={"tools"}>
-            No types available.<br />
-            If the problem persists, please contact the support.<br /><br />
-          <Button variant="primary" onClick={handleRetryFetchStructure}>
-            <FontAwesomeIcon icon={"redo-alt"} />&nbsp;&nbsp; Retry
-          </Button>
-        </BGMessage>
-      </div>
-    );
-  }
-
-  const panel1Style = queryBuilderStore.hasRootSchema?{transform: "translateX(-200%)"}:{};
-  const panel2Style = !queryBuilderStore.hasRootSchema?{transform: "translateX(200%)"}:{};
+  const { queryBuilderStore } = useStores();
 
   return (
-    <div className={classes.container}>
-      <div className={classes.panel} style={panel1Style}>
-        <RootSchema />
-      </div>
-      <div className={classes.panel} style={panel2Style}>
-        <div className={classes.layout}>
-          <div className={classes.header}>
-            {queryBuilderStore.hasRootSchema && (
-              <div className={classes.title}>
-                <Types types={queryBuilderStore.rootSchema.canBe} /> - <small>{queryBuilderStore.rootSchema.id}</small>
-              </div>
-            )}
-            <button className={classes.closeQueryButton} onClick={handleCloseQuery} title="back to type selection">
-              <FontAwesomeIcon icon={"chevron-left"} size="lg" />
-            </button>
+    <div className={classes.panel}>
+      <div className={classes.layout}>
+        <div className={classes.header}>
+          <div className={classes.title}>
+            <Types types={queryBuilderStore.rootSchema.canBe} /> - <small>{queryBuilderStore.rootSchema.id}</small>
           </div>
-          <div className={classes.body}>
-            <Query />
-            <QueryPanels />
-          </div>
-          <QueriesDrawer />
+        </div>
+        <div className={classes.body}>
+          <Query />
+          <QueryPanels />
         </div>
       </div>
     </div>
   );
-
 });
 QueryBuilder.displayName = "QueryBuilder";
 

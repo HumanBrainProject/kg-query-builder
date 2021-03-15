@@ -24,6 +24,7 @@ const jsdiff = require("diff");
 
 import Field from "./Field";
 
+
 const defaultContext = {
   "@vocab": "https://core.kg.ebrains.eu/vocab/query/",
   "query": "https://schema.hbp.eu/myQuery/",
@@ -113,6 +114,8 @@ export class QueryBuilderStore {
   fromQueryId = null;
   fromLabel = "";
   fromDescription = "";
+  isFetchingQuery = false;
+  fetchQueryError = null;
 
   specifications = [];
 
@@ -157,6 +160,8 @@ export class QueryBuilderStore {
       result: observable.shallow,
       tableViewRoot: observable,
       currentField: observable,
+      isFetchingQuery: observable,
+      fetchQueryError: observable,
       currentFieldLookups: computed,
       currentFieldLookupsAttributes: computed,
       currentFieldLookupsAdvancedAttributes: computed,
@@ -217,6 +222,7 @@ export class QueryBuilderStore {
       cancelDeleteQuery: action,
       fetchQueries: action,
       setDescription: action,
+      fetchQueryById: action,
       fromQueryId: observable,
       fromLabel: observable,
       fromDescription: observable
@@ -330,7 +336,6 @@ export class QueryBuilderStore {
       this.fromDescription = "";
       this.workspace = this.rootStore.authStore.workspaces[0];
       this.selectField(this.rootField);
-      this.fetchQueries();
     }
   }
 
@@ -1179,7 +1184,7 @@ export class QueryBuilderStore {
             this.sourceQuery.meta = query.meta;
             this.sourceQuery.properties = getProperties(query);
           } else if (!this.saveAsMode) {
-            this.sourceQuery = this.specifications.find(spec => spec.id === queryId);
+            this.sourceQuery = this.findQuery(queryId);
             this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
             this.sourceQuery.description = query.meta && query.meta.description?query.meta.description:"";
             this.sourceQuery.specification = query;
@@ -1274,36 +1279,17 @@ export class QueryBuilderStore {
             this.showOthersQueries = true;
             const jsonSpecifications = response && response.data && response.data.data && response.data.data.length ? response.data.data : [];
             jsonSpecifications.forEach(async jsonSpec => {
-              let queryId = jsonSpec["@id"];
-              jsonSpec["@context"] = toJS(defaultContext);
               try {
-                const expanded = await jsonld.expand(jsonSpec);
-                const compacted = await jsonld.compact(expanded, jsonSpec["@context"]);
-                runInAction(() => {
-                  this.specifications.push({
-                    id: queryId,
-                    user: normalizeUser(jsonSpec["https://core.kg.ebrains.eu/vocab/meta/user"]),
-                    context: compacted["@context"],
-                    merge: compacted.merge,
-                    structure: compacted.structure,
-                    properties: getProperties(compacted),
-                    meta: compacted.meta,
-                    label: compacted.meta && compacted.meta.name?compacted.meta.name:"",
-                    description: compacted.meta && compacted.meta.description?compacted.meta.description:"",
-                    workspace: jsonSpec["https://core.kg.ebrains.eu/vocab/meta/space"],
-                    isDeleting: false,
-                    deleteError: null
-                  });
-                });
+                const query = await this.normalizeQuery(jsonSpec);
+                runInAction(() => this.specifications.push(query));
               } catch (e) {
                 runInAction(() => {
                   this.fetchQueriesError = `Error while trying to expand/compact JSON-LD (${e})`;
                 });
-                this.transportLayer.captureException(e);
               }
             });
             if (this.sourceQuery) {
-              const query = this.specifications.find(spec => spec.id === this.sourceQuery.id);
+              const query = this.findQuery(this.sourceQuery.id);
               if (query) {
                 this.sourceQuery = query;
               } else {
@@ -1320,6 +1306,92 @@ export class QueryBuilderStore {
             this.isFetchingQueries = false;
           });
         }
+      }
+    }
+  }
+
+  async fetchQueryById(queryId) {
+    this.isFetchingQuery = true;
+    this.fetchQueryError = null;
+    try {
+      const response = await this.transportLayer.getQuery(queryId);
+      const jsonSpecification = response && response.data ? response.data : null;
+      try{
+        const query = await this.normalizeQuery(jsonSpecification);
+        runInAction(() => this.specifications.push(query));
+      } catch (e) {
+        runInAction(() => this.fetchQueriesError = `Error while trying to expand/compact JSON-LD (${e})`);
+      }
+      runInAction(() => this.isFetchingQuery = false);
+    } catch (e) {
+      runInAction(() => {
+        const { response } = e;
+        const { status } = response;
+        const message = e.message ? e.message : e;
+        this.isFetchingQuery = false;
+        switch (status) {
+        case 401: // Unauthorized
+        case 403: // Forbidden
+        {
+          this.fetchQueryError = `You do not have permission to access the query with id "${queryId}"`;
+          break;
+        }
+        //TODO: Catch 500 on kg core and remove it from here
+        case 500:
+        case 404:
+        {
+          // It means that the query does not exist.
+          return;
+        }
+        default: {
+          this.fetchQueryError = `Error while fetching query with id "${queryId}" (${message})`;
+        }
+        }
+      });
+    }
+  }
+
+  async normalizeQuery(jsonSpec) {
+    let queryId = jsonSpec["@id"];
+    jsonSpec["@context"] = toJS(defaultContext);
+    const expanded = await jsonld.expand(jsonSpec);
+    const compacted = await jsonld.compact(expanded, jsonSpec["@context"]);
+    return {
+      id: queryId,
+      user: normalizeUser(jsonSpec["https://core.kg.ebrains.eu/vocab/meta/user"]),
+      context: compacted["@context"],
+      merge: compacted.merge,
+      structure: compacted.structure,
+      properties: getProperties(compacted),
+      meta: compacted.meta,
+      label: compacted.meta && compacted.meta.name?compacted.meta.name:"",
+      description: compacted.meta && compacted.meta.description?compacted.meta.description:"",
+      workspace: jsonSpec["https://core.kg.ebrains.eu/vocab/meta/space"],
+      isDeleting: false,
+      deleteError: null
+    };
+  }
+
+  findQuery(id) {
+    return this.specifications.find(spec => spec.id === id);
+  }
+
+  async selectQueryById(id) {
+    let query = this.findQuery(id);
+    if(!query) {
+      await this.fetchQueryById(id);
+      query = this.findQuery(id);
+    }
+    if(query) {
+      const typeName = query.meta.type;
+      const type = this.rootStore.typeStore.types[typeName];
+      if(type) {
+        this.selectRootSchema(type);
+        this.selectQuery(query);
+      }
+    } else {
+      if(!this.hasRootSchema) {
+        this.rootStore.history.replace("/");
       }
     }
   }

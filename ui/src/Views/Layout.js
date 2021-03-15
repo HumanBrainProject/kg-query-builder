@@ -18,13 +18,16 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import Modal from "react-bootstrap/Modal";
 import { createUseStyles, useTheme } from "react-jss";
+import { Route, Switch } from "react-router-dom";
 
 import { useStores } from "../Hooks/UseStores";
 
 import Header from "./Header";
 import Login from "./Login";
 import GlobalError from "./GlobalError";
-import QueryBuilder from "./QueryBuilder";
+import QueriesDrawer from "./QueryBuilder/QueriesDrawer";
+import RootSchema from "./QueryBuilder/RootSchema";
+import Query from "./Query";
 
 const getGlobalUseStyles = () => createUseStyles(theme => {
   const styles = {
@@ -151,6 +154,11 @@ const useStyles = createUseStyles(theme => ({
     backgroundImage: theme.background.image?`url('${theme.background.image}')`:"unset",
     backgroundPosition: theme.background.position?theme.background.position:"unset"
   },
+  container: {
+    width: "100%",
+    height: "100%",
+    color: "var(--ft-color-normal)",
+  },
   status: {
     background: "var(--bg-color-ui-contrast1)",
     color: "var(--ft-color-loud)",
@@ -176,21 +184,29 @@ const Layout = observer(() => {
 
   const classes = useStyles({ theme });
 
-  const { appStore, authStore } = useStores();
+  const { appStore, authStore, queryBuilderStore } = useStores();
 
   return (
     <div className={classes.layout}>
       <Header />
       <div className={classes.body}>
         {appStore.globalError ?
-          <GlobalError />
+          <Route component={GlobalError} />
           :
           (!appStore.isInitialized || !authStore.isAuthenticated ?
-            <Login />
+            <Route component={Login} />
             :
             (authStore.isUserAuthorized?
               (authStore.hasUserWorkspaces?
-                <QueryBuilder />
+                <div className={classes.container}>
+                  <Switch>
+                    <Route path="/" exact={true} component={RootSchema} />
+                    <Route path="/queries/:id" exact={true} render={props => <Query id={props.match.params.id} />} />
+                    {queryBuilderStore.hasRootSchema && (
+                      <Route path="/queries" exact={true} component={QueriesDrawer} />
+                    )}
+                  </Switch>
+                </div>
                 :
                 <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
                   <Modal.Body>

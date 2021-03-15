@@ -19,18 +19,12 @@ import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { Scrollbars } from "react-custom-scrollbars";
 
-
 import { useStores } from "../../Hooks/UseStores";
 
 import Filter from "../../Components/Filter";
 import Schemas from "./RootSchema/Schemas";
 
 const useStyles = createUseStyles({
-  container: {
-    position: "relative",
-    display: "grid",
-    gridTemplateRows: "auto 1fr"
-  },
   panel: {
     position: "relative",
     display: "grid",
@@ -80,16 +74,14 @@ const RootSchemaModal = observer(() => {
   };
 
   return (
-    <div className={classes.container}>
-      <div className={classes.panel}>
-        <Filter value={typeStore.filterValue} placeholder="Filter types" onChange={handleChange} onKeyDown={handleKeyDown} />
-        <div className={classes.body}>
-          <Scrollbars autoHide>
-            <div className={classes.content}>
-              <Schemas cursor={cursor} onKeyDown={handleKeyDown} />
-            </div>
-          </Scrollbars>
-        </div>
+    <div className={classes.panel}>
+      <Filter value={typeStore.filterValue} placeholder="Filter types" onChange={handleChange} onKeyDown={handleKeyDown} />
+      <div className={classes.body}>
+        <Scrollbars autoHide>
+          <div className={classes.content}>
+            <Schemas cursor={cursor} onKeyDown={handleKeyDown} />
+          </div>
+        </Scrollbars>
       </div>
     </div>
   );

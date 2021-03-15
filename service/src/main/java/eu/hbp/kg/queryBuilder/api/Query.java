@@ -121,6 +121,22 @@ public class Query {
                 Map.class);
     }
 
+    @GetMapping("/{queryId}")
+    public Map<?, ?> getQueryById(@PathVariable("queryId") String queryId) {
+        Map result = serviceCall.get(
+                String.format("%s/%s/queries/%s", kgCoreEndpoint, apiVersion, queryId),
+                authContext.getAuthTokens(),
+                Map.class);
+        Map<String, Object> query = (Map<String, Object>) result.get("data");
+        String id = getQueryId(query);
+        List userList = (List<Map<String, String>>) query.get(META_USER);
+        String userId = getQueryId((Map<String, Object>)userList.get(0));
+        query.put("@id", id);
+        query.put(META_USER, Map.of("@id", userId));
+        return query;
+    }
+
+
     @PostMapping
     public Map<?, ?> executeQuery(
             @RequestBody Map<?, ?> query,

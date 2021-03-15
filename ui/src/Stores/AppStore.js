@@ -102,6 +102,18 @@ export class AppStore{
       }
       if (this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && this.rootStore.authStore.areUserWorkspacesRetrieved) {
         runInAction(() => {
+          this.initializingMessage = "Retrieving types...";
+        });
+        await this.rootStore.typeStore.fetch();
+        if(this.rootStore.typeStore.fetchError) {
+          runInAction(() => {
+            this.initializationError = this.rootStore.typeStore.fetchError;
+            this.initializingMessage = null;
+          });
+        }
+      }
+      if (this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && this.rootStore.authStore.areUserWorkspacesRetrieved && this.rootStore.typeStore.isFetched) {
+        runInAction(() => {
           this.initializingMessage = null;
           this.isInitialized = true;
         });

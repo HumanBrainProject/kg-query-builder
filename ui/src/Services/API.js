@@ -26,6 +26,7 @@ const API = {
       ""}${from!==undefined && from!==null?`from=${encodeURIComponent(from)}&`:""}${
       ""}${stage?`stage=${stage}`:"" }`,
     "query": (workspace, queryId) => `/service/api/query/${workspace}/${encodeURIComponent(queryId)}`,
+    "queryById": queryId => `/service/api/query/${encodeURIComponent(queryId)}`,
     "listQueries": type => `/service/api/query?type=${encodeURIComponent(type)}`
   }
 };
