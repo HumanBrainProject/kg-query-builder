@@ -1173,7 +1173,7 @@ export class QueryBuilderStore {
       const queryId = this.saveAsMode ? this.queryId : this.sourceQuery.id;
       const query = this.JSONQuery;
       try {
-        await this.transportLayer.saveQuery(this.workspace, queryId, query);
+        await this.transportLayer.saveQuery(queryId, query, this.workspace);
         runInAction(() => {
           if (!this.saveAsMode && this.sourceQuery && this.sourceQuery.user.id === this.rootStore.authStore.user.id) {
             this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
@@ -1237,7 +1237,7 @@ export class QueryBuilderStore {
     if (query && !query.isDeleting && !query.deleteError && !(query === this.sourceQuery && this.isSaving)) {
       query.isDeleting = true;
       try {
-        await this.transportLayer.deleteQuery(this.workspace, query.id);
+        await this.transportLayer.deleteQuery(query.id);
         runInAction(() => {
           query.isDeleting = false;
           if (query === this.sourceQuery) {

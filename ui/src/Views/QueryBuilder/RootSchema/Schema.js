@@ -75,7 +75,7 @@ const Schema = observer(({ type, enableFocus, onKeyDown }) =>  {
   const handleClick = () => {
     queryBuilderStore.selectRootSchema(type);
     const uuid = _.uuid();
-    history.push(`/query/${uuid}`);
+    history.push(`/queries/${uuid}`);
   };
 
   const handleKeyDown= e => {

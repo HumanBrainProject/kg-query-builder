@@ -34,9 +34,9 @@ import java.util.stream.Collectors;
 import static eu.hbp.kg.queryBuilder.constants.SchemaFieldsConsts.META_USER;
 import static eu.hbp.kg.queryBuilder.constants.SchemaFieldsConsts.USER_PICTURE;
 
-@RequestMapping("/query")
+@RequestMapping("/queries")
 @RestController
-public class Query {
+public class Queries {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -108,15 +108,14 @@ public class Query {
         return splitQueryId[splitQueryId.length - 1];
     }
 
-    @GetMapping("/{workspace}/{queryId}")
-    public Map<?, ?> executeQueryWithQueryId(@PathVariable("workspace") String workspace,
-                                             @PathVariable("queryId") String queryId,
-                                             @RequestParam("from") Integer from,
-                                             @RequestParam("size") Integer size,
-                                             @RequestParam("vocab") String vocab,
-                                             @RequestParam("stage") String stage) {
+    @GetMapping("/{queryId}/instances")
+    public Map<?, ?> executeStoredQuery(@PathVariable("queryId") String queryId,
+                                        @RequestParam("from") Integer from,
+                                        @RequestParam("size") Integer size,
+                                        @RequestParam("vocab") String vocab,
+                                        @RequestParam("stage") String stage) {
         return serviceCall.get(
-                String.format("%s/%s/queries/%s/instances?space=%s&from=%s&size=%s&vocab=%s&stage=%s", kgCoreEndpoint, apiVersion, queryId, workspace, from, size, vocab, stage),
+                String.format("%s/%s/queries/%s/instances?from=%s&size=%s&vocab=%s&stage=%s", kgCoreEndpoint, apiVersion, queryId, from, size, vocab, stage),
                 authContext.getAuthTokens(),
                 Map.class);
     }
@@ -151,8 +150,8 @@ public class Query {
                 Map.class);
     }
 
-    @PutMapping("/{workspace}/{queryId}")
-    public void saveQuery(@RequestBody Map<?, ?> query, @PathVariable("workspace") String workspace, @PathVariable("queryId") String queryId) {
+    @PutMapping("/{queryId}")
+    public void saveQuery(@RequestBody Map<?, ?> query, @PathVariable("queryId") String queryId, @RequestParam(value = "workspace", required = false)  String workspace) {
         serviceCall.put(
                 String.format("%s/%s/queries/%s?space=%s", kgCoreEndpoint, apiVersion, queryId, workspace),
                 query,
@@ -161,10 +160,10 @@ public class Query {
         );
     }
 
-    @DeleteMapping("/{workspace}/{queryId}")
-    public void deleteQuery(@PathVariable("workspace") String workspace, @PathVariable("queryId") String queryId) {
+    @DeleteMapping("/{queryId}")
+    public void deleteQuery(@PathVariable("queryId") String queryId) {
         serviceCall.delete(
-                String.format("%s/%s/queries/%s?space=%s", kgCoreEndpoint, apiVersion, queryId, workspace),
+                String.format("%s/%s/queries/%s", kgCoreEndpoint, apiVersion, queryId),
                 authContext.getAuthTokens(),
                 Void.class
         );
