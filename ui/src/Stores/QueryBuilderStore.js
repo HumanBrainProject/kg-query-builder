@@ -108,6 +108,7 @@ export class QueryBuilderStore {
   saveAsMode = false;
   compareChanges = false;
   queriesFilterValue = "";
+  childrenFilterValue = "";
   fromQueryId = null;
   fromLabel = "";
   fromDescription = "";
@@ -184,6 +185,8 @@ export class QueryBuilderStore {
       othersFilteredQueries: computed,
       queriesFilterValue: observable,
       setQueriesFilterValue: action,
+      childrenFilterValue: observable,
+      setChildrenFilterValue: action,
       addField: action,
       addMergeField: action,
       addMergeChildField: action,
@@ -227,14 +230,17 @@ export class QueryBuilderStore {
     this.rootStore = rootStore;
   }
 
-  getLookupsAttributes(lookups, advanced=false) {
+  getLookupsAttributes(lookups, advanced, filter) {
     if (!lookups || !lookups.length) {
       return [];
     }
+    filter = filter && filter.toLowerCase();
     return lookups.reduce((acc, id) => {
       const type = this.rootStore.typeStore.types[id];
       if (type) {
-        const properties = type.properties.filter(prop => (!prop.canBe || !prop.canBe.length) && ((advanced && prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) || (!advanced && !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))));
+        const properties = type.properties.filter(prop => (!prop.canBe || !prop.canBe.length) &&
+                                                          ((advanced && prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) || (!advanced && !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))) &&
+                                                          (!filter || !prop.label || prop.label.toLowerCase().includes(filter)));
         if (properties.length) {
           acc.push({
             id: type.id,
@@ -248,14 +254,15 @@ export class QueryBuilderStore {
     }, []);
   }
 
-  getLookupsLinks(lookups) {
+  getLookupsLinks(lookups, filter) {
     if (!lookups || !lookups.length) {
       return [];
     }
+    filter = filter && filter.toLowerCase();
     return lookups.reduce((acc, id) => {
       const type = this.rootStore.typeStore.types[id];
       if (type) {
-        const properties = type.properties.filter(prop => prop.canBe && !!prop.canBe.length);
+        const properties = type.properties.filter(prop => prop.canBe && !!prop.canBe.length && (!filter || !prop.label || prop.label.toLowerCase().includes(filter)));
         if (properties.length) {
           acc.push({
             id: type.id,
@@ -267,6 +274,10 @@ export class QueryBuilderStore {
       }
       return acc;
     }, []);
+  }
+
+  setChildrenFilterValue(value) {
+    this.childrenFilterValue = value;
   }
 
   get currentFieldLookups() {
@@ -274,15 +285,15 @@ export class QueryBuilderStore {
   }
 
   get currentFieldLookupsAttributes() {
-    return this.getLookupsAttributes(this.currentFieldLookups, false);
+    return this.getLookupsAttributes(this.currentFieldLookups, false, this.childrenFilterValue);
   }
 
   get currentFieldLookupsAdvancedAttributes() {
-    return this.getLookupsAttributes(this.currentFieldLookups, true);
+    return this.getLookupsAttributes(this.currentFieldLookups, true, this.childrenFilterValue);
   }
 
   get currentFieldLookupsLinks() {
-    return this.getLookupsLinks(this.currentFieldLookups);
+    return this.getLookupsLinks(this.currentFieldLookups, this.childrenFilterValue);
   }
 
   get currentFieldParentLookups() {
@@ -293,11 +304,11 @@ export class QueryBuilderStore {
   }
 
   get currentFieldParentLookupsAttributes() {
-    return this.getLookupsAttributes(this.currentFieldParentLookups, false);
+    return this.getLookupsAttributes(this.currentFieldParentLookups, false, this.childrenFilterValue);
   }
 
   get currentFieldParentLookupsLinks() {
-    return this.getLookupsLinks(this.currentFieldParentLookups);
+    return this.getLookupsLinks(this.currentFieldParentLookups, this.childrenFilterValue);
   }
 
   selectRootSchema(schema) {
@@ -322,6 +333,7 @@ export class QueryBuilderStore {
       this.runError = null;
       this.saveAsMode = false;
       this.queriesFilterValue = "";
+      this.childrenFilterValue = "";
       this.result = null;
       this.fromQueryId = null;
       this.fromLabel = "";
@@ -359,6 +371,7 @@ export class QueryBuilderStore {
       this.runError = null;
       this.saveAsMode = false;
       this.queriesFilterValue = "";
+      this.childrenFilterValue = "";
       this.result = null;
       this.rootField = null;
       this.fromQueryId = null;
@@ -381,6 +394,7 @@ export class QueryBuilderStore {
       this.runError = null;
       this.saveAsMode = false;
       this.queriesFilterValue = "";
+      this.childrenFilterValue = "";
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
@@ -601,11 +615,13 @@ export class QueryBuilderStore {
 
   selectField(field) {
     this.currentField = field;
+    this.childrenFilterValue = "";
     this.rootStore.typeStore.addTypesToTetch(this.currentField.lookups);
   }
 
   resetField() {
     this.currentField = null;
+    this.childrenFilterValue = "";
   }
 
   get JSONQueryFields() {

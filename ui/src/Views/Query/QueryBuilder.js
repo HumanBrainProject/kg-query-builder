@@ -27,6 +27,7 @@ import CompareChangesModal from "./QueryBuilder/CompareChangesModal";
 import SaveError from "./QueryBuilder/SaveError";
 import SavingMessage from "./QueryBuilder/SavingMessage";
 import Options from "./QueryBuilder/Options";
+import Children from "./QueryBuilder/Children";
 
 const useStyles = createUseStyles({
   container: {
@@ -59,6 +60,8 @@ const useStyles = createUseStyles({
   },
   options: {
     position:"relative",
+    display: "grid",
+    gridTemplateRows: "auto 1fr",
     background: "var(--bg-color-ui-contrast2)",
     border: "1px solid var(--border-color-ui-contrast1)",
     color: "var(--ft-color-loud)",
@@ -84,13 +87,14 @@ const QueryBuilder = observer(() => {
         <QueryForm className={classes.form} />
         <Representation className={classes.representation} />
         <Actions className={classes.actions} />
-        <SavingMessage />
-        <SaveError />
-        <CompareChangesModal />
       </div>
       <div className={classes.options}>
         <Options />
+        <Children />
       </div>
+      <SavingMessage />
+      <SaveError />
+      <CompareChangesModal />
     </div>
   );
 });

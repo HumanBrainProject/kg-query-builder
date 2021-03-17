@@ -45,7 +45,11 @@ const useStyles = createUseStyles({
       width: "900px"
     }
   },
+  filter: {
+    border: 0
+  },
   body: {
+    borderTop: "1px solid var(--border-color-ui-contrast2)",
     padding: "0 15px 10px 15px",
     background: "var(--bg-color-ui-contrast2)"
   },
@@ -131,7 +135,7 @@ const Queries = observer(() => {
 
   return (
     <div className={classes.panel} >
-      <Filter value={queryBuilderStore.queriesFilterValue} placeholder="Filter queries" onChange={handleChange} />
+      <Filter className={classes.filter} value={queryBuilderStore.queriesFilterValue} placeholder="Filter queries" onChange={handleChange} />
       <div className={classes.body}>
         <Scrollbars autoHide>
           <SavedQueries

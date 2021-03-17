@@ -41,7 +41,11 @@ const useStyles = createUseStyles({
       width: "900px"
     }
   },
+  filter: {
+    border: 0
+  },
   body: {
+    borderTop: "1px solid var(--border-color-ui-contrast2)",
     padding: "10px 0",
     background: "var(--bg-color-ui-contrast2)"
   },
@@ -75,7 +79,7 @@ const RootSchemaModal = observer(() => {
 
   return (
     <div className={classes.panel}>
-      <Filter value={typeStore.filterValue} placeholder="Filter types" onChange={handleChange} onKeyDown={handleKeyDown} />
+      <Filter className={classes.filter} value={typeStore.filterValue} placeholder="Filter types" onChange={handleChange} onKeyDown={handleKeyDown} />
       <div className={classes.body}>
         <Scrollbars autoHide>
           <div className={classes.content}>

@@ -15,7 +15,7 @@
 */
 
 import React from "react";
-import Toggle from "./Toggle";
+import Toggle from "../../../../Components/Toggle";
 import Filter from "./Filter";
 import SingleItemStrategy from "./SingleItemStrategy";
 import UnsupportedOption from "./UnsupportedOption";

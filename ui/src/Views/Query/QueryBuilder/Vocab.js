@@ -16,7 +16,7 @@
 
 import React from "react";
 
-import Toggle from "./Options/Toggle";
+import Toggle from "../../../Components/Toggle";
 
 const Vocab = ({ defaultValue, value, onChange}) => {
 

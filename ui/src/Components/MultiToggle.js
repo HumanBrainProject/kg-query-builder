@@ -17,7 +17,7 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 
-import Toggle from "./Toggle";
+import MultiToggleItem from "./MultiToggleItem";
 
 const useStyles = createUseStyles({
   container:{
@@ -47,6 +47,6 @@ const MultiToggle = ({ children, selectedValue, onChange }) => {
   );
 };
 
-MultiToggle.Toggle = Toggle;
+MultiToggle.Toggle = MultiToggleItem;
 
 export default MultiToggle;

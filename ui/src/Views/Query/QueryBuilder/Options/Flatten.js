@@ -16,7 +16,7 @@
 
 import React from "react";
 
-import Toggle from "./Toggle";
+import Toggle from "../../../../Components/Toggle";
 
 const Flatten = ({ field, show, onChange}) => {
 
