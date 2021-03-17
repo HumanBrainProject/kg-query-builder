@@ -84,6 +84,7 @@ import {faLevelDownAlt} from "@fortawesome/free-solid-svg-icons/faLevelDownAlt";
 import {faSitemap} from "@fortawesome/free-solid-svg-icons/faSitemap";
 import {faTools} from "@fortawesome/free-solid-svg-icons/faTools";
 import {faFilter} from "@fortawesome/free-solid-svg-icons/faFilter";
+import {faPlay} from "@fortawesome/free-solid-svg-icons/faPlay";
 
 library.add(
   faUser,
@@ -152,5 +153,6 @@ library.add(
   faLevelDownAlt,
   faSitemap,
   faTools,
-  faFilter
+  faFilter,
+  faPlay
 );

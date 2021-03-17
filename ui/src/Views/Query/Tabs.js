@@ -79,7 +79,7 @@ const Tabs = observer(({ mode, onClick }) => {
     <div className={classes.tabs}>
       <Tab className={classes.tab} icon="pencil-alt"  mode="build"    active={mode === "build"}   onClick={onClick} title="build query" />
       <Tab className={classes.tab} icon="eye"         mode="view"     active={mode === "view"}    onClick={onClick} title="view query" />
-      <Tab className={classes.tab} icon="cog"         mode="execute"  active={mode === "execute"} onClick={onClick} title="execute query" disable={false} />
+      <Tab className={classes.tab} icon="play"         mode="execute"  active={mode === "execute"} onClick={onClick} title="execute query" disable={false} />
     </div>
   );
 });
