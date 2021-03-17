@@ -14,20 +14,17 @@
 *   limitations under the License.
 */
 
-import React, { useState, useRef } from "react";
-import ReactJson from "react-json-view";
+import React from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Scrollbars } from "react-custom-scrollbars";
 
 import { useStores } from "../../Hooks/UseStores";
 
-import ThemeRJV from "../../Themes/ThemeRJV";
 import BGMessage from "../../Components/BGMessage";
 import FetchingLoader from "../../Components/FetchingLoader";
-import ResultTable from "../Query/QueryExecution/ResultTable";
+import Result from "../Query/QueryExecution/Result";
 import ExecutionParams from "../Query/QueryExecution/ExecutionParams";
 
 const useStyles = createUseStyles({
@@ -87,33 +84,16 @@ const QueryExecution = observer(() => {
 
   const { queryBuilderStore } = useStores();
 
-  const [viewAsTable, setViewAsTable] = useState(false);
-
-  const scrollRef = useRef();
-
   const handlExecuteQuery = () => queryBuilderStore.executeQuery();
 
-  const handlClearError = () => {
-    setViewAsTable(false);
-    queryBuilderStore.runError = null;
-  };
+  const handlClearError = () => queryBuilderStore.setRunError(null);
 
   return (
     <div className={classes.container}>
       <div className={classes.params}>
         <ExecutionParams />
       </div>
-      {queryBuilderStore.result && (
-        <div className={classes.result}>
-          <Scrollbars autoHide ref={scrollRef}>
-            {viewAsTable?
-              <ResultTable />
-              :
-              <ReactJson collapsed={1} name={false} theme={ThemeRJV} src={queryBuilderStore.result} />
-            }
-          </Scrollbars>
-        </div>
-      )}
+      <Result />
       {queryBuilderStore.runError && (
         <BGMessage icon={"ban"}>
           There was a network problem fetching the query.<br/>
