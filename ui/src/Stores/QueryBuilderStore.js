@@ -494,6 +494,9 @@ export class QueryBuilderStore {
         newField.isMerge = true;
         newField.isFlattened = !!newField.lookups.length;
       }
+      if (schema.reverse) {
+        newField.isReverse = true;
+      }
       if (!parent.structure || parent.structure.length === undefined) {
         parent.structure = [];
       }

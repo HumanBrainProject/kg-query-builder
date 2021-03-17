@@ -16,6 +16,7 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Types from "../../../Types";
 
@@ -34,6 +35,10 @@ const useStyles = createUseStyles({
     "&:hover": {
       background: "var(--bg-color-ui-contrast4)",
     }
+  },
+  reverseLink: {
+    color: "greenyellow",
+    transform: "translateY(1px)"
   }
 });
 
@@ -47,6 +52,11 @@ const Property = ({ property, onClick }) => {
 
   return (
     <div className={classes.property} onClick={handleClick}>
+      {property.reverse && (
+        <React.Fragment>
+          <FontAwesomeIcon icon="long-arrow-alt-left" className={classes.reverseLink} title="is reverse" />&nbsp;
+        </React.Fragment>
+      )}
       {label} - <small>{attribute}</small>
       <Types types={canBe} />
     </div>

@@ -75,6 +75,7 @@ import {faAngleRight} from "@fortawesome/free-solid-svg-icons/faAngleRight";
 import {faCopy} from "@fortawesome/free-solid-svg-icons/faCopy";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons/faPlusSquare";
 import {faLongArrowAltRight} from "@fortawesome/free-solid-svg-icons/faLongArrowAltRight";
+import {faLongArrowAltLeft} from "@fortawesome/free-solid-svg-icons/faLongArrowAltLeft";
 import {faShoppingCart} from "@fortawesome/free-solid-svg-icons/faShoppingCart";
 import {faPollH} from "@fortawesome/free-solid-svg-icons/faPollH";
 import {faSatelliteDish} from "@fortawesome/free-solid-svg-icons/faSatelliteDish";
@@ -145,6 +146,7 @@ library.add(
   faCopy,
   faPlusSquare,
   faLongArrowAltRight,
+  faLongArrowAltLeft,
   faShoppingCart,
   faPollH,
   faSatelliteDish,

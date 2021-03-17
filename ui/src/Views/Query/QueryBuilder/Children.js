@@ -48,7 +48,7 @@ const useStyles = createUseStyles({
     paddingTop: "15px",
     height: "calc(100% - 25px)",
     "&:after": {
-      content: "\"Children\"",
+      content: "\"Properties\"",
       position: "absolute",
       top: "-11px",
       left: "5px",
@@ -60,7 +60,7 @@ const useStyles = createUseStyles({
     border: 0
   },
   body: {
-    padding: "0 10px",
+    padding: "0 10px 10px 10px",
     borderTop: "1px solid var(--bg-color-ui-contrast4)"
   }
 });

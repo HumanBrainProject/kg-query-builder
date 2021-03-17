@@ -46,6 +46,7 @@ class Field {
   alias = null;
   isFlattened = false;
   isMerge = false;
+  isReverse = false;
   optionsMap = new Map();
   isUnknown = null;;
   isInvalid = null;
@@ -59,6 +60,7 @@ class Field {
       alias: observable,
       isFlattened: observable,
       isMerge: observable,
+      isReverse: observable,
       optionsMap: observable,
       isUnknown: observable,
       isInvalid: observable,
