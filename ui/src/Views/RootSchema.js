@@ -19,9 +19,9 @@ import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { Scrollbars } from "react-custom-scrollbars";
 
-import { useStores } from "../../Hooks/UseStores";
+import { useStores } from "../Hooks/UseStores";
 
-import Filter from "../../Components/Filter";
+import Filter from "../Components/Filter";
 import Schemas from "./RootSchema/Schemas";
 
 const useStyles = createUseStyles({

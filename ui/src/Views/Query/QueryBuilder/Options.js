@@ -14,9 +14,10 @@
 *   limitations under the License.
 */
 
-import React from "react";
+import React, { useRef }  from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
+import { Scrollbars } from "react-custom-scrollbars";
 
 import { useStores } from "../../../Hooks/UseStores";
 
@@ -30,6 +31,7 @@ import Links from "./Options/Links";
 
 const useStyles = createUseStyles({
   container: {
+    height: "100%",
     color: "var(--ft-color-normal)",
     "& input": {
       color: "black"
@@ -51,6 +53,8 @@ const Options = observer(() => {
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
+
+  const scrollRef = useRef();
 
   const field = queryBuilderStore.currentField;
   const rootField = queryBuilderStore.rootField;
@@ -87,85 +91,87 @@ const Options = observer(() => {
 
   return (
     <div className={classes.container}>
-      {field === rootField && (
-        <Vocab
-          defaultValue={queryBuilderStore.defaultResponseVocab}
-          value={queryBuilderStore.responseVocab}
-          show={field === rootField}
-          onChange={handleChangeVocab}
-        />
-      )}
-      <div className={classes.fieldOptions}>
-        <Name field={field} rootField={rootField} />
-        <FieldOptions field={field} rootField={rootField} lookupsLinks={lookupsLinks} options={field.options} onChange={handleChangeOption} />
-        <Flatten
-          field={field}
-          show={field !== rootField
+      <Scrollbars autoHide ref={scrollRef}>
+        {field === rootField && (
+          <Vocab
+            defaultValue={queryBuilderStore.defaultResponseVocab}
+            value={queryBuilderStore.responseVocab}
+            show={field === rootField}
+            onChange={handleChangeVocab}
+          />
+        )}
+        <div className={classes.fieldOptions}>
+          <Name field={field} rootField={rootField} />
+          <FieldOptions field={field} rootField={rootField} lookupsLinks={lookupsLinks} options={field.options} onChange={handleChangeOption} />
+          <Flatten
+            field={field}
+            show={field !== rootField
           && (lookupsLinks && !!lookupsLinks.length)
           && field.structure.length === 1
           && !field.isMerge
-          }
-          onChange={handleChangeFlatten}
-        />
-      </div>
-      <AddMergeButton
-        field={field}
-        show={!field.isMerge
+            }
+            onChange={handleChangeFlatten}
+          />
+        </div>
+        <AddMergeButton
+          field={field}
+          show={!field.isMerge
           && field !== rootField
           && (lookupsLinks && !!lookupsLinks.length)
-        }
-        onClick={handleAddMergeField}
-      />
-      <Attributes
-        attributes={parentLookupsAttributes}
-        label="attributes valid for"
-        isMerge={true}
-        show={field.isRootMerge && field !== rootField}
-        onClick={handleAddMergeChildField}
-      />
-      <Links
-        links={parentLookupsLinks}
-        label="links valid for"
-        isMerge={true}
-        show={field.isRootMerge && field !== rootField}
-        onClick={handleAddMergeChildField}
-      />
-      <Attributes
-        attributes={lookupsAttributes}
-        label="Attributes valid for"
-        show={!field.isFlattened
+          }
+          onClick={handleAddMergeField}
+        />
+        <Attributes
+          attributes={parentLookupsAttributes}
+          label="attributes valid for"
+          isMerge={true}
+          show={field.isRootMerge && field !== rootField}
+          onClick={handleAddMergeChildField}
+        />
+        <Links
+          links={parentLookupsLinks}
+          label="links valid for"
+          isMerge={true}
+          show={field.isRootMerge && field !== rootField}
+          onClick={handleAddMergeChildField}
+        />
+        <Attributes
+          attributes={lookupsAttributes}
+          label="Attributes valid for"
+          show={!field.isFlattened
           || (field.isMerge
             && (field.isRootMerge
               || (!field.isRootMerge && (!field.structure || !field.structure.length))
             )
           )
-        }
-        onClick={handleAddField}
-      />
-      <Attributes
-        attributes={lookupsAdvancedAttributes}
-        label="Advanced attributes valid for"
-        show={!field.isFlattened
+          }
+          onClick={handleAddField}
+        />
+        <Attributes
+          attributes={lookupsAdvancedAttributes}
+          label="Advanced attributes valid for"
+          show={!field.isFlattened
           || (field.isMerge
             && (field.isRootMerge
               || (!field.isRootMerge && (!field.structure || !field.structure.length))
             )
           )
-        }
-        onClick={handleAddField}
-      />
-      <Links
-        links={lookupsLinks}
-        label="Links valid for"
-        show={!field.isFlattened
+          }
+          onClick={handleAddField}
+        />
+        <Links
+          links={lookupsLinks}
+          label="Links valid for"
+          show={!field.isFlattened
           || (field.isMerge
             && (field.isRootMerge
               || (!field.isRootMerge && (!field.structure || !field.structure.length))
             )
           )
-        }
-        onClick={handleAddField}
-      />
+          }
+          onClick={handleAddField}
+        />
+      </Scrollbars>
     </div>
   );
 });

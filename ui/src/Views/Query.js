@@ -14,18 +14,32 @@
 *   limitations under the License.
 */
 
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 
 import { useStores } from "../Hooks/UseStores";
-import QueryBuilder from "./QueryBuilder";
+
+import Tabs from "./Query/Tabs";
+import QueryBuilder from "./Query/QueryBuilder";
+import QuerySpecification from "./Query/QuerySpecification";
+import QueryExecution from "./Query/QueryExecution";
 import FetchingLoader from "../Components/FetchingLoader";
 import BGMessage from "../Components/BGMessage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const useStyles = createUseStyles({
+  container: {
+    display: "grid",
+    height: "100%",
+    gridTemplateRows: "100%",
+    gridTemplateColumns: "50px 1fr"
+  },
+  body: {
+    position: "relative",
+    overflow: "hidden"
+  },
   loader: {
     position: "fixed",
     top: 0,
@@ -45,11 +59,31 @@ const useStyles = createUseStyles({
   }
 });
 
+const View = ({mode}) => {
+  switch (mode) {
+  case "view":
+    return(
+      <QuerySpecification />
+    );
+  case "execute":
+    return(
+      <QueryExecution />
+    );
+  case "build":
+  default:
+    return(
+      <QueryBuilder />
+    );
+  }
+};
+
 const Query = observer(({id}) => {
 
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
+
+  const [mode, setMode] = useState("build");
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => queryBuilderStore.selectQueryById(id), []);
@@ -78,8 +112,13 @@ const Query = observer(({id}) => {
   }
 
   if(queryBuilderStore.hasRootSchema) {
-    return(
-      <QueryBuilder />
+    return (
+      <div className={classes.container}>
+        <Tabs mode={mode} onClick={setMode} />
+        <div className={classes.body}>
+          <View mode={mode} />
+        </div>
+      </div>
     );
   }
 

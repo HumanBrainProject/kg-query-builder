@@ -106,7 +106,6 @@ export class QueryBuilderStore {
   isRunning = false;
   runError = null;
   showHeader = true;
-  showQueries = false;
   showMyQueries = true;
   showOthersQueries = true;
   saveAsMode = false;
@@ -149,7 +148,6 @@ export class QueryBuilderStore {
       isRunning: observable,
       runError: observable,
       showHeader: observable,
-      showQueries: observable,
       showMyQueries: observable,
       showOthersQueries: observable,
       saveAsMode: observable,
@@ -210,7 +208,6 @@ export class QueryBuilderStore {
       setFetchQueriesError: action,
       setSaveAsMode: action,
       toggleCompareChanges: action,
-      toggleQueries: action,
       toggleOtherQueries: action,
       toggleMyQueries: action,
       toggleHeader: action,
@@ -327,7 +324,6 @@ export class QueryBuilderStore {
       this.runError = null;
       this.saveAsMode = false;
       this.showHeader = true;
-      this.showQueries = false;
       this.showMyQueries = true;
       this.showOthersQueries = true;
       this.result = null;
@@ -367,7 +363,6 @@ export class QueryBuilderStore {
       this.runError = null;
       this.saveAsMode = false;
       this.showHeader = true;
-      this.showQueries = false;
       this.showMyQueries = true;
       this.showOthersQueries = true;
       this.result = null;
@@ -379,9 +374,9 @@ export class QueryBuilderStore {
     }
   }
 
-  setAsNewQuery() {
+  setAsNewQuery(queryId) {
     if (!this.isSaving) {
-      this.queryId = null;
+      this.queryId = queryId;
       this.label = "";
       this.description = "";
       this.sourceQuery = null;
@@ -392,7 +387,6 @@ export class QueryBuilderStore {
       this.runError = null;
       this.showHeader = true;
       this.saveAsMode = false;
-      this.showQueries = false;
       this.showMyQueries = true;
       this.showOthersQueries = true;
       this.fromQueryId = null;
@@ -553,7 +547,7 @@ export class QueryBuilderStore {
   removeField(field) {
     if (field === this.rootField) {
       this.rootField = null;
-      this.queryId = "";
+      this.queryId = null;
       this.label = "";
       this.description = "";
       this.sourceQuery = null;
@@ -1000,7 +994,7 @@ export class QueryBuilderStore {
     if (!this.isSaving
       && this.rootField && this.rootField.schema && this.rootField.schema.id
       && query && !query.isDeleting) {
-      this.queryId = _.uuid();
+      this.queryId = query.id;
       this.workspace = query.workspace;
       if (this.sourceQuery !== query) { // reset
         this.showHeader = true;
@@ -1035,7 +1029,6 @@ export class QueryBuilderStore {
       this.isRunning = false;
       this.runError = null;
       this.saveAsMode = false;
-      this.showQueries = false;
       this.result = null;
       this.fromQueryId = null;
       this.fromLabel = "";
@@ -1134,10 +1127,6 @@ export class QueryBuilderStore {
 
   toggleCompareChanges() {
     this.compareChanges = !this.compareChanges;
-  }
-
-  toggleQueries() {
-    this.showQueries = !this.showQueries;
   }
 
   toggleOtherQueries() {
@@ -1390,7 +1379,10 @@ export class QueryBuilderStore {
         this.selectQuery(query);
       }
     } else {
-      if(!this.hasRootSchema) {
+      if(this.hasRootSchema) {
+        this.setAsNewQuery(id);
+      } else {
+        this.clearRootSchema();
         this.rootStore.history.replace("/");
       }
     }

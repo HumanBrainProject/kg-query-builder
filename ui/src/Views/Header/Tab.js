@@ -19,6 +19,8 @@ import { createUseStyles } from "react-jss";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import { useStores } from "../../Hooks/UseStores";
+
 const useStyles = createUseStyles({
   container:{
     height:"50px",
@@ -31,6 +33,9 @@ const useStyles = createUseStyles({
     cursor:"pointer",
     display:"grid",
     gridTemplateColumns:"auto 1fr auto",
+    "&$closable":{
+      paddingRight:"10px"
+    },
     "& $icon": {
       opacity:0.5
     },
@@ -40,6 +45,20 @@ const useStyles = createUseStyles({
         opacity:1
       }
     }
+  },
+  closable:{},
+  disabled:{
+    "&, &:hover": {
+      backgroundColor:"var(--bg-color-ui-contrast2)",
+      color:"var(--ft-color-normal)",
+      cursor: "not-allowed",
+      "& $icon": {
+        opacity:0.2
+      }
+    }
+  },
+  readOnly: {
+    cursor: "default",
   },
   current:{
     backgroundColor:"var(--bg-color-ui-contrast3)",
@@ -74,25 +93,50 @@ const useStyles = createUseStyles({
   }
 });
 
-const Tab = ({ current, label, icon, iconColor, hideLabel, onClick}) => {
+const Tab = ({label, disabled, current, icon, iconColor, iconSpin, Component, hideLabel, path, onClick, onClose}) => {
+
+  const  { history } = useStores();
+
   const classes = useStyles();
+  const closeable = typeof onClose === "function";
 
   const handleClick = e => {
-    e.preventDefault();
-    if (typeof onClick === "function") {
-      onClick(e);
+    if (!disabled) {
+      e.preventDefault();
+      if(path){
+        history.push(path);
+      }
+      typeof onClick === "function" && onClick(e);
     }
   };
 
+  const handleClose = e => {
+    e.stopPropagation();
+    onClose(e);
+  };
+
   return (
-    <div className={`${classes.container} ${current? classes.current: ""}`} onClick={handleClick}>
-      <div className={classes.icon} style={iconColor?{color:iconColor}:{}} title={label}>
-        {icon && <FontAwesomeIcon fixedWidth icon={icon} />}
-      </div>
-      {hideLabel?null:
-        <div className={classes.text} title={label}>
-          {label}
-        </div>
+    <div className={`${classes.container} ${disabled? classes.disabled: ""} ${current? classes.current: ""} ${(!path && !onClick)?classes.readOnly:""} ${onClose?classes.closable:""}`} onClick={handleClick} title={label}>
+      {Component?
+        <Component />
+        :
+        <React.Fragment>
+          <div className={classes.icon} style={iconColor?{color:iconColor}:{}} title={label}>
+            {icon && (
+              <FontAwesomeIcon fixedWidth icon={icon} spin={iconSpin}/>
+            )}
+          </div>
+          {!hideLabel && (
+            <div className={classes.text} title={label}>
+              {label}
+            </div>
+          )}
+          {closeable && (
+            <div className={classes.close} onClick={handleClose}>
+              <FontAwesomeIcon icon={"times"}/>
+            </div>
+          )}
+        </React.Fragment>
       }
     </div>
   );

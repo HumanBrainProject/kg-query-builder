@@ -15,42 +15,43 @@
 */
 
 import React from "react";
+import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
-import Types from "../../Types";
+import { useStores } from "../../Hooks/UseStores";
+
+import Schema from "./Schema";
 
 const useStyles = createUseStyles({
-  property: {
-    color: "var(--ft-color-loud)",
-    fontWeight: "normal",
-    cursor: "pointer",
-    padding: "10px",
-    margin: "1px",
-    background: "var(--bg-color-ui-contrast1)",
-    "& small": {
-      color: "var(--ft-color-quiet)",
-      fontStyle: "italic"
-    },
-    "&:hover": {
+  container: {
+    position: "relative"
+  },
+  activeSchema: {
+    "& > div": {
       background: "var(--bg-color-ui-contrast4)",
+      "&:focus": {
+        outline: 0
+      }
     }
   }
 });
 
-const Property = ({ property, onClick }) => {
+const Schemas = observer(({cursor, onKeyDown}) =>  {
 
   const classes = useStyles();
 
-  const { attribute, label, canBe } = property;
-
-  const handleClick = e => onClick(e, property);
+  const { typeStore } = useStores();
 
   return (
-    <div className={classes.property} onClick={handleClick}>
-      {label} - <small>{attribute}</small>
-      <Types types={canBe} />
+    <div className={classes.container}>
+      {typeStore.filteredWorkspaceTypeList.map((type, index) =>
+        (<div className={cursor === index ? classes.activeSchema: ""} key={type.id}>
+          <Schema key={type.id} type={type} enableFocus={cursor === index} onKeyDown={onKeyDown}/>
+        </div>)
+      )}
     </div>
   );
-};
+});
+Schemas.displayName = "Schemas";
 
-export default Property;
+export default Schemas;

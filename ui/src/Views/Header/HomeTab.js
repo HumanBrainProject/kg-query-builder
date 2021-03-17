@@ -15,25 +15,27 @@
 */
 
 import React from "react";
-import ReactJson from "react-json-view";
 import { observer } from "mobx-react-lite";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { useStores } from "../../../Hooks/UseStores";
+import { useStores } from "../../Hooks/UseStores";
 
-import ThemeRJV from "../../../Themes/ThemeRJV";
+import Types from "../Types";
 
-const QuerySpecification = observer(() => {
+const HomeTab = observer(() => {
 
   const { queryBuilderStore } = useStores();
 
-  if (!queryBuilderStore.rootField) {
+  if (!queryBuilderStore.rootSchema) {
     return null;
   }
 
   return (
-    <ReactJson collapsed={false} name={false} theme={ThemeRJV} src={queryBuilderStore.JSONQuery} />
+    <div>
+      <Types types={queryBuilderStore.rootSchema.canBe} />&nbsp;-&nbsp;<small style={{marginRight: "16px"}}>{queryBuilderStore.rootSchema.id}</small><FontAwesomeIcon icon={"caret-down"} />
+    </div>
   );
 });
-QuerySpecification.displayName = "QuerySpecification";
+HomeTab.displayName = "HomeTab";
 
-export default QuerySpecification;
+export default HomeTab;

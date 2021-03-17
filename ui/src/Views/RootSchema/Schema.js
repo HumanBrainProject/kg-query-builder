@@ -21,9 +21,9 @@ import { useHistory } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import _  from "lodash-uuid";
 
-import Icon from "../../../Components/Icon";
+import Icon from "../../Components/Icon";
 
-import { useStores } from "../../../Hooks/UseStores";
+import { useStores } from "../../Hooks/UseStores";
 
 const useStyles = createUseStyles({
   container: {

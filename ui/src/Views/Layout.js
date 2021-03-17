@@ -18,15 +18,15 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import Modal from "react-bootstrap/Modal";
 import { createUseStyles, useTheme } from "react-jss";
-import { Route, Switch } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 
 import { useStores } from "../Hooks/UseStores";
 
 import Header from "./Header";
 import Login from "./Login";
 import GlobalError from "./GlobalError";
-import QueriesDrawer from "./QueryBuilder/QueriesDrawer";
-import RootSchema from "./QueryBuilder/RootSchema";
+import Queries from "./Queries";
+import RootSchema from "./RootSchema";
 import Query from "./Query";
 
 const getGlobalUseStyles = () => createUseStyles(theme => {
@@ -203,8 +203,9 @@ const Layout = observer(() => {
                     <Route path="/" exact={true} component={RootSchema} />
                     <Route path="/queries/:id" exact={true} render={props => <Query id={props.match.params.id} />} />
                     {queryBuilderStore.hasRootSchema && (
-                      <Route path="/queries" exact={true} component={QueriesDrawer} />
+                      <Route path="/queries" exact={true} component={Queries} />
                     )}
+                    <Redirect to='/' />
                   </Switch>
                 </div>
                 :

@@ -14,42 +14,35 @@
 *   limitations under the License.
 */
 
-import React from "react";
+import React, { useRef } from "react";
+import ReactJson from "react-json-view";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
+import { Scrollbars } from "react-custom-scrollbars";
 
 import { useStores } from "../../Hooks/UseStores";
 
-import QueryForm from "./Query/QueryForm";
-import Representation from "./Query/Representation";
-import CompareChangesModal from "./Query/CompareChangesModal";
-import SaveError from "./Query/SaveError";
-import SavingMessage from "./Query/SavingMessage";
+import ThemeRJV from "../../Themes/ThemeRJV";
 
 const useStyles = createUseStyles({
   container:{
-    position: "relative",
-    display: "grid",
-    gridTemplateRows: "auto 1fr",
-    gridTemplateColumns: "1fr",
-    gridGap: "10px",
-    height: "100%"
-  },
-  form: {
-    "&:not(.available)": {
-      display: "none",
-      "& + $representation": {
-        gridRowStart: "span 2"
-      }
-    }
-  },
-  representation:{}
+    position:"relative",
+    color:"var(--ft-color-loud)",
+    background:"var(--bg-color-ui-contrast3)",
+    border: "1px solid var(--border-color-ui-contrast1)",
+    height: "calc(100% - 20px)",
+    margin:"10px",
+    padding:"10px"
+  }
 });
 
-const Query = observer(() => {
+const QuerySpecification = observer(() => {
+
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
+
+  const scrollRef = useRef();
 
   if (!queryBuilderStore.rootField) {
     return null;
@@ -57,14 +50,12 @@ const Query = observer(() => {
 
   return (
     <div className={classes.container}>
-      <QueryForm className={`${classes.form} ${queryBuilderStore.isQuerySaved || !queryBuilderStore.isQueryEmpty?"available":""}`} />
-      <Representation className={classes.representation} />
-      <SavingMessage />
-      <SaveError />
-      <CompareChangesModal />
+      <Scrollbars autoHide ref={scrollRef}>
+        <ReactJson collapsed={false} name={false} theme={ThemeRJV} src={queryBuilderStore.JSONQuery} />
+      </Scrollbars>
     </div>
   );
 });
-Query.displayName = "Query";
+QuerySpecification.displayName = "QuerySpecification";
 
-export default Query;
+export default QuerySpecification;

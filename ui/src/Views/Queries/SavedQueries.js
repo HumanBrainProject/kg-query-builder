@@ -76,12 +76,6 @@ const useStyles = createUseStyles({
         color:"var(--ft-color-quiet)",
         fontStyle:"italic"
       }
-    },
-    "& button.refresh-btn": {
-      color: "var(--ft-color-normal)",
-      "&:hover": {
-        color: "var(--ft-color-loud)"
-      }
     }
   },
   toggleButton: {
@@ -99,7 +93,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const SavedQueries = observer(({title, subTitle, list, expanded, onExpandToggle, onRefresh, showUser, enableDelete}) => {
+const SavedQueries = observer(({title, subTitle, list, expanded, onExpandToggle, showUser, enableDelete}) => {
   const classes = useStyles();
 
   return (
@@ -110,9 +104,6 @@ const SavedQueries = observer(({title, subTitle, list, expanded, onExpandToggle,
             <button className={`toggle-btn ${classes.toggleButton}`} onClick={onExpandToggle}><FontAwesomeIcon icon="angle-down"/></button>
           )}
           <h4 onClick={onExpandToggle}>{title}<small>{subTitle?(" - " + subTitle):""}</small></h4>
-          {typeof onRefresh === "function" && (
-            <button className="refresh-btn" onClick={onRefresh} title="Refresh"><FontAwesomeIcon icon="redo-alt"/></button>
-          )}
         </div>
       )}
       {expanded !== false || !title?

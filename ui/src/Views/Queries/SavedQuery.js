@@ -20,9 +20,9 @@ import {observer} from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "react-bootstrap/Button";
 
-import { useStores } from "../../../Hooks/UseStores";
+import { useStores } from "../../Hooks/UseStores";
 
-import PopOverButton from "../../../Components/PopOverButton";
+import PopOverButton from "../../Components/PopOverButton";
 //import User from "../../../Components/User";
 
 const useStyles = createUseStyles({
@@ -124,14 +124,14 @@ const SavedQuery = observer(({query, enableDelete}) => {
 // const SavedQuery = observer(({query, showUser, enableDelete}) => {
   const classes = useStyles();
 
-  const { queryBuilderStore } = useStores();
+  const { queryBuilderStore, history } = useStores();
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleSelect = e => {
     e.stopPropagation();
     if (!query.deleteError && !query.isDeleting) {
-      queryBuilderStore.selectQuery(query);
+      history.push(`/queries/${query.id}`);
     }
   };
 
@@ -158,6 +158,7 @@ const SavedQuery = observer(({query, enableDelete}) => {
   return (
     <div className={`${classes.container} ${query.isDeleting?"is-deleting":""}`} key={query.id} onClick={handleSelect} onMouseLeave={handleCloseDeleteDialog} >
       <div className={classes.name}>
+        <FontAwesomeIcon icon={"filter"} />&nbsp;&nbsp;
         <span>{query.label?query.label:query.id} - <small title="queryId">{query.id}</small></span>
         {/* {showUser && query.user && ( //TODO: Enable this when new user endpoint available
           <span className={`author ${enableDelete?"extra-padding":""}`}>by user <User user={query.user} />

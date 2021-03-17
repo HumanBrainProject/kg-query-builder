@@ -82,34 +82,10 @@ const Login = observer(() => {
 
   const handleRetryToInitialize = () => appStore.initialize();
 
-  return (
-    <div className={classes.container}>
-      {!appStore.isInitialized?
-        appStore.initializationError?
-          <div className={classes.error}>
-            <BGMessage icon={"ban"}>
-              {`There was a problem initializing (${appStore.initializationError}).
-              If the problem persists, please contact the support.`}<br /><br />
-              <Button variant="primary" onClick={handleRetryToInitialize}>
-                <FontAwesomeIcon icon={"redo-alt"} /> &nbsp; Retry
-              </Button>
-            </BGMessage>
-          </div>
-          :
-          appStore.initializingMessage?
-            <div className={classes.loader}>
-              <FetchingLoader>{appStore.initializingMessage}</FetchingLoader>
-            </div>
-            :
-            <div className={classes.panel}>
-              <h3>You are logged out of the application</h3>
-              <p></p>
-              <div>
-                <Button variant="primary" onClick={handleLogin}>Login</Button>
-              </div>
-            </div>
-        :
-        authStore.isTokenExpired && !authStore.isLogout?
+  if (appStore.isInitialized) {
+    if (authStore.isTokenExpired && !authStore.isLogout) {
+      return (
+        <div className={classes.container}>
           <div className={classes.panel}>
             <h3>Your session has expired</h3>
             <p>
@@ -120,9 +96,47 @@ const Login = observer(() => {
               <Button variant="primary" onClick={handleLogin}>Re-Login</Button>
             </div>
           </div>
-          :
-          null
-      }
+        </div>
+      );
+    }
+    return null;
+  }
+
+  if (appStore.initializationError) {
+    return (
+      <div className={classes.container}>
+        <div className={classes.error}>
+          <BGMessage icon={"ban"}>
+            {`There was a problem initializing (${appStore.initializationError}).
+              If the problem persists, please contact the support.`}<br /><br />
+            <Button variant="primary" onClick={handleRetryToInitialize}>
+              <FontAwesomeIcon icon={"redo-alt"} /> &nbsp; Retry
+            </Button>
+          </BGMessage>
+        </div>
+      </div>
+    );
+  }
+
+  if (appStore.initializingMessage) {
+    return (
+      <div className={classes.container}>
+        <div className={classes.loader}>
+          <FetchingLoader>{appStore.initializingMessage}</FetchingLoader>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={classes.container}>
+      <div className={classes.panel}>
+        <h3>You are logged out of the application</h3>
+        <p></p>
+        <div>
+          <Button variant="primary" onClick={handleLogin}>Login</Button>
+        </div>
+      </div>
     </div>
   );
 });

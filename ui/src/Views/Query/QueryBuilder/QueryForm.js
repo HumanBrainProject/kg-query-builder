@@ -20,6 +20,7 @@ import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import _  from "lodash-uuid";
 
 import { useStores } from "../../../Hooks/UseStores";
 
@@ -223,7 +224,7 @@ const QueryForm = observer(({ className }) => {
 
   const handleResetQuery = () => queryBuilderStore.resetRootSchema();
 
-  const handleNewQuery = () => queryBuilderStore.setAsNewQuery();
+  const handleNewQuery = () => queryBuilderStore.setAsNewQuery(_.uuid());
 
   const handleHeaderToggle= () => queryBuilderStore.toggleHeader();
 

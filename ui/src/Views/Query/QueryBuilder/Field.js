@@ -21,7 +21,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "react-bootstrap/Button";
 
 import { useStores } from "../../../Hooks/UseStores";
-import Types from "../Types";
+import Types from "../../Types";
 
 import Fields from "./Fields";
 

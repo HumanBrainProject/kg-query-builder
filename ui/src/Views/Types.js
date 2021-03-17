@@ -2,9 +2,9 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 
-import { useStores } from "../../Hooks/UseStores";
+import { useStores } from "../Hooks/UseStores";
 
-import Icon from "../../Components/Icon";
+import Icon from "../Components/Icon";
 
 const useStyles = createUseStyles({
   types: {
