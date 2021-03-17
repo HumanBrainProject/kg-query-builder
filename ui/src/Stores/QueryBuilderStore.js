@@ -105,10 +105,9 @@ export class QueryBuilderStore {
   saveError = null;
   isRunning = false;
   runError = null;
-  showMyQueries = true;
-  showOthersQueries = true;
   saveAsMode = false;
   compareChanges = false;
+  queriesFilterValue = "";
   fromQueryId = null;
   fromLabel = "";
   fromDescription = "";
@@ -146,8 +145,6 @@ export class QueryBuilderStore {
       saveError: observable,
       isRunning: observable,
       runError: observable,
-      showMyQueries: observable,
-      showOthersQueries: observable,
       saveAsMode: observable,
       compareChanges: observable,
       specifications: observable,
@@ -178,9 +175,15 @@ export class QueryBuilderStore {
       hasChanged: computed,
       hasQueries: computed,
       hasMyQueries: computed,
+      hasMyFilteredQueries: computed,
       hasOthersQueries: computed,
+      hasOthersFilteredQueries: computed,
       myQueries: computed,
+      myFilteredQueries: computed,
       othersQueries: computed,
+      othersFilteredQueries: computed,
+      queriesFilterValue: observable,
+      setQueriesFilterValue: action,
       addField: action,
       addMergeField: action,
       addMergeChildField: action,
@@ -206,8 +209,6 @@ export class QueryBuilderStore {
       setFetchQueriesError: action,
       setSaveAsMode: action,
       toggleCompareChanges: action,
-      toggleOtherQueries: action,
-      toggleMyQueries: action,
       setLabel: action,
       setWorkspace: action,
       saveQuery: action,
@@ -320,8 +321,7 @@ export class QueryBuilderStore {
       this.isRunning = false;
       this.runError = null;
       this.saveAsMode = false;
-      this.showMyQueries = true;
-      this.showOthersQueries = true;
+      this.queriesFilterValue = "";
       this.result = null;
       this.fromQueryId = null;
       this.fromLabel = "";
@@ -358,8 +358,7 @@ export class QueryBuilderStore {
       this.isRunning = false;
       this.runError = null;
       this.saveAsMode = false;
-      this.showMyQueries = true;
-      this.showOthersQueries = true;
+      this.queriesFilterValue = "";
       this.result = null;
       this.rootField = null;
       this.fromQueryId = null;
@@ -381,8 +380,7 @@ export class QueryBuilderStore {
       this.isRunning = false;
       this.runError = null;
       this.saveAsMode = false;
-      this.showMyQueries = true;
-      this.showOthersQueries = true;
+      this.queriesFilterValue = "";
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
@@ -431,8 +429,16 @@ export class QueryBuilderStore {
     return this.myQueries.length > 0;
   }
 
+  get hasMyFilteredQueries() {
+    return this.myFilteredQueries.length > 0;
+  }
+
   get hasOthersQueries() {
     return this.othersQueries.length > 0;
+  }
+
+  get hasOthersFilteredQueries() {
+    return this.othersFilteredQueries.length > 0;
   }
 
   get myQueries() {
@@ -442,11 +448,25 @@ export class QueryBuilderStore {
     return [];
   }
 
+  get myFilteredQueries() {
+    const filter = this.queriesFilterValue.toLowerCase();
+    return this.myQueries.filter(query => (query.label && query.label.toLowerCase().includes(filter)) || (query.description && query.description.toLowerCase().includes(filter)) || (query.id && query.id.toLowerCase().includes(filter)));
+  }
+
   get othersQueries() {
     if (this.rootStore.authStore.user) {
       return this.specifications.filter(spec =>  !spec.user || (spec.user.id !== this.rootStore.authStore.user.id)).sort((a, b) =>queryCompare(a, b));
     }
     return this.specifications.sort((a, b) => queryCompare(a, b));
+  }
+
+  get othersFilteredQueries() {
+    const filter = this.queriesFilterValue.toLowerCase();
+    return this.othersQueries.filter(query => (query.label && query.label.toLowerCase().includes(filter)) || (query.description && query.description.toLowerCase().includes(filter)) || (query.id && query.id.toLowerCase().includes(filter)));
+  }
+
+  setQueriesFilterValue(value) {
+    this.queriesFilterValue = value;
   }
 
   addField(schema, parent, gotoField = true) {
@@ -1119,14 +1139,6 @@ export class QueryBuilderStore {
     this.compareChanges = !this.compareChanges;
   }
 
-  toggleOtherQueries() {
-    this.showOthersQueries = !this.showOthersQueries;
-  }
-
-  toggleMyQueries() {
-    this.showMyQueries = !this.showMyQueries;
-  }
-
   setLabel(label) {
     this.label = label;
   }
@@ -1250,8 +1262,7 @@ export class QueryBuilderStore {
           const response = await this.transportLayer.listQueries(this.rootField.schema.id);
           runInAction(() => {
             this.specifications = [];
-            this.showMyQueries = true;
-            this.showOthersQueries = true;
+            this.queriesFilterValue = "";
             const jsonSpecifications = response && response.data && response.data.data && response.data.data.length ? response.data.data : [];
             jsonSpecifications.forEach(async jsonSpec => {
               try {

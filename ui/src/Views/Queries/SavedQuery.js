@@ -29,7 +29,7 @@ const useStyles = createUseStyles({
   container:{
     position:"relative",
     cursor:"pointer",
-    margin:"1px",
+    margin:"4px 0",
     padding:"10px",
     background:"var(--bg-color-ui-contrast1)",
     color:"var(--ft-color-normal)",

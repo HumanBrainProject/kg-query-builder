@@ -19,11 +19,13 @@ import { createUseStyles } from "react-jss";
 import {observer} from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Scrollbars } from "react-custom-scrollbars";
 
 import { useStores } from "../Hooks/UseStores";
 
 import FetchingLoader from "../Components/FetchingLoader";
 import BGMessage from "../Components/BGMessage";
+import Filter from "../Components/Filter";
 import SavedQueries from "./Queries/SavedQueries";
 
 const useStyles = createUseStyles({
@@ -35,23 +37,17 @@ const useStyles = createUseStyles({
     width: "90%",
     margin: "auto",
     marginTop: "5vh",
-    padding: "15px",
     background: "var(--bg-color-ui-contrast2)",
     color: "var(--ft-color-normal)",
     border: "1px solid var(--border-color-ui-contrast2)",
     overflow: "hidden",
     "@media screen and (min-width:1024px)": {
       width: "900px"
-    },
-    "& > div": {
-      transition: "height 0.3s ease",
-      "&.show": {
-        flex: 1
-      },
-      "& + div": {
-        marginTop: "15px"
-      }
     }
+  },
+  body: {
+    padding: "0 15px 10px 15px",
+    background: "var(--bg-color-ui-contrast2)"
   },
   loader: {
     position: "fixed",
@@ -93,9 +89,7 @@ const Queries = observer(() => {
 
   const handleFetchSavedQueries = () => queryBuilderStore.fetchQueries();
 
-  const handleMyQueriesExpandToggle = () => queryBuilderStore.toggleMyQueries();
-
-  const handleOthersQueriesExpandToggle = () => queryBuilderStore.toggleOtherQueries();
+  const handleChange = value => queryBuilderStore.setQueriesFilterValue(value);
 
   if (!queryBuilderStore.hasRootSchema) {
     return null;
@@ -137,28 +131,19 @@ const Queries = observer(() => {
 
   return (
     <div className={classes.panel} >
-      {queryBuilderStore.hasMyQueries && (
-        <div className={`${queryBuilderStore.showMyQueries?" show":""}`} >
+      <Filter value={queryBuilderStore.queriesFilterValue} placeholder="Filter queries" onChange={handleChange} />
+      <div className={classes.body}>
+        <Scrollbars autoHide>
           <SavedQueries
-            title={`My saved queries for ${queryBuilderStore.rootSchema.label}`}
-            subTitle={queryBuilderStore.rootSchema.id}
-            list={queryBuilderStore.myQueries}
-            expanded={queryBuilderStore.showMyQueries}
-            onExpandToggle={handleMyQueriesExpandToggle}
+            title="My saved queries"
+            list={queryBuilderStore.myFilteredQueries}
             enableDelete={true} />
-        </div>
-      )}
-      {queryBuilderStore.hasOthersQueries && (
-        <div className={`${queryBuilderStore.showOthersQueries?" show":""}`} >
           <SavedQueries
-            title={`Other users queries for ${queryBuilderStore.rootSchema.label}`}
-            subTitle={queryBuilderStore.rootSchema.id}
-            list={queryBuilderStore.othersQueries}
-            expanded={queryBuilderStore.showOthersQueries}
-            onExpandToggle={handleOthersQueriesExpandToggle}
+            title="Other users queries"
+            list={queryBuilderStore.othersFilteredQueries}
             showUser={true} />
-        </div>
-      )}
+        </Scrollbars>
+      </div>
     </div>
   );
 });

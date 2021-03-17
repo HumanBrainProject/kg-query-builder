@@ -16,7 +16,6 @@
 
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useStores } from "../../Hooks/UseStores";
 
@@ -32,7 +31,7 @@ const HomeTab = observer(() => {
 
   return (
     <div>
-      <Types types={queryBuilderStore.rootSchema.canBe} />&nbsp;-&nbsp;<small style={{marginRight: "16px"}}>{queryBuilderStore.rootSchema.id}</small><FontAwesomeIcon icon={"caret-down"} />
+      <Types types={queryBuilderStore.rootSchema.canBe} />&nbsp;-&nbsp;<small>{queryBuilderStore.rootSchema.id}</small>
     </div>
   );
 });
