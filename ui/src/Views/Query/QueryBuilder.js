@@ -22,6 +22,7 @@ import { useStores } from "../../Hooks/UseStores";
 
 import QueryForm from "./QueryBuilder/QueryForm";
 import Representation from "./QueryBuilder/Representation";
+import Actions from "./QueryBuilder/Actions";
 import CompareChangesModal from "./QueryBuilder/CompareChangesModal";
 import SaveError from "./QueryBuilder/SaveError";
 import SavingMessage from "./QueryBuilder/SavingMessage";
@@ -40,10 +41,21 @@ const useStyles = createUseStyles({
   body:{
     position: "relative",
     display: "grid",
-    gridTemplateRows: "auto 1fr",
+    gridTemplateRows: "auto 1fr auto",
     gridTemplateColumns: "1fr",
     gridGap: "10px",
-    height: "100%"
+    height: "100%",
+    "&:not(.hasChanged)": {
+      "& $form": {
+        display: "none"
+      },
+      "& $representation": {
+        gridRowStart: "span 3"
+      },
+      "& $actions": {
+        display: "none"
+      }
+    }
   },
   options: {
     position:"relative",
@@ -52,15 +64,9 @@ const useStyles = createUseStyles({
     color: "var(--ft-color-loud)",
     padding: "10px"
   },
-  form: {
-    "&:not(.available)": {
-      display: "none",
-      "& + $representation": {
-        gridRowStart: "span 2"
-      }
-    }
-  },
-  representation:{}
+  form: {},
+  representation:{},
+  actions:{}
 });
 
 const QueryBuilder = observer(() => {
@@ -74,9 +80,10 @@ const QueryBuilder = observer(() => {
 
   return (
     <div className={classes.container}>
-      <div className={classes.body}>
-        <QueryForm className={`${classes.form} ${queryBuilderStore.isQuerySaved || !queryBuilderStore.isQueryEmpty?"available":""}`} />
+      <div className={`${classes.body} ${queryBuilderStore.isQuerySaved || !queryBuilderStore.isQueryEmpty?"hasChanged":""}`}>
+        <QueryForm className={classes.form} />
         <Representation className={classes.representation} />
+        <Actions className={classes.actions} />
         <SavingMessage />
         <SaveError />
         <CompareChangesModal />

@@ -16,15 +16,11 @@
 
 import React from "react";
 
-import Toggle from "./Toggle";
+import Toggle from "./Options/Toggle";
 
-const Vocab = ({ defaultValue, value, show, onChange}) => {
+const Vocab = ({ defaultValue, value, onChange}) => {
 
   const handleOnChange = (name, newValue) => onChange(newValue?defaultValue:null);
-
-  if (!show) {
-    return null;
-  }
 
   return (
     <Toggle

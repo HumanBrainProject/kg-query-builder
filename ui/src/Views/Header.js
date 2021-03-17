@@ -116,7 +116,7 @@ const Header = observer(() => {
                     <Tab icon={"search"} current={matchPath(currentLocationPathname, { path: "/queries", exact: "true" })} onClick={handleBrowseStoredQueries} hideLabel label={"Browse stored queries"} disable={queryBuilderStore.isSaving} />
                     <Tab icon={"file"} current={false} onClick={handleBuildNewQuery} hideLabel label={"New query"} disable={queryBuilderStore.isSaving} />
                     {queryBuilderStore.queryId && (
-                      <Tab icon={queryBuilderStore.isSaving?"circle-notch":"filter"} iconSpin={queryBuilderStore.isSaving} current={matchPath(currentLocationPathname, { path: "/queries/:id", exact: "true" })} onClose={handleBrowseStoredQueries} label={queryBuilderStore.label?queryBuilderStore.label:queryBuilderStore.queryId} />
+                      <Tab icon={queryBuilderStore.isSaving?"circle-notch":"tag"} iconSpin={queryBuilderStore.isSaving} current={matchPath(currentLocationPathname, { path: "/queries/:id", exact: "true" })} onClose={handleBrowseStoredQueries} label={queryBuilderStore.label?queryBuilderStore.label:queryBuilderStore.queryId} />
                     )}
                   </React.Fragment>
                   :

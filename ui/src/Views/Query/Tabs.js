@@ -19,6 +19,8 @@ import {observer} from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
+import { useStores } from "../../Hooks/UseStores";
+
 const useStyles = createUseStyles({
   tabs: {
     borderRight: "1px solid var(--border-color-ui-contrast1)",
@@ -46,6 +48,7 @@ const useStyles = createUseStyles({
       opacity: "1"
     },
     "&.disabled, &.disabled:hover":{
+      background: "transparent",
       color: "var(--ft-color-normal)",
       opacity: "0.2",
       cursor: "not-allowed"
@@ -55,7 +58,7 @@ const useStyles = createUseStyles({
 
 const Tab = ({ className, disabled, active, icon, mode, title, onClick }) => {
 
-  const props = disabled || active ?
+  const props = (disabled || active) ?
     {
       className: `${className} ${disabled?"disabled":""} ${active?"active":""}`
     }:
@@ -75,11 +78,13 @@ const Tabs = observer(({ mode, onClick }) => {
 
   const classes = useStyles();
 
+  const { queryBuilderStore } = useStores();
+
   return (
     <div className={classes.tabs}>
       <Tab className={classes.tab} icon="pencil-alt"  mode="build"    active={mode === "build"}   onClick={onClick} title="build query" />
-      <Tab className={classes.tab} icon="eye"         mode="view"     active={mode === "view"}    onClick={onClick} title="view query" />
-      <Tab className={classes.tab} icon="play"         mode="execute"  active={mode === "execute"} onClick={onClick} title="execute query" disable={false} />
+      <Tab className={classes.tab} icon="eye"         mode="view"     active={mode === "view"}    onClick={onClick} title="view query" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} />
+      <Tab className={classes.tab} icon="play"        mode="execute"  active={mode === "execute"} onClick={onClick} title="execute query" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} />
     </div>
   );
 });

@@ -105,7 +105,6 @@ export class QueryBuilderStore {
   saveError = null;
   isRunning = false;
   runError = null;
-  showHeader = true;
   showMyQueries = true;
   showOthersQueries = true;
   saveAsMode = false;
@@ -147,7 +146,6 @@ export class QueryBuilderStore {
       saveError: observable,
       isRunning: observable,
       runError: observable,
-      showHeader: observable,
       showMyQueries: observable,
       showOthersQueries: observable,
       saveAsMode: observable,
@@ -210,7 +208,6 @@ export class QueryBuilderStore {
       toggleCompareChanges: action,
       toggleOtherQueries: action,
       toggleMyQueries: action,
-      toggleHeader: action,
       setLabel: action,
       setWorkspace: action,
       saveQuery: action,
@@ -323,7 +320,6 @@ export class QueryBuilderStore {
       this.isRunning = false;
       this.runError = null;
       this.saveAsMode = false;
-      this.showHeader = true;
       this.showMyQueries = true;
       this.showOthersQueries = true;
       this.result = null;
@@ -362,7 +358,6 @@ export class QueryBuilderStore {
       this.isRunning = false;
       this.runError = null;
       this.saveAsMode = false;
-      this.showHeader = true;
       this.showMyQueries = true;
       this.showOthersQueries = true;
       this.result = null;
@@ -385,7 +380,6 @@ export class QueryBuilderStore {
       this.saveError = null;
       this.isRunning = false;
       this.runError = null;
-      this.showHeader = true;
       this.saveAsMode = false;
       this.showMyQueries = true;
       this.showOthersQueries = true;
@@ -417,7 +411,6 @@ export class QueryBuilderStore {
   get isQueryEmpty() {
     return !this.rootField || !this.rootField.structure || !this.rootField.structure.length;
   }
-
 
   get hasQueryChanged() {
     return !isEqual(this.JSONQuery, this.JSONSourceQuery);
@@ -996,9 +989,6 @@ export class QueryBuilderStore {
       && query && !query.isDeleting) {
       this.queryId = query.id;
       this.workspace = query.workspace;
-      if (this.sourceQuery !== query) { // reset
-        this.showHeader = true;
-      }
       this.sourceQuery = query;
       this.context = toJS(query.context);
       if (!this.context) {
@@ -1135,10 +1125,6 @@ export class QueryBuilderStore {
 
   toggleMyQueries() {
     this.showMyQueries = !this.showMyQueries;
-  }
-
-  toggleHeader() {
-    this.showHeader = !this.showHeader;
   }
 
   setLabel(label) {

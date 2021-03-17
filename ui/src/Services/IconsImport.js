@@ -83,8 +83,8 @@ import {faAsterisk} from "@fortawesome/free-solid-svg-icons/faAsterisk";
 import {faLevelDownAlt} from "@fortawesome/free-solid-svg-icons/faLevelDownAlt";
 import {faSitemap} from "@fortawesome/free-solid-svg-icons/faSitemap";
 import {faTools} from "@fortawesome/free-solid-svg-icons/faTools";
-import {faFilter} from "@fortawesome/free-solid-svg-icons/faFilter";
 import {faPlay} from "@fortawesome/free-solid-svg-icons/faPlay";
+import {faTag} from "@fortawesome/free-solid-svg-icons/faTag";
 
 library.add(
   faUser,
@@ -153,6 +153,6 @@ library.add(
   faLevelDownAlt,
   faSitemap,
   faTools,
-  faFilter,
-  faPlay
+  faPlay,
+  faTag
 );

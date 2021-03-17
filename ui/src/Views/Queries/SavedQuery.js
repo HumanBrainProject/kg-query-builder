@@ -158,7 +158,7 @@ const SavedQuery = observer(({query, enableDelete}) => {
   return (
     <div className={`${classes.container} ${query.isDeleting?"is-deleting":""}`} key={query.id} onClick={handleSelect} onMouseLeave={handleCloseDeleteDialog} >
       <div className={classes.name}>
-        <FontAwesomeIcon icon={"filter"} />&nbsp;&nbsp;
+        <FontAwesomeIcon icon={"tag"} />&nbsp;&nbsp;
         <span>{query.label?query.label:query.id} - <small title="queryId">{query.id}</small></span>
         {/* {showUser && query.user && ( //TODO: Enable this when new user endpoint available
           <span className={`author ${enableDelete?"extra-padding":""}`}>by user <User user={query.user} />
