@@ -751,14 +751,7 @@ export class QueryBuilderStore {
       if (field.schema.attribute) {
         const attribute = (!attributeReg.test(field.schema.attribute) && modelReg.test(field.schema.attribute)) ? field.schema.attribute.match(modelReg)[1] : field.schema.attribute;
         const relativePath = field.schema.attributeNamespace && field.schema.simpleAttributeName ? `${field.schema.attributeNamespace}:${field.schema.simpleAttributeName}` : attribute;
-        if (field.schema.reverse) {
-          jsonField.path = {
-            "@id": relativePath,
-            "reverse": true
-          };
-        } else {
-          jsonField.path = relativePath;
-        }
+        jsonField.path = this._processPath(field, relativePath);
       }
       field.options.forEach(({ name, value }) => jsonField[name] = toJS(value));
       if (field.merge) {
@@ -770,16 +763,7 @@ export class QueryBuilderStore {
         while (field.isFlattened && field.structure[0]) {
           field = field.structure[0];
           const relativePath = field.schema.attributeNamespace && field.schema.simpleAttributeName ? `${field.schema.attributeNamespace}:${field.schema.simpleAttributeName}` : field.schema.attribute;
-          if (field.schema.reverse) {
-            jsonField.path.push(
-              {
-                "@id": relativePath,
-                "reverse": true
-              }
-            );
-          } else {
-            jsonField.path.push(relativePath);
-          }
+          jsonField.path.push(this._processPath(field, relativePath));
           if (field.structure && field.structure.length) {
             jsonField.propertyName = (topField.namespace ? topField.namespace : "query") + ":" + (topField.alias || field.schema.simpleAttributeName || field.schema.label);
           }
@@ -798,6 +782,27 @@ export class QueryBuilderStore {
     } else if (jsonFields.length === 1) {
       json.structure = jsonFields[0];
     }
+  }
+
+  _processPath(field, relativePath) {
+    if (field.schema.reverse) {
+      const path = {
+        "@id": relativePath,
+        "reverse": true
+      };
+      if (field.typeFilterEnabled && field.typeFilter.length) {
+        path.typeFilter = field.typeFilter.map(t => ({"@id": t}));
+      }
+      return path;
+    }
+
+    if (field.typeFilterEnabled && field.typeFilter.length) {
+      return {
+        "@id": relativePath,
+        "typeFilter": field.typeFilter.map(t => ({"@id": t}))
+      };
+    }
+    return relativePath;
   }
 
   _processJsonSpecificationFields(parentField, jsonFields) {

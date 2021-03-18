@@ -15,12 +15,13 @@
 */
 
 import React from "react";
+import { observer } from "mobx-react-lite";
 
 import Toggle from "../../../../Components/Toggle";
 
-const Flatten = ({ field, show, onChange}) => {
+const Flatten = observer(({ field, show, onChange}) => {
 
-  const handleOnChange = (name, value) => onChange(value);
+  const handleOnChange = (name, value) => onChange(!!value);
 
   if (!show) {
     return null;
@@ -37,6 +38,6 @@ const Flatten = ({ field, show, onChange}) => {
       onChange={handleOnChange}
     />
   );
-};
+});
 
 export default Flatten;

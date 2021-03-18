@@ -24,7 +24,7 @@ import { useStores } from "../../../Hooks/UseStores";
 import Filter from "../../../Components/Filter";
 import Attributes from "./Children/Attributes";
 import Links from "./Children/Links";
-import TypesFilter from "./Children/TypesFilter";
+import TypeFilter from "./Children/TypeFilter";
 
 const useStyles = createUseStyles({
   container: {
@@ -101,7 +101,7 @@ const Children = observer(() => {
   return (
     <div className={classes.container}>
       <div className={classes.panel}>
-        <TypesFilter />
+        <div><TypeFilter /></div>
         <Filter className={classes.filter} value={queryBuilderStore.childrenFilterValue} placeholder="Filter properties" onChange={handleChange} />
         <div className={classes.body}>
           <Scrollbars autoHide ref={scrollRef}>
