@@ -821,6 +821,7 @@ export class QueryBuilderStore {
           const isFlattened = !!jsonRP && typeof jsonRP !== "string" && jsonRP.length !== undefined && jsonRP.length > 1;
           const relativePath = jsonRP && (typeof jsonRP === "string" ? jsonRP : (isFlattened ? (jsonRP[0] && (typeof jsonRP[0] === "string" ? jsonRP[0] : jsonRP[0]["@id"])) : (typeof jsonRP === "string" ? jsonRP : jsonRP["@id"])));
           const reverse = jsonRP && (typeof jsonRP === "string" ? false : (isFlattened ? (jsonRP[0] && (typeof jsonRP[0] === "string" ? false : jsonRP[0].reverse)) : (typeof jsonRP === "string" ? false : jsonRP.reverse)));
+          const typeFilter = jsonRP && (typeof jsonRP === "string" ? undefined : (isFlattened ? (jsonRP[0] && (typeof jsonRP[0] === "string" ? undefined : jsonRP[0].typeFilter)) : (typeof jsonRP === "string" ? undefined : jsonRP.typeFilter)));
           let attribute = null;
           let attributeNamespace = null;
           let simpleAttributeName = null;
@@ -864,6 +865,8 @@ export class QueryBuilderStore {
           field = new Field(property, parentField);
           field.isUnknown = isUnknown;
           field.isFlattened = isFlattened;
+          field.typeFilterEnabled = Array.isArray(typeFilter);
+          field.typeFilter = Array.isArray(typeFilter)?typeFilter.map(t => typeof t === "object" && t["@id"]).filter(t => t):[];
         }
 
         if (jsonField.merge) {
