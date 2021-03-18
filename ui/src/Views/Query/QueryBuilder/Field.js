@@ -73,7 +73,7 @@ const useStyles = createUseStyles({
     borderLeft: "3px solid #40a9f3"
   },
   label: {
-    padding: "10px",
+    padding: "10px 20px 10px 10px",
     margin: "1px",
     backgroundColor: "var(--bg-color-ui-contrast1)",
     position: "relative",

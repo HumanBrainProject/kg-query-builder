@@ -69,7 +69,7 @@ const View = ({mode}) => {
     return(
       <QueryExecution />
     );
-  case "build":
+  case "edit":
   default:
     return(
       <QueryBuilder />
@@ -77,18 +77,16 @@ const View = ({mode}) => {
   }
 };
 
-const Query = observer(({id}) => {
+const Query = observer(({id, mode}) => {
 
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
 
-  const [mode, setMode] = useState("build");
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => queryBuilderStore.selectQueryById(id), []);
+  useEffect(() => queryBuilderStore.selectQueryById(id, mode), [id, mode]);
 
-  const handleRetry = () => queryBuilderStore.selectQueryById(id);
+  const handleRetry = () => queryBuilderStore.selectQueryById(id, mode);
 
   if (queryBuilderStore.isFetchingQuery) {
     return (
@@ -114,9 +112,9 @@ const Query = observer(({id}) => {
   if(queryBuilderStore.hasRootSchema) {
     return (
       <div className={classes.container}>
-        <Tabs mode={mode} onClick={setMode} />
+        <Tabs />
         <div className={classes.body}>
-          <View mode={mode} />
+          <View mode={queryBuilderStore.mode} />
         </div>
       </div>
     );

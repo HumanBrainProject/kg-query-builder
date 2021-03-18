@@ -114,7 +114,7 @@ export class QueryBuilderStore {
   fromDescription = "";
   isFetchingQuery = false;
   fetchQueryError = null;
-
+  mode = "edit";
   specifications = [];
 
   resultSize = 20;
@@ -223,7 +223,9 @@ export class QueryBuilderStore {
       fetchQueryById: action,
       fromQueryId: observable,
       fromLabel: observable,
-      fromDescription: observable
+      fromDescription: observable,
+      mode: observable,
+      setMode: action
     });
 
     this.transportLayer = transportLayer;
@@ -340,6 +342,7 @@ export class QueryBuilderStore {
       this.fromDescription = "";
       this.workspace = this.rootStore.authStore.workspaces[0];
       this.selectField(this.rootField);
+      this.mode = "edit";
     }
   }
 
@@ -351,6 +354,7 @@ export class QueryBuilderStore {
         this.rootField = new Field(rootField.schema);
         this.selectField(this.rootField);
       }
+      this.mode = "edit";
     }
   }
 
@@ -378,6 +382,7 @@ export class QueryBuilderStore {
       this.fromLabel = "";
       this.fromDescription = "";
       this.resetField();
+      this.mode = "edit";
     }
   }
 
@@ -401,6 +406,7 @@ export class QueryBuilderStore {
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
+      this.mode = "edit";
     }
   }
 
@@ -1064,6 +1070,7 @@ export class QueryBuilderStore {
       this.fromDescription = "";
       this.selectField(this.rootField);
       this.savedQueryHasInconsistencies = this.hasQueryChanged;
+      this.mode = "edit";
     }
   }
 
@@ -1381,7 +1388,20 @@ export class QueryBuilderStore {
     return this.specifications.find(spec => spec.id === id);
   }
 
-  async selectQueryById(id) {
+  setMode(mode) {
+    if (["edit", "view", "execute"].includes(mode)) {
+      this.mode = mode;
+      const path = `/queries/${this.queryId}/${mode}`;
+      if (this.rootStore.history.location.pathname !== path) {
+        this.rootStore.history.push(path);
+      }
+    } else {
+      this.mode = "edit";
+      this.rootStore.history.replace(`/queries/${this.queryId}/edit`);
+    }
+  }
+
+  async selectQueryById(id, mode) {
     let query = this.findQuery(id);
     if(!query) {
       await this.fetchQueryById(id);
@@ -1393,8 +1413,13 @@ export class QueryBuilderStore {
       if(type) {
         this.selectRootSchema(type);
         this.selectQuery(query);
+        this.setMode(mode);
+      } else {
+        this.rootStore.history.replace("/");
+        this.mode = "edit";
       }
     } else {
+      this.mode = "edit";
       if(this.hasRootSchema) {
         this.setAsNewQuery(id);
       } else {

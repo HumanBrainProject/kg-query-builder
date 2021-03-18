@@ -74,17 +74,19 @@ const Tab = ({ className, disabled, active, icon, mode, title, onClick }) => {
   );
 };
 
-const Tabs = observer(({ mode, onClick }) => {
+const Tabs = observer(() => {
 
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
 
+  const setMode = mode => queryBuilderStore.setMode(mode);
+
   return (
     <div className={classes.tabs}>
-      <Tab className={classes.tab} icon="pencil-alt"  mode="build"    active={mode === "build"}   onClick={onClick} title="build query" />
-      <Tab className={classes.tab} icon="eye"         mode="view"     active={mode === "view"}    onClick={onClick} title="view query" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} />
-      <Tab className={classes.tab} icon="play"        mode="execute"  active={mode === "execute"} onClick={onClick} title="execute query" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} />
+      <Tab className={classes.tab} icon="pencil-alt"  mode="edit"     active={queryBuilderStore.mode === "edit"}    onClick={setMode} title="build query" />
+      <Tab className={classes.tab} icon="eye"         mode="view"     active={queryBuilderStore.mode === "view"}    onClick={setMode} title="view query" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} />
+      <Tab className={classes.tab} icon="play"        mode="execute"  active={queryBuilderStore.mode === "execute"} onClick={setMode} title="execute query" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} />
     </div>
   );
 });

@@ -201,7 +201,8 @@ const Layout = observer(() => {
                 <div className={classes.container}>
                   <Switch>
                     <Route path="/" exact={true} component={RootSchema} />
-                    <Route path="/queries/:id" exact={true} render={props => <Query id={props.match.params.id} />} />
+                    <Route path="/queries/:id" exact={true} render={props => <Query id={props.match.params.id} mode="edit" />} />
+                    <Route path="/queries/:id/:mode" exact={true} render={props => <Query id={props.match.params.id} mode={props.match.params.mode} />} />
                     {queryBuilderStore.hasRootSchema && (
                       <Route path="/queries" exact={true} component={Queries} />
                     )}
@@ -217,7 +218,8 @@ const Layout = observer(() => {
                   </Modal.Body>
                 </Modal>
               )
-              :              <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
+              :
+              <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
                 <Modal.Body>
                   <h1>Welcome</h1>
                   <p>You are currently not granted permission to acccess the application.</p>
