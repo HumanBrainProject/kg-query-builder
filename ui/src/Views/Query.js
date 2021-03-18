@@ -14,7 +14,7 @@
 *   limitations under the License.
 */
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
