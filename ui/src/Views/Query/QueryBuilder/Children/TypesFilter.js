@@ -25,13 +25,18 @@ import Toggle from "../../../../Components/Toggle";
 
 const useStyles = createUseStyles({
   container: {
-    display: "block"
+    display: "block",
+    padding: "10px"
   },
   typeFilter: {
     display: "inline-block",
     border: "1px solid gray",
     borderRadius: "10px",
     padding: "10px"
+  },
+  toggle: {
+    display: "inline-block",
+    paddingLeft: "4px"
   }
 });
 
@@ -42,13 +47,15 @@ const TypeFilter = ({ type, isSelected, onClick }) => {
   return(
     <div className={classes.typeFilter}>
       <Type type={type} />
-      <Toggle
-        option={{
-          name: type,
-          value: isSelected
-        }}
-        show={true}
-        onChange={onClick} />
+      <div className={classes.toggle}>
+        <Toggle
+          option={{
+            name: type,
+            value: isSelected
+          }}
+          show={true}
+          onChange={onClick} />
+      </div>
     </div>
   );
 };

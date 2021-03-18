@@ -74,16 +74,22 @@ const Schema = observer(({ type, enableFocus, onKeyDown }) =>  {
 
   const handleClick = () => {
     queryBuilderStore.selectRootSchema(type);
-    const uuid = _.uuid();
-    history.push(`/queries/${uuid}`);
+    selectSchema();
   };
 
   const handleKeyDown= e => {
     if(e.keyCode === 13) {
       queryBuilderStore.selectRootSchema(type);
+      selectSchema();
     }
     onKeyDown(e);
   };
+
+  const selectSchema = () => {
+    const uuid = _.uuid();
+    history.push(`/queries/${uuid}`);
+  };
+
 
 
   const getTypeLabel = type => {
