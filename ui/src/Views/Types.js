@@ -18,7 +18,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const Type = ({type}) => {
+export const Type = ({type}) => {
 
   const { typeStore } = useStores();
 
