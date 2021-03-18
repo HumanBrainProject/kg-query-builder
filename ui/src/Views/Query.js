@@ -84,7 +84,7 @@ const Query = observer(({id, mode}) => {
   const { queryBuilderStore } = useStores();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => queryBuilderStore.selectQueryById(id, mode), [id, mode]);
+  useEffect(() => queryBuilderStore.selectQueryById(id, mode), [id]);
 
   const handleRetry = () => queryBuilderStore.selectQueryById(id, mode);
 

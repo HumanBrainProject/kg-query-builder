@@ -1222,6 +1222,7 @@ export class QueryBuilderStore {
               deleteError: null
             };
             this.specifications.push(this.sourceQuery);
+            this.rootStore.history.push(`/queries/${queryId}/${this.mode}`);
           }
           this.saveAsMode = false;
           this.isSaving = false;
@@ -1389,15 +1390,16 @@ export class QueryBuilderStore {
   }
 
   setMode(mode) {
+    const id = (this.saveAsMode && this.sourceQuery && this.queryId !== this.sourceQuery.id)?this.sourceQuery.id:this.queryId;
     if (["edit", "view", "execute"].includes(mode)) {
       this.mode = mode;
-      const path = `/queries/${this.queryId}/${mode}`;
+      const path = `/queries/${id}/${mode}`;
       if (this.rootStore.history.location.pathname !== path) {
         this.rootStore.history.push(path);
       }
     } else {
       this.mode = "edit";
-      this.rootStore.history.replace(`/queries/${this.queryId}/edit`);
+      this.rootStore.history.replace(`/queries/${id}/edit`);
     }
   }
 
