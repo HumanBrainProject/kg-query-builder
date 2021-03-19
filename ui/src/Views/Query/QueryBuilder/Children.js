@@ -66,11 +66,33 @@ const Children = observer(() => {
 
   const field = queryBuilderStore.currentField;
   const rootField = queryBuilderStore.rootField;
+
+  if (!field || !field.schema.canBe || !Array.isArray(field.schema.canBe) || !field.schema.canBe.length) {
+    return null;
+  }
+
+  const parentLookupsAttributes = queryBuilderStore.currentFieldParentLookupsAttributes;
+  const parentLookupsLinks = queryBuilderStore.currentFieldParentLookupsLinks;
   const lookupsLinks= queryBuilderStore.currentFieldLookupsLinks;
   const lookupsAttributes = queryBuilderStore.currentFieldLookupsAttributes;
   const lookupsAdvancedAttributes = queryBuilderStore.currentFieldLookupsAdvancedAttributes;
-  const parentLookupsAttributes = queryBuilderStore.currentFieldParentLookupsAttributes;
-  const parentLookupsLinks = queryBuilderStore.currentFieldParentLookupsLinks;
+
+  const showParentProperties = field.isRootMerge && field !== rootField;
+
+  const showProperties = !field.isFlattened ||
+                          (field.isMerge &&
+                            (field.isRootMerge ||
+                              (!field.isRootMerge && (!field.structure || !field.structure.length))));
+
+  const showParentLookupsAttributes = showParentProperties && queryBuilderStore.currentFieldParentLookupsAttributes.length;
+  const showParentLookupsLinks = showParentProperties && queryBuilderStore.currentFieldParentLookupsLinks.length;
+  const showLookupsLinks = showProperties && queryBuilderStore.currentFieldLookupsLinks.length;
+  const showLookupsAttributes = showProperties && queryBuilderStore.currentFieldLookupsAttributes.length;
+  const showLookupsAdvancedAttributes = showProperties && queryBuilderStore.currentFieldLookupsAdvancedAttributes.length;
+
+  if (!showParentLookupsAttributes && !showParentLookupsLinks && !showLookupsLinks && !showLookupsAttributes && !showLookupsAdvancedAttributes) {
+    return null;
+  }
 
   const handleAddField = (e, schema) => {
     //Don't got to newly chosen field options if ctrl is pressed (or cmd)
@@ -84,10 +106,6 @@ const Children = observer(() => {
 
   const handleChange = value => queryBuilderStore.setChildrenFilterValue(value);
 
-  if (!field || !field.schema.canBe || !Array.isArray(field.schema.canBe) || !field.schema.canBe.length) {
-    return null;
-  }
-
   return (
     <div className={classes.container}>
       <div className={classes.panel}>
@@ -98,41 +116,32 @@ const Children = observer(() => {
               attributes={parentLookupsAttributes}
               label="attributes valid for"
               isMerge={true}
-              show={field.isRootMerge && field !== rootField}
+              show={showParentLookupsAttributes}
               onClick={handleAddMergeChildField}
             />
             <Links
               links={parentLookupsLinks}
               label="links valid for"
               isMerge={true}
-              show={field.isRootMerge && field !== rootField}
+              show={showParentLookupsAttributes}
               onClick={handleAddMergeChildField}
             />
             <Attributes
               attributes={lookupsAttributes}
               label="Attributes valid for"
-              show={!field.isFlattened ||
-                    (field.isMerge &&
-                      (field.isRootMerge ||
-                        (!field.isRootMerge && (!field.structure || !field.structure.length))))}
+              show={showProperties}
               onClick={handleAddField}
             />
             <Attributes
               attributes={lookupsAdvancedAttributes}
               label="Advanced attributes valid for"
-              show={!field.isFlattened ||
-                    (field.isMerge &&
-                      (field.isRootMerge ||
-                        (!field.isRootMerge && (!field.structure || !field.structure.length))))}
+              show={showProperties}
               onClick={handleAddField}
             />
             <Links
               links={lookupsLinks}
               label="Links valid for"
-              show={!field.isFlattened ||
-                    (field.isMerge &&
-                      (field.isRootMerge ||
-                        (!field.isRootMerge && (!field.structure || !field.structure.length))))}
+              show={showProperties}
               onClick={handleAddField}
             />
           </Scrollbars>

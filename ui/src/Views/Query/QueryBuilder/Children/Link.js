@@ -45,6 +45,10 @@ const Link = ({ link, label: prefix, isMerge=false, onClick }) => {
 
   const { id, label, color, properties } = link;
 
+  if (!Array.isArray(properties) || !properties.length) {
+    return null;
+  }
+
   return (
     <div className={`${classes.container} ${isMerge?"merge":""}`}>
       <h5>{isMerge?(<strong>Merge</strong> ):""}{prefix} <Icon icon="circle" color={color}/> {label} <small> - {id}</small></h5>

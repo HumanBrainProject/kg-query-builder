@@ -20,7 +20,7 @@ import Link from "./Link";
 
 const Links = ({ links, label, isMerge, show, onClick }) => {
 
-  if (!show) {
+  if (!show || !Array.isArray(links)) {
     return null;
   }
 

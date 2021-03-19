@@ -31,7 +31,6 @@ const useStyles = createUseStyles({
     padding: "10px 10px 0 10px",
     flexWrap: "wrap",
     border: "1px solid var(--bg-color-ui-contrast4)",
-    borderRadius: "4px",
     marginTop: "4px"
   },
   typeFilter: {

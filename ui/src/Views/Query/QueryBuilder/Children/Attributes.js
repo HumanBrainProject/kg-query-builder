@@ -20,7 +20,7 @@ import Attribute from "./Attribute";
 
 const Attributes = ({ attributes, label, isMerge, show, onClick }) => {
 
-  if (!show) {
+  if (!show || !Array.isArray(attributes)) {
     return null;
   }
 
