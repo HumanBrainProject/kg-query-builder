@@ -600,11 +600,17 @@ export class QueryBuilderStore {
         this.resetField();
       }
       if (field.isMerge && field.parentIsRootMerge) {
-        remove(field.parent.merge, parentField => field === parentField);
+        remove(field.parent.merge, childField => field === childField);
         field.parent.isInvalid = (field.parent.merge.length < 2);
+        if (!field.parent.merge.length) {
+          field.parent.isFlattened = false;
+        }
         this.checkMergeFields(field.parent);
       } else {
-        remove(field.parent.structure, parentField => field === parentField);
+        remove(field.parent.structure, childField => field === childField);
+        if (!field.parent.structure.length) {
+          field.parent.isFlattened = false;
+        }
         const rootMerge = field.rootMerge;
         if (rootMerge) {
           this.checkMergeFields(rootMerge);
