@@ -260,12 +260,12 @@ const Field = observer(({ field }) => {
         {field.parent && !field.parent.isFlattened && (!field.isMerge || field.isRootMerge) && (
           field.alias ?
             <span className={classes.rename}>
-              &nbsp;&nbsp;<FontAwesomeIcon icon={field.isReverse?"long-arrow-alt-left":"long-arrow-alt-right"} className={field.isReverse?classes.reverseLink:classes.link} title={field.isReverse?"is reverse":null} />&nbsp;&nbsp;
+              &nbsp;&nbsp;<FontAwesomeIcon icon={field.isReverse?"long-arrow-alt-left":"long-arrow-alt-right"} className={field.isReverse?classes.reverseLink:classes.link} title={field.isReverse?"is an incoming link":null} />&nbsp;&nbsp;
               {field.alias}
             </span>
             :
             <span className={classes.defaultname}>
-              &nbsp;&nbsp;<FontAwesomeIcon icon={field.isReverse?"long-arrow-alt-left":"long-arrow-alt-right"} className={field.isReverse?classes.reverseLink:classes.link} title={field.isReverse?"is reverse":null} />&nbsp;&nbsp;
+              &nbsp;&nbsp;<FontAwesomeIcon icon={field.isReverse?"long-arrow-alt-left":"long-arrow-alt-right"} className={field.isReverse?classes.reverseLink:classes.link} title={field.isReverse?"is an incoming link":null} />&nbsp;&nbsp;
               {field.defaultAlias}
             </span>
         )}

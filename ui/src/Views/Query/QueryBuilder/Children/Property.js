@@ -54,7 +54,7 @@ const Property = ({ property, onClick }) => {
     <div className={classes.property} onClick={handleClick}>
       {property.reverse && (
         <React.Fragment>
-          <FontAwesomeIcon icon="long-arrow-alt-left" className={classes.reverseLink} title="is reverse" />&nbsp;
+          <FontAwesomeIcon icon="long-arrow-alt-left" className={classes.reverseLink} title="is an incoming link" />&nbsp;
         </React.Fragment>
       )}
       {label} - <small>{attribute}</small>
