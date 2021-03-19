@@ -17,6 +17,7 @@
 import React from "react";
 import Icon from "../../../../Components/Icon";
 import { createUseStyles } from "react-jss";
+import { observer } from "mobx-react-lite";
 
 import Property from "./Property";
 
@@ -33,10 +34,11 @@ const useStyles = createUseStyles({
   }
 });
 
-const Link = ({ link, label: prefix, onClick }) => {
+const GroupProperties = observer(({group, prefix, onClick }) => {
+
   const classes = useStyles();
 
-  const { id, label, color, properties } = link;
+  const { id, label, color, properties } = group;
 
   if (!Array.isArray(properties) || !properties.length) {
     return null;
@@ -50,6 +52,6 @@ const Link = ({ link, label: prefix, onClick }) => {
       ))}
     </div>
   );
-};
+});
 
-export default Link;
+export default GroupProperties;

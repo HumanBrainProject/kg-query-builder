@@ -15,8 +15,8 @@
 */
 
 import React from "react";
-import Icon from "../../../../Components/Icon";
 import { createUseStyles } from "react-jss";
+import { observer } from "mobx-react-lite";
 
 import Property from "./Property";
 
@@ -33,10 +33,8 @@ const useStyles = createUseStyles({
   }
 });
 
-const Attribute = ({ attribute, label: prefix, onClick }) => {
+const Properties = observer(({ properties, label, onClick }) => {
   const classes = useStyles();
-
-  const { id, label, color, properties } = attribute;
 
   if (!Array.isArray(properties) || !properties.length) {
     return null;
@@ -44,12 +42,12 @@ const Attribute = ({ attribute, label: prefix, onClick }) => {
 
   return (
     <div className={classes.container}>
-      <h5>{prefix} <Icon icon="circle" color={color}/> {label} <small> - {id}</small></h5>
+      <h5>{label}</h5>
       {properties.map(property => (
         <Property key={property.attribute + (property.reverse ? "reverse" : "")} property={property} onClick={onClick} />
       ))}
     </div>
   );
-};
+});
 
-export default Attribute;
+export default Properties;

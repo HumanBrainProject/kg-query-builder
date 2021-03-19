@@ -17,6 +17,7 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { observer } from "mobx-react-lite";
 
 import Types from "../../../Types";
 
@@ -42,7 +43,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const Property = ({ property, onClick }) => {
+const Property = observer(({ property, onClick }) => {
 
   const classes = useStyles();
 
@@ -61,6 +62,6 @@ const Property = ({ property, onClick }) => {
       <Types types={canBe} />
     </div>
   );
-};
+});
 
 export default Property;

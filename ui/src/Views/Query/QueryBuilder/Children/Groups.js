@@ -15,20 +15,21 @@
 */
 
 import React from "react";
+import { observer } from "mobx-react-lite";
 
-import Attribute from "./Attribute";
+import GroupProperties from "./GroupProperties";
 
-const Attributes = ({ attributes, label, onClick }) => {
+const Groups = observer(({ groups, prefix, onClick }) => {
 
-  if (!Array.isArray(attributes) || !attributes.length) {
+  if (!Array.isArray(groups) || !groups.length) {
     return null;
   }
 
   return (
-    attributes.map(attribute => (
-      <Attribute key={attribute.id} attribute={attribute} label={label} onClick={onClick} />
+    groups.map(group => (
+      <GroupProperties key={group.id} group={group} prefix={prefix} onClick={onClick} />
     ))
   );
-};
+});
 
-export default Attributes;
+export default Groups;

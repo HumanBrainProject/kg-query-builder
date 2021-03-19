@@ -22,8 +22,8 @@ import { Scrollbars } from "react-custom-scrollbars";
 import { useStores } from "../../../Hooks/UseStores";
 
 import Filter from "../../../Components/Filter";
-import Attributes from "./Children/Attributes";
-import Links from "./Children/Links";
+import Groups from "./Children/Groups";
+import Properties from "./Children/Properties";
 
 const useStyles = createUseStyles({
   container: {
@@ -70,11 +70,12 @@ const Children = observer(() => {
     return null;
   }
 
-  const lookupsLinks = queryBuilderStore.currentFieldLookupsLinks;
+  const lookupsCommonsAttributes = queryBuilderStore.currentFieldLookupsCommonAttributes;
   const lookupsAttributes = queryBuilderStore.currentFieldLookupsAttributes;
-  const lookupsAdvancedAttributes = queryBuilderStore.currentFieldLookupsAdvancedAttributes;
+  const lookupsCommonsLinks = queryBuilderStore.currentFieldLookupsCommonLinks;
+  const lookupsLinks = queryBuilderStore.currentFieldLookupsLinks;
 
-  if (!lookupsLinks.length && !lookupsAttributes.length && !lookupsAdvancedAttributes.length) {
+  if (!lookupsCommonsAttributes.length && !lookupsAttributes.length && !lookupsLinks.length  && !lookupsCommonsLinks.length ) {
     return null;
   }
 
@@ -95,19 +96,24 @@ const Children = observer(() => {
         <Filter className={classes.filter} value={queryBuilderStore.childrenFilterValue} placeholder="Filter properties" onChange={handleChange} />
         <div className={classes.body}>
           <Scrollbars autoHide ref={scrollRef}>
-            <Attributes
-              attributes={lookupsAttributes}
-              label="Attributes valid for"
+            <Properties
+              properties={lookupsCommonsAttributes}
+              label="Attributes"
               onClick={handleAddField}
             />
-            <Attributes
-              attributes={lookupsAdvancedAttributes}
-              label="Advanced attributes valid for"
+            <Groups
+              groups={lookupsAttributes}
+              prefix="Attributes specific to"
               onClick={handleAddField}
             />
-            <Links
-              links={lookupsLinks}
-              label="Links valid for"
+            <Properties
+              properties={lookupsCommonsLinks}
+              label="Links"
+              onClick={handleAddField}
+            />
+            <Groups
+              groups={lookupsLinks}
+              prefix="Links specific to"
               onClick={handleAddField}
             />
           </Scrollbars>

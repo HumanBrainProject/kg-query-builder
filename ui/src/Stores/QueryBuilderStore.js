@@ -116,6 +116,7 @@ export class QueryBuilderStore {
   fetchQueryError = null;
   mode = "edit";
   specifications = [];
+  includeAdvancedAttributes = false;
 
   resultSize = 20;
   resultStart = 0;
@@ -157,9 +158,11 @@ export class QueryBuilderStore {
       isFetchingQuery: observable,
       fetchQueryError: observable,
       currentFieldLookups: computed,
+      currentFieldLookupsCommonProperties: computed,
       currentFieldLookupsAttributes: computed,
-      currentFieldLookupsAdvancedAttributes: computed,
       currentFieldLookupsLinks: computed,
+      currentFieldLookupsCommonAttributes: computed,
+      currentFieldLookupsCommonLinks: computed,
       selectRootSchema: action,
       resetRootSchema: action,
       clearRootSchema: action,
@@ -222,11 +225,17 @@ export class QueryBuilderStore {
       fromLabel: observable,
       fromDescription: observable,
       mode: observable,
-      setMode: action
+      setMode: action,
+      includeAdvancedAttributes: observable,
+      toggleIncludeAdvancedAttributes: action,
     });
 
     this.transportLayer = transportLayer;
     this.rootStore = rootStore;
+  }
+
+  toggleIncludeAdvancedAttributes() {
+    this.includeAdvancedAttributes = !this.includeAdvancedAttributes;
   }
 
   get currentFieldLookups() {
@@ -258,16 +267,47 @@ export class QueryBuilderStore {
     return [];
   }
 
-  getLookupsAttributes(lookups, advanced, filter) {
-    if (!lookups || !lookups.length) {
+  get currentFieldLookupsCommonProperties() {
+    const lookups = this.currentFieldLookups;
+    if (!lookups.length) {
       return [];
     }
-    filter = filter && filter.toLowerCase();
+    const attributes = {};
+    lookups.forEach(id => {
+      const type = this.rootStore.typeStore.types[id];
+      if (type) {
+        type.properties.forEach(prop => {
+          if (attributes[prop.attribute]) {
+            attributes[prop.attribute] += 1;
+          } else {
+            attributes[prop.attribute] = 1;
+          }
+        });
+      }
+    });
+    return Object.entries(attributes).filter(([, value]) => value === lookups.length).map(([name,]) => name);
+  }
+
+  setChildrenFilterValue(value) {
+    this.childrenFilterValue = value;
+  }
+
+  get currentFieldLookupsAttributes() {
+    const lookups = this.currentFieldLookups;
+
+    if (!lookups.length) {
+      return [];
+    }
+
+    const filter = this.childrenFilterValue && this.childrenFilterValue.toLowerCase();
+    const commonProps = this.currentFieldLookupsCommonProperties;
+
     return lookups.reduce((acc, id) => {
       const type = this.rootStore.typeStore.types[id];
       if (type) {
         const properties = type.properties.filter(prop => (!prop.canBe || !prop.canBe.length) &&
-                                                          ((advanced && prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) || (!advanced && !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))) &&
+                                                          !commonProps.includes(prop.attribute) &&
+                                                          ((this.includeAdvancedAttributes && prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) || (!this.includeAdvancedAttributes && !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))) &&
                                                           (!filter || !prop.label || prop.label.toLowerCase().includes(filter)));
         if (properties.length) {
           acc.push({
@@ -282,15 +322,20 @@ export class QueryBuilderStore {
     }, []);
   }
 
-  getLookupsLinks(lookups, filter) {
-    if (!lookups || !lookups.length) {
+  get currentFieldLookupsLinks() {
+    const lookups = this.currentFieldLookups;
+
+    if (!lookups.length) {
       return [];
     }
-    filter = filter && filter.toLowerCase();
+
+    const filter = this.childrenFilterValue && this.childrenFilterValue.toLowerCase();
+    const commonProps = this.currentFieldLookupsCommonProperties;
+
     return lookups.reduce((acc, id) => {
       const type = this.rootStore.typeStore.types[id];
       if (type) {
-        const properties = type.properties.filter(prop => prop.canBe && !!prop.canBe.length && (!filter || !prop.label || prop.label.toLowerCase().includes(filter)));
+        const properties = type.properties.filter(prop => prop.canBe && !!prop.canBe.length && !commonProps.includes(prop.attribute) && (!filter || !prop.label || prop.label.toLowerCase().includes(filter)));
         if (properties.length) {
           acc.push({
             id: type.id,
@@ -304,20 +349,50 @@ export class QueryBuilderStore {
     }, []);
   }
 
-  setChildrenFilterValue(value) {
-    this.childrenFilterValue = value;
+  get currentFieldLookupsCommonAttributes() {
+    const lookups = this.currentFieldLookups;
+
+    if (!lookups.length) {
+      return [];
+    }
+
+    const filter = this.childrenFilterValue && this.childrenFilterValue.toLowerCase();
+    const commonProps = this.currentFieldLookupsCommonProperties;
+
+    return Object.values(lookups.reduce((acc, id) => {
+      const type = this.rootStore.typeStore.types[id];
+      if (type) {
+        type.properties
+          .filter(prop => !acc[prop.attribute] &&
+                          (!prop.canBe || !prop.canBe.length) &&
+                          commonProps.includes(prop.attribute) &&
+                          ((this.includeAdvancedAttributes && prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) || (!this.includeAdvancedAttributes && !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))) &&
+                          (!filter || !prop.label || prop.label.toLowerCase().includes(filter)))
+          .forEach(prop => acc[prop.attribute] = prop);
+      }
+      return acc;
+    }, {})).sort((a, b) => a.label.localeCompare(b.label));
   }
 
-  get currentFieldLookupsAttributes() {
-    return this.getLookupsAttributes(this.currentFieldLookups, false, this.childrenFilterValue);
-  }
+  get currentFieldLookupsCommonLinks() {
+    const lookups = this.currentFieldLookups;
 
-  get currentFieldLookupsAdvancedAttributes() {
-    return this.getLookupsAttributes(this.currentFieldLookups, true, this.childrenFilterValue);
-  }
+    if (!lookups.length) {
+      return [];
+    }
 
-  get currentFieldLookupsLinks() {
-    return this.getLookupsLinks(this.currentFieldLookups, this.childrenFilterValue);
+    const filter = this.childrenFilterValue && this.childrenFilterValue.toLowerCase();
+    const commonProps = this.currentFieldLookupsCommonProperties;
+
+    return Object.values(lookups.reduce((acc, id) => {
+      const type = this.rootStore.typeStore.types[id];
+      if (type) {
+        type.properties
+          .filter(prop => !acc[prop.attribute] && prop.canBe && !!prop.canBe.length && commonProps.includes(prop.attribute) && (!filter || !prop.label || prop.label.toLowerCase().includes(filter)))
+          .forEach(prop => acc[prop.attribute] = prop);
+      }
+      return acc;
+    }, {})).sort((a, b) => a.label.localeCompare(b.label));
   }
 
   selectRootSchema(schema) {
@@ -603,6 +678,8 @@ export class QueryBuilderStore {
       this.savedQueryHasInconsistencies = false;
       this.resetField();
     } else {
+      const currentField = this.currentField;
+      const parentField = field.parent;
       if (isChildOfField(this.currentField, field, this.rootField)) {
         this.resetField();
       }
@@ -622,6 +699,9 @@ export class QueryBuilderStore {
         if (rootMerge) {
           this.checkMergeFields(rootMerge);
         }
+      }
+      if (field === currentField) {
+        this.selectField(parentField);
       }
     }
   }
