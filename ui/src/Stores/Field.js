@@ -89,8 +89,8 @@ class Field {
     defaultOptions.forEach(option => this.optionsMap.set(option.name, option.value));
   }
 
-  filterType(type, isSelected) {
-    if (isSelected) {
+  filterType(type, selected) {
+    if (selected) {
       if (!this.typeFilter.includes(type)) {
         this.typeFilter.push(type);
       }
@@ -103,7 +103,7 @@ class Field {
     if (!this.schema || !Array.isArray(this.schema.canBe)  || !this.schema.canBe.length) {
       return [];
     }
-    return this.schema.canBe.map(t => ({id: t, selected: this.typeFilter.length?this.typeFilter.includes(t):true}));
+    return this.schema.canBe.map(t => ({id: t, selected: this.typeFilter.includes(t)}));
   }
 
   toggleTypeFilter() {

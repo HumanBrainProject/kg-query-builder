@@ -790,13 +790,13 @@ export class QueryBuilderStore {
         "@id": relativePath,
         "reverse": true
       };
-      if (field.typeFilterEnabled && field.typeFilter.length) {
+      if (field.typeFilterEnabled) {
         path.typeFilter = field.typeFilter.map(t => ({"@id": t}));
       }
       return path;
     }
 
-    if (field.typeFilterEnabled && field.typeFilter.length) {
+    if (field.typeFilterEnabled) {
       return {
         "@id": relativePath,
         "typeFilter": field.typeFilter.map(t => ({"@id": t}))
