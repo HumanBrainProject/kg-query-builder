@@ -86,6 +86,7 @@ import {faSitemap} from "@fortawesome/free-solid-svg-icons/faSitemap";
 import {faTools} from "@fortawesome/free-solid-svg-icons/faTools";
 import {faPlay} from "@fortawesome/free-solid-svg-icons/faPlay";
 import {faTag} from "@fortawesome/free-solid-svg-icons/faTag";
+import {faFilter} from "@fortawesome/free-solid-svg-icons/faFilter";
 
 library.add(
   faUser,
@@ -156,5 +157,6 @@ library.add(
   faSitemap,
   faTools,
   faPlay,
-  faTag
+  faTag,
+  faFilter
 );

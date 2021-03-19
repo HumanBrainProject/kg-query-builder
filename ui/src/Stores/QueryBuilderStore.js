@@ -160,9 +160,6 @@ export class QueryBuilderStore {
       currentFieldLookupsAttributes: computed,
       currentFieldLookupsAdvancedAttributes: computed,
       currentFieldLookupsLinks: computed,
-      currentFieldParentLookups: computed,
-      currentFieldParentLookupsAttributes: computed,
-      currentFieldParentLookupsLinks: computed,
       selectRootSchema: action,
       resetRootSchema: action,
       clearRootSchema: action,
@@ -232,6 +229,35 @@ export class QueryBuilderStore {
     this.rootStore = rootStore;
   }
 
+  get currentFieldLookups() {
+    const field = this.currentField;
+    if (!field) {
+      return [];
+    }
+    if (field.isRootMerge && field !== this.rootField) {
+      if (field.parent) {
+        const lookups = field.parent.lookups;
+        if (field.parent.typeFilterEnabled) {
+          return lookups.filter(type => field.parent.typeFilter.includes(type));
+        }
+        return lookups;
+      }
+      return [];
+    }
+
+    if (!field.isFlattened ||
+                (field.isMerge &&
+                  (field.isRootMerge ||
+                    (!field.isRootMerge && (!field.structure || !field.structure.length))))) {
+      const lookups = field.lookups;
+      if (field.typeFilterEnabled) {
+        return lookups.filter(type => field.typeFilter.includes(type));
+      }
+      return lookups;
+    }
+    return [];
+  }
+
   getLookupsAttributes(lookups, advanced, filter) {
     if (!lookups || !lookups.length) {
       return [];
@@ -282,10 +308,6 @@ export class QueryBuilderStore {
     this.childrenFilterValue = value;
   }
 
-  get currentFieldLookups() {
-    return this.currentField?this.currentField.lookups:[];
-  }
-
   get currentFieldLookupsAttributes() {
     return this.getLookupsAttributes(this.currentFieldLookups, false, this.childrenFilterValue);
   }
@@ -296,21 +318,6 @@ export class QueryBuilderStore {
 
   get currentFieldLookupsLinks() {
     return this.getLookupsLinks(this.currentFieldLookups, this.childrenFilterValue);
-  }
-
-  get currentFieldParentLookups() {
-    if (!this.currentField || !this.currentField.parent) {
-      return [];
-    }
-    return this.currentField.parent.lookups;
-  }
-
-  get currentFieldParentLookupsAttributes() {
-    return this.getLookupsAttributes(this.currentFieldParentLookups, false, this.childrenFilterValue);
-  }
-
-  get currentFieldParentLookupsLinks() {
-    return this.getLookupsLinks(this.currentFieldParentLookups, this.childrenFilterValue);
   }
 
   selectRootSchema(schema) {

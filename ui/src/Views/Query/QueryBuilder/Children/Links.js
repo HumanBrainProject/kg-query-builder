@@ -18,15 +18,15 @@ import React from "react";
 
 import Link from "./Link";
 
-const Links = ({ links, label, isMerge, show, onClick }) => {
+const Links = ({ links, label, onClick }) => {
 
-  if (!show || !Array.isArray(links)) {
+  if (!Array.isArray(links) || !links.length) {
     return null;
   }
 
   return (
     links.map(link => (
-      <Link key={link.id} link={link} label={label} isMerge={isMerge} onClick={onClick} />
+      <Link key={link.id} link={link} label={label} onClick={onClick} />
     ))
   );
 };

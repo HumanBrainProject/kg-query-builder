@@ -18,15 +18,15 @@ import React from "react";
 
 import Attribute from "./Attribute";
 
-const Attributes = ({ attributes, label, isMerge, show, onClick }) => {
+const Attributes = ({ attributes, label, onClick }) => {
 
-  if (!show || !Array.isArray(attributes)) {
+  if (!Array.isArray(attributes) || !attributes.length) {
     return null;
   }
 
   return (
     attributes.map(attribute => (
-      <Attribute key={attribute.id} attribute={attribute} label={label} isMerge={isMerge} onClick={onClick} />
+      <Attribute key={attribute.id} attribute={attribute} label={label} onClick={onClick} />
     ))
   );
 };

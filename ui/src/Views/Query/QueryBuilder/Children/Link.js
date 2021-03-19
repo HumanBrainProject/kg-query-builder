@@ -29,18 +29,11 @@ const useStyles = createUseStyles({
         color: "var(--ft-color-quiet)",
         fontStyle: "italic"
       }
-    },
-    "& .merge": {
-      "& h5": {
-        "& strong": {
-          color: "greenyellow"
-        }
-      }
     }
   }
 });
 
-const Link = ({ link, label: prefix, isMerge=false, onClick }) => {
+const Link = ({ link, label: prefix, onClick }) => {
   const classes = useStyles();
 
   const { id, label, color, properties } = link;
@@ -50,8 +43,8 @@ const Link = ({ link, label: prefix, isMerge=false, onClick }) => {
   }
 
   return (
-    <div className={`${classes.container} ${isMerge?"merge":""}`}>
-      <h5>{isMerge?(<strong>Merge</strong> ):""}{prefix} <Icon icon="circle" color={color}/> {label} <small> - {id}</small></h5>
+    <div className={classes.container}>
+      <h5>{prefix} <Icon icon="circle" color={color}/> {label} <small> - {id}</small></h5>
       {properties.map(property => (
         <Property key={property.attribute + (property.reverse ? "reverse" : "")} property={property} onClick={onClick} />
       ))}

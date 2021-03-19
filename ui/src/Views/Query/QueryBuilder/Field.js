@@ -154,14 +154,21 @@ const useStyles = createUseStyles({
   reverseLink: {
     color: "greenyellow",
     transform: "translateY(1px)"
+  },
+  typeFilter: {
+    transform: "scale(0.9) translateY(1px)",
+    color: "lightskyblue"
   }
 });
 
 const FieldTypes = observer(({ field}) => {
+
+  const classes = useStyles();
+
   if (field.typeFilterEnabled && field.typeFilter && field.typeFilter.length) {
     return (
       <React.Fragment>
-        &nbsp;( <Types types={field.typeFilter} /> )
+        &nbsp;(&nbsp;<FontAwesomeIcon icon="filter" className={classes.typeFilter} title="filtered types" />&nbsp;<Types types={field.typeFilter} />&nbsp;)
       </React.Fragment>
     );
   }
@@ -169,7 +176,7 @@ const FieldTypes = observer(({ field}) => {
   if(field.schema.canBe && !!field.schema.canBe.length) {
     return (
       <React.Fragment>
-        &nbsp;( <Types types={field.schema.canBe} /> )
+        &nbsp;(&nbsp;<Types types={field.schema.canBe} />&nbsp;)
       </React.Fragment>);
   }
   return null;
