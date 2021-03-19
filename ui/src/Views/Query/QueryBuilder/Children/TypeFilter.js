@@ -38,15 +38,25 @@ const useStyles = createUseStyles({
   typeFilter: {
     display: "inline-block",
     border: "1px solid var(--bg-color-ui-contrast4)",
-    borderRadius: "10px",
-    padding: "10px",
+    borderRadius: "20px",
+    padding: "4px 10px 8px 10px",
     float: "left",
     marginRight: "10px",
-    marginBottom: "10px"
+    marginBottom: "10px",
+    cursor: "pointer",
+    maxHeight: "44px",
+    minHeight: "44px",
+    "-webkitTouchCallout": "none",
+    userSelect: "none",
+    transition: "color .3s ease-in-out, border-color .3s ease-in-out",
+    "&.selected, &:hover": {
+      color: "var(--ft-color-loud)",
+      borderColor: "var(--ft-color-loud)"
+    }
   },
   toggle: {
     display: "inline-block",
-    paddingLeft: "4px"
+    paddingLeft: "6px"
   },
   toggleTypeFilter: {
     display: "inline-block",
@@ -62,10 +72,12 @@ const TypeFilterItem = ({ type, isSelected, onClick }) => {
 
   const classes = useStyles();
 
-  const handleOnClick = (name, value) => onClick(name, !!value);
+  const handleOnClick = () => typeof onClick === "function" && onClick(type, !isSelected);
+
+  const handleToggleClick = (name, value) => typeof onClick === "function" && onClick(name, !!value);
 
   return(
-    <div className={classes.typeFilter}>
+    <div className={`${classes.typeFilter} ${isSelected?"selected":""}`} onClick={handleOnClick} >
       <Type type={type} />
       <div className={classes.toggle}>
         <Toggle
@@ -74,7 +86,7 @@ const TypeFilterItem = ({ type, isSelected, onClick }) => {
             value: isSelected?true:undefined
           }}
           show={true}
-          onChange={handleOnClick} />
+          onChange={handleToggleClick} />
       </div>
     </div>
   );
