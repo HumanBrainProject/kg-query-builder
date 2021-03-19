@@ -157,6 +157,24 @@ const useStyles = createUseStyles({
   }
 });
 
+const FieldTypes = observer(({ field}) => {
+  if (field.typeFilterEnabled && field.typeFilter && field.typeFilter.length) {
+    return (
+      <React.Fragment>
+        &nbsp;( <Types types={field.typeFilter} /> )
+      </React.Fragment>
+    );
+  }
+
+  if(field.schema.canBe && !!field.schema.canBe.length) {
+    return (
+      <React.Fragment>
+        &nbsp;( <Types types={field.schema.canBe} /> )
+      </React.Fragment>);
+  }
+  return null;
+});
+
 const Field = observer(({ field }) => {
 
   const classes = useStyles();
@@ -203,11 +221,8 @@ const Field = observer(({ field }) => {
             </span>
             {field.parent?
               <React.Fragment>
-                &nbsp;&nbsp;{field.schema.label}{field.schema.canBe && !!field.schema.canBe.length && (
-                  <React.Fragment>
-                    &nbsp;( <Types types={field.schema.canBe} /> )
-                  </React.Fragment>
-                )}
+                &nbsp;&nbsp;{field.schema.label}
+                <FieldTypes field={field} />
               </React.Fragment>
               :
               <React.Fragment>
@@ -228,10 +243,8 @@ const Field = observer(({ field }) => {
             field.parent?
               <React.Fragment>
                 {field.schema.label}
-                {!field.isRootMerge && field.schema.canBe && !!field.schema.canBe.length && (
-                  <React.Fragment>
-                    &nbsp;( <Types types={field.schema.canBe} /> )
-                  </React.Fragment>
+                {!field.isRootMerge && (
+                  <FieldTypes field={field} />
                 )}
               </React.Fragment>
               :

@@ -24,7 +24,6 @@ import { useStores } from "../../../Hooks/UseStores";
 import Filter from "../../../Components/Filter";
 import Attributes from "./Children/Attributes";
 import Links from "./Children/Links";
-import TypeFilter from "./Children/TypeFilter";
 
 const useStyles = createUseStyles({
   container: {
@@ -44,18 +43,9 @@ const useStyles = createUseStyles({
   panel: {
     position: "relative",
     display: "grid",
-    gridTemplateRows: "auto auto 1fr",
+    gridTemplateRows: "auto 1fr",
     border: "1px solid rgb(108, 117, 125)",
-    paddingTop: "15px",
-    height: "calc(100% - 25px)",
-    "&:after": {
-      content: "\"Properties\"",
-      position: "absolute",
-      top: "-11px",
-      left: "5px",
-      backgroundColor: "#282828",
-      padding: "0 5px"
-    }
+    height: "calc(100% - 25px)"
   },
   filter: {
     border: 0
@@ -101,7 +91,6 @@ const Children = observer(() => {
   return (
     <div className={classes.container}>
       <div className={classes.panel}>
-        <div><TypeFilter /></div>
         <Filter className={classes.filter} value={queryBuilderStore.childrenFilterValue} placeholder="Filter properties" onChange={handleChange} />
         <div className={classes.body}>
           <Scrollbars autoHide ref={scrollRef}>

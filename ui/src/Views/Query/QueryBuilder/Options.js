@@ -24,6 +24,7 @@ import Name from "./Options/Name";
 import Flatten from "./Options/Flatten";
 import AddMergeButton from "./Options/AddMergeButton";
 import FieldOptions from "./Options/Options";
+import TypeFilter from "./Options/TypeFilter";
 
 const useStyles = createUseStyles({
   container: {
@@ -90,6 +91,7 @@ const Options = observer(() => {
         }
         onClick={handleAddMergeField}
       />
+      <TypeFilter />
     </div>
   );
 });

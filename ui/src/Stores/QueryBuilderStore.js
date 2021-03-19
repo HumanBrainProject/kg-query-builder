@@ -796,13 +796,13 @@ export class QueryBuilderStore {
         "@id": relativePath,
         "reverse": true
       };
-      if (field.typeFilterEnabled) {
+      if (field.typeFilterEnabled && field.typeFilter.length) {
         path.typeFilter = field.typeFilter.map(t => ({"@id": t}));
       }
       return path;
     }
 
-    if (field.typeFilterEnabled) {
+    if (field.typeFilterEnabled && field.typeFilter.length) {
       return {
         "@id": relativePath,
         "typeFilter": field.typeFilter.map(t => ({"@id": t}))
@@ -871,8 +871,11 @@ export class QueryBuilderStore {
           field = new Field(property, parentField);
           field.isUnknown = isUnknown;
           field.isFlattened = isFlattened;
-          field.typeFilterEnabled = Array.isArray(typeFilter);
-          field.typeFilter = Array.isArray(typeFilter)?typeFilter.map(t => typeof t === "object" && t["@id"]).filter(t => t):[];
+          const validTypeFilter = Array.isArray(typeFilter)?typeFilter.map(t => typeof t === "object" && t["@id"]).filter(t => t):[];
+          if (validTypeFilter.length) {
+            field.typeFilterEnabled = true;
+            field.typeFilter = validTypeFilter;
+          }
         }
 
         if (jsonField.merge) {

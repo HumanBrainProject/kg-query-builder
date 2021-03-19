@@ -24,8 +24,7 @@ import Toggle from "../../../../Components/Toggle";
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
-    padding: "5px 15px 15px 15px"
+    position: "relative"
   },
   panel: {
     display: "flex",
@@ -39,13 +38,13 @@ const useStyles = createUseStyles({
     display: "inline-block",
     border: "1px solid var(--bg-color-ui-contrast4)",
     borderRadius: "20px",
-    padding: "4px 10px 8px 10px",
+    padding: "7px 4px 7px 10px",
     float: "left",
     marginRight: "10px",
     marginBottom: "10px",
     cursor: "pointer",
-    maxHeight: "44px",
-    minHeight: "44px",
+    maxHeight: "40px",
+    minHeight: "40px",
     "-webkitTouchCallout": "none",
     userSelect: "none",
     transition: "color .3s ease-in-out, border-color .3s ease-in-out",
@@ -57,14 +56,6 @@ const useStyles = createUseStyles({
   toggle: {
     display: "inline-block",
     paddingLeft: "6px"
-  },
-  toggleTypeFilter: {
-    display: "inline-block",
-    paddingRight: "10px",
-    transform: "translateY(-1px)",
-    "& + span": {
-      fontWeight: "bold"
-    }
   }
 });
 
@@ -108,8 +99,9 @@ const TypeFilter = observer(() => {
 
   return (
     <div className={classes.container}>
-      <div className={classes.toggleTypeFilter}>
+      <div>
         <Toggle
+          label="Type Filter"
           option={{
             name: "Type Filter",
             value: queryBuilderStore.currentField.typeFilterEnabled?true:undefined
@@ -117,7 +109,6 @@ const TypeFilter = observer(() => {
           show={true}
           onChange={handleToggleTypeFilter} />
       </div>
-      <span>Type Filter</span>
       {queryBuilderStore.currentField.typeFilterEnabled && (
         <div className={classes.panel}>
           {queryBuilderStore.currentField.types.map(type =>

@@ -26,15 +26,17 @@ const useStyles = createUseStyles({
       marginBottom: 0
     }
   },
+  toggle: {
+    display: "inline-block"
+  },
   optionLabel: {
+    display: "inline-block",
     fontWeight: "bold",
     marginBottom: "5px",
+    marginLeft: "5px",
     "& small": {
       fontWeight: "normal",
       fontStyle: "italic"
-    },
-    "& strong": {
-      color: "var(--ft-color-loud)"
     }
   }
 });
@@ -54,16 +56,16 @@ const Toggle = ({ option, label, comment, show, onChange }) => {
 
   return (
     <div className={classes.option}>
-      <div className={classes.optionLabel}>
-        {label}{comment && (
-          <small>({comment})</small>
-        )}
-      </div>
-      <div>
+      <div className={classes.toggle}>
         <MultiToggle selectedValue={value} onChange={handleChange}>
           <MultiToggle.Toggle color={"var(--ft-color-loud)"} icon={"check"} value={true} />
           <MultiToggle.Toggle color={"var(--ft-color-loud)"} icon={"times"} value={undefined} />
         </MultiToggle>
+      </div>
+      <div className={classes.optionLabel}>
+        {label}{comment && (
+          <small>({comment})</small>
+        )}
       </div>
     </div>
   );
