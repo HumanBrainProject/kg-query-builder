@@ -24,6 +24,7 @@ import { useStores } from "../../../Hooks/UseStores";
 import Filter from "../../../Components/Filter";
 import Groups from "./Children/Groups";
 import Properties from "./Children/Properties";
+import Toggle from "../../../Components/Toggle";
 
 const useStyles = createUseStyles({
   container: {
@@ -43,7 +44,7 @@ const useStyles = createUseStyles({
   panel: {
     position: "relative",
     display: "grid",
-    gridTemplateRows: "auto 1fr",
+    gridTemplateRows: "auto 1fr auto",
     border: "1px solid rgb(108, 117, 125)",
     height: "calc(100% - 25px)"
   },
@@ -52,6 +53,10 @@ const useStyles = createUseStyles({
   },
   body: {
     padding: "0 10px 10px 10px",
+    borderTop: "1px solid var(--bg-color-ui-contrast4)"
+  },
+  advancedPropertiesToggle: {
+    padding: "10px",
     borderTop: "1px solid var(--bg-color-ui-contrast4)"
   }
 });
@@ -84,12 +89,14 @@ const Children = observer(() => {
     }
   };
 
-  const handleChange = value => queryBuilderStore.setChildrenFilterValue(value);
+  const handleChildrenFilterChange = value => queryBuilderStore.setChildrenFilterValue(value);
+
+  const handleToggleAdvancedProperties = () => queryBuilderStore.toggleIncludeAdvancedAttributes();
 
   return (
     <div className={classes.container}>
       <div className={classes.panel}>
-        <Filter className={classes.filter} value={queryBuilderStore.childrenFilterValue} placeholder="Filter properties" onChange={handleChange} />
+        <Filter className={classes.filter} value={queryBuilderStore.childrenFilterValue} placeholder="Filter properties" onChange={handleChildrenFilterChange} />
         <div className={classes.body}>
           <Scrollbars autoHide ref={scrollRef}>
             <Properties
@@ -113,6 +120,16 @@ const Children = observer(() => {
               onClick={handleAddField}
             />
           </Scrollbars>
+        </div>
+        <div className={classes.advancedPropertiesToggle} >
+          <Toggle
+            label="Show advanced properties"
+            option={{
+              name: "Show advanced properties",
+              value: queryBuilderStore.includeAdvancedAttributes?true:undefined
+            }}
+            show={true}
+            onChange={handleToggleAdvancedProperties} />
         </div>
       </div>
     </div>

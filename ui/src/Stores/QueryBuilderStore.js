@@ -277,7 +277,7 @@ export class QueryBuilderStore {
     return lookups.reduce((acc, id) => {
       const type = this.rootStore.typeStore.types[id];
       if (type) {
-        const properties = type.properties.filter(prop => ((this.includeAdvancedAttributes && prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) || (!this.includeAdvancedAttributes && !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))) &&
+        const properties = type.properties.filter(prop => (this.includeAdvancedAttributes  || !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) &&
                                                           (!filter || !prop.label || prop.label.toLowerCase().includes(filter)));
         if (properties.length) {
           acc.push({
