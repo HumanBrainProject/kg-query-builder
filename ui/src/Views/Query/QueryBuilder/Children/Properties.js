@@ -44,7 +44,7 @@ const Properties = observer(({ properties, label, onClick }) => {
     <div className={classes.container}>
       <h5>{label}</h5>
       {properties.map(property => (
-        <Property key={property.attribute + (property.reverse ? "reverse" : "")} property={property} onClick={onClick} />
+        <Property key={`${property.attribute}${property.reverse?"reverse":""}`} property={property} onClick={onClick} />
       ))}
     </div>
   );

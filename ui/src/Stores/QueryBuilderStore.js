@@ -158,7 +158,8 @@ export class QueryBuilderStore {
       isFetchingQuery: observable,
       fetchQueryError: observable,
       currentFieldLookups: computed,
-      currentFieldLookupsCommonProperties: computed,
+      currentFieldFilteredPropertiesGroups: computed,
+      currentFieldFilteredCommonProperties: computed,
       currentFieldLookupsAttributes: computed,
       currentFieldLookupsLinks: computed,
       currentFieldLookupsCommonAttributes: computed,
@@ -245,11 +246,7 @@ export class QueryBuilderStore {
     }
     if (field.isRootMerge && field !== this.rootField) {
       if (field.parent) {
-        const lookups = field.parent.lookups;
-        if (field.parent.typeFilterEnabled) {
-          return lookups.filter(type => field.parent.typeFilter.includes(type));
-        }
-        return lookups;
+        return field.parent.lookups;
       }
       return [];
     }
@@ -258,56 +255,29 @@ export class QueryBuilderStore {
                 (field.isMerge &&
                   (field.isRootMerge ||
                     (!field.isRootMerge && (!field.structure || !field.structure.length))))) {
-      const lookups = field.lookups;
-      if (field.typeFilterEnabled) {
-        return lookups.filter(type => field.typeFilter.includes(type));
-      }
-      return lookups;
+      return field.lookups;
     }
     return [];
-  }
-
-  get currentFieldLookupsCommonProperties() {
-    const lookups = this.currentFieldLookups;
-    if (!lookups.length) {
-      return [];
-    }
-    const attributes = {};
-    lookups.forEach(id => {
-      const type = this.rootStore.typeStore.types[id];
-      if (type) {
-        type.properties.forEach(prop => {
-          if (attributes[prop.attribute]) {
-            attributes[prop.attribute] += 1;
-          } else {
-            attributes[prop.attribute] = 1;
-          }
-        });
-      }
-    });
-    return Object.entries(attributes).filter(([, value]) => value === lookups.length).map(([name,]) => name);
   }
 
   setChildrenFilterValue(value) {
     this.childrenFilterValue = value;
   }
 
-  get currentFieldLookupsAttributes() {
-    const lookups = this.currentFieldLookups;
+  get currentFieldFilteredPropertiesGroups() {
+    const field = this.currentField;
+    const lookups = field.typeFilterEnabled?this.currentFieldLookups.filter(type => field.typeFilter.includes(type)):this.currentFieldLookups;
 
     if (!lookups.length) {
       return [];
     }
 
     const filter = this.childrenFilterValue && this.childrenFilterValue.toLowerCase();
-    const commonProps = this.currentFieldLookupsCommonProperties;
 
     return lookups.reduce((acc, id) => {
       const type = this.rootStore.typeStore.types[id];
       if (type) {
-        const properties = type.properties.filter(prop => (!prop.canBe || !prop.canBe.length) &&
-                                                          !commonProps.includes(prop.attribute) &&
-                                                          ((this.includeAdvancedAttributes && prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) || (!this.includeAdvancedAttributes && !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))) &&
+        const properties = type.properties.filter(prop => ((this.includeAdvancedAttributes && prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) || (!this.includeAdvancedAttributes && !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))) &&
                                                           (!filter || !prop.label || prop.label.toLowerCase().includes(filter)));
         if (properties.length) {
           acc.push({
@@ -322,77 +292,71 @@ export class QueryBuilderStore {
     }, []);
   }
 
-  get currentFieldLookupsLinks() {
-    const lookups = this.currentFieldLookups;
+  get currentFieldFilteredCommonProperties() {
+    const groups = this.currentFieldFilteredPropertiesGroups;
+    if (!groups.length) {
+      return [];
+    }
+    const counters = {};
+    groups.forEach(group => {
+      group.properties.forEach(prop => {
+        const key = `${prop.attribute}${prop.reverse?":is-reverse":""}`;
+        if (!counters[key]) {
+          counters[key] = {
+            property: prop,
+            count: 0
+          };
+        }
+        counters[key].count += 1;
+      });
+    });
+    return Object.values(counters).filter(({count}) => count === groups.length).map(({property}) => property).sort((a, b) => a.label.localeCompare(b.label));
+  }
 
-    if (!lookups.length) {
+  isACurrentFieldFilteredCommonProperty(property) {
+    return this.currentFieldFilteredCommonProperties.some(prop => prop.attribute === property.attribute && prop.reverse === property.reverse);
+  }
+
+  get currentFieldLookupsAttributes() {
+    const groups = this.currentFieldFilteredPropertiesGroups;
+
+    if (!groups.length) {
       return [];
     }
 
-    const filter = this.childrenFilterValue && this.childrenFilterValue.toLowerCase();
-    const commonProps = this.currentFieldLookupsCommonProperties;
+    return groups.reduce((acc, group) => {
+      const properties = group.properties.filter(prop => (!prop.canBe || !prop.canBe.length) &&
+                                                         !this.isACurrentFieldFilteredCommonProperty(prop));
+      if (properties.length) {
+        acc.push({...group, properties: properties});
+      }
+      return acc;
+    }, []);
+  }
 
-    return lookups.reduce((acc, id) => {
-      const type = this.rootStore.typeStore.types[id];
-      if (type) {
-        const properties = type.properties.filter(prop => prop.canBe && !!prop.canBe.length && !commonProps.includes(prop.attribute) && (!filter || !prop.label || prop.label.toLowerCase().includes(filter)));
-        if (properties.length) {
-          acc.push({
-            id: type.id,
-            label: type.label,
-            color: type.color,
-            properties: properties
-          });
-        }
+  get currentFieldLookupsLinks() {
+    const groups = this.currentFieldFilteredPropertiesGroups;
+
+    if (!groups.length) {
+      return [];
+    }
+
+    return groups.reduce((acc, group) => {
+      const properties = group.properties.filter(prop => prop.canBe && !!prop.canBe.length &&
+                                                          !this.isACurrentFieldFilteredCommonProperty(prop));
+      if (properties.length) {
+        acc.push({...group, properties: properties});
       }
       return acc;
     }, []);
   }
 
   get currentFieldLookupsCommonAttributes() {
-    const lookups = this.currentFieldLookups;
-
-    if (!lookups.length) {
-      return [];
-    }
-
-    const filter = this.childrenFilterValue && this.childrenFilterValue.toLowerCase();
-    const commonProps = this.currentFieldLookupsCommonProperties;
-
-    return Object.values(lookups.reduce((acc, id) => {
-      const type = this.rootStore.typeStore.types[id];
-      if (type) {
-        type.properties
-          .filter(prop => !acc[prop.attribute] &&
-                          (!prop.canBe || !prop.canBe.length) &&
-                          commonProps.includes(prop.attribute) &&
-                          ((this.includeAdvancedAttributes && prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) || (!this.includeAdvancedAttributes && !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))) &&
-                          (!filter || !prop.label || prop.label.toLowerCase().includes(filter)))
-          .forEach(prop => acc[prop.attribute] = prop);
-      }
-      return acc;
-    }, {})).sort((a, b) => a.label.localeCompare(b.label));
+    return this.currentFieldFilteredCommonProperties.filter(prop => !prop.canBe || !prop.canBe.length);
   }
 
   get currentFieldLookupsCommonLinks() {
-    const lookups = this.currentFieldLookups;
-
-    if (!lookups.length) {
-      return [];
-    }
-
-    const filter = this.childrenFilterValue && this.childrenFilterValue.toLowerCase();
-    const commonProps = this.currentFieldLookupsCommonProperties;
-
-    return Object.values(lookups.reduce((acc, id) => {
-      const type = this.rootStore.typeStore.types[id];
-      if (type) {
-        type.properties
-          .filter(prop => !acc[prop.attribute] && prop.canBe && !!prop.canBe.length && commonProps.includes(prop.attribute) && (!filter || !prop.label || prop.label.toLowerCase().includes(filter)))
-          .forEach(prop => acc[prop.attribute] = prop);
-      }
-      return acc;
-    }, {})).sort((a, b) => a.label.localeCompare(b.label));
+    return this.currentFieldFilteredCommonProperties.filter(prop => prop.canBe && !!prop.canBe.length);
   }
 
   selectRootSchema(schema) {

@@ -20,7 +20,7 @@ import Filter from "./Filter";
 import SingleItemStrategy from "./SingleItemStrategy";
 import UnsupportedOption from "./UnsupportedOption";
 
-const Option = ({ field, rootField, lookupsLinks, option, onChange }) => {
+const Option = ({ field, rootField, option, onChange }) => {
 
   const { name, value } = option;
 
@@ -46,7 +46,7 @@ const Option = ({ field, rootField, lookupsLinks, option, onChange }) => {
         label="Sort"
         comment="enabling sort on this field will disable sort on other fields"
         show={field !== rootField
-          && !(lookupsLinks && !!lookupsLinks.length)
+              && !field.lookups.length
         }
         onChange={onChange}
       />
@@ -60,7 +60,7 @@ const Option = ({ field, rootField, lookupsLinks, option, onChange }) => {
         label="Ensure original order"
         comment="only applicable if parent field is not flattened"
         show={field !== rootField
-          && (lookupsLinks && !!lookupsLinks.length)
+          && !!field.lookups.length
           && !field.parent.isFlattened
           && (!field.isMerge || field.isRootMerge)
         }
@@ -74,7 +74,7 @@ const Option = ({ field, rootField, lookupsLinks, option, onChange }) => {
       <Filter
         filter={option.value}
         show={field !== rootField
-          && !(lookupsLinks && !!lookupsLinks.length)
+          && !field.lookups.length
         }
         onChange={onChange}
       />
@@ -86,7 +86,7 @@ const Option = ({ field, rootField, lookupsLinks, option, onChange }) => {
       <SingleItemStrategy
         strategy={option.value}
         show={field !== rootField
-          && (lookupsLinks && !!lookupsLinks.length)
+          && !!field.lookups.length
           && !field.parent.isFlattened
           && (!field.isMerge || field.isRootMerge)
         }

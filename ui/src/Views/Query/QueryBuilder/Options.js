@@ -23,7 +23,7 @@ import { useStores } from "../../../Hooks/UseStores";
 import Name from "./Options/Name";
 import Flatten from "./Options/Flatten";
 import AddMergeButton from "./Options/AddMergeButton";
-import FieldOptions from "./Options/Options";
+import Option from "./Options/Option";
 import TypeFilter from "./Options/TypeFilter";
 
 const useStyles = createUseStyles({
@@ -52,8 +52,13 @@ const Options = observer(() => {
   const { queryBuilderStore } = useStores();
 
   const field = queryBuilderStore.currentField;
+
+
+  if (!field) {
+    return null;
+  }
+
   const rootField = queryBuilderStore.rootField;
-  const lookupsLinks= queryBuilderStore.currentFieldLookupsLinks;
 
   const handleAddMergeField = e => {
     //Don't got to newly chosen field options if ctrl is pressed (or cmd)
@@ -64,21 +69,19 @@ const Options = observer(() => {
 
   const handleChangeOption = (name, value) => field.setOption(name, value);
 
-  if (!field) {
-    return null;
-  }
-
   return (
     <div className={classes.container}>
       <div className={classes.fieldOptions}>
         <Name field={field} rootField={rootField} />
-        <FieldOptions field={field} rootField={rootField} lookupsLinks={lookupsLinks} options={field.options} onChange={handleChangeOption} />
+        {field.options.map(option => (
+          <Option key={option.name} field={field} rootField={rootField} option={option} onChange={handleChangeOption} />
+        ))}
         <Flatten
           field={field}
           show={field !== rootField
-          && (lookupsLinks && !!lookupsLinks.length)
-          && field.structure.length === 1
-          && !field.isMerge
+                && !!field.lookups.length
+                && field.structure.length === 1
+                && !field.isMerge
           }
           onChange={handleChangeFlatten}
         />
@@ -86,8 +89,8 @@ const Options = observer(() => {
       <AddMergeButton
         field={field}
         show={!field.isMerge
-          && field !== rootField
-          && (lookupsLinks && !!lookupsLinks.length)
+              && field !== rootField
+              && !!field.lookups.length
         }
         onClick={handleAddMergeField}
       />

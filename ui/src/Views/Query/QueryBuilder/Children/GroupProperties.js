@@ -48,7 +48,7 @@ const GroupProperties = observer(({group, prefix, onClick }) => {
     <div className={classes.container}>
       <h5>{prefix} <Icon icon="circle" color={color}/> {label} <small> - {id}</small></h5>
       {properties.map(property => (
-        <Property key={property.attribute + (property.reverse ? "reverse" : "")} property={property} onClick={onClick} />
+        <Property key={`${property.attribute}${property.reverse?"reverse":""}`} property={property} onClick={onClick} />
       ))}
     </div>
   );

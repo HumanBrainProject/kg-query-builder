@@ -66,7 +66,7 @@ const Children = observer(() => {
 
   const field = queryBuilderStore.currentField;
 
-  if (!field) {
+  if (!field || !queryBuilderStore.currentFieldLookups.length) {
     return null;
   }
 
@@ -74,10 +74,6 @@ const Children = observer(() => {
   const lookupsAttributes = queryBuilderStore.currentFieldLookupsAttributes;
   const lookupsCommonsLinks = queryBuilderStore.currentFieldLookupsCommonLinks;
   const lookupsLinks = queryBuilderStore.currentFieldLookupsLinks;
-
-  if (!lookupsCommonsAttributes.length && !lookupsAttributes.length && !lookupsLinks.length  && !lookupsCommonsLinks.length ) {
-    return null;
-  }
 
   const handleAddField = (e, schema) => {
     //Don't got to newly chosen field options if ctrl is pressed (or cmd)

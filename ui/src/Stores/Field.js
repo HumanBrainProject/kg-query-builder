@@ -191,7 +191,7 @@ class Field {
       });
       return canBe;
     }
-    return (this.schema && this.schema.canBe && !!this.schema.canBe) ? this.schema.canBe : [];
+    return (this.schema && this.schema.canBe && !!this.schema.canBe.length) ? this.schema.canBe : [];
   }
 
   get defaultAlias() {
