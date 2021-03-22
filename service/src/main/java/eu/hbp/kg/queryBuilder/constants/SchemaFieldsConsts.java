@@ -18,4 +18,5 @@ public class SchemaFieldsConsts {
     public static final String META_INCOMING_LINKS = META + "incomingLinks";
     public static final String META_CLIENT_SPACE = META_SPACE + "clientSpace";
     public static final String META_INTERNAL_SPACE = META_SPACE + "internalSpace";
+    public static final String META_NAME_REVERSE_LINK = META + "nameForReverseLink";
 }
