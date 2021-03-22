@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class Queries {
         data.forEach(query -> {
             String queryId = getQueryId(query);
             List userList = (List<Map<String, String>>) query.get(META_USER);
-            String userId = getQueryId((Map<String, Object>)userList.get(0));
+            String userId = getQueryId((Map<String, Object>) userList.get(0));
             query.put("@id", queryId);
             query.put(META_USER, Map.of("@id", userId));
         });
@@ -121,18 +122,21 @@ public class Queries {
     }
 
     @GetMapping("/{queryId}")
-    public Map<?, ?> getQueryById(@PathVariable("queryId") String queryId) {
+    public ResponseEntity<Map<?, ?>> getQueryById(@PathVariable("queryId") String queryId) {
         Map result = serviceCall.get(
                 String.format("%s/%s/queries/%s", kgCoreEndpoint, apiVersion, queryId),
                 authContext.getAuthTokens(),
                 Map.class);
-        Map<String, Object> query = (Map<String, Object>) result.get("data");
-        String id = getQueryId(query);
-        List userList = (List<Map<String, String>>) query.get(META_USER);
-        String userId = getQueryId((Map<String, Object>)userList.get(0));
-        query.put("@id", id);
-        query.put(META_USER, Map.of("@id", userId));
-        return query;
+        if (result != null) {
+            Map<String, Object> query = (Map<String, Object>) result.get("data");
+            String id = getQueryId(query);
+            List userList = (List<Map<String, String>>) query.get(META_USER);
+            String userId = getQueryId((Map<String, Object>) userList.get(0));
+            query.put("@id", id);
+            query.put(META_USER, Map.of("@id", userId));
+            return ResponseEntity.ok(query);
+        }
+        return ResponseEntity.notFound().build();
     }
 
 
@@ -151,7 +155,7 @@ public class Queries {
     }
 
     @PutMapping("/{queryId}")
-    public void saveQuery(@RequestBody Map<?, ?> query, @PathVariable("queryId") String queryId, @RequestParam(value = "workspace", required = false)  String workspace) {
+    public void saveQuery(@RequestBody Map<?, ?> query, @PathVariable("queryId") String queryId, @RequestParam(value = "workspace", required = false) String workspace) {
         serviceCall.put(
                 String.format("%s/%s/queries/%s?space=%s", kgCoreEndpoint, apiVersion, queryId, workspace),
                 query,

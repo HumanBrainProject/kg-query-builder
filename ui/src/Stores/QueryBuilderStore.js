@@ -1417,8 +1417,6 @@ export class QueryBuilderStore {
           this.fetchQueryError = `You do not have permission to access the query with id "${queryId}"`;
           break;
         }
-        //TODO: Catch 500 on kg core and remove it from here
-        case 500:
         case 404:
         {
           // It means that the query does not exist.
