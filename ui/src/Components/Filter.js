@@ -50,7 +50,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const Filter = ({ value, placeholder="filter...", icon="search", onChange, onKeyDown }) => {
+const Filter = ({ value, className, placeholder="filter...", icon="search", onChange, onKeyDown }) => {
 
   const classes = useStyles();
 
@@ -68,10 +68,10 @@ const Filter = ({ value, placeholder="filter...", icon="search", onChange, onKey
 
   const handleChange = e => onChange(e.target.value);
 
-  const handleKeyDown = e => onKeyDown(e);
+  const handleKeyDown = e => onKeyDown && onKeyDown(e);
 
   return (
-    <div className={classes.container}>
+    <div className={`${classes.container} ${className?className:""}`}>
       <Form.Control
         ref={ref}
         className={classes.input}

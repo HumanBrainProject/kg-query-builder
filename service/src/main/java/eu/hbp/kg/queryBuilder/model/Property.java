@@ -105,10 +105,10 @@ public class Property {
         return new Property(numOfOccurennces, simpleAttributeName, attribute, label, canBe);
     }
 
-    public static Property fromIncomingLinksMap(Map d) {
+    public static Property fromIncomingLinksMap(Map d, Map propertyReverseLink) {
         String attribute = (String) (d.get(SchemaFieldsConsts.ID));
         String simpleAttributeName = extractSimpleAttributeName(attribute);
-        String label = (String) (d.get(SchemaFieldsConsts.NAME));
+        String label = propertyReverseLink.get(attribute) != null? (String) propertyReverseLink.get(attribute):(String) (d.get(SchemaFieldsConsts.NAME));
         List<Map> canBe = (List<Map>) d.get(SchemaFieldsConsts.META_SOURCE_TYPES);
         return new Property(simpleAttributeName, attribute, label, canBe, true);
     }

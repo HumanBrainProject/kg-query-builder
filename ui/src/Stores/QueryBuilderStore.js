@@ -24,6 +24,7 @@ const jsdiff = require("diff");
 
 import Field from "./Field";
 
+
 const defaultContext = {
   "@vocab": "https://core.kg.ebrains.eu/vocab/query/",
   "query": "https://schema.hbp.eu/myQuery/",
@@ -104,17 +105,18 @@ export class QueryBuilderStore {
   saveError = null;
   isRunning = false;
   runError = null;
-  showHeader = true;
-  showQueries = false;
-  showMyQueries = true;
-  showOthersQueries = true;
   saveAsMode = false;
   compareChanges = false;
+  queriesFilterValue = "";
+  childrenFilterValue = "";
   fromQueryId = null;
   fromLabel = "";
   fromDescription = "";
-
+  isFetchingQuery = false;
+  fetchQueryError = null;
+  mode = "edit";
   specifications = [];
+  includeAdvancedAttributes = false;
 
   resultSize = 20;
   resultStart = 0;
@@ -145,10 +147,6 @@ export class QueryBuilderStore {
       saveError: observable,
       isRunning: observable,
       runError: observable,
-      showHeader: observable,
-      showQueries: observable,
-      showMyQueries: observable,
-      showOthersQueries: observable,
       saveAsMode: observable,
       compareChanges: observable,
       specifications: observable,
@@ -157,13 +155,15 @@ export class QueryBuilderStore {
       result: observable.shallow,
       tableViewRoot: observable,
       currentField: observable,
+      isFetchingQuery: observable,
+      fetchQueryError: observable,
       currentFieldLookups: computed,
+      currentFieldFilteredPropertiesGroups: computed,
+      currentFieldFilteredCommonProperties: computed,
       currentFieldLookupsAttributes: computed,
-      currentFieldLookupsAdvancedAttributes: computed,
       currentFieldLookupsLinks: computed,
-      currentFieldParentLookups: computed,
-      currentFieldParentLookupsAttributes: computed,
-      currentFieldParentLookupsLinks: computed,
+      currentFieldLookupsCommonAttributes: computed,
+      currentFieldLookupsCommonLinks: computed,
       selectRootSchema: action,
       resetRootSchema: action,
       clearRootSchema: action,
@@ -177,9 +177,17 @@ export class QueryBuilderStore {
       hasChanged: computed,
       hasQueries: computed,
       hasMyQueries: computed,
+      hasMyFilteredQueries: computed,
       hasOthersQueries: computed,
+      hasOthersFilteredQueries: computed,
       myQueries: computed,
+      myFilteredQueries: computed,
       othersQueries: computed,
+      othersFilteredQueries: computed,
+      queriesFilterValue: observable,
+      setQueriesFilterValue: action,
+      childrenFilterValue: observable,
+      setChildrenFilterValue: action,
       addField: action,
       addMergeField: action,
       addMergeChildField: action,
@@ -205,10 +213,6 @@ export class QueryBuilderStore {
       setFetchQueriesError: action,
       setSaveAsMode: action,
       toggleCompareChanges: action,
-      toggleQueries: action,
-      toggleOtherQueries: action,
-      toggleMyQueries: action,
-      toggleHeader: action,
       setLabel: action,
       setWorkspace: action,
       saveQuery: action,
@@ -217,86 +221,142 @@ export class QueryBuilderStore {
       cancelDeleteQuery: action,
       fetchQueries: action,
       setDescription: action,
+      fetchQueryById: action,
       fromQueryId: observable,
       fromLabel: observable,
-      fromDescription: observable
+      fromDescription: observable,
+      mode: observable,
+      setMode: action,
+      includeAdvancedAttributes: observable,
+      toggleIncludeAdvancedAttributes: action,
     });
 
     this.transportLayer = transportLayer;
     this.rootStore = rootStore;
   }
 
-  getLookupsAttributes(lookups, advanced=false) {
-    if (!lookups || !lookups.length) {
-      return [];
-    }
-    return lookups.reduce((acc, id) => {
-      const type = this.rootStore.typeStore.types[id];
-      if (type) {
-        const properties = type.properties.filter(prop => (!prop.canBe || !prop.canBe.length) && ((advanced && prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) || (!advanced && !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))));
-        if (properties.length) {
-          acc.push({
-            id: type.id,
-            label: type.label,
-            color: type.color,
-            properties: properties
-          });
-        }
-      }
-      return acc;
-    }, []);
-  }
-
-  getLookupsLinks(lookups) {
-    if (!lookups || !lookups.length) {
-      return [];
-    }
-    return lookups.reduce((acc, id) => {
-      const type = this.rootStore.typeStore.types[id];
-      if (type) {
-        const properties = type.properties.filter(prop => prop.canBe && !!prop.canBe.length);
-        if (properties.length) {
-          acc.push({
-            id: type.id,
-            label: type.label,
-            color: type.color,
-            properties: properties
-          });
-        }
-      }
-      return acc;
-    }, []);
+  toggleIncludeAdvancedAttributes() {
+    this.includeAdvancedAttributes = !this.includeAdvancedAttributes;
   }
 
   get currentFieldLookups() {
-    return this.currentField?this.currentField.lookups:[];
+    const field = this.currentField;
+    if (!field) {
+      return [];
+    }
+    if (field.isRootMerge && field !== this.rootField) {
+      if (field.parent) {
+        return field.parent.lookups;
+      }
+      return [];
+    }
+
+    if (!field.isFlattened ||
+                (field.isMerge &&
+                  (field.isRootMerge ||
+                    (!field.isRootMerge && (!field.structure || !field.structure.length))))) {
+      return field.lookups;
+    }
+    return [];
+  }
+
+  setChildrenFilterValue(value) {
+    this.childrenFilterValue = value;
+  }
+
+  get currentFieldFilteredPropertiesGroups() {
+    const field = this.currentField;
+    const lookups = field.typeFilterEnabled?this.currentFieldLookups.filter(type => field.typeFilter.includes(type)):this.currentFieldLookups;
+
+    if (!lookups.length) {
+      return [];
+    }
+
+    const filter = this.childrenFilterValue && this.childrenFilterValue.toLowerCase();
+
+    return lookups.reduce((acc, id) => {
+      const type = this.rootStore.typeStore.types[id];
+      if (type) {
+        const properties = type.properties.filter(prop => (this.includeAdvancedAttributes  || !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) &&
+                                                          (!filter || !prop.label || prop.label.toLowerCase().includes(filter)));
+        if (properties.length) {
+          acc.push({
+            id: type.id,
+            label: type.label,
+            color: type.color,
+            properties: properties
+          });
+        }
+      }
+      return acc;
+    }, []);
+  }
+
+  get currentFieldFilteredCommonProperties() {
+    const groups = this.currentFieldFilteredPropertiesGroups;
+    if (!groups.length) {
+      return [];
+    }
+    const counters = {};
+    groups.forEach(group => {
+      group.properties.forEach(prop => {
+        const key = `${prop.attribute}${prop.reverse?":is-reverse":""}`;
+        if (!counters[key]) {
+          counters[key] = {
+            property: prop,
+            count: 0
+          };
+        }
+        counters[key].count += 1;
+      });
+    });
+    return Object.values(counters).filter(({count}) => count === groups.length).map(({property}) => property).sort((a, b) => a.label.localeCompare(b.label));
+  }
+
+  isACurrentFieldFilteredCommonProperty(property) {
+    return this.currentFieldFilteredCommonProperties.some(prop => prop.attribute === property.attribute && prop.reverse === property.reverse);
   }
 
   get currentFieldLookupsAttributes() {
-    return this.getLookupsAttributes(this.currentFieldLookups, false);
-  }
+    const groups = this.currentFieldFilteredPropertiesGroups;
 
-  get currentFieldLookupsAdvancedAttributes() {
-    return this.getLookupsAttributes(this.currentFieldLookups, true);
+    if (!groups.length) {
+      return [];
+    }
+
+    return groups.reduce((acc, group) => {
+      const properties = group.properties.filter(prop => (!prop.canBe || !prop.canBe.length) &&
+                                                         !this.isACurrentFieldFilteredCommonProperty(prop));
+      if (properties.length) {
+        acc.push({...group, properties: properties});
+      }
+      return acc;
+    }, []);
   }
 
   get currentFieldLookupsLinks() {
-    return this.getLookupsLinks(this.currentFieldLookups);
-  }
+    const groups = this.currentFieldFilteredPropertiesGroups;
 
-  get currentFieldParentLookups() {
-    if (!this.currentField || !this.currentField.parent) {
+    if (!groups.length) {
       return [];
     }
-    return this.currentField.parent.lookups;
+
+    return groups.reduce((acc, group) => {
+      const properties = group.properties.filter(prop => prop.canBe && !!prop.canBe.length &&
+                                                          !this.isACurrentFieldFilteredCommonProperty(prop));
+      if (properties.length) {
+        acc.push({...group, properties: properties});
+      }
+      return acc;
+    }, []);
   }
 
-  get currentFieldParentLookupsAttributes() {
-    return this.getLookupsAttributes(this.currentFieldParentLookups, false);
+  get currentFieldLookupsCommonAttributes() {
+    return this.currentFieldFilteredCommonProperties.filter(prop => !prop.canBe || !prop.canBe.length);
   }
 
-  get currentFieldParentLookupsLinks() {
-    return this.getLookupsLinks(this.currentFieldParentLookups);
+  get currentFieldLookupsCommonLinks() {
+    return this.currentFieldFilteredCommonProperties.filter(prop => prop.canBe && !!prop.canBe.length);
   }
 
   selectRootSchema(schema) {
@@ -320,17 +380,15 @@ export class QueryBuilderStore {
       this.isRunning = false;
       this.runError = null;
       this.saveAsMode = false;
-      this.showHeader = true;
-      this.showQueries = false;
-      this.showMyQueries = true;
-      this.showOthersQueries = true;
+      this.queriesFilterValue = "";
+      this.childrenFilterValue = "";
       this.result = null;
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
       this.workspace = this.rootStore.authStore.workspaces[0];
       this.selectField(this.rootField);
-      this.fetchQueries();
+      this.mode = "edit";
     }
   }
 
@@ -342,6 +400,7 @@ export class QueryBuilderStore {
         this.rootField = new Field(rootField.schema);
         this.selectField(this.rootField);
       }
+      this.mode = "edit";
     }
   }
 
@@ -361,22 +420,21 @@ export class QueryBuilderStore {
       this.isRunning = false;
       this.runError = null;
       this.saveAsMode = false;
-      this.showHeader = true;
-      this.showQueries = false;
-      this.showMyQueries = true;
-      this.showOthersQueries = true;
+      this.queriesFilterValue = "";
+      this.childrenFilterValue = "";
       this.result = null;
       this.rootField = null;
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
       this.resetField();
+      this.mode = "edit";
     }
   }
 
-  setAsNewQuery() {
+  setAsNewQuery(queryId) {
     if (!this.isSaving) {
-      this.queryId = null;
+      this.queryId = queryId;
       this.label = "";
       this.description = "";
       this.sourceQuery = null;
@@ -385,17 +443,16 @@ export class QueryBuilderStore {
       this.saveError = null;
       this.isRunning = false;
       this.runError = null;
-      this.showHeader = true;
       this.saveAsMode = false;
-      this.showQueries = false;
-      this.showMyQueries = true;
-      this.showOthersQueries = true;
+      this.queriesFilterValue = "";
+      this.childrenFilterValue = "";
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
+      this.mode = "edit";
     }
   }
 
@@ -419,7 +476,6 @@ export class QueryBuilderStore {
     return !this.rootField || !this.rootField.structure || !this.rootField.structure.length;
   }
 
-
   get hasQueryChanged() {
     return !isEqual(this.JSONQuery, this.JSONSourceQuery);
   }
@@ -439,8 +495,16 @@ export class QueryBuilderStore {
     return this.myQueries.length > 0;
   }
 
+  get hasMyFilteredQueries() {
+    return this.myFilteredQueries.length > 0;
+  }
+
   get hasOthersQueries() {
     return this.othersQueries.length > 0;
+  }
+
+  get hasOthersFilteredQueries() {
+    return this.othersFilteredQueries.length > 0;
   }
 
   get myQueries() {
@@ -450,11 +514,25 @@ export class QueryBuilderStore {
     return [];
   }
 
+  get myFilteredQueries() {
+    const filter = this.queriesFilterValue.toLowerCase();
+    return this.myQueries.filter(query => (query.label && query.label.toLowerCase().includes(filter)) || (query.description && query.description.toLowerCase().includes(filter)) || (query.id && query.id.toLowerCase().includes(filter)));
+  }
+
   get othersQueries() {
     if (this.rootStore.authStore.user) {
       return this.specifications.filter(spec =>  !spec.user || (spec.user.id !== this.rootStore.authStore.user.id)).sort((a, b) =>queryCompare(a, b));
     }
     return this.specifications.sort((a, b) => queryCompare(a, b));
+  }
+
+  get othersFilteredQueries() {
+    const filter = this.queriesFilterValue.toLowerCase();
+    return this.othersQueries.filter(query => (query.label && query.label.toLowerCase().includes(filter)) || (query.description && query.description.toLowerCase().includes(filter)) || (query.id && query.id.toLowerCase().includes(filter)));
+  }
+
+  setQueriesFilterValue(value) {
+    this.queriesFilterValue = value;
   }
 
   addField(schema, parent, gotoField = true) {
@@ -467,6 +545,9 @@ export class QueryBuilderStore {
       if (parent.isMerge && !parent.isRootMerge) {
         newField.isMerge = true;
         newField.isFlattened = !!newField.lookups.length;
+      }
+      if (schema.reverse) {
+        newField.isReverse = true;
       }
       if (!parent.structure || parent.structure.length === undefined) {
         parent.structure = [];
@@ -548,7 +629,7 @@ export class QueryBuilderStore {
   removeField(field) {
     if (field === this.rootField) {
       this.rootField = null;
-      this.queryId = "";
+      this.queryId = null;
       this.label = "";
       this.description = "";
       this.sourceQuery = null;
@@ -561,19 +642,30 @@ export class QueryBuilderStore {
       this.savedQueryHasInconsistencies = false;
       this.resetField();
     } else {
+      const currentField = this.currentField;
+      const parentField = field.parent;
       if (isChildOfField(this.currentField, field, this.rootField)) {
         this.resetField();
       }
       if (field.isMerge && field.parentIsRootMerge) {
-        remove(field.parent.merge, parentField => field === parentField);
+        remove(field.parent.merge, childField => field === childField);
         field.parent.isInvalid = (field.parent.merge.length < 2);
+        if (!field.parent.merge.length) {
+          field.parent.isFlattened = false;
+        }
         this.checkMergeFields(field.parent);
       } else {
-        remove(field.parent.structure, parentField => field === parentField);
+        remove(field.parent.structure, childField => field === childField);
+        if (!field.parent.structure.length) {
+          field.parent.isFlattened = false;
+        }
         const rootMerge = field.rootMerge;
         if (rootMerge) {
           this.checkMergeFields(rootMerge);
         }
+      }
+      if (field === currentField) {
+        this.selectField(parentField);
       }
     }
   }
@@ -589,11 +681,13 @@ export class QueryBuilderStore {
 
   selectField(field) {
     this.currentField = field;
+    this.childrenFilterValue = "";
     this.rootStore.typeStore.addTypesToTetch(this.currentField.lookups);
   }
 
   resetField() {
     this.currentField = null;
+    this.childrenFilterValue = "";
   }
 
   get JSONQueryFields() {
@@ -714,14 +808,7 @@ export class QueryBuilderStore {
       if (field.schema.attribute) {
         const attribute = (!attributeReg.test(field.schema.attribute) && modelReg.test(field.schema.attribute)) ? field.schema.attribute.match(modelReg)[1] : field.schema.attribute;
         const relativePath = field.schema.attributeNamespace && field.schema.simpleAttributeName ? `${field.schema.attributeNamespace}:${field.schema.simpleAttributeName}` : attribute;
-        if (field.schema.reverse) {
-          jsonField.path = {
-            "@id": relativePath,
-            "reverse": true
-          };
-        } else {
-          jsonField.path = relativePath;
-        }
+        jsonField.path = this._processPath(field, relativePath);
       }
       field.options.forEach(({ name, value }) => jsonField[name] = toJS(value));
       if (field.merge) {
@@ -733,16 +820,7 @@ export class QueryBuilderStore {
         while (field.isFlattened && field.structure[0]) {
           field = field.structure[0];
           const relativePath = field.schema.attributeNamespace && field.schema.simpleAttributeName ? `${field.schema.attributeNamespace}:${field.schema.simpleAttributeName}` : field.schema.attribute;
-          if (field.schema.reverse) {
-            jsonField.path.push(
-              {
-                "@id": relativePath,
-                "reverse": true
-              }
-            );
-          } else {
-            jsonField.path.push(relativePath);
-          }
+          jsonField.path.push(this._processPath(field, relativePath));
           if (field.structure && field.structure.length) {
             jsonField.propertyName = (topField.namespace ? topField.namespace : "query") + ":" + (topField.alias || field.schema.simpleAttributeName || field.schema.label);
           }
@@ -763,6 +841,27 @@ export class QueryBuilderStore {
     }
   }
 
+  _processPath(field, relativePath) {
+    if (field.schema.reverse) {
+      const path = {
+        "@id": relativePath,
+        "reverse": true
+      };
+      if (field.typeFilterEnabled && field.typeFilter.length) {
+        path.typeFilter = field.typeFilter.map(t => ({"@id": t}));
+      }
+      return path;
+    }
+
+    if (field.typeFilterEnabled && field.typeFilter.length) {
+      return {
+        "@id": relativePath,
+        "typeFilter": field.typeFilter.map(t => ({"@id": t}))
+      };
+    }
+    return relativePath;
+  }
+
   _processJsonSpecificationFields(parentField, jsonFields) {
     if (!jsonFields) {
       return;
@@ -779,6 +878,7 @@ export class QueryBuilderStore {
           const isFlattened = !!jsonRP && typeof jsonRP !== "string" && jsonRP.length !== undefined && jsonRP.length > 1;
           const relativePath = jsonRP && (typeof jsonRP === "string" ? jsonRP : (isFlattened ? (jsonRP[0] && (typeof jsonRP[0] === "string" ? jsonRP[0] : jsonRP[0]["@id"])) : (typeof jsonRP === "string" ? jsonRP : jsonRP["@id"])));
           const reverse = jsonRP && (typeof jsonRP === "string" ? false : (isFlattened ? (jsonRP[0] && (typeof jsonRP[0] === "string" ? false : jsonRP[0].reverse)) : (typeof jsonRP === "string" ? false : jsonRP.reverse)));
+          const typeFilter = jsonRP && (typeof jsonRP === "string" ? undefined : (isFlattened ? (jsonRP[0] && (typeof jsonRP[0] === "string" ? undefined : jsonRP[0].typeFilter)) : (typeof jsonRP === "string" ? undefined : jsonRP.typeFilter)));
           let attribute = null;
           let attributeNamespace = null;
           let simpleAttributeName = null;
@@ -822,6 +922,11 @@ export class QueryBuilderStore {
           field = new Field(property, parentField);
           field.isUnknown = isUnknown;
           field.isFlattened = isFlattened;
+          const validTypeFilter = Array.isArray(typeFilter)?typeFilter.map(t => typeof t === "object" && t["@id"]).filter(t => t):[];
+          if (validTypeFilter.length) {
+            field.typeFilterEnabled = true;
+            field.typeFilter = validTypeFilter;
+          }
         }
 
         if (jsonField.merge) {
@@ -995,11 +1100,8 @@ export class QueryBuilderStore {
     if (!this.isSaving
       && this.rootField && this.rootField.schema && this.rootField.schema.id
       && query && !query.isDeleting) {
-      this.queryId = _.uuid();
+      this.queryId = query.id;
       this.workspace = query.workspace;
-      if (this.sourceQuery !== query) { // reset
-        this.showHeader = true;
-      }
       this.sourceQuery = query;
       this.context = toJS(query.context);
       if (!this.context) {
@@ -1030,13 +1132,13 @@ export class QueryBuilderStore {
       this.isRunning = false;
       this.runError = null;
       this.saveAsMode = false;
-      this.showQueries = false;
       this.result = null;
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
       this.selectField(this.rootField);
       this.savedQueryHasInconsistencies = this.hasQueryChanged;
+      this.mode = "edit";
     }
   }
 
@@ -1131,22 +1233,6 @@ export class QueryBuilderStore {
     this.compareChanges = !this.compareChanges;
   }
 
-  toggleQueries() {
-    this.showQueries = !this.showQueries;
-  }
-
-  toggleOtherQueries() {
-    this.showOthersQueries = !this.showOthersQueries;
-  }
-
-  toggleMyQueries() {
-    this.showMyQueries = !this.showMyQueries;
-  }
-
-  toggleHeader() {
-    this.showHeader = !this.showHeader;
-  }
-
   setLabel(label) {
     this.label = label;
   }
@@ -1168,7 +1254,7 @@ export class QueryBuilderStore {
       const queryId = this.saveAsMode ? this.queryId : this.sourceQuery.id;
       const query = this.JSONQuery;
       try {
-        await this.transportLayer.saveQuery(this.workspace, queryId, query);
+        await this.transportLayer.saveQuery(queryId, query, this.workspace);
         runInAction(() => {
           if (!this.saveAsMode && this.sourceQuery && this.sourceQuery.user.id === this.rootStore.authStore.user.id) {
             this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
@@ -1179,7 +1265,7 @@ export class QueryBuilderStore {
             this.sourceQuery.meta = query.meta;
             this.sourceQuery.properties = getProperties(query);
           } else if (!this.saveAsMode) {
-            this.sourceQuery = this.specifications.find(spec => spec.id === queryId);
+            this.sourceQuery = this.findQuery(queryId);
             this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
             this.sourceQuery.description = query.meta && query.meta.description?query.meta.description:"";
             this.sourceQuery.specification = query;
@@ -1204,6 +1290,7 @@ export class QueryBuilderStore {
               deleteError: null
             };
             this.specifications.push(this.sourceQuery);
+            this.rootStore.history.push(`/queries/${queryId}/${this.mode}`);
           }
           this.saveAsMode = false;
           this.isSaving = false;
@@ -1232,7 +1319,7 @@ export class QueryBuilderStore {
     if (query && !query.isDeleting && !query.deleteError && !(query === this.sourceQuery && this.isSaving)) {
       query.isDeleting = true;
       try {
-        await this.transportLayer.deleteQuery(this.workspace, query.id);
+        await this.transportLayer.deleteQuery(query.id);
         runInAction(() => {
           query.isDeleting = false;
           if (query === this.sourceQuery) {
@@ -1270,40 +1357,20 @@ export class QueryBuilderStore {
           const response = await this.transportLayer.listQueries(this.rootField.schema.id);
           runInAction(() => {
             this.specifications = [];
-            this.showMyQueries = true;
-            this.showOthersQueries = true;
+            this.queriesFilterValue = "";
             const jsonSpecifications = response && response.data && response.data.data && response.data.data.length ? response.data.data : [];
             jsonSpecifications.forEach(async jsonSpec => {
-              let queryId = jsonSpec["@id"];
-              jsonSpec["@context"] = toJS(defaultContext);
               try {
-                const expanded = await jsonld.expand(jsonSpec);
-                const compacted = await jsonld.compact(expanded, jsonSpec["@context"]);
-                runInAction(() => {
-                  this.specifications.push({
-                    id: queryId,
-                    user: normalizeUser(jsonSpec["https://core.kg.ebrains.eu/vocab/meta/user"]),
-                    context: compacted["@context"],
-                    merge: compacted.merge,
-                    structure: compacted.structure,
-                    properties: getProperties(compacted),
-                    meta: compacted.meta,
-                    label: compacted.meta && compacted.meta.name?compacted.meta.name:"",
-                    description: compacted.meta && compacted.meta.description?compacted.meta.description:"",
-                    workspace: jsonSpec["https://core.kg.ebrains.eu/vocab/meta/space"],
-                    isDeleting: false,
-                    deleteError: null
-                  });
-                });
+                const query = await this.normalizeQuery(jsonSpec);
+                runInAction(() => this.specifications.push(query));
               } catch (e) {
                 runInAction(() => {
                   this.fetchQueriesError = `Error while trying to expand/compact JSON-LD (${e})`;
                 });
-                this.transportLayer.captureException(e);
               }
             });
             if (this.sourceQuery) {
-              const query = this.specifications.find(spec => spec.id === this.sourceQuery.id);
+              const query = this.findQuery(this.sourceQuery.id);
               if (query) {
                 this.sourceQuery = query;
               } else {
@@ -1320,6 +1387,112 @@ export class QueryBuilderStore {
             this.isFetchingQueries = false;
           });
         }
+      }
+    }
+  }
+
+  async fetchQueryById(queryId) {
+    this.isFetchingQuery = true;
+    this.fetchQueryError = null;
+    try {
+      const response = await this.transportLayer.getQuery(queryId);
+      const jsonSpecification = response && response.data ? response.data : null;
+      try{
+        const query = await this.normalizeQuery(jsonSpecification);
+        runInAction(() => this.specifications.push(query));
+      } catch (e) {
+        runInAction(() => this.fetchQueriesError = `Error while trying to expand/compact JSON-LD (${e})`);
+      }
+      runInAction(() => this.isFetchingQuery = false);
+    } catch (e) {
+      runInAction(() => {
+        const { response } = e;
+        const { status } = response;
+        const message = e.message ? e.message : e;
+        this.isFetchingQuery = false;
+        switch (status) {
+        case 401: // Unauthorized
+        case 403: // Forbidden
+        {
+          this.fetchQueryError = `You do not have permission to access the query with id "${queryId}"`;
+          break;
+        }
+        case 404:
+        {
+          // It means that the query does not exist.
+          return;
+        }
+        default: {
+          this.fetchQueryError = `Error while fetching query with id "${queryId}" (${message})`;
+        }
+        }
+      });
+    }
+  }
+
+  async normalizeQuery(jsonSpec) {
+    let queryId = jsonSpec["@id"];
+    jsonSpec["@context"] = toJS(defaultContext);
+    const expanded = await jsonld.expand(jsonSpec);
+    const compacted = await jsonld.compact(expanded, jsonSpec["@context"]);
+    return {
+      id: queryId,
+      user: normalizeUser(jsonSpec["https://core.kg.ebrains.eu/vocab/meta/user"]),
+      context: compacted["@context"],
+      merge: compacted.merge,
+      structure: compacted.structure,
+      properties: getProperties(compacted),
+      meta: compacted.meta,
+      label: compacted.meta && compacted.meta.name?compacted.meta.name:"",
+      description: compacted.meta && compacted.meta.description?compacted.meta.description:"",
+      workspace: jsonSpec["https://core.kg.ebrains.eu/vocab/meta/space"],
+      isDeleting: false,
+      deleteError: null
+    };
+  }
+
+  findQuery(id) {
+    return this.specifications.find(spec => spec.id === id);
+  }
+
+  setMode(mode) {
+    const id = (this.saveAsMode && this.sourceQuery && this.queryId !== this.sourceQuery.id)?this.sourceQuery.id:this.queryId;
+    if (["edit", "view", "execute"].includes(mode)) {
+      this.mode = mode;
+      const path = `/queries/${id}/${mode}`;
+      if (this.rootStore.history.location.pathname !== path) {
+        this.rootStore.history.push(path);
+      }
+    } else {
+      this.mode = "edit";
+      this.rootStore.history.replace(`/queries/${id}/edit`);
+    }
+  }
+
+  async selectQueryById(id, mode) {
+    let query = this.findQuery(id);
+    if(!query) {
+      await this.fetchQueryById(id);
+      query = this.findQuery(id);
+    }
+    if(query) {
+      const typeName = query.meta.type;
+      const type = this.rootStore.typeStore.types[typeName];
+      if(type) {
+        this.selectRootSchema(type);
+        this.selectQuery(query);
+        this.setMode(mode);
+      } else {
+        this.rootStore.history.replace("/");
+        this.mode = "edit";
+      }
+    } else {
+      this.mode = "edit";
+      if(this.hasRootSchema) {
+        this.setAsNewQuery(id);
+      } else {
+        this.clearRootSchema();
+        this.rootStore.history.replace("/");
       }
     }
   }

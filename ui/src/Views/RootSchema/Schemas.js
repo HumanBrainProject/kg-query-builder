@@ -15,38 +15,43 @@
 */
 
 import React from "react";
+import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
-import MultiToggleItem from "./MultiToggleItem";
+import { useStores } from "../../Hooks/UseStores";
+
+import Schema from "./Schema";
 
 const useStyles = createUseStyles({
-  container:{
-    display:"inline-grid",
-    background:"var(--bg-color-ui-contrast4)",
-    borderRadius:"20px",
-    height:"24px"
+  container: {
+    position: "relative"
+  },
+  activeSchema: {
+    "& > div": {
+      background: "var(--bg-color-ui-contrast4)",
+      "&:focus": {
+        outline: 0
+      }
+    }
   }
 });
 
-const MultiToggle = ({ children, selectedValue, onChange }) => {
+const Schemas = observer(({cursor, onKeyDown}) =>  {
 
   const classes = useStyles();
 
-  const handleSelect = value => {
-    if (typeof onChange === "function") {
-      onChange(value);
-    }
-  };
+  const { typeStore } = useStores();
 
-  const childrenWithProps = React.Children.map(children, child => child && React.cloneElement(child, { selectedValue: selectedValue, onSelect: handleSelect }));
-
-  return(
-    <div className={classes.container} style={{gridTemplateColumns:`repeat(${childrenWithProps.length}, 24px)`}}>
-      {childrenWithProps}
+  return (
+    <div className={classes.container}>
+      {typeStore.filteredWorkspaceTypeList.map((type, index) =>
+        (<div className={cursor === index ? classes.activeSchema: ""} key={type.id}>
+          <Schema key={type.id} type={type} enableFocus={cursor === index} onKeyDown={onKeyDown}/>
+        </div>)
+      )}
     </div>
   );
-};
+});
+Schemas.displayName = "Schemas";
 
-MultiToggle.Toggle = MultiToggleItem;
-
-export default MultiToggle;
+export default Schemas;

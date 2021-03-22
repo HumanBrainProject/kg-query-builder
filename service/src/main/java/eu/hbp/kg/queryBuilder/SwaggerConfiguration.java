@@ -85,7 +85,7 @@ public class SwaggerConfiguration {
 
     List<GrantType> grantTypes() {
         GrantType grantType = new ImplicitGrantBuilder()
-                .loginEndpoint(new LoginEndpoint("https://iam-dev.humanbrainproject.eu/auth/realms/hbp/protocol/openid-connect/auth"))
+                .loginEndpoint(new LoginEndpoint("https://iam-dev.ebrains.eu/auth/realms/hbp/protocol/openid-connect/auth"))
                 .build();
         return Arrays.asList(grantType);
     }

@@ -16,37 +16,38 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
+import { observer } from "mobx-react-lite";
 
-import MultiToggleItem from "./MultiToggleItem";
+import Property from "./Property";
 
 const useStyles = createUseStyles({
-  container:{
-    display:"inline-grid",
-    background:"var(--bg-color-ui-contrast4)",
-    borderRadius:"20px",
-    height:"24px"
+  container: {
+    color: "var(--ft-color-loud)",
+    "& h5": {
+      margin: "18px 0 6px 5px",
+      "& small": {
+        color: "var(--ft-color-quiet)",
+        fontStyle: "italic"
+      }
+    }
   }
 });
 
-const MultiToggle = ({ children, selectedValue, onChange }) => {
-
+const Properties = observer(({ properties, label, onClick }) => {
   const classes = useStyles();
 
-  const handleSelect = value => {
-    if (typeof onChange === "function") {
-      onChange(value);
-    }
-  };
+  if (!Array.isArray(properties) || !properties.length) {
+    return null;
+  }
 
-  const childrenWithProps = React.Children.map(children, child => child && React.cloneElement(child, { selectedValue: selectedValue, onSelect: handleSelect }));
-
-  return(
-    <div className={classes.container} style={{gridTemplateColumns:`repeat(${childrenWithProps.length}, 24px)`}}>
-      {childrenWithProps}
+  return (
+    <div className={classes.container}>
+      <h5>{label}</h5>
+      {properties.map(property => (
+        <Property key={`${property.attribute}${property.reverse?"reverse":""}`} property={property} onClick={onClick} />
+      ))}
     </div>
   );
-};
+});
 
-MultiToggle.Toggle = MultiToggleItem;
-
-export default MultiToggle;
+export default Properties;

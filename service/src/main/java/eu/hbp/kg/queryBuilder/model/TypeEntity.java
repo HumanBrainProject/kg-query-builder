@@ -77,9 +77,14 @@ public class TypeEntity {
                 .filter(p -> p instanceof Map)
                 .map(p -> Property.fromMap((Map<?, ?>) p))
                 .collect(Collectors.toList());
+        Map<String, String> propertyReverseLink = ((Collection<?>) d.get(SchemaFieldsConsts.META_PROPERTIES)).stream()
+                .filter(p -> p instanceof Map)
+                .map(p -> (Map<?, ?>) p)
+                .filter(f -> f.get(SchemaFieldsConsts.META_NAME_REVERSE_LINK) != null)
+                .collect(Collectors.toMap(k-> ((String) k.get(SchemaFieldsConsts.ID)), v-> ((String) v.get(SchemaFieldsConsts.META_NAME_REVERSE_LINK))));
         List<Property> incomingLinksProperties = ((Collection<?>) d.get(SchemaFieldsConsts.META_INCOMING_LINKS)).stream()
                 .filter(p -> p instanceof Map)
-                .map(p -> Property.fromIncomingLinksMap((Map<?, ?>) p))
+                .map(p -> Property.fromIncomingLinksMap((Map<?, ?>) p, propertyReverseLink))
                 .collect(Collectors.toList());
         properties.addAll(incomingLinksProperties);
         return new TypeEntity(id, name, color, properties);

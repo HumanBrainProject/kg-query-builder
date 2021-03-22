@@ -14,12 +14,16 @@
 *   limitations under the License.
 */
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
+import { matchPath } from "react-router-dom";
+import _  from "lodash-uuid";
 
 import { useStores } from "../Hooks/UseStores";
 
+import Tab from "./Header/Tab";
+import HomeTab from "./Header/HomeTab";
 import UserProfileTab from "./UserProfileTab";
 
 const useStyles = createUseStyles({
@@ -31,7 +35,7 @@ const useStyles = createUseStyles({
   },
   fixedTabsLeft: {
     display: "grid",
-    gridTemplateColumns: "auto 1fr"
+    gridTemplateColumns: "auto auto auto auto 1fr"
   },
   fixedTabsRight: {
     display: "grid",
@@ -67,7 +71,34 @@ const Header = observer(() => {
 
   const classes = useStyles();
 
-  const { appStore, authStore } = useStores();
+  const { appStore, history, authStore, queryBuilderStore } = useStores();
+
+  const [currentLocationPathname, setCurrentLocationPathname] = useState(history.location.pathname);
+
+  useEffect(() => {
+    const unlisten = history.listen(location => {
+      setCurrentLocationPathname(location.pathname);
+    });
+    return unlisten;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleBrowseTypes = () => {
+    queryBuilderStore.clearRootSchema();
+    history.push("/");
+  };
+
+  const handleBrowseStoredQueries = () => {
+    queryBuilderStore.resetRootSchema();
+    history.push("/queries");
+  };
+
+  const handleBuildNewQuery = () => {
+    queryBuilderStore.resetRootSchema();
+    const uuid = _.uuid();
+    queryBuilderStore.setAsNewQuery(uuid);
+    history.push(`/queries/${uuid}`);
+  };
 
   return (
     <div className={classes.container}>
@@ -77,7 +108,21 @@ const Header = observer(() => {
       </div>
       {!appStore.globalError &&
           <React.Fragment>
-            <div className={classes.fixedTabsLeft}></div>
+            <div className={classes.fixedTabsLeft}>
+              {authStore.isUserAuthorized && authStore.hasUserWorkspaces && (
+                queryBuilderStore.hasRootSchema?
+                  <React.Fragment>
+                    <Tab Component={HomeTab} current={matchPath(currentLocationPathname, { path: "/", exact: "true" })} onClick={handleBrowseTypes} label={"Select another type"} hideLabel disable={queryBuilderStore.isSaving} />
+                    <Tab icon={"search"} current={matchPath(currentLocationPathname, { path: "/queries", exact: "true" })} onClick={handleBrowseStoredQueries} hideLabel label={"Browse stored queries"} disable={queryBuilderStore.isSaving} />
+                    <Tab icon={"file"} current={false} onClick={handleBuildNewQuery} hideLabel label={"New query"} disable={queryBuilderStore.isSaving} />
+                    {queryBuilderStore.queryId && (
+                      <Tab icon={queryBuilderStore.isSaving?"circle-notch":"tag"} iconSpin={queryBuilderStore.isSaving} current={matchPath(currentLocationPathname, { path: "/queries/:id", exact: "true" })} onClose={handleBrowseStoredQueries} label={queryBuilderStore.label?queryBuilderStore.label:queryBuilderStore.queryId} />
+                    )}
+                  </React.Fragment>
+                  :
+                  <Tab icon={"home"} current={matchPath(currentLocationPathname, { path: "/", exact: "true" })} onClick={handleBrowseTypes} label={"Select a type"} hideLabel />
+              )}
+            </div>
             <div className={classes.fixedTabsRight}>
               {authStore.isAuthenticated && authStore.isUserAuthorized && (
                 <UserProfileTab className={classes.userProfileTab} size={32} />

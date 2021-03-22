@@ -46,10 +46,13 @@ class Field {
   alias = null;
   isFlattened = false;
   isMerge = false;
+  isReverse = false;
   optionsMap = new Map();
   isUnknown = null;;
   isInvalid = null;
   aliasError = null;
+  typeFilter = [];
+  typeFilterEnabled = false;
 
   constructor(schema, parent) {
     makeObservable(this, {
@@ -59,6 +62,7 @@ class Field {
       alias: observable,
       isFlattened: observable,
       isMerge: observable,
+      isReverse: observable,
       optionsMap: observable,
       isUnknown: observable,
       isInvalid: observable,
@@ -72,12 +76,43 @@ class Field {
       rootMerge: computed,
       hasMergeChild: computed,
       lookups: computed,
-      defaultAlias: computed
+      defaultAlias: computed,
+      typeFilterEnabled: observable,
+      toggleTypeFilter: action,
+      typeFilter: observable,
+      filterType: action,
+      types: computed
     });
 
     this.schema = schema;
     this.parent = parent;
     defaultOptions.forEach(option => this.optionsMap.set(option.name, option.value));
+  }
+
+  filterType(type, selected) {
+    if (selected) {
+      if (!this.typeFilter.includes(type)) {
+        this.typeFilter.push(type);
+      }
+    } else {
+      this.typeFilter = this.typeFilter.filter(t => t !== type);
+    }
+  }
+
+  get types() {
+    if (!this.schema || !Array.isArray(this.schema.canBe)  || !this.schema.canBe.length) {
+      return [];
+    }
+    return this.schema.canBe.map(t => ({id: t, selected: this.typeFilter.includes(t)}));
+  }
+
+  toggleTypeFilter() {
+    this.typeFilterEnabled = !this.typeFilterEnabled;
+    if (this.typeFilterEnabled) {
+      this.typeFilter = (!this.schema || !Array.isArray(this.schema.canBe)  || !this.schema.canBe.length)?[]:[...this.schema.canBe];
+    } else {
+      this.typeFilter = [];
+    }
   }
 
   setAlias(value) {
@@ -156,7 +191,7 @@ class Field {
       });
       return canBe;
     }
-    return (this.schema && this.schema.canBe && !!this.schema.canBe) ? this.schema.canBe : [];
+    return (this.schema && this.schema.canBe && !!this.schema.canBe.length) ? this.schema.canBe : [];
   }
 
   get defaultAlias() {

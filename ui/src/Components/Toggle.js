@@ -16,46 +16,57 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import MultiToggle from "./MultiToggle";
 
 const useStyles = createUseStyles({
-  container:{
-    textAlign:"center",
-    height:"24px",
-    lineHeight:"24px",
-    cursor:"pointer",
-    fontSize:"0.66em",
-    transition:"all .2s ease",
-    background:"none",
-    "&.selected":{
-      background:"var(--bg-color-ui-contrast1)",
-      borderRadius:"50%",
-      transform:"scale(1.12)",
-      fontSize:"0.8em",
-      /*backgroundColor:"currentColor",
-      "& svg":{
-        color:"white"
-      },*/
-      "&.noscale":{
-        transform:"scale(1)",
-      }
+  option: {
+    marginBottom: "20px",
+    "&:last-child": {
+      marginBottom: 0
+    }
+  },
+  toggle: {
+    display: "inline-block"
+  },
+  optionLabel: {
+    display: "inline-block",
+    fontWeight: "bold",
+    marginBottom: "5px",
+    marginLeft: "5px",
+    "& small": {
+      fontWeight: "normal",
+      fontStyle: "italic"
     }
   }
 });
 
-const Toggle = ({ selectedValue, value, color, icon, noscale, onSelect }) => {
+
+const Toggle = ({ option, label, comment, show, onChange }) => {
 
   const classes = useStyles();
 
-  const handleClick = () => {
-    if(typeof onSelect === "function") {
-      onSelect(value);
-    }
-  };
+  const { name, value } = option;
 
-  return(
-    <div onClick={handleClick} className={`${classes.container}${selectedValue === value?" selected":""}${noscale !== undefined?" noscale":""}`} style={{color: color}}>
-      <FontAwesomeIcon icon={icon || "dot-circle"}/>
+  const handleChange = newValue => onChange(name, newValue);
+
+  if (!show) {
+    return null;
+  }
+
+  return (
+    <div className={classes.option}>
+      <div className={classes.toggle}>
+        <MultiToggle selectedValue={value} onChange={handleChange}>
+          <MultiToggle.Toggle color={"var(--ft-color-loud)"} icon={"check"} value={true} />
+          <MultiToggle.Toggle color={"var(--ft-color-loud)"} icon={"times"} value={undefined} />
+        </MultiToggle>
+      </div>
+      <div className={classes.optionLabel}>
+        {label}{comment && (
+          <small>({comment})</small>
+        )}
+      </div>
     </div>
   );
 };
