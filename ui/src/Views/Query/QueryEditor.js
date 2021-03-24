@@ -14,11 +14,13 @@
 *   limitations under the License.
 */
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import ReactJson from "react-json-view";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import { Scrollbars } from "react-custom-scrollbars";
+import Alert from "react-bootstrap/Alert";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useStores } from "../../Hooks/UseStores";
 
@@ -29,16 +31,27 @@ const useStyles = createUseStyles({
   container: {
     position: "relative",
     display: "grid",
-    gridTemplateRows: "1fr auto",
+    gridTemplateRows: "auto 1fr auto",
     gridGap: "10px",
     height: "100%",
-    padding:"10px"
+    padding:"0 10px 10px 10px"
   },
   body:{
     color:"var(--ft-color-loud)",
     background:"var(--bg-color-ui-contrast3)",
     border: "1px solid var(--border-color-ui-contrast1)",
     padding:"10px"
+  },
+  error: {
+    cursor: "pointer",
+    "& [role=\"alert\"]": {
+      marginTop: "10px",
+      marginBottom: 0,
+      "& svg": {
+        marginRight: "4px",
+        transform: "translateY(1px)"
+      }
+    }
   }
 });
 
@@ -50,6 +63,8 @@ const QueryEditor = observer(() => {
 
   const scrollRef = useRef();
 
+  const [error, setError] = useState(null);
+
   if (!queryBuilderStore.rootField) {
     return null;
   }
@@ -59,35 +74,50 @@ const QueryEditor = observer(() => {
     return true;
   };
 
-  const handleOnAdd = ({updated_src, namespace}) => {
-    if (namespace.join("/") === ""){
-      return false;
+  const handleOnAdd = ({existing_src, updated_src, namespace}) => {
+    const path = namespace.join("/");
+    if (path === ""){
+      setError("Adding properties to the root path is forbidden.");
+      queryBuilderStore.updateQuery(existing_src);
+    } else {
+      queryBuilderStore.updateQuery(updated_src);
     }
-    queryBuilderStore.updateQuery(updated_src);
     return true;
   };
 
-  const handleOnDelete = ({updated_src, namespace, name}) => {
-    if ((namespace.join("/") === "") ||
-        (name === "type" && namespace.join("/") === "meta") ||
-        (name === "@vocab" && namespace.join("/") === "@context") ||
-        (name === "propertyName" && namespace.join("/") === "@context") ||
-        (name === "@type" && namespace.join("/") === "@context/propertyName") ||
-        (name === "@id" && namespace.join("/") === "@context/propertyName") ||
-        (name === "merge" && namespace.join("/") === "@context") ||
-        (name === "@type" && namespace.join("/") === "@context/merge") ||
-        (name === "@id" && namespace.join("/") === "@context/merge")  ||
-        (name === "path" && namespace.join("/") === "@context") ||
-        (name === "@type" && namespace.join("/") === "@context/path") ||
-        (name === "@id" && namespace.join("/") === "@context/path") ) {
-      return false;
+  const handleOnDelete = ({existing_src, updated_src, namespace, name}) => {
+    const path = namespace.join("/");
+    if ((path === "") ||
+        (name === "type" && path === "meta") ||
+        (name === "@vocab" && path === "@context") ||
+        (name === "propertyName" && path === "@context") ||
+        (name === "@type" && path === "@context/propertyName") ||
+        (name === "@id" && path === "@context/propertyName") ||
+        (name === "merge" && path === "@context") ||
+        (name === "@type" && path === "@context/merge") ||
+        (name === "@id" && path === "@context/merge")  ||
+        (name === "path" && path === "@context") ||
+        (name === "@type" && path === "@context/path") ||
+        (name === "@id" && path === "@context/path") ) {
+      setError(`Deleting ${name} of ${path} is forbidden.`);
+      queryBuilderStore.updateQuery(existing_src);
+    } else {
+      queryBuilderStore.updateQuery(updated_src);
     }
-    queryBuilderStore.updateQuery(updated_src);
     return true;
   };
+
+  const handleOnErrorClose = () => setError(null);
 
   return (
     <div className={classes.container}>
+      <div className={classes.error} onClick={handleOnErrorClose} >
+        {error && (
+          <Alert variant="danger" onClose={handleOnErrorClose} dismissible>
+            <FontAwesomeIcon icon="ban" />{error}
+          </Alert>
+        )}
+      </div>
       <div className={classes.body}>
         <Scrollbars autoHide ref={scrollRef}>
           <ReactJson collapsed={false} name={false} theme={ThemeRJV} src={queryBuilderStore.JSONQuery} onEdit={handleOnEdit} onAdd={handleOnAdd} onDelete={handleOnDelete}  />
