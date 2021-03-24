@@ -26,9 +26,12 @@ import { useStores } from "../../../Hooks/UseStores";
 
 const useStyles = createUseStyles({
   modal:{
-    width:"90%",
-    "@media screen and (min-width:1024px)": {
-      width:"900px",
+    maxWidth: "85vw",
+    "@media screen and media (min-width: 576px)": {
+      maxWidth: "85vw"
+    },
+    "@media screen and (min-width:1600px)": {
+      maxWidth: "1400px"
     },
     "& .modal-body": {
       height: "calc(95vh - 112px)",

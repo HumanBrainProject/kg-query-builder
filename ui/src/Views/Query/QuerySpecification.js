@@ -23,15 +23,21 @@ import { Scrollbars } from "react-custom-scrollbars";
 import { useStores } from "../../Hooks/UseStores";
 
 import ThemeRJV from "../../Themes/ThemeRJV";
+import Actions from "./QueryBuilder/Actions";
 
 const useStyles = createUseStyles({
-  container:{
-    position:"relative",
+  container: {
+    position: "relative",
+    display: "grid",
+    gridTemplateRows: "1fr auto",
+    gridGap: "10px",
+    height: "100%",
+    padding:"10px"
+  },
+  body:{
     color:"var(--ft-color-loud)",
     background:"var(--bg-color-ui-contrast3)",
     border: "1px solid var(--border-color-ui-contrast1)",
-    height: "calc(100% - 20px)",
-    margin:"10px",
     padding:"10px"
   }
 });
@@ -48,11 +54,46 @@ const QuerySpecification = observer(() => {
     return null;
   }
 
+  const handleOnEdit = ({updated_src}) => {
+    queryBuilderStore.updateQuery(updated_src);
+    return true;
+  };
+
+  const handleOnAdd = ({updated_src, namespace}) => {
+    if (namespace.join("/") === ""){
+      return false;
+    }
+    queryBuilderStore.updateQuery(updated_src);
+    return true;
+  };
+
+  const handleOnDelete = ({updated_src, namespace, name}) => {
+    if ((namespace.join("/") === "") ||
+        (name === "type" && namespace.join("/") === "meta") ||
+        (name === "@vocab" && namespace.join("/") === "@context") ||
+        (name === "propertyName" && namespace.join("/") === "@context") ||
+        (name === "@type" && namespace.join("/") === "@context/propertyName") ||
+        (name === "@id" && namespace.join("/") === "@context/propertyName") ||
+        (name === "merge" && namespace.join("/") === "@context") ||
+        (name === "@type" && namespace.join("/") === "@context/merge") ||
+        (name === "@id" && namespace.join("/") === "@context/merge")  ||
+        (name === "path" && namespace.join("/") === "@context") ||
+        (name === "@type" && namespace.join("/") === "@context/path") ||
+        (name === "@id" && namespace.join("/") === "@context/path") ) {
+      return false;
+    }
+    queryBuilderStore.updateQuery(updated_src);
+    return true;
+  };
+
   return (
     <div className={classes.container}>
-      <Scrollbars autoHide ref={scrollRef}>
-        <ReactJson collapsed={false} name={false} theme={ThemeRJV} src={queryBuilderStore.JSONQuery} />
-      </Scrollbars>
+      <div className={classes.body}>
+        <Scrollbars autoHide ref={scrollRef}>
+          <ReactJson collapsed={false} name={false} theme={ThemeRJV} src={queryBuilderStore.JSONQuery} onEdit={handleOnEdit} onAdd={handleOnAdd} onDelete={handleOnDelete}  />
+        </Scrollbars>
+      </div>
+      <Actions />
     </div>
   );
 });

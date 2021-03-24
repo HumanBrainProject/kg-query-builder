@@ -114,7 +114,7 @@ export class QueryBuilderStore {
   fromDescription = "";
   isFetchingQuery = false;
   fetchQueryError = null;
-  mode = "edit";
+  mode = "build";
   specifications = [];
   includeAdvancedAttributes = false;
 
@@ -202,6 +202,7 @@ export class QueryBuilderStore {
       JSONSourceQuery: computed,
       JSONQueryDiff: computed,
       selectQuery: action,
+      updateQuery: action,
       executeQuery: action,
       setResultSize: action,
       setResultStart: action,
@@ -228,7 +229,7 @@ export class QueryBuilderStore {
       mode: observable,
       setMode: action,
       includeAdvancedAttributes: observable,
-      toggleIncludeAdvancedAttributes: action,
+      toggleIncludeAdvancedAttributes: action
     });
 
     this.transportLayer = transportLayer;
@@ -388,7 +389,9 @@ export class QueryBuilderStore {
       this.fromDescription = "";
       this.workspace = this.rootStore.authStore.workspaces[0];
       this.selectField(this.rootField);
-      this.mode = "edit";
+      if (this.mode !== "build" && this.mode !== "edit") {
+        this.mode = "build";
+      }
     }
   }
 
@@ -400,7 +403,9 @@ export class QueryBuilderStore {
         this.rootField = new Field(rootField.schema);
         this.selectField(this.rootField);
       }
-      this.mode = "edit";
+      if (this.mode !== "build" && this.mode !== "edit") {
+        this.mode = "build";
+      }
     }
   }
 
@@ -428,7 +433,9 @@ export class QueryBuilderStore {
       this.fromLabel = "";
       this.fromDescription = "";
       this.resetField();
-      this.mode = "edit";
+      if (this.mode !== "build" && this.mode !== "edit") {
+        this.mode = "build";
+      }
     }
   }
 
@@ -452,7 +459,9 @@ export class QueryBuilderStore {
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
-      this.mode = "edit";
+      if (this.mode !== "build" && this.mode !== "edit") {
+        this.mode = "build";
+      }
     }
   }
 
@@ -1103,30 +1112,7 @@ export class QueryBuilderStore {
       this.queryId = query.id;
       this.workspace = query.workspace;
       this.sourceQuery = query;
-      this.context = toJS(query.context);
-      if (!this.context) {
-        this.context = toJS(defaultContext);
-      }
-      if (!this.context.query) {
-        this.context.query = defaultContext.query;
-      }
-      this.meta = toJS(query.meta);
-      if (this.meta) {
-        this.label = this.meta.name?this.meta.name:"";
-        this.description = this.meta.description?this.meta.description:"";
-        if (this.meta.responseVocab) {
-          this.defaultResponseVocab = this.meta.responseVocab;
-          this.responseVocab = this.defaultResponseVocab;
-          delete this.meta.responseVocab;
-        } else {
-          this.defaultResponseVocab = this.context.query;
-          this.responseVocab = null;
-        }
-      } else {
-        this.defaultResponseVocab = this.context.query;
-        this.responseVocab = null;
-      }
-      this.rootField = this._processJsonSpecification(toJS(this.rootField.schema), toJS(query.merge), toJS(query.structure), toJS(query.properties));
+      this.updateQuery(query);
       this.isSaving = false;
       this.saveError = null;
       this.isRunning = false;
@@ -1136,10 +1122,39 @@ export class QueryBuilderStore {
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
-      this.selectField(this.rootField);
       this.savedQueryHasInconsistencies = this.hasQueryChanged;
-      this.mode = "edit";
+      if (this.mode !== "build" && this.mode !== "edit") {
+        this.mode = "build";
+      }
     }
+  }
+
+  updateQuery(query) {
+    this.context = toJS(query.context);
+    if (!this.context) {
+      this.context = toJS(defaultContext);
+    }
+    if (!this.context.query) {
+      this.context.query = defaultContext.query;
+    }
+    this.meta = toJS(query.meta);
+    if (this.meta) {
+      this.label = this.meta.name?this.meta.name:"";
+      this.description = this.meta.description?this.meta.description:"";
+      if (this.meta.responseVocab) {
+        this.defaultResponseVocab = this.meta.responseVocab;
+        this.responseVocab = this.defaultResponseVocab;
+        delete this.meta.responseVocab;
+      } else {
+        this.defaultResponseVocab = this.context.query;
+        this.responseVocab = null;
+      }
+    } else {
+      this.defaultResponseVocab = this.context.query;
+      this.responseVocab = null;
+    }
+    this.rootField = this._processJsonSpecification(toJS(this.rootField.schema), toJS(query.merge), toJS(query.structure), toJS(query.properties));
+    this.selectField(this.rootField);
   }
 
   async executeQuery() {
@@ -1457,15 +1472,15 @@ export class QueryBuilderStore {
 
   setMode(mode) {
     const id = (this.saveAsMode && this.sourceQuery && this.queryId !== this.sourceQuery.id)?this.sourceQuery.id:this.queryId;
-    if (["edit", "view", "execute"].includes(mode)) {
+    if (["build", "edit", "execute"].includes(mode)) {
       this.mode = mode;
       const path = `/queries/${id}/${mode}`;
       if (this.rootStore.history.location.pathname !== path) {
         this.rootStore.history.push(path);
       }
     } else {
-      this.mode = "edit";
-      this.rootStore.history.replace(`/queries/${id}/edit`);
+      this.mode = "build";
+      this.rootStore.history.replace(`/queries/${id}/build`);
     }
   }
 
@@ -1484,10 +1499,14 @@ export class QueryBuilderStore {
         this.setMode(mode);
       } else {
         this.rootStore.history.replace("/");
-        this.mode = "edit";
+        if (this.mode !== "build" && this.mode !== "edit") {
+          this.mode = "build";
+        }
       }
     } else {
-      this.mode = "edit";
+      if (this.mode !== "build" && this.mode !== "edit") {
+        this.mode = "build";
+      }
       if(this.hasRootSchema) {
         this.setAsNewQuery(id);
       } else {

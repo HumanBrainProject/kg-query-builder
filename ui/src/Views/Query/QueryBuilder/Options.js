@@ -40,8 +40,7 @@ const useStyles = createUseStyles({
     }
   },
   fieldOptions: {
-    position: "relative",
-    marginTop: "10px"
+    position: "relative"
   }
 });
 

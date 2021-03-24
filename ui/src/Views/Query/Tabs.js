@@ -84,9 +84,9 @@ const Tabs = observer(() => {
 
   return (
     <div className={classes.tabs}>
-      <Tab className={classes.tab} icon="pencil-alt"  mode="edit"     active={queryBuilderStore.mode === "edit"}    onClick={setMode} title="build query" />
-      <Tab className={classes.tab} icon="eye"         mode="view"     active={queryBuilderStore.mode === "view"}    onClick={setMode} title="view query" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} />
-      <Tab className={classes.tab} icon="play"        mode="execute"  active={queryBuilderStore.mode === "execute"} onClick={setMode} title="execute query" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} />
+      <Tab className={classes.tab} icon="tools"  mode="build"    active={queryBuilderStore.mode === "build"}   onClick={setMode} title="build query" disabled={queryBuilderStore.isSaving} />
+      <Tab className={classes.tab} icon="code"   mode="edit"     active={queryBuilderStore.mode === "edit"}    onClick={setMode} title="edit query" disabled={queryBuilderStore.isSaving} />
+      <Tab className={classes.tab} icon="play"   mode="execute"  active={queryBuilderStore.mode === "execute"} onClick={setMode} title="execute query" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} />
     </div>
   );
 });

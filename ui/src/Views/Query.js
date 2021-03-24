@@ -18,6 +18,7 @@ import React, { useEffect } from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -27,7 +28,9 @@ import QuerySpecification from "./Query/QuerySpecification";
 import QueryExecution from "./Query/QueryExecution";
 import FetchingLoader from "../Components/FetchingLoader";
 import BGMessage from "../Components/BGMessage";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CompareChangesModal from "./Query/QueryBuilder/CompareChangesModal";
+import SaveError from "./Query/QueryBuilder/SaveError";
+import SavingMessage from "./Query/QueryBuilder/SavingMessage";
 
 const useStyles = createUseStyles({
   container: {
@@ -61,7 +64,7 @@ const useStyles = createUseStyles({
 
 const View = ({mode}) => {
   switch (mode) {
-  case "view":
+  case "edit":
     return(
       <QuerySpecification />
     );
@@ -69,7 +72,7 @@ const View = ({mode}) => {
     return(
       <QueryExecution />
     );
-  case "edit":
+  case "build":
   default:
     return(
       <QueryBuilder />
@@ -116,6 +119,9 @@ const Query = observer(({id, mode}) => {
         <div className={classes.body}>
           <View mode={queryBuilderStore.mode} />
         </div>
+        <SavingMessage />
+        <SaveError />
+        <CompareChangesModal />
       </div>
     );
   }

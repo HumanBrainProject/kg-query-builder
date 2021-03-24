@@ -30,7 +30,6 @@ const useStyles = createUseStyles({
   container: {
     position: "relative",
     height: "100%",
-    marginTop: "25px",
     color: "var(--ft-color-normal)",
     "& input": {
       color: "black"
@@ -39,14 +38,20 @@ const useStyles = createUseStyles({
       margin: "30px auto",
       maxWidth: "500px",
       borderTopColor: "var(--bg-color-ui-contrast4)"
+    },
+    "&.has-options": {
+      marginTop: "25px",
+      "& $panel": {
+        height: "calc(100% - 25px)"
+      }
     }
   },
   panel: {
     position: "relative",
     display: "grid",
     gridTemplateRows: "auto 1fr auto",
-    border: "1px solid rgb(108, 117, 125)",
-    height: "calc(100% - 25px)"
+    border: "1px solid var(--bg-color-ui-contrast4)",
+    height: "100%"
   },
   filter: {
     border: 0
@@ -94,7 +99,7 @@ const Children = observer(() => {
   const handleToggleAdvancedProperties = () => queryBuilderStore.toggleIncludeAdvancedAttributes();
 
   return (
-    <div className={classes.container}>
+    <div className={`${classes.container} ${queryBuilderStore.currentField === queryBuilderStore.rootField?"":"has-options"}`}>
       <div className={classes.panel}>
         <Filter className={classes.filter} value={queryBuilderStore.childrenFilterValue} placeholder="Filter properties" onChange={handleChildrenFilterChange} />
         <div className={classes.body}>

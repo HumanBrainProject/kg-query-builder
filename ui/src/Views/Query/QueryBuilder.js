@@ -23,9 +23,6 @@ import { useStores } from "../../Hooks/UseStores";
 import QueryForm from "./QueryBuilder/QueryForm";
 import Representation from "./QueryBuilder/Representation";
 import Actions from "./QueryBuilder/Actions";
-import CompareChangesModal from "./QueryBuilder/CompareChangesModal";
-import SaveError from "./QueryBuilder/SaveError";
-import SavingMessage from "./QueryBuilder/SavingMessage";
 import Options from "./QueryBuilder/Options";
 import Children from "./QueryBuilder/Children";
 
@@ -43,7 +40,6 @@ const useStyles = createUseStyles({
     position: "relative",
     display: "grid",
     gridTemplateRows: "auto 1fr auto",
-    gridTemplateColumns: "1fr",
     gridGap: "10px",
     height: "100%",
     "&:not(.hasChanged)": {
@@ -92,9 +88,6 @@ const QueryBuilder = observer(() => {
         <Options />
         <Children />
       </div>
-      <SavingMessage />
-      <SaveError />
-      <CompareChangesModal />
     </div>
   );
 });
