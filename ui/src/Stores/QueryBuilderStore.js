@@ -545,6 +545,18 @@ export class QueryBuilderStore {
   }
 
   addField(schema, parent, gotoField = true) {
+    if (!this.context["@vocab"]) {
+      this.context["@vocab"] = toJS(defaultContext["@vocab"]);
+    }
+    if (!this.context.query) {
+      this.context.query = this.responseVocab;
+    }
+    if (!this.context.propertyName) {
+      this.context.propertyName = toJS(defaultContext.propertyName);
+    }
+    if (!this.context.path) {
+      this.context.path = toJS(defaultContext.path);
+    }
     if (parent === undefined) {
       parent = this.showModalFieldChoice || this.rootField;
       this.showModalFieldChoice = null;
@@ -578,6 +590,18 @@ export class QueryBuilderStore {
       this.showModalFieldChoice = null;
     }
     if (!parent.isRootMerge && parent !== this.rootFields) {
+      if (!this.context["@vocab"]) {
+        this.context["@vocab"] = toJS(defaultContext["@vocab"]);
+      }
+      if (!this.context.query) {
+        this.context.query = this.responseVocab;
+      }
+      if (!this.context.propertyName) {
+        this.context.propertyName = toJS(defaultContext.propertyName);
+      }
+      if (!this.context.path) {
+        this.context.path = toJS(defaultContext.path);
+      }
       if (!this.context.merge) {
         this.context.merge = toJS(defaultContext.merge);
       }
@@ -620,6 +644,21 @@ export class QueryBuilderStore {
       this.showModalFieldChoice = null;
     }
     if (parent.isRootMerge) {
+      if (!this.context["@vocab"]) {
+        this.context["@vocab"] = toJS(defaultContext["@vocab"]);
+      }
+      if (!this.context.query) {
+        this.context.query = this.responseVocab;
+      }
+      if (!this.context.propertyName) {
+        this.context.propertyName = toJS(defaultContext.propertyName);
+      }
+      if (!this.context.path) {
+        this.context.path = toJS(defaultContext.path);
+      }
+      if (!this.context.merge) {
+        this.context.merge = toJS(defaultContext.merge);
+      }
       const newField = new Field(schema, parent);
       newField.isMerge = true;
       newField.isFlattened = !!newField.lookups.length;
