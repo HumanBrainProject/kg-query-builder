@@ -18,9 +18,9 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 
-import { useStores } from "../../../Hooks/UseStores";
+import { useStores } from "../../Hooks/UseStores";
 
-import FetchingLoader from "../../../Components/FetchingLoader";
+import FetchingLoader from "../../Components/FetchingLoader";
 
 const useStyles = createUseStyles({
   container: {

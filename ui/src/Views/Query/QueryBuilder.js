@@ -22,7 +22,7 @@ import { useStores } from "../../Hooks/UseStores";
 
 import QueryForm from "./QueryBuilder/QueryForm";
 import Representation from "./QueryBuilder/Representation";
-import Actions from "./QueryBuilder/Actions";
+import Actions from "./Actions";
 import Options from "./QueryBuilder/Options";
 import Children from "./QueryBuilder/Children";
 

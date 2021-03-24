@@ -20,9 +20,9 @@ import { observer } from "mobx-react-lite";
 import Modal from "react-bootstrap/Modal";
 import { Scrollbars } from "react-custom-scrollbars";
 
-import CompareChanges from "./CompareChanges";
+import CompareChanges from "./CompareChanges/CompareChanges";
 
-import { useStores } from "../../../Hooks/UseStores";
+import { useStores } from "../../Hooks/UseStores";
 
 const useStyles = createUseStyles({
   modal:{

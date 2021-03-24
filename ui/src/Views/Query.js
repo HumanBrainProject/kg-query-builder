@@ -24,13 +24,13 @@ import { useStores } from "../Hooks/UseStores";
 
 import Tabs from "./Query/Tabs";
 import QueryBuilder from "./Query/QueryBuilder";
-import QuerySpecification from "./Query/QuerySpecification";
+import QueryEditor from "./Query/QueryEditor";
 import QueryExecution from "./Query/QueryExecution";
 import FetchingLoader from "../Components/FetchingLoader";
 import BGMessage from "../Components/BGMessage";
-import CompareChangesModal from "./Query/QueryBuilder/CompareChangesModal";
-import SaveError from "./Query/QueryBuilder/SaveError";
-import SavingMessage from "./Query/QueryBuilder/SavingMessage";
+import CompareChangesModal from "./Query/CompareChangesModal";
+import SaveError from "./Query/SaveError";
+import SavingMessage from "./Query/SavingMessage";
 
 const useStyles = createUseStyles({
   container: {
@@ -66,7 +66,7 @@ const View = ({mode}) => {
   switch (mode) {
   case "edit":
     return(
-      <QuerySpecification />
+      <QueryEditor />
     );
   case "execute":
     return(

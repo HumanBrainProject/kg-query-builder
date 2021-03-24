@@ -23,7 +23,7 @@ import { Scrollbars } from "react-custom-scrollbars";
 import { useStores } from "../../Hooks/UseStores";
 
 import ThemeRJV from "../../Themes/ThemeRJV";
-import Actions from "./QueryBuilder/Actions";
+import Actions from "./Actions";
 
 const useStyles = createUseStyles({
   container: {
@@ -42,7 +42,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const QuerySpecification = observer(() => {
+const QueryEditor = observer(() => {
 
   const classes = useStyles();
 
@@ -97,6 +97,6 @@ const QuerySpecification = observer(() => {
     </div>
   );
 });
-QuerySpecification.displayName = "QuerySpecification";
+QueryEditor.displayName = "QueryEditor";
 
-export default QuerySpecification;
+export default QueryEditor;
