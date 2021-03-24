@@ -201,7 +201,7 @@ const Layout = observer(() => {
                 <div className={classes.container}>
                   <Switch>
                     <Route path="/" exact={true} component={RootSchema} />
-                    <Route path="/queries/:id" exact={true} render={props => <Query id={props.match.params.id} mode="edit" />} />
+                    <Route path="/queries/:id" exact={true} render={props => <Query id={props.match.params.id} mode="build" />} />
                     <Route path="/queries/:id/:mode" exact={true} render={props => <Query id={props.match.params.id} mode={props.match.params.mode} />} />
                     {queryBuilderStore.hasRootSchema && (
                       <Route path="/queries" exact={true} component={Queries} />
