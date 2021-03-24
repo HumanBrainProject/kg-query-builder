@@ -54,6 +54,9 @@ const useStyles = createUseStyles({
         "& .react-json-view": {
           backgroundColor: "transparent !important"
         }
+      },
+      "&:last-child": {
+        marginBottom: "10px"
       }
     }
   },
