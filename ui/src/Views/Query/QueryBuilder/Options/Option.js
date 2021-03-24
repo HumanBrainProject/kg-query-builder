@@ -53,7 +53,7 @@ const Option = ({ field, rootField, option, onChange }) => {
     );
   }
 
-  if (name === "ensure_order") {
+  if (name === "ensureOrder") {
     return (
       <Toggle
         option={option}

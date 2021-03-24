@@ -26,7 +26,7 @@ const defaultOptions = [
     value: undefined
   },
   {
-    name: "ensure_order",
+    name: "ensureOrder",
     value: undefined
   },
   {
