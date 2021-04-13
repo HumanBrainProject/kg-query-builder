@@ -40,7 +40,7 @@ const useStyles = createUseStyles({
       marginTop: "20px"
     }
   },
-  workspace: {
+  space: {
     marginTop: "20px",
     "& form-group": {
       marginBottom: 0
@@ -99,7 +99,7 @@ const QueryForm = observer(({ className }) => {
 
   const handleChangeLabel = e => queryBuilderStore.setLabel(e.target.value);
 
-  const handleChangeWorkspace = e => queryBuilderStore.setWorkspace(e.target.value);
+  const handleChangeSpace = e => queryBuilderStore.setSpace(e.target.value);
 
   const handleChangeDescription = e => queryBuilderStore.setDescription(e.target.value);
 
@@ -130,14 +130,14 @@ const QueryForm = observer(({ className }) => {
               onChange={handleChangeDescription} />
           </div>
           {queryBuilderStore.saveAsMode && (
-            <div className={classes.workspace}>
+            <div className={classes.space}>
               <Form.Group>
-                <h5>Workspace :</h5>
-                <Form.Control className={`${classes.input} ${classes.half}`} as="select" value={queryBuilderStore.workspace} onChange={handleChangeWorkspace}>
-                  {!queryBuilderStore.saveAsMode && queryBuilderStore.workspace ?
-                    <option value={queryBuilderStore.workspace} >{queryBuilderStore.workspace}</option> :
-                    authStore.workspaces.map(workspace => (
-                      <option value={workspace} key={workspace}>{workspace}</option>
+                <h5>Space :</h5>
+                <Form.Control className={`${classes.input} ${classes.half}`} as="select" value={queryBuilderStore.space} onChange={handleChangeSpace}>
+                  {!queryBuilderStore.saveAsMode && queryBuilderStore.space ?
+                    <option value={queryBuilderStore.space} >{queryBuilderStore.space}</option> :
+                    authStore.spaces.map(space => (
+                      <option value={space} key={space}>{space}</option>
                     ))
                   }
                 </Form.Control>

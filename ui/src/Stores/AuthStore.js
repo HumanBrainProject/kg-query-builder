@@ -43,11 +43,11 @@ const mapUserProfile = data => {
 export class AuthStore {
   isUserAuthorized = false;
   user = null;
-  workspaces = null;
+  spaces = null;
   isRetrievingUserProfile = false;
   userProfileError = null;
-  isRetrievingWorkspaces = false;
-  workspacesError = null;
+  isRetrievingSpaces = false;
+  spacesError = null;
   authError = null;
   authSuccess = false;
   isTokenExpired = false;
@@ -63,11 +63,11 @@ export class AuthStore {
     makeObservable(this, {
       isUserAuthorized: observable,
       user: observable,
-      workspaces: observable,
+      spaces: observable,
       isRetrievingUserProfile: observable,
       userProfileError: observable,
-      isRetrievingWorkspaces: observable,
-      workspacesError: observable,
+      isRetrievingSpaces: observable,
+      spacesError: observable,
       authError: observable,
       authSuccess: observable,
       isTokenExpired: observable,
@@ -76,12 +76,12 @@ export class AuthStore {
       isLogout: observable,
       accessToken: computed,
       isAuthenticated: computed,
-      hasWorkspaces: computed,
-      hasUserWorkspaces: computed,
-      areUserWorkspacesRetrieved: computed,
+      hasSpaces: computed,
+      hasUserSpaces: computed,
+      areUserSpacesRetrieved: computed,
       logout: action,
       retrieveUserProfile: action,
-      retrieveUserWorkspaces: action,
+      retrieveUserSpaces: action,
       initializeKeycloak: action,
       login: action,
       authenticate: action,
@@ -107,16 +107,16 @@ export class AuthStore {
     return !!this.user;
   }
 
-  get hasWorkspaces() {
-    return !!this.workspaces;
+  get hasSpaces() {
+    return !!this.spaces;
   }
 
-  get hasUserWorkspaces() {
-    return this.areUserWorkspacesRetrieved && !!this.workspaces.length;
+  get hasUserSpaces() {
+    return this.areUserSpacesRetrieved && !!this.spaces.length;
   }
 
-  get areUserWorkspacesRetrieved() {
-    return this.workspaces instanceof Array;
+  get areUserSpacesRetrieved() {
+    return this.spaces instanceof Array;
   }
 
   get firstName() {
@@ -143,7 +143,7 @@ export class AuthStore {
     this.isTokenExpired = true;
     this.isUserAuthorized = false;
     this.user = null;
-    this.workspaces = null;
+    this.spaces = null;
     this.keycloak.logout({redirectUri: `${window.location.protocol}//${window.location.host}${rootPath}/logout`});
     this.isLogout = true;
   }
@@ -176,25 +176,25 @@ export class AuthStore {
     }
   }
 
-  async retrieveUserWorkspaces() {
-    if(this.isAuthenticated && this.isUserAuthorized && !this.isRetrievingWorkspaces) {
+  async retrieveUserSpaces() {
+    if(this.isAuthenticated && this.isUserAuthorized && !this.isRetrievingSpaces) {
       try {
-        this.workspacesError = null;
-        this.isRetrievingWorkspaces = true;
-        const { data } = await this.transportLayer.getWorkspaces();
+        this.spacesError = null;
+        this.isRetrievingSpaces = true;
+        const { data } = await this.transportLayer.getSpaces();
         //throw {response: { status: 403}};
         runInAction(() => {
-          this.workspaces = data && data.data ? data.data.map(workspace => workspace["http://schema.org/name"]).sort() : [];
-          this.isRetrievingWorkspaces = false;
+          this.spaces = data && data.data ? data.data.map(space => space["http://schema.org/name"]).sort() : [];
+          this.isRetrievingSpaces = false;
         });
       } catch(e) {
         runInAction(() => {
           if (e.response && e.response.status === 403) {
-            this.workspaces = [];
-            this.isRetrievingWorkspaces = false;
+            this.spaces = [];
+            this.isRetrievingSpaces = false;
           } else {
-            this.workspacesError = e.message ? e.message : e;
-            this.isRetrievingWorkspaces = false;
+            this.spacesError = e.message ? e.message : e;
+            this.isRetrievingSpaces = false;
           }
         });
         this.transportLayer.captureException(e);

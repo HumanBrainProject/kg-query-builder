@@ -109,7 +109,7 @@ const Header = observer(() => {
       {!appStore.globalError &&
           <React.Fragment>
             <div className={classes.fixedTabsLeft}>
-              {authStore.isUserAuthorized && authStore.hasUserWorkspaces && (
+              {authStore.isUserAuthorized && authStore.hasUserSpaces && (
                 queryBuilderStore.hasRootSchema?
                   <React.Fragment>
                     <Tab Component={HomeTab} current={matchPath(currentLocationPathname, { path: "/", exact: "true" })} onClick={handleBrowseTypes} label={"Select another type"} hideLabel disable={queryBuilderStore.isSaving} />

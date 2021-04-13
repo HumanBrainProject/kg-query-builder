@@ -88,19 +88,19 @@ export class AppStore{
           }
         });
       }
-      if(this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && !this.rootStore.authStore.areUserWorkspacesRetrieved) {
+      if(this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && !this.rootStore.authStore.areUserSpacesRetrieved) {
         runInAction(() => {
-          this.initializingMessage = "Retrieving workspaces...";
+          this.initializingMessage = "Retrieving spaces...";
         });
-        await this.rootStore.authStore.retrieveUserWorkspaces();
-        if (this.rootStore.authStore.workspacesError) {
+        await this.rootStore.authStore.retrieveUserSpaces();
+        if (this.rootStore.authStore.spacesError) {
           runInAction(() => {
-            this.initializationError = this.rootStore.authStore.workspacesError;
+            this.initializationError = this.rootStore.authStore.spacesError;
             this.initializingMessage = null;
           });
         }
       }
-      if (this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && this.rootStore.authStore.areUserWorkspacesRetrieved) {
+      if (this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && this.rootStore.authStore.areUserSpacesRetrieved) {
         runInAction(() => {
           this.initializingMessage = "Retrieving types...";
         });
@@ -112,7 +112,7 @@ export class AppStore{
           });
         }
       }
-      if (this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && this.rootStore.authStore.areUserWorkspacesRetrieved && this.rootStore.typeStore.isFetched) {
+      if (this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && this.rootStore.authStore.areUserSpacesRetrieved && this.rootStore.typeStore.isFetched) {
         runInAction(() => {
           this.initializingMessage = null;
           this.isInitialized = true;

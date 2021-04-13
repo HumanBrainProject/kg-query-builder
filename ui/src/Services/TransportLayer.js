@@ -65,8 +65,8 @@ export class TransportLayer {
     return this._axios.get(API.endpoints.user());
   }
 
-  async getWorkspaces() {
-    return this._axios.get(API.endpoints.workspaces());
+  async getSpaces() {
+    return this._axios.get(API.endpoints.spaces());
   }
 
   async getTypes() {
@@ -89,8 +89,8 @@ export class TransportLayer {
     return this._axios.get(API.endpoints.getQuery(queryId));
   }
 
-  async saveQuery(queryId, query, workspace) {
-    return this._axios.put(API.endpoints.saveQuery(queryId, workspace), query);
+  async saveQuery(queryId, query, space) {
+    return this._axios.put(API.endpoints.saveQuery(queryId, space), query);
   }
 
   async deleteQuery(queryId) {

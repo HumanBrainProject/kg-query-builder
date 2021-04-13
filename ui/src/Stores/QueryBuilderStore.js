@@ -93,7 +93,7 @@ export class QueryBuilderStore {
   responseVocab = null;
   queryId = null;
   label = "";
-  workspace = "";
+  space = "";
   description = "";
   stage = "RELEASED";
   sourceQuery = null;
@@ -132,7 +132,7 @@ export class QueryBuilderStore {
     makeObservable(this, {
       queryId: observable,
       label: observable,
-      workspace: observable,
+      space: observable,
       description: observable,
       stage: observable,
       sourceQuery: observable,
@@ -215,7 +215,7 @@ export class QueryBuilderStore {
       setSaveAsMode: action,
       toggleCompareChanges: action,
       setLabel: action,
-      setWorkspace: action,
+      setSpace: action,
       saveQuery: action,
       cancelSaveQuery: action,
       deleteQuery: action,
@@ -387,7 +387,7 @@ export class QueryBuilderStore {
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
-      this.workspace = this.rootStore.authStore.workspaces[0];
+      this.space = this.rootStore.authStore.spaces[0];
       this.selectField(this.rootField);
       if (this.mode !== "build" && this.mode !== "edit") {
         this.mode = "build";
@@ -1149,7 +1149,7 @@ export class QueryBuilderStore {
       && this.rootField && this.rootField.schema && this.rootField.schema.id
       && query && !query.isDeleting) {
       this.queryId = query.id;
-      this.workspace = query.workspace;
+      this.space = query.space;
       this.sourceQuery = query;
       this.updateQuery(query);
       this.isSaving = false;
@@ -1291,8 +1291,8 @@ export class QueryBuilderStore {
     this.label = label;
   }
 
-  setWorkspace(workspace) {
-    this.workspace = workspace;
+  setSpace(space) {
+    this.space = space;
   }
 
   setDescription(description) {
@@ -1308,7 +1308,7 @@ export class QueryBuilderStore {
       const queryId = this.saveAsMode ? this.queryId : this.sourceQuery.id;
       const query = this.JSONQuery;
       try {
-        await this.transportLayer.saveQuery(queryId, query, this.workspace);
+        await this.transportLayer.saveQuery(queryId, query, this.space);
         runInAction(() => {
           if (!this.saveAsMode && this.sourceQuery && this.sourceQuery.user.id === this.rootStore.authStore.user.id) {
             this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
@@ -1339,7 +1339,7 @@ export class QueryBuilderStore {
               meta: query.meta,
               label: query.meta && query.meta.name?query.meta.name:"",
               description: query.meta && query.meta.description?query.meta.description:"",
-              workspace: query.workspace,
+              space: query.space,
               isDeleting: false,
               deleteError: null
             };
@@ -1499,7 +1499,7 @@ export class QueryBuilderStore {
       meta: compacted.meta,
       label: compacted.meta && compacted.meta.name?compacted.meta.name:"",
       description: compacted.meta && compacted.meta.description?compacted.meta.description:"",
-      workspace: jsonSpec["https://core.kg.ebrains.eu/vocab/meta/space"],
+      space: jsonSpec["https://core.kg.ebrains.eu/vocab/meta/space"],
       isDeleting: false,
       deleteError: null
     };

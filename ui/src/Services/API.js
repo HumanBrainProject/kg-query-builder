@@ -18,7 +18,7 @@ const API = {
   endpoints: {
     "auth": () => "/service/api/auth/endpoint",
     "user": () => "/service/api/user",
-    "workspaces": () => "/service/api/workspaces",
+    "spaces": () => "/service/api/spaces",
     "types": () => "/service/api/types",
     "structure": () => "/service/api/structure?withLinks=true",
     "performQuery": (stage, from, size) => `/service/api/queries?${
@@ -26,7 +26,7 @@ const API = {
       ""}${from!==undefined && from!==null?`from=${from}&`:""}${
       ""}${stage?`stage=${stage}`:"" }`,
     "getQuery": queryId => `/service/api/queries/${queryId}`,
-    "saveQuery": (queryId, workspace) => `/service/api/queries/${queryId}/${workspace?`?workspace=${workspace}`:"" }`,
+    "saveQuery": (queryId, space) => `/service/api/queries/${queryId}/${space?`?space=${space}`:"" }`,
     "deleteQuery": queryId => `/service/api/queries/${queryId}`,
     "listQueries": type => `/service/api/queries?type=${encodeURIComponent(type)}`
   }

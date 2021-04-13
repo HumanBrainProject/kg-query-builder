@@ -35,9 +35,9 @@ import java.util.stream.Collectors;
 import static eu.hbp.kg.queryBuilder.constants.SchemaFieldsConsts.META_CLIENT_SPACE;
 import static eu.hbp.kg.queryBuilder.constants.SchemaFieldsConsts.META_INTERNAL_SPACE;
 
-@RequestMapping("/workspaces")
+@RequestMapping("/spaces")
 @RestController
-public class Workspaces {
+public class Spaces {
 
     @Value("${kgcore.endpoint}")
     String kgCoreEndpoint;
@@ -52,7 +52,7 @@ public class Workspaces {
     private AuthContext authContext;
 
     @GetMapping
-    public Map<?, ?> getWorkspaces() {
+    public Map<?, ?> getSpaces() {
         Map<String, Object> result = serviceCall.get(
                 String.format("%s/%s/spaces?stage=IN_PROGRESS", kgCoreEndpoint, apiVersion),
                 authContext.getAuthTokens(),

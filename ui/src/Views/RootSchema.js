@@ -72,7 +72,7 @@ const RootSchemaModal = observer(() => {
     }
     if (e.keyCode === 38 && cursor > 0) {
       setCursor(prevCursor => prevCursor - 1);
-    } else if (e.keyCode === 40 && cursor < typeStore.filteredWorkspaceTypeList.length - 1) {
+    } else if (e.keyCode === 40 && cursor < typeStore.filteredSpaceTypeList.length - 1) {
       setCursor(prevCursor => prevCursor + 1);
     }
   };

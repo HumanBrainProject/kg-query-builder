@@ -155,9 +155,9 @@ public class Queries {
     }
 
     @PutMapping("/{queryId}")
-    public void saveQuery(@RequestBody Map<?, ?> query, @PathVariable("queryId") String queryId, @RequestParam(value = "workspace", required = false) String workspace) {
+    public void saveQuery(@RequestBody Map<?, ?> query, @PathVariable("queryId") String queryId, @RequestParam(value = "space", required = false) String space) {
         serviceCall.put(
-                String.format("%s/%s/queries/%s?space=%s", kgCoreEndpoint, apiVersion, queryId, workspace),
+                String.format("%s/%s/queries/%s?space=%s", kgCoreEndpoint, apiVersion, queryId, space),
                 query,
                 authContext.getAuthTokens(),
                 Void.class

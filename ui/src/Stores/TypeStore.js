@@ -20,7 +20,7 @@ import debounce from "lodash/debounce";
 export class TypeStore {
   filterValue = "";
   types = {};
-  workspaceTypeList = [];
+  spaceTypeList = [];
   fetchError = null;
   isFetching = false;
   typesQueue = new Set();
@@ -36,13 +36,13 @@ export class TypeStore {
     makeObservable(this, {
       filterValue: observable,
       types: observable,
-      workspaceTypeList: observable,
+      spaceTypeList: observable,
       fetchError: observable,
       isFetching: observable,
       fetchingQueueError: observable,
       isFetchingQueue: observable,
       isFetched: computed,
-      filteredWorkspaceTypeList: computed,
+      filteredSpaceTypeList: computed,
       hasTypes: computed,
       setFilterValue: action,
       fetch: action,
@@ -56,16 +56,16 @@ export class TypeStore {
   }
 
   get isFetched() {
-    return !this.fetchError && this.workspaceTypeList.length;
+    return !this.fetchError && this.spaceTypeList.length;
   }
 
-  get filteredWorkspaceTypeList() {
-    return this.workspaceTypeList.filter(type => type.label.toLowerCase().indexOf(this.filterValue.trim().toLowerCase()) !== -1);
+  get filteredSpaceTypeList() {
+    return this.spaceTypeList.filter(type => type.label.toLowerCase().indexOf(this.filterValue.trim().toLowerCase()) !== -1);
   }
 
   get hasTypes() {
     return (
-      !!this.workspaceTypeList.length
+      !!this.spaceTypeList.length
     );
   }
 
@@ -96,7 +96,7 @@ export class TypeStore {
               })
               .sort((a, b) => a.label.localeCompare(b.label))
           }));
-          this.workspaceTypeList = types.sort((a, b) => a.label.localeCompare(b.label));
+          this.spaceTypeList = types.sort((a, b) => a.label.localeCompare(b.label));
           types.forEach(type => this.types[type.id] = type);
           this.isFetching = false;
         });
