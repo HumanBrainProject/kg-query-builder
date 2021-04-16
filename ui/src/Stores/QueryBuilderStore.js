@@ -20,9 +20,9 @@ import isEqual from "lodash/isEqual";
 import remove from "lodash/remove";
 import _  from "lodash-uuid";
 import jsonld from "jsonld";
-const jsdiff = require("diff");
-
 import Field from "./Field";
+
+const jsdiff = require("diff");
 
 
 const defaultContext = {
@@ -1020,7 +1020,7 @@ export class QueryBuilderStore {
             childrenJsonFields[0].sort = true;
           }
           this._processJsonSpecificationFields(field, childrenJsonFields);
-          if (flattenRelativePath.length || field.structure && field.structure.length === 1) {
+          if (flattenRelativePath.length || (field.structure && field.structure.length === 1)) {
             field.isflattened = true;
           }
         } else if (jsonField.structure) {
@@ -1117,7 +1117,7 @@ export class QueryBuilderStore {
             }
           ];
           this._processJsonSpecificationMergeFields(field, childrenJsonFields);
-          if (flattenRelativePath.length || field.mergeFields && field.mergeFields.length === 1) {
+          if (flattenRelativePath.length || (field.mergeFields && field.mergeFields.length === 1)) {
             field.isflattened = true;
           }
         }
@@ -1314,7 +1314,7 @@ export class QueryBuilderStore {
             this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
             this.sourceQuery.description = query.meta && query.meta.description?query.meta.description:"";
             this.sourceQuery.context = query["@context"];
-            this.sourceQuery.merge = query.merge,
+            this.sourceQuery.merge = query.merge;
             this.sourceQuery.structure = query.structure;
             this.sourceQuery.meta = query.meta;
             this.sourceQuery.properties = getProperties(query);

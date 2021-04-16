@@ -34,6 +34,8 @@ export class TransportLayer {
         Sentry.captureException(e);
         break;
       }
+      default:
+        break;
       }
     }
   }

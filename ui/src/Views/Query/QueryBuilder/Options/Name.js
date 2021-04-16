@@ -63,8 +63,8 @@ const Name = observer(({ field, rootField }) => {
 
   const handleChangeName = e => field.setAlias(e.target.value);
 
-  if (field == rootField
-    || parent.isFlattened
+  if (field === rootField
+    || field.parent.isFlattened
     || (field.isMerge && !field.isRootMerge)
   ) {
     return null;

@@ -14,7 +14,7 @@
 *   limitations under the License.
 */
 
-export default {
+const theme = {
   base00: "var(--bg-color-ui-contrast2)",
   base01: "#383830",
   base02: "#49483e",
@@ -32,3 +32,5 @@ export default {
   base0E: "#ae81ff",
   base0F: "#cc6633"
 };
+
+export default theme;

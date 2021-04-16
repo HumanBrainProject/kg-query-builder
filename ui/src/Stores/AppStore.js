@@ -27,7 +27,7 @@ themes[BrightTheme.name] = BrightTheme;
 export class AppStore{
   globalError = null;
   _currentThemeName = DefaultTheme.name;
-  historySettings;
+  historySettings = null;
   initializingMessage = null;
   initializationError = null;
   canLogin = true;

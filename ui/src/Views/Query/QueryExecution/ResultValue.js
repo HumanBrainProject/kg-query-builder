@@ -58,14 +58,15 @@ const ResultValue = observer(({name, index, value}) => {
       return value;
     }
     if (isObject(value)) {
-      let result = null;
-      Object.keys(value).some(n => {
+      const result = Object.keys(value).find(n => {
         if (n === "relativeUrl" || reg.test(n)) {
-          result = value[n];
           return true;
         }
+        return false;
       });
-      return result;
+      if(result) {
+        return value[result];
+      }
     }
     return null;
   };

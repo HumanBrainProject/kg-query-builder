@@ -17,6 +17,7 @@
 import React from "react";
 import { render } from "react-dom";
 // import { configure } from "mobx";
+//import reportWebVitals from './reportWebVitals';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -31,6 +32,8 @@ import App from "./Views/App";
 //   observableRequiresReaction: true,
 //   disableErrorBoundaries: false // help to debug only
 // });
+
+//reportWebVitals();
 
 render(
   <React.StrictMode>

@@ -4,11 +4,11 @@
 <head>
 	<meta charset="utf-8">
 	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet">
-	<link rel="icon" type="image/png" href="<%= htmlWebpackPlugin.options.env.rootPath %>/assets/favicon.png">
+	<link rel="icon" type="image/png" href="%PUBLIC_URL%/assets/favicon.png">
 	<meta name="viewport" content="width=device-width, user-scalable=no">
 	<title>HBP Knowledge Graph Query Builder</title>
 	<script>
-		window.rootPath = "<%= htmlWebpackPlugin.options.env.rootPath %>";
+		window.rootPath = "%PUBLIC_URL%";
 	</script>
 </head>
 
@@ -17,7 +17,6 @@
 		You need to enable JavaScript to run this app.
 	</noscript>
   <div id="root"></div>
-  <script src="<%= htmlWebpackPlugin.options.env.rootPath %>/bundle.js"></script>
 </body>
 
 </html>
