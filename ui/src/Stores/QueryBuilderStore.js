@@ -674,6 +674,23 @@ export class QueryBuilderStore {
     }
   }
 
+  moveUpField(field) {
+    const fieldIndex = field.parent?field.parent.structure.findIndex(f => f === field):-1;
+    if (fieldIndex >= 1) {
+      field.parent.structure.splice(fieldIndex, 1);
+      field.parent.structure.splice(fieldIndex-1, 0, field);
+    }
+  }
+
+  moveDownField(field) {
+    const fieldIndex = field.parent?field.parent.structure.findIndex(f => f === field):-1;
+    if (fieldIndex === -1?false:fieldIndex < (field.parent.structure.length -1)) {
+      
+      field.parent.structure.splice(fieldIndex, 1);
+      field.parent.structure.splice(fieldIndex+1, 0, field);
+    }
+  }
+
   removeField(field) {
     if (field === this.rootField) {
       this.rootField = null;
