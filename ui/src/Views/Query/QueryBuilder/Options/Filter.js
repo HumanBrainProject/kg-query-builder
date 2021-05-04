@@ -133,12 +133,27 @@ const Filter = observer(({ filter, show, onChange }) => {
   };
 
   const handleChangeOp = e => {
-    const value = e.target.value !== "NONE"?{
-      op: e.target.value,
-      parameter: filter.parameter,
-      value: filter.value
-    }:undefined;
-    onChange("filter", value);
+    switch (e.target.value) {
+      case "NONE": {
+        onChange("filter", undefined);
+        break;
+      }
+      case "IS_EMPTY": {
+          const value = {
+            op: e.target.value
+          };
+          onChange("filter", value);
+          break;
+      }
+      default: {
+        const value = {
+          op: e.target.value,
+          parameter: filter.parameter,
+          value: filter.op === "IS_EMPTY"?"":filter.value
+        };
+        onChange("filter", value);
+      }
+    }
   };
 
   const handleAddValue = () => {
@@ -206,6 +221,7 @@ const Filter = observer(({ filter, show, onChange }) => {
           <div className={classes.inputRow}>
             <div className={classes.selectBox}><select className={classes.select} value={filter.op} onChange={handleChangeOp}>
               <option value="NONE">None</option>
+              <option value="IS_EMPTY">Is empty</option>
               <option value="CONTAINS">Contains</option>
               <option value="EQUALS">Equals</option>
               <option value="STARTS_WITH">Start with</option>
@@ -213,10 +229,10 @@ const Filter = observer(({ filter, show, onChange }) => {
               <option value="REGEX">Regex</option>
               <option value="MBB">Minimal bounding box</option>
             </select></div>
-            {filter.parameter === undefined && (
+            {filter.parameter === undefined && filter.op !== "IS_EMPTY" && (
               <Button variant="secondary"className={classes.addButton} onClick={handleAddParameter}><FontAwesomeIcon icon="plus"></FontAwesomeIcon>&nbsp;add parameter</Button>
             )}
-            {filter.value === undefined && (
+            {filter.value === undefined && filter.op !== "IS_EMPTY" && (
               <Button variant="secondary" className={classes.addButton} onClick={handleAddValue}><FontAwesomeIcon icon="plus"></FontAwesomeIcon>&nbsp;add value</Button>
             )}
           </div>
