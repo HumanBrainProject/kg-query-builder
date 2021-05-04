@@ -146,7 +146,20 @@ const useStyles = createUseStyles({
     position: "absolute",
     right: "6px",
     top: "6px",
-    opacity: 0.25
+    opacity: 0.25,
+    "&>button.btn": {
+      "&:not(:first-child):not(:last-child)": {
+        borderRadius: 0
+      },
+      "&:first-child": {
+        borderTopRightRadius: 0,
+        borderBottomRightRadius: 0
+      },
+      "&:last-child": {
+        borderTopLeftRadius: 0,
+        borderBottomLeftRadius: 0
+      }
+    }
   },
   link: {
     transform: "translateY(1px)"
@@ -197,8 +210,23 @@ const Field = observer(({ field }) => {
     queryBuilderStore.removeField(field);
   };
 
+  const handleMoveUpField = e => {
+    e.stopPropagation();
+    queryBuilderStore.moveUpField(field);
+  };
+
+  const handleMoveDownField = e => {
+    e.stopPropagation();
+    queryBuilderStore.moveDownField(field);
+  };
+
   const isFlattened = field.isFlattened;
   const hasFlattenedParent = field.parent && field.parent.isFlattened;
+
+  const fieldIndex = field.parent?field.parent.structure.findIndex(f => f === field):-1;
+
+  const canMoveUp = fieldIndex >= 1;
+  const canMoveDown = fieldIndex === -1?false:fieldIndex < (field.parent.structure.length -1);
 
   return (
     <div className={`${classes.container} ${field.isMerge ? "is-merge" : ""} ${field.isRootMerge ? "is-root-merge" : ""} ${field.isMerge && !field.isRootMerge ? "is-child-merge" : ""} ${(field.isMerge && field.parentIsRootMerge) ? "parent-is-root-merge" : ""} ${isFlattened ? "flattened" : ""} ${hasFlattenedParent ? "has-flattened-parent" : ""}`}>
@@ -271,7 +299,17 @@ const Field = observer(({ field }) => {
         )}
         {field.parent && (
           <div className={classes.optionsButton}>
-            <Button size="sm" variant="primary" onClick={handleRemoveField}>
+            {canMoveUp && (
+              <Button size="sm" variant="primary" onClick={handleMoveUpField} title="move up">
+                <FontAwesomeIcon icon="arrow-up" />
+              </Button>
+            )}
+            {canMoveDown && (
+              <Button size="sm" variant="primary" onClick={handleMoveDownField} title="move down">
+                <FontAwesomeIcon icon="arrow-down" />
+              </Button>
+            )}
+            <Button size="sm" variant="primary" onClick={handleRemoveField} title="remove">
               <FontAwesomeIcon icon="times" />
             </Button>
           </div>

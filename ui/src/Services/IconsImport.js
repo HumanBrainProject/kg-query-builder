@@ -88,6 +88,8 @@ import {faPlay} from "@fortawesome/free-solid-svg-icons/faPlay";
 import {faTag} from "@fortawesome/free-solid-svg-icons/faTag";
 import {faFilter} from "@fortawesome/free-solid-svg-icons/faFilter";
 import {faCode} from "@fortawesome/free-solid-svg-icons/faCode";
+import {faArrowUp} from "@fortawesome/free-solid-svg-icons/faArrowUp";
+import {faArrowDown} from "@fortawesome/free-solid-svg-icons/faArrowDown";
 
 library.add(
   faUser,
@@ -160,5 +162,7 @@ library.add(
   faPlay,
   faTag,
   faFilter,
-  faCode
+  faCode,
+  faArrowUp,
+  faArrowDown
 );
