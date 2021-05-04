@@ -53,7 +53,7 @@ public class Types {
     @GetMapping
     public List<TypeEntity> getTypes() {
         Map result = serviceCall.get(
-                String.format("%s/%s/types?stage=IN_PROGRESS&withProperties=true&withIncomingLinks=true", kgCoreEndpoint, apiVersion),
+                String.format("%s/%s/types?stage=IN_PROGRESS&withProperties=true&withIncomingLinks=true&withCounts=false", kgCoreEndpoint, apiVersion),
                 authContext.getAuthTokens(),
                 Map.class);
         if (result != null) {

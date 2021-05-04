@@ -25,20 +25,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Property {
-    private Double numOfOccurennces;
     private String simpleAttributeName;
     private String attribute;
     private String label;
     private List<Map> canBe;
     private Boolean reverse;
-
-    public Double getNumOfOccurennces() {
-        return numOfOccurennces;
-    }
-
-    public void setNumOfOccurennces(Double numOfOccurennces) {
-        this.numOfOccurennces = numOfOccurennces;
-    }
 
     public String getSimpleAttributeName() {
         return simpleAttributeName;
@@ -80,8 +71,7 @@ public class Property {
         this.reverse = reverse;
     }
 
-    public Property(Double numOfOccurennces, String simpleAttributeName, String attribute, String label, List<Map> canBe) {
-        this.numOfOccurennces = numOfOccurennces;
+    public Property(String simpleAttributeName, String attribute, String label, List<Map> canBe) {
         this.simpleAttributeName = simpleAttributeName;
         this.attribute = attribute;
         this.label = label;
@@ -97,12 +87,11 @@ public class Property {
     }
 
     public static Property fromMap(Map d) {
-        Double numOfOccurennces = (Double) (d.get(SchemaFieldsConsts.META_OCCURRENCES));
         String attribute = (String) (d.get(SchemaFieldsConsts.ID));
         String simpleAttributeName = extractSimpleAttributeName(attribute);
         String label = (String) (d.get(SchemaFieldsConsts.NAME));
         List<Map> canBe = (List<Map>) d.get(SchemaFieldsConsts.META_TARGET_TYPES);
-        return new Property(numOfOccurennces, simpleAttributeName, attribute, label, canBe);
+        return new Property(simpleAttributeName, attribute, label, canBe);
     }
 
     public static Property fromIncomingLinksMap(Map d, Map propertyReverseLink) {
