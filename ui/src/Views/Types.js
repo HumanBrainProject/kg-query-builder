@@ -18,18 +18,31 @@ const useStyles = createUseStyles({
   }
 });
 
+const extractLabel = type => {
+  if (typeof type !== "string") {
+    return "<unknown filter>";
+  }
+  const idx = type.lastIndexOf("/");
+  if (idx !== -1) {
+    return type.substr(idx + 1);
+  }
+  return type;
+};
+
 export const Type = ({type}) => {
 
   const { typeStore } = useStores();
 
   const t = typeStore.types[type];
-  const label = t?t.label:t;
+  const label = t?t.label:extractLabel(type);
   const color = t?t.color:null;
 
+  
+
   return (
-    <React.Fragment>
+    <span title={typeof type === "string"?type:JSON.stringify(type)}>
       <Icon icon="circle" color={color} />{label}
-    </React.Fragment>
+    </span>
   );
 };
 
@@ -43,8 +56,8 @@ const Types = ({types}) => {
 
   return (
     <span className={classes.types}>
-      {types.map(type => (
-        <Type type={type} key={type} />
+      {types.map((type, index) => (
+        <Type type={type} key={type?type:index} />
       ))}
     </span>
   );

@@ -987,7 +987,7 @@ export class QueryBuilderStore {
           field = new Field(property, parentField);
           field.isUnknown = isUnknown;
           field.isFlattened = isFlattened;
-          const validTypeFilter = Array.isArray(typeFilter)?typeFilter.map(t => typeof t === "object" && t["@id"]).filter(t => t):[];
+          const validTypeFilter = Array.isArray(typeFilter)?typeFilter.map(t => (t !== null && typeof t === "object")?t["@id"]:undefined):((typeFilter !== null && typeof typeFilter === "object" && typeFilter["@id"])?[typeFilter["@id"]]:[]);
           if (validTypeFilter.length) {
             field.typeFilterEnabled = true;
             field.typeFilter = validTypeFilter;

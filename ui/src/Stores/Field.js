@@ -101,9 +101,14 @@ class Field {
 
   get types() {
     if (!this.schema || !Array.isArray(this.schema.canBe)  || !this.schema.canBe.length) {
+      if (Array.isArray(this.typeFilter) && this.typeFilter.length) {
+        return this.typeFilter.map(t => ({id: t, selected: true, isUnknown: true}));
+      }
       return [];
     }
-    return this.schema.canBe.map(t => ({id: t, selected: this.typeFilter.includes(t)}));
+    const knownTypes = this.schema.canBe.map(t => ({id: t, selected: this.typeFilter.includes(t), isUnknown: false}));
+    const unknownTypes = this.typeFilter.filter(t => !this.schema.canBe.includes(t)).map(t => ({id: t, selected: true, isUnknown: true}));
+    return [...knownTypes, ...unknownTypes];
   }
 
   toggleTypeFilter() {

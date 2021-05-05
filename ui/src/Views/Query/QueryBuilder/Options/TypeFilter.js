@@ -24,7 +24,8 @@ import Toggle from "../../../../Components/Toggle";
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative"
+    position: "relative",
+    paddingTop: "20px"
   },
   panel: {
     display: "flex",
@@ -50,6 +51,12 @@ const useStyles = createUseStyles({
     "&.selected, &:hover": {
       color: "var(--ft-color-loud)",
       borderColor: "var(--ft-color-loud)"
+    },
+    "&.isUnknown" : {
+      borderColor: "var(--bg-color-warn-quiet)"
+    },
+    "&.isUnknown.selected, &.isUnknown:hover": {
+      borderColor: "var(--bg-color-warn-loud)"
     }
   },
   toggle: {
@@ -58,22 +65,22 @@ const useStyles = createUseStyles({
   }
 });
 
-const TypeFilterItem = ({ type, isSelected, onClick }) => {
+const TypeFilterItem = ({ type, onClick }) => {
 
   const classes = useStyles();
 
-  const handleOnClick = () => typeof onClick === "function" && onClick(type, !isSelected);
+  const handleOnClick = () => typeof onClick === "function" && onClick(type.id, !type.selected);
 
   const handleToggleClick = (name, value) => typeof onClick === "function" && onClick(name, !!value);
 
   return(
-    <div className={`${classes.typeFilter} ${isSelected?"selected":""}`} onClick={handleOnClick} >
-      <Type type={type} />
+    <div className={`${classes.typeFilter} ${type.isUnknown?"isUnknown":""} ${type.selected?"selected":""}`} onClick={handleOnClick} >
+      <Type type={type.id} />
       <div className={classes.toggle}>
         <Toggle
           option={{
-            name: type,
-            value: isSelected?true:undefined
+            name: type.id,
+            value: type.selected?true:undefined
           }}
           show={true}
           onChange={handleToggleClick} />
@@ -90,9 +97,9 @@ const TypeFilter = observer(() => {
 
   const handleToggleTypeFilter = () => queryBuilderStore.currentField.toggleTypeFilter();
 
-  const toggleTypeFilter = (type, isSelected) => queryBuilderStore.currentField.filterType(type, isSelected);
+  const toggleTypeFilter = (type, selected) => queryBuilderStore.currentField.filterType(type, selected);
 
-  if (!queryBuilderStore.currentField || queryBuilderStore.currentField.types.length <= 1) {
+  if (!queryBuilderStore.currentField || !queryBuilderStore.currentField.types.length) {
     return null;
   }
 
@@ -110,8 +117,8 @@ const TypeFilter = observer(() => {
       </div>
       {queryBuilderStore.currentField.typeFilterEnabled && (
         <div className={classes.panel}>
-          {queryBuilderStore.currentField.types.map(type =>
-            <TypeFilterItem key={type.id} type={type.id} isSelected={type.selected} onClick={toggleTypeFilter} />)}
+          {queryBuilderStore.currentField.types.map((type, index) =>
+            <TypeFilterItem key={type.id?type.id:index} type={type} onClick={toggleTypeFilter} />)}
         </div>
       )}
     </div>
