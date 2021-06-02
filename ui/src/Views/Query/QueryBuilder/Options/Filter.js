@@ -231,8 +231,8 @@ const Filter = observer(({ filter, show, onChange }) => {
               <option value="IS_EMPTY">Is empty</option>
               <option value="CONTAINS">Contains</option>
               <option value="EQUALS">Equals</option>
-              <option value="STARTS_WITH">Start with</option>
-              <option value="END_WIDTH">End width</option>
+              <option value="STARTS_WITH">Starts with</option>
+              <option value="ENDS_WITH">Ends with</option>
               <option value="REGEX">Regex</option>
               <option value="MBB">Minimal bounding box</option>
             </select></div>
