@@ -23,6 +23,7 @@
 
 import React from "react";
 import { render } from "react-dom";
+import ReactPiwik from "react-piwik";
 // import { configure } from "mobx";
 //import reportWebVitals from './reportWebVitals';
 
@@ -41,6 +42,14 @@ import App from "./Views/App";
 // });
 
 //reportWebVitals();
+
+new ReactPiwik({
+  url: process.env.REACT_APP_MATOMO_URL,
+  siteId: process.env.REACT_APP_MATOMO_SITE_ID,
+  trackErrors: true
+});
+
+ReactPiwik.push(["trackPageView"]);
 
 render(
   <React.StrictMode>
