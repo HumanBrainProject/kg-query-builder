@@ -64,6 +64,7 @@ const queryCompare = (a, b) => {
 
 const rootFieldReservedProperties = ["root_schema", "schema:root_schema", "http://schema.org/root_schema", "identifier", "schema:identifier", "http://schema.org/identifier", "@id", "@type", "https://core.kg.ebrains.eu/vocab/meta/revision", "https://core.kg.ebrains.eu/vocab/meta/space", "https://core.kg.ebrains.eu/vocab/meta/user", "@context", "meta", "structure", "merge"];
 const fieldReservedProperties = ["propertyName", "path", "merge", "structure"];
+const optionsToKeepOnFlattenendField = ["ensureOrder", "required", "singleValue"];
 
 const namespaceReg = /^(.+):(.+)$/;
 const attributeReg = /^https?:\/\/.+\/(.+)$/;
@@ -883,7 +884,7 @@ export class QueryBuilderStore {
         jsonField.path = this._processPath(field, relativePath);
       }
       field.options.forEach(({ name, value }) => jsonField[name] = toJS(value));
-      if (field.merge) {
+      if (field.merge.length) {
         this._processMergeFields(jsonField, field.merge);
       }
       if (field.isFlattened) {
@@ -896,9 +897,7 @@ export class QueryBuilderStore {
           if (field.structure && field.structure.length) {
             jsonField.propertyName = (topField.namespace ? topField.namespace : "query") + ":" + (topField.alias || field.schema.simpleAttributeName || field.schema.label);
           }
-          if (field.optionsMap.get("sort")) {
-            jsonField["sort"] = true;
-          }
+          field.options.filter(({name}) => !optionsToKeepOnFlattenendField.includes(name)).forEach(({ name, value }) => jsonField[name] = toJS(value));
         }
       }
       if (field.structure && field.structure.length) {
@@ -1025,7 +1024,7 @@ export class QueryBuilderStore {
           field.alias = propertyName;
         }
         Object.entries(jsonField).forEach(([name, value]) => {
-          if (!fieldReservedProperties.includes(name) && !(field.isFlattened && name === "sort")) {
+          if (!fieldReservedProperties.includes(name) && (!field.isFlattened || optionsToKeepOnFlattenendField.includes(name))) {
             field.setOption(name, value);
           }
         });
@@ -1041,9 +1040,11 @@ export class QueryBuilderStore {
               structure: jsonField.structure
             }
           ];
-          if (jsonField.sort) {
-            childrenJsonFields[0].sort = true;
-          }
+          Object.entries(jsonField).forEach(([name, value]) => {
+            if (!fieldReservedProperties.includes(name) && !optionsToKeepOnFlattenendField.includes(name)) {
+              childrenJsonFields[0][name] = value;
+            }
+          });
           this._processJsonSpecificationFields(field, childrenJsonFields);
           if (flattenRelativePath.length || (field.structure && field.structure.length === 1)) {
             field.isflattened = true;
