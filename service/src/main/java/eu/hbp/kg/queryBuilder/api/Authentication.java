@@ -18,6 +18,7 @@ package eu.hbp.kg.queryBuilder.api;
 
 import eu.hbp.kg.queryBuilder.controller.ServiceCallWithClientSecret;
 import eu.hbp.kg.queryBuilder.model.AuthContext;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,9 @@ public class Authentication {
     @Value("${api.version}")
     String apiVersion;
 
+    @Value("${eu.ebrains.kg.commit}")
+    String commit;
+
     @Autowired
     private ServiceCallWithClientSecret serviceCall;
 
@@ -41,9 +45,13 @@ public class Authentication {
 
     @GetMapping("/endpoint")
     public Map<?, ?> getAuthEndpoint() {
-        return serviceCall.get(
+        Map data = serviceCall.get(
                 String.format("%s/%s/users/authorization", kgCoreEndpoint, apiVersion),
                 authContext.getAuthTokens(),
                 Map.class);
+        if(StringUtils.isNotBlank(commit)) {
+            data.put("commit", commit);
+        }
+        return data;
     }
 }
