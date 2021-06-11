@@ -261,8 +261,6 @@ const UserProfileTab = observer(({ className, size=30 }) => {
     return null;
   }
 
-  console.log(authStore.user);
-
   return (
     <div className={`${classes.container} ${className?className:""}`}>
       <button className={classes.button} onClick={handleButtonClick} title="Account" ref={buttonRef}>
