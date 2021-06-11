@@ -21,10 +21,11 @@
  *
  */
 
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { Scrollbars } from "react-custom-scrollbars";
+import ReactPiwik from "react-piwik";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -67,6 +68,13 @@ const RootSchemaModal = observer(() => {
   const classes = useStyles();
 
   const { typeStore } = useStores();
+
+  useEffect(() => {
+    ReactPiwik.push(["setCustomUrl", window.location.href]);
+    ReactPiwik.push(["trackPageView"]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   const handleChange = value => {
     typeStore.setFilterValue(value);

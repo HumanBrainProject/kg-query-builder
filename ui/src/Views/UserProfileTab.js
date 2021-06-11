@@ -21,7 +21,7 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import Overlay from "react-bootstrap/Overlay";
@@ -30,10 +30,27 @@ import Button from "react-bootstrap/Button";
 import uniqueId from "lodash/uniqueId";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import ReactPiwik from "react-piwik";
 
 import { useStores } from "../Hooks/UseStores";
 
 import Avatar from "../Components/Avatar";
+
+const PopOverContent = ({onSizeChange, children}) => {
+  const ref = useRef();
+
+  useEffect(() => {
+    if (ref.current) {
+      typeof onSizeChange === "function" && onSizeChange(ref.current.getBoundingClientRect());
+    }
+  });
+
+  return (
+    <div ref={ref}>
+      {children}
+    </div>
+  );
+};
 
 const useStyles = createUseStyles({
   container: {
@@ -124,6 +141,38 @@ const useStyles = createUseStyles({
     color: "var(--release-color-highlight)",
     transition: "transform .3s ease-in-out",
     transform: "translateY(-48px)"
+  },
+  profilePictureButton: {
+    margin: 0,
+    padding: 0,
+    overflow: "hidden",
+    border: 0,
+    background: "none",
+    "&:hover $profilePictureCamera": {
+      color: "rgba(0, 0, 0, 0.45)"
+    },
+    "&:hover $profilePicturePlus": {
+      color: "rgba(0, 0, 0, 0.65)"
+    },
+    "& .avatar.default.fa-user": {
+      width: "100px",
+      transform: "scale(8)",
+      color: "#1b1b1b"
+    }
+  },
+  profilePictureCamera: {
+    position: "absolute",
+    top: "30px",
+    left: "35px",
+    color: "rgba(0, 0, 0, 0.25)",
+    transition: "color 0.25 ease-in-out"
+  },
+  profilePicturePlus: {
+    position: "absolute",
+    top: "50px",
+    left: "55px",
+    color: "rgba(0, 0, 0, 0.45)",
+    transition: "color 0.25 ease-in-out"
   }
 });
 
@@ -136,65 +185,85 @@ const windowHeight = () => {
   //return $(window).height();
 };
 
-const PopOverContent = ({onSizeChange, children}) => {
-  const ref = useRef();
+const UserProfileTab = observer(({ className, size=30 }) => {
 
-  useEffect(() => {
-    if (ref.current) {
-      typeof onSizeChange === "function" && onSizeChange(ref.current.getBoundingClientRect());
-    }
-  });
-
-
-  return (
-    <div ref={ref}>
-      {children}
-    </div>
-  );
-
-};
-
-const UserProfileTab = observer(({className, size=30}) => {
   const classes = useStyles();
+
+  const buttonRef = useRef();
+  const imageFileRef = useRef();
+
   const [showPopOver, setShowPopOver] = useState(false);
   const [popOverPosition, setPopOverPosition] = useState("bottom");
   const [tokenCopied, setTokenCopied] = useState(null);
-  const buttonRef = useRef();
 
   const { authStore } = useStores();
+
+  useEffect(() => {
+    if(showPopOver) {
+      ReactPiwik.push(["trackEvent", "Tab", "UserProfile", "Open"]);
+    }
+    return () => {
+      if (showPopOver) {
+        handlePopOverClose();
+      }
+    };
+  }, [showPopOver]);
 
   const handlePopOverPosition = popOverRect => {
     if (!popOverRect) { return null; }
     const buttonRect = buttonRef.current.getBoundingClientRect();
     const position = (buttonRect.bottom + popOverRect.height + 5) >= windowHeight()?"top":"bottom";
     if (popOverPosition !== position) {
-      setPopOverPosition(popOverPosition);
+      setPopOverPosition(position);
     }
   };
 
   const handleButtonClick = e => {
     e.stopPropagation();
-    setShowPopOver(showPopOver => !showPopOver);
+    setShowPopOver(!showPopOver);
   };
 
   const handlePopOverClose = e => {
-    e.stopPropagation();
-    setPopOverPosition(false);
+    e && e.stopPropagation();
+    setShowPopOver(false);
   };
 
   const handleCopyToken = () => {
+    ReactPiwik.push(["trackEvent", "Token", "Copy"]);
     clearTimeout(tokenCopied);
     const timer = setTimeout(() => setTokenCopied(null), 2000);
     setTokenCopied(timer);
   };
 
-  const handleLogout = () => authStore.logout();
+  // const handlePictureClick = e => {
+  //   e && e.stopPropagation();
+  //   imageFileRef.current.click();
+  // };
+
+  // const handleImageFileChange = () => {
+  //   if (imageFileRef.current.files.length) {
+  //     const reader = new FileReader();
+  //     const sendPictureToBackend = () => {
+  //       authStore.saveProfilePicture(reader.result);
+  //       reader.removeEventListener("load", sendPictureToBackend);
+  //     };
+  //     reader.addEventListener("load", sendPictureToBackend, false);
+  //     reader.readAsDataURL(imageFileRef.current.files[0]);
+  //   }
+  // };
+
+  const handleLogout = () => {
+    ReactPiwik.push(["trackEvent", "User", "Logout"]);
+    authStore.logout();
+  }
 
   if (!authStore.isAuthenticated || !authStore.isUserAuthorized || !authStore.user) {
     return null;
   }
 
-  return(
+  console.log(authStore.user);
+
+  return (
     <div className={`${classes.container} ${className?className:""}`}>
       <button className={classes.button} onClick={handleButtonClick} title="Account" ref={buttonRef}>
         <Avatar user={authStore.user} size={size} />
@@ -211,9 +280,16 @@ const UserProfileTab = observer(({className, size=30}) => {
         <Popover id={uniqueId("popover")} className={classes.popOver}>
           <PopOverContent onSizeChange={handlePopOverPosition}>
             <div className={classes.popOverContent}>
-              <Avatar user={authStore.user} size={100} />
+              {/* <button className={classes.profilePictureButton} onClick={handlePictureClick} title="Click to change your profile picture." > */}
+              <button className={classes.profilePictureButton} >
+                <Avatar user={authStore.user} size={100} />
+                <FontAwesomeIcon icon={"camera"} size="5x" className={classes.profilePictureCamera} />
+                <FontAwesomeIcon icon={"plus"} size="2x" className={classes.profilePicturePlus} />
+              </button>
+              {/* <input type="file" accept="image/*" ref={imageFileRef} style={{display: "none"}} onChange={handleImageFileChange} /> */}
+              <input type="file" accept="image/*" ref={imageFileRef} style={{display: "none"}} />
               <div>
-                <div className={classes.name}>{authStore.user.name}</div>
+                <div className={classes.name}>{authStore.user.displayName}</div>
                 <div className={classes.email}>{authStore.user.email}</div>
                 <Button variant="primary" className={classes.accountBtn} href="https://iam.ebrains.eu/auth/realms/hbp/account/" title="https://iam.ebrains.eu/auth/realms/hbp/account/" rel="noopener noreferrer" target="_blank">Account</Button>
               </div>

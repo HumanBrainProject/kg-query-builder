@@ -27,6 +27,7 @@ import {observer} from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Scrollbars } from "react-custom-scrollbars";
+import ReactPiwik from "react-piwik";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -92,6 +93,8 @@ const Queries = observer(() => {
   const { queryBuilderStore } = useStores();
 
   useEffect(() => {
+    ReactPiwik.push(["setCustomUrl", window.location.href]);
+    ReactPiwik.push(["trackPageView"]);
     if (queryBuilderStore.hasRootSchema) {
       queryBuilderStore.fetchQueries();
     }

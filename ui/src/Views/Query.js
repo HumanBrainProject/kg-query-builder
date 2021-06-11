@@ -26,6 +26,7 @@ import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ReactPiwik from "react-piwik";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -93,8 +94,13 @@ const Query = observer(({id, mode}) => {
 
   const { queryBuilderStore } = useStores();
 
+  
+  useEffect(() => {
+    ReactPiwik.push(["setCustomUrl", window.location.href]);
+    ReactPiwik.push(["trackPageView"]);
+    queryBuilderStore.selectQueryById(id, mode)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => queryBuilderStore.selectQueryById(id, mode), [id]);
+  }, [id]);
 
   const handleRetry = () => queryBuilderStore.selectQueryById(id, mode);
 
