@@ -52,7 +52,7 @@ const ExecutionParams = observer(() => {
 
   const { queryBuilderStore } = useStores();
 
-  const scopeOptions =  [{label: "Released", value: "RELEASED" }, {label: "Curated", value: "IN_PROGRESS"}];
+  const scopeOptions =  [{label: "Released", value: "RELEASED" }, {label: "In progress", value: "IN_PROGRESS"}];
 
   const handleChangeSize = e => queryBuilderStore.setResultSize(e.target.value);
 
