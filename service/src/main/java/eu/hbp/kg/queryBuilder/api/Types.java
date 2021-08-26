@@ -68,7 +68,7 @@ public class Types {
     @PostMapping
     public Map<?, ?> getTypesByName(@RequestBody List<String> payload) {
         Map result = serviceCall.post(
-                String.format("%s/%s/typesByName?stage=IN_PROGRESS&withProperties=true", kgCoreEndpoint, apiVersion),
+                String.format("%s/%s/typesByName?stage=IN_PROGRESS&withProperties=true&withIncomingLinks=true", kgCoreEndpoint, apiVersion),
                 payload,
                 authContext.getAuthTokens(),
                 Map.class);
