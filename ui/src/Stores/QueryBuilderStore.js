@@ -89,11 +89,20 @@ const getProperties = query => {
     }, {});
 };
 
-const normalizeUser = user => ({
-  id: user["@id"],
-  name: user["http://schema.org/name"],
-  picture: user["https://schema.hbp.eu/users/picture"]
-});
+const normalizeUser = user => {
+  if (!user || !user["@id"]) {
+    return {
+      id: null,
+      name: null,
+      picture: null
+    };
+  }
+  return {
+    id: user["@id"],
+    name: user["http://schema.org/name"],
+    picture: user["https://schema.hbp.eu/users/picture"]
+  };
+};
 
 export class QueryBuilderStore {
   meta = null;
