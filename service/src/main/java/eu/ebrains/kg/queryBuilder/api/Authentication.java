@@ -18,22 +18,20 @@ package eu.ebrains.kg.queryBuilder.api;
 
 import eu.ebrains.kg.queryBuilder.model.KGCoreResult;
 import eu.ebrains.kg.queryBuilder.service.AuthClient;
-import eu.ebrains.kg.queryBuilder.model.AuthContext;
+import io.swagger.v3.oas.annotations.Operation;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RequestMapping("/auth")
 @RestController
 public class Authentication {
 
-    @Value("${kgcore.endpoint}")
-    String kgCoreEndpoint;
-
-    @Value("${api.version}")
-    String apiVersion;
+    @Value("${eu.ebrains.kg.commit}")
+    String commit;
 
     private final AuthClient authClient;
 
@@ -41,16 +39,14 @@ public class Authentication {
         this.authClient = authClient;
     }
 
+    @Operation(summary = "Get the authorization endpoint, the user should authenticate against")
     @GetMapping("/endpoint")
     public KGCoreResult.Single getAuthEndpoint() {
-        KGCoreResult.Single response = authClient.getEndpoint();
-//        Map<String, Object> data = response.getData();
-//        if(StringUtils.isNotBlank(sentryUrl)) {
-//            data.put("sentryUrl", sentryUrl);
-//        }
-//        if(StringUtils.isNotBlank(commit)) {
-//            data.put("commit", commit);
-//        }
-        return response;
+        KGCoreResult.Single result = authClient.getEndpoint();
+        Map<String, Object> data = result.getData();
+        if(StringUtils.isNotBlank(commit)) {
+            data.put("commit", commit);
+        }
+        return result;
     }
 }

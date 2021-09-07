@@ -26,6 +26,7 @@ import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { matchPath } from "react-router-dom";
 import _  from "lodash-uuid";
+import ReactPiwik from "react-piwik";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -91,16 +92,19 @@ const Header = observer(() => {
   }, []);
 
   const handleBrowseTypes = () => {
+    ReactPiwik.push(["trackEvent", "Tab", "BrowseTypes"]);
     queryBuilderStore.clearRootSchema();
     history.push("/");
   };
 
   const handleBrowseStoredQueries = () => {
+    ReactPiwik.push(["trackEvent", "Tab", "BrowseQueries", queryBuilderStore.rootField.id]);
     queryBuilderStore.resetRootSchema();
     history.push("/queries");
   };
 
   const handleBuildNewQuery = () => {
+    ReactPiwik.push(["trackEvent", "Tab", "NewQuery", queryBuilderStore.rootField.id]);
     queryBuilderStore.resetRootSchema();
     const uuid = _.uuid();
     queryBuilderStore.setAsNewQuery(uuid);

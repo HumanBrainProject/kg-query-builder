@@ -63,6 +63,7 @@ export class AuthStore {
   isLogout = false;
   keycloak = null;
   endpoint = null;
+  commit = null;
 
   transportLayer = null;
 
@@ -71,6 +72,7 @@ export class AuthStore {
       isUserAuthorized: observable,
       user: observable,
       spaces: observable,
+      commit: observable,
       isRetrievingUserProfile: observable,
       userProfileError: observable,
       isRetrievingSpaces: observable,
@@ -255,6 +257,7 @@ export class AuthStore {
       const { data } = await this.transportLayer.getAuthEndpoint();
       runInAction(() => {
         this.endpoint =  data && data.data? data.data.endpoint :null;
+        this.commit = data && data.commit? data.commit:null;
       });
       if(this.endpoint) {
         try {

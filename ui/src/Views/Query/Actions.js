@@ -27,6 +27,7 @@ import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import _  from "lodash-uuid";
+import ReactPiwik from "react-piwik";
 
 import { useStores } from "../../Hooks/UseStores";
 
@@ -54,19 +55,29 @@ const Actions = observer(({ className }) => {
 
   const { queryBuilderStore, history } = useStores();
 
-  const handleToggleCompareChanges = () => queryBuilderStore.toggleCompareChanges();
+  const handleToggleCompareChanges = () => {
+    ReactPiwik.push(["trackEvent", "Query", "Compare", queryBuilderStore.rootField.id]);
+    queryBuilderStore.toggleCompareChanges();
+  }
 
-  const handleSave = () => queryBuilderStore.saveQuery();
+  const handleSave = () => {
+    ReactPiwik.push(["trackEvent", "Query", "Save", queryBuilderStore.rootField.id]);
+    queryBuilderStore.saveQuery();
+  }
 
   const handleRevertChanges = () => queryBuilderStore.cancelChanges();
 
-  const handleShowSaveDialog = () => queryBuilderStore.setSaveAsMode(true);
+  const handleShowSaveDialog = () =>  {
+    ReactPiwik.push(["trackEvent", "Query", "SaveAs", queryBuilderStore.rootField.id]);
+    queryBuilderStore.setSaveAsMode(true);
+  }
 
   const handleHideSaveDialog = () => queryBuilderStore.setSaveAsMode(false);
 
   const handleResetQuery = () => queryBuilderStore.resetRootSchema();
 
   const handleNewQuery = () => {
+    ReactPiwik.push(["trackEvent", "Query", "CopyAsNew", queryBuilderStore.rootField.id]);
     const uuid = _.uuid();
     queryBuilderStore.setAsNewQuery(uuid);
     history.push(`/queries/${uuid}`);

@@ -26,6 +26,7 @@ import { createUseStyles } from "react-jss";
 import {observer} from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "react-bootstrap/Button";
+import ReactPiwik from "react-piwik";
 
 import { useStores } from "../../Hooks/UseStores";
 
@@ -136,6 +137,7 @@ const SavedQuery = observer(({query, enableDelete}) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleSelect = e => {
+    ReactPiwik.push(["trackEvent", "Query", "Select", query.id]);
     e.stopPropagation();
     if (!query.deleteError && !query.isDeleting) {
       history.push(`/queries/${query.id}`);
@@ -148,6 +150,7 @@ const SavedQuery = observer(({query, enableDelete}) => {
   };
 
   const handleDelete = e => {
+    ReactPiwik.push(["trackEvent", "Query", "Delete", query.id]);
     e.stopPropagation();
     setShowDeleteDialog(false);
     queryBuilderStore.deleteQuery(query);

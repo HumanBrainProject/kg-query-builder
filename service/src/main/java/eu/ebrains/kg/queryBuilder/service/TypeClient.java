@@ -54,7 +54,7 @@ public class TypeClient {
     }
 
     public Map<?, ?> getTypesByName(List<String> types) {
-        String relativeUrl = "typesByName?stage=IN_PROGRESS&withProperties=true";
+        String relativeUrl = "typesByName?stage=IN_PROGRESS&withProperties=true&withIncomingLinks=true";
         Map result = kg.client().post().uri(kg.url(relativeUrl))
                 .body(BodyInserters.fromValue(types))
                 .retrieve()

@@ -23,8 +23,9 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ReactPiwik from "react-piwik";
+
 
 import { useStores } from "../../Hooks/UseStores";
 
@@ -118,6 +119,7 @@ const Tab = ({label, disabled, current, icon, iconColor, iconSpin, Component, hi
   };
 
   const handleClose = e => {
+    ReactPiwik.push(["trackEvent", "Query", "Close"]);
     e.stopPropagation();
     onClose(e);
   };

@@ -28,6 +28,7 @@ import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
+import ReactPiwik from "react-piwik";
 
 import { useStores } from "../../../Hooks/UseStores";
 
@@ -51,7 +52,7 @@ const ExecutionParams = observer(() => {
 
   const { queryBuilderStore } = useStores();
 
-  const scopeOptions =  [{label: "Released", value: "RELEASED" }, {label: "Curated", value: "IN_PROGRESS"}];
+  const scopeOptions =  [{label: "Released", value: "RELEASED" }, {label: "In progress", value: "IN_PROGRESS"}];
 
   const handleChangeSize = e => queryBuilderStore.setResultSize(e.target.value);
 
@@ -59,7 +60,10 @@ const ExecutionParams = observer(() => {
 
   const handleChangeStage = e => queryBuilderStore.setStage(e.target.value);
 
-  const handlExecuteQuery = () => queryBuilderStore.executeQuery();
+  const handlExecuteQuery = () => {
+    ReactPiwik.push(["trackEvent", "Query", "Execute", queryBuilderStore.rootField.id]);
+    queryBuilderStore.executeQuery();
+  }
 
   return (
     <Form>

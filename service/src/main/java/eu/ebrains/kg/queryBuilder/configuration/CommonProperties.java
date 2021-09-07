@@ -18,38 +18,15 @@
  * Framework Programme for Research and Innovation under
  * Specific Grant Agreements No. 720270, No. 785907, and No. 945539
  * (Human Brain Project SGA1, SGA2 and SGA3).
- *
  */
 
-import React from "react";
-import { render } from "react-dom";
-import ReactPiwik from "react-piwik";
-// import { configure } from "mobx";
-//import reportWebVitals from './reportWebVitals';
+package eu.ebrains.kg.queryBuilder.configuration;
 
-import "bootstrap/dist/css/bootstrap.min.css";
 
-import "./Services/IconsImport";
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
-import App from "./Views/App";
-
-// configure({
-//   enforceActions: "always",
-//   computedRequiresReaction: true,
-//   reactionRequiresObservable: true,
-//   observableRequiresReaction: true,
-//   disableErrorBoundaries: false // help to debug only
-// });
-
-//reportWebVitals();
-
-new ReactPiwik({
-  url: process.env.REACT_APP_MATOMO_URL,
-  siteId: process.env.REACT_APP_MATOMO_SITE_ID,
-  trackErrors: true
-});
-
-render(
-  <React.StrictMode>
-    <App/>
-  </React.StrictMode>, document.getElementById("root"));
+@Configuration
+@PropertySource({"classpath:commit.properties"})
+public class CommonProperties {
+}

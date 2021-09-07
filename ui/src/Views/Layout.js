@@ -180,6 +180,15 @@ const useStyles = createUseStyles(theme => ({
         fontSize: "1.6rem"
       }
     }
+  },
+  footer: {
+    position: "relative"
+  },
+  build: {
+    color: "var(--ft-color-loud)",
+    position: "absolute",
+    top: "0px",
+    right: "10px"
   }
 }));
 
@@ -192,6 +201,7 @@ const Layout = observer(() => {
   const classes = useStyles({ theme });
 
   const { appStore, authStore, queryBuilderStore } = useStores();
+  const commit = authStore.commit;
 
   return (
     <div className={classes.layout}>
@@ -237,8 +247,13 @@ const Layout = observer(() => {
           )
         }
       </div>
-      <div className={`${classes.status} layout-status`}>
-              Copyright &copy; {new Date().getFullYear()} EBRAINS. All rights reserved.
+      <div className={classes.footer}>
+        <div className={`${classes.status} layout-status`}>
+                Copyright &copy; {new Date().getFullYear()} EBRAINS. All rights reserved.
+        </div>
+        <div className={classes.build}>
+          {commit && <span >build: <i>{commit}</i></span>}
+        </div>
       </div>
     </div>
   );

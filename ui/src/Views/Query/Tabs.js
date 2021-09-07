@@ -25,6 +25,7 @@ import React from "react";
 import {observer} from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ReactPiwik from "react-piwik";
 
 import { useStores } from "../../Hooks/UseStores";
 
@@ -87,7 +88,10 @@ const Tabs = observer(() => {
 
   const { queryBuilderStore } = useStores();
 
-  const setMode = mode => queryBuilderStore.setMode(mode);
+  const setMode = mode => {
+    ReactPiwik.push(["trackEvent", "Type", "ChangeMode", mode]);
+    queryBuilderStore.setMode(mode);
+  }
 
   return (
     <div className={classes.tabs}>

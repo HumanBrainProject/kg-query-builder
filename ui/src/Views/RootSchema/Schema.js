@@ -27,6 +27,7 @@ import { createUseStyles } from "react-jss";
 import { useHistory } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import _  from "lodash-uuid";
+import ReactPiwik from "react-piwik";
 
 import Icon from "../../Components/Icon";
 
@@ -80,6 +81,7 @@ const Schema = observer(({ type, enableFocus, onKeyDown }) =>  {
   const { queryBuilderStore } = useStores();
 
   const handleClick = () => {
+    ReactPiwik.push(["trackEvent", "Type", "Select", type.id]);
     queryBuilderStore.selectRootSchema(type);
     selectSchema();
   };
