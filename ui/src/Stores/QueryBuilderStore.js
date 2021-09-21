@@ -393,6 +393,7 @@ export class QueryBuilderStore {
         label: schema.label,
         canBe: [schema.id]
       });
+      this.rootField.isInvalidLeaf = true;
       this.isSaving = false;
       this.saveError = null;
       this.isRunning = false;
@@ -420,6 +421,7 @@ export class QueryBuilderStore {
         this.rootField = new Field(rootField.schema);
         this.selectField(this.rootField);
       }
+      this.rootField.isInvalidLeaf = true;
       if (this.mode !== "build" && this.mode !== "edit") {
         this.mode = "build";
       }
@@ -580,6 +582,10 @@ export class QueryBuilderStore {
     }
     if (!parent.isFlattened || parent.structure.length < 1) {
       const newField = new Field(schema, parent);
+      if (Array.isArray(schema.canBe)) {
+        newField.isInvalidLeaf = true;
+      }
+      parent.isInvalidLeaf = false;
       if (parent.isMerge && !parent.isRootMerge) {
         newField.isMerge = true;
         newField.isFlattened = !!newField.lookups.length;
@@ -624,8 +630,9 @@ export class QueryBuilderStore {
       }
       const newField = new Field({}, parent);
       newField.isMerge = true;
-      newField.isInvalid = true;
       newField.alias = uniqueId("field");
+      newField.isInvalidLeaf = true;
+      parent.isInvalidLeaf = false;
       if (!parent.structure || parent.structure.length === undefined) {
         parent.structure = [];
       }
@@ -682,6 +689,10 @@ export class QueryBuilderStore {
       if (!parent.merge || parent.merge.length === undefined) {
         parent.merge = [];
       }
+      if (Array.isArray(schema.canBe)) {
+        newField.isInvalidLeaf = true;
+      }
+      parent.isInvalidLeaf = false;
       parent.merge.push(newField);
       parent.isInvalid = (parent.merge.length < 2);
       this.checkMergeFields(parent);
@@ -733,12 +744,14 @@ export class QueryBuilderStore {
         remove(field.parent.merge, childField => field === childField);
         field.parent.isInvalid = (field.parent.merge.length < 2);
         if (!field.parent.merge.length) {
+          field.parent.isInvalidLeaf = true;
           field.parent.isFlattened = false;
         }
         this.checkMergeFields(field.parent);
       } else {
         remove(field.parent.structure, childField => field === childField);
         if (!field.parent.structure.length) {
+          field.parent.isInvalidLeaf = true;
           field.parent.isFlattened = false;
         }
         const rootMerge = field.rootMerge;
@@ -1008,11 +1021,17 @@ export class QueryBuilderStore {
             field.typeFilterEnabled = true;
             field.typeFilter = validTypeFilter;
           }
+          if (Array.isArray(property.canBe)) {
+            field.isInvalidLeaf = true;
+          }
+          parentField.isInvalidLeaf = false;
         }
 
         if (jsonField.merge) {
           if (!field) {
             field = new Field({}, parentField);
+            field.isInvalidLeaf = true;
+            parentField.isInvalidLeaf = false;
           }
           field.isMerge = true;
           this._processJsonSpecificationMergeFields(field, jsonField.merge instanceof Array ? jsonField.merge : [jsonField.merge]);
@@ -1021,6 +1040,8 @@ export class QueryBuilderStore {
           field = new Field({}, parentField);
           field.isInvalid = true;
           field.isUnknown = true;
+          field.isInvalidLeaf = true;
+          parentField.isInvalidLeaf = false;
         }
         if ((jsonField.merge && jsonField.path) || (!jsonField.merge && !jsonField.path)) {
           field.isInvalid = true;

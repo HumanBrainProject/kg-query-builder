@@ -56,7 +56,8 @@ class Field {
   isReverse = false;
   optionsMap = new Map();
   isUnknown = null;;
-  isInvalid = null;
+  isInvalid = false;
+  isInvalidLeaf = false;
   aliasError = null;
   typeFilter = [];
   typeFilterEnabled = false;
@@ -73,6 +74,7 @@ class Field {
       optionsMap: observable,
       isUnknown: observable,
       isInvalid: observable,
+      isInvalidLeaf: observable,
       aliasError: observable,
       setAlias: action,
       options: computed,

@@ -240,7 +240,7 @@ const Field = observer(({ field }) => {
       {hasFlattenedParent &&
         <div className={classes.verticalLineExtraPath}></div>
       }
-      <div className={`${classes.label} ${field.isUnknown ? "is-unknown" : ""} ${(field.isInvalid || field.aliasError) ? "is-invalid" : ""} ${field === queryBuilderStore.currentField ? "selected" : ""}`} onClick={handleSelectField}>
+      <div className={`${classes.label} ${field.isUnknown ? "is-unknown" : ""} ${(field.isInvalid || field.aliasError || field.isInvalidLeaf) ? "is-invalid" : ""} ${field === queryBuilderStore.currentField ? "selected" : ""}`} onClick={handleSelectField} title={field.isInvalid?"this is not a recognized property for this type":field.aliasError?"alias should not be empty":field.isInvalidLeaf?"Links field must have at least one child field":null} >
         {field.isMerge && field.parentIsRootMerge && (
           <div className={classes.parentIsRootMerge}>
             <FontAwesomeIcon icon="long-arrow-alt-right" />
