@@ -32,7 +32,7 @@ import Toggle from "../../../../Components/Toggle";
 const useStyles = createUseStyles({
   container: {
     position: "relative",
-    paddingTop: "20px"
+    paddingBottom: "10px"
   },
   panel: {
     display: "flex",

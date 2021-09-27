@@ -62,7 +62,32 @@ const queryCompare = (a, b) => {
   return a.id.localeCompare(b.id);
 };
 
-const rootFieldReservedProperties = ["root_schema", "schema:root_schema", "http://schema.org/root_schema", "identifier", "schema:identifier", "http://schema.org/identifier", "@id", "@type", "https://core.kg.ebrains.eu/vocab/meta/revision", "https://core.kg.ebrains.eu/vocab/meta/space", "https://core.kg.ebrains.eu/vocab/meta/user", "@context", "meta", "structure", "merge"];
+const rootFieldReservedProperties = [
+  "root_schema",
+  "schema:root_schema",
+  "http://schema.org/root_schema",
+  "identifier",
+  "schema:identifier",
+  "http://schema.org/identifier",
+  "@id",
+  "@type",
+  "@context",
+  "meta",
+  "structure",
+  "merge",
+  "_collection",
+  "_id",
+  "_identifiers",
+  "_indexTimestamp",
+  "_inferenceOf",
+  "_key",
+  "_rev",
+  "_timestamp",
+  "https://core.kg.ebrains.eu/vocab/meta/revision",
+  "https://core.kg.ebrains.eu/vocab/meta/space",
+  "https://core.kg.ebrains.eu/vocab/meta/user",
+  "https://core.kg.ebrains.eu/vocab/meta/alternative"
+];
 const fieldReservedProperties = ["propertyName", "path", "merge", "structure"];
 const optionsToKeepOnFlattenendField = ["ensureOrder", "required", "singleValue"];
 
@@ -1154,6 +1179,7 @@ export class QueryBuilderStore {
           field.isInvalid = true;
           field.isUnknown = true;
         }
+        parentField.isInvalidLeaf = false;
         if (parentField.isRootMerge) {
           if (!parentField.merge || parentField.merge.length === undefined) {
             parentField.merge = [];
@@ -1178,6 +1204,9 @@ export class QueryBuilderStore {
           }
         }
       });
+      if (parentField.isRootMerge && Array.isArray(parentField.merge) && parentField.merge.length < 2) {
+        parentField.isInvalid = true;
+      }
     }
   }
 

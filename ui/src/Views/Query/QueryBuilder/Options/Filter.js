@@ -30,10 +30,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const useStyles = createUseStyles({
   container: {
-    marginBottom: "20px",
     paddingTop: "10px",
+    marginBottom: "20px",
     "&:last-child": {
-      marginBottom: 0
+      marginTop: "10px",
+      marginBottom: "10px"
     }
   },
   panel: {

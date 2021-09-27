@@ -235,12 +235,25 @@ const Field = observer(({ field }) => {
   const canMoveUp = fieldIndex >= 1;
   const canMoveDown = fieldIndex === -1?false:fieldIndex < (field.parent.structure.length -1);
 
+  let title = null;
+  if (field.isInvalid) {
+    if (field.isMerge) {
+      title = "A merge field must have at least 2 child fields";
+    } else {
+      title = "this is not a recognized property for this type";
+    }
+  } else if (field.aliasError) {
+    title = "alias should not be empty";
+  } else if (field.isInvalidLeaf) {
+    title = "Links field must have at least one child field"
+  }
+
   return (
     <div className={`${classes.container} ${field.isMerge ? "is-merge" : ""} ${field.isRootMerge ? "is-root-merge" : ""} ${field.isMerge && !field.isRootMerge ? "is-child-merge" : ""} ${(field.isMerge && field.parentIsRootMerge) ? "parent-is-root-merge" : ""} ${isFlattened ? "flattened" : ""} ${hasFlattenedParent ? "has-flattened-parent" : ""}`}>
       {hasFlattenedParent &&
         <div className={classes.verticalLineExtraPath}></div>
       }
-      <div className={`${classes.label} ${field.isUnknown ? "is-unknown" : ""} ${(field.isInvalid || field.aliasError || field.isInvalidLeaf) ? "is-invalid" : ""} ${field === queryBuilderStore.currentField ? "selected" : ""}`} onClick={handleSelectField} title={field.isInvalid?"this is not a recognized property for this type":field.aliasError?"alias should not be empty":field.isInvalidLeaf?"Links field must have at least one child field":null} >
+      <div className={`${classes.label} ${field.isUnknown ? "is-unknown" : ""} ${(field.isInvalid || field.aliasError || field.isInvalidLeaf) ? "is-invalid" : ""} ${field === queryBuilderStore.currentField ? "selected" : ""}`} onClick={handleSelectField} title={title} >
         {field.isMerge && field.parentIsRootMerge && (
           <div className={classes.parentIsRootMerge}>
             <FontAwesomeIcon icon="long-arrow-alt-right" />

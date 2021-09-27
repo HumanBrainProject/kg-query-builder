@@ -32,7 +32,8 @@ const useStyles = createUseStyles({
     marginTop: "20px",
     marginBottom: "20px",
     "&:last-child": {
-      marginBottom: 0
+      marginTop: "10px",
+      marginBottom: "10px"
     }
   },
   optionLabel: {

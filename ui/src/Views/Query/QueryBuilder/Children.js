@@ -47,7 +47,7 @@ const useStyles = createUseStyles({
       borderTopColor: "var(--bg-color-ui-contrast4)"
     },
     "&.has-options": {
-      marginTop: "25px",
+      marginTop: "10px",
       "& $panel": {
         height: "calc(100% - 25px)"
       }
