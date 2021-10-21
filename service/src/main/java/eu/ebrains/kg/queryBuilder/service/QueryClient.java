@@ -28,13 +28,12 @@ import eu.ebrains.kg.queryBuilder.controller.IdController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import java.util.UUID;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class QueryClient {
@@ -59,14 +58,6 @@ public class QueryClient {
             UUID resolvedQueryId = idController.getSimplifyFullyQualifiedId(query);
             if (resolvedQueryId != null) {
                 query.put("@id", resolvedQueryId.toString());
-            }
-            List<Map<String, Object>> userList = (List<Map<String, Object>>) query.get(SchemaFieldsConstants.META_USER);
-            if (!CollectionUtils.isEmpty(userList)) {
-                Map<String, Object> user = userList.get(0);
-                UUID userId = idController.getSimplifyFullyQualifiedId(user);
-                if (userId != null) {
-                    query.put(SchemaFieldsConstants.META_USER, userId.toString());
-                }
             }
         });
         return queriesResult;
