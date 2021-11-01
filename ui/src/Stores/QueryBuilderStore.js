@@ -318,10 +318,21 @@ export class QueryBuilderStore {
     const filter = this.childrenFilterValue && this.childrenFilterValue.toLowerCase();
 
     return lookups.reduce((acc, id) => {
+      const reg = /^https?:\/\/.+\/(.+)$/;
       const type = this.rootStore.typeStore.types[id];
       if (type) {
-        const properties = type.properties.filter(prop => (this.includeAdvancedAttributes  || !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta")) &&
-                                                          (!filter || !prop.label || prop.label.toLowerCase().includes(filter)));
+        const properties = type.properties.filter(prop => (this.includeAdvancedAttributes  || !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))
+                                                            && (!filter 
+                                                                || (prop.label && prop.label.toLowerCase().includes(filter))
+                                                                || (Array.isArray(prop.canBe) && prop.canBe.some(t => {
+                                                                      const m = t.match(reg);
+                                                                      if (!m) {
+                                                                        return false;
+                                                                      }
+                                                                      return m[1].toLowerCase().includes(filter);
+                                                                  }))
+                                                            )
+                                                  );
         if (properties.length) {
           acc.push({
             id: type.id,
