@@ -132,7 +132,7 @@ const normalizeUser = user => {
 export class QueryBuilderStore {
   meta = null;
   defaultResponseVocab = defaultContext.query;
-  responseVocab = null;
+  responseVocab = defaultContext.query;
   queryId = null;
   label = "";
   space = "";
@@ -421,7 +421,7 @@ export class QueryBuilderStore {
       this.context = toJS(defaultContext);
       this.meta = null;
       this.defaultResponseVocab = this.context.query;
-      this.responseVocab = null;
+      this.responseVocab = this.context.meta?this.context.meta.responseVocab:this.context.query;
       this.sourceQuery = null;
       this.savedQueryHasInconsistencies = false;
       this.rootField = new Field({
@@ -472,7 +472,7 @@ export class QueryBuilderStore {
       this.context = toJS(defaultContext);
       this.meta = null;
       this.defaultResponseVocab = this.context.query;
-      this.responseVocab = null;
+      this.responseVocab = this.defaultResponseVocab;
       this.sourceQuery = null;
       this.savedQueryHasInconsistencies = false;
       this.isSaving = false;
@@ -860,6 +860,8 @@ export class QueryBuilderStore {
     }
     if (this.responseVocab) {
       meta.responseVocab = this.responseVocab;
+    } else {
+      delete meta.responseVocab;
     }
     return meta;
   }
@@ -1278,15 +1280,13 @@ export class QueryBuilderStore {
       this.description = this.meta.description?this.meta.description:"";
       if (this.meta.responseVocab) {
         this.defaultResponseVocab = this.meta.responseVocab;
-        this.responseVocab = this.defaultResponseVocab;
-        delete this.meta.responseVocab;
       } else {
         this.defaultResponseVocab = this.context.query;
-        this.responseVocab = null;
       }
+      this.responseVocab = this.meta.responseVocab;
     } else {
       this.defaultResponseVocab = this.context.query;
-      this.responseVocab = null;
+      this.responseVocab = this.context.query;
     }
     this.rootField = this._processJsonSpecification(toJS(this.rootField.schema), toJS(query.merge), toJS(query.structure), toJS(query.properties));
     this.selectField(this.rootField);
