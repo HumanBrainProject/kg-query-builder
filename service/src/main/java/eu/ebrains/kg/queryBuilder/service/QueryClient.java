@@ -136,11 +136,15 @@ public class QueryClient {
 
     public Map<?, ?> executeQuery(
             Map<?, ?> query,
+            String stage,
             Integer from,
             Integer size,
             String vocab,
-            String stage) {
+            String instanceId) {
         String relativeUrl = String.format("queries?from=%d&size=%d&vocab=%s&stage=%s", from, size, vocab, stage);
+        if (instanceId != null) {
+            relativeUrl += String.format("&instanceId=%s", instanceId);
+        }
         return kg.client().post().uri(kg.url(relativeUrl))
                 .body(BodyInserters.fromValue(query))
                 .retrieve()

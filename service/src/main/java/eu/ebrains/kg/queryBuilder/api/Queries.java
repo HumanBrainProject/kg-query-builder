@@ -53,11 +53,12 @@ public class Queries {
     @PostMapping
     public Map<?, ?> executeQuery(
             @RequestBody Map<?, ?> query,
+            @RequestParam("stage") String stage,
             @RequestParam("from") Integer from,
             @RequestParam("size") Integer size,
             @RequestParam(value = "vocab", required = false) String vocab,
-            @RequestParam("stage") String stage) {
-        return queryClient.executeQuery(query, from, size, vocab, stage);
+            @RequestParam(value = "instanceId", required = false) String instanceId) {
+        return queryClient.executeQuery(query, stage, from, size, vocab, instanceId);
     }
 
     @PutMapping("/{queryId}")

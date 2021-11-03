@@ -43,6 +43,11 @@ const useStyles = createUseStyles({
       borderColor: "rgba(64, 169, 243, 0.5)",
       backgroundColor: "transparent"
     }
+  },
+  required: {
+    color: "var(--bg-color-error-normal)",
+    paddingLeft: "3px",
+    fontWeight: "bold"
   }
 });
 
@@ -60,6 +65,8 @@ const ExecutionParams = observer(() => {
 
   const handleChangeStage = e => queryBuilderStore.setStage(e.target.value);
 
+  const handleChangeInstanceId = e => queryBuilderStore.setResultInstanceId(e.target.value);
+
   const handlExecuteQuery = () => {
     ReactPiwik.push(["trackEvent", "Query", "Execute", queryBuilderStore.rootField.id]);
     queryBuilderStore.executeQuery();
@@ -70,7 +77,17 @@ const ExecutionParams = observer(() => {
       <Row>
         <Col xs={3}>
           <Form.Group>
-            <Form.Label>Size</Form.Label>
+            <Form.Label>Scope<span className={classes.required}>*</span></Form.Label>
+            <Form.Control className={classes.input} as="select" value={queryBuilderStore.stage} onChange={handleChangeStage} >
+              {scopeOptions.map(space => (
+                <option value={space.value} key={space.value}>{space.label}</option>
+              ))}
+            </Form.Control>
+          </Form.Group>
+        </Col>
+        <Col xs={2}>
+          <Form.Group>
+            <Form.Label>Size<span className={classes.required}>*</span></Form.Label>
             <Form.Control
               className={classes.input}
               type="number"
@@ -80,9 +97,9 @@ const ExecutionParams = observer(() => {
             />
           </Form.Group>
         </Col>
-        <Col xs={3}>
+        <Col xs={2}>
           <Form.Group>
-            <Form.Label>Start</Form.Label>
+            <Form.Label>Start<span className={classes.required}>*</span></Form.Label>
             <Form.Control
               className={classes.input}
               type="number"
@@ -92,14 +109,16 @@ const ExecutionParams = observer(() => {
             />
           </Form.Group>
         </Col>
-        <Col xs={6}>
+        <Col xs={5}>
           <Form.Group>
-            <Form.Label>Select the scope</Form.Label>
-            <Form.Control className={classes.input} as="select" value={queryBuilderStore.stage} onChange={handleChangeStage} >
-              {scopeOptions.map(space => (
-                <option value={space.value} key={space.value}>{space.label}</option>
-              ))}
-            </Form.Control>
+            <Form.Label>Instance id</Form.Label>
+            <Form.Control
+              className={classes.input}
+              type="text"
+              value={queryBuilderStore.resultInstanceId}
+              placeholder=""
+              onChange={handleChangeInstanceId}
+            />
           </Form.Group>
         </Col>
       </Row>

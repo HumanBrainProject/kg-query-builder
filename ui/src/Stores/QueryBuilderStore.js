@@ -162,6 +162,7 @@ export class QueryBuilderStore {
 
   resultSize = 20;
   resultStart = 0;
+  resultInstanceId = "";
   result = null;
   tableViewRoot = ["data"];
 
@@ -194,6 +195,7 @@ export class QueryBuilderStore {
       specifications: observable,
       resultSize: observable,
       resultStart: observable,
+      resultInstanceId: observable,
       result: observable.shallow,
       tableViewRoot: observable,
       currentField: observable,
@@ -248,6 +250,7 @@ export class QueryBuilderStore {
       executeQuery: action,
       setResultSize: action,
       setResultStart: action,
+      setResultInstanceId: action,
       setStage: action,
       returnToTableViewRoot: action,
       appendTableViewRoot: action,
@@ -1320,7 +1323,8 @@ export class QueryBuilderStore {
       this.result = null;
       try {
         const query = this.JSONQuery;
-        const response = await this.transportLayer.performQuery(query, this.stage, this.resultStart, this.resultSize);
+        const instanceId = typeof this.resultInstanceId === "string"?this.resultInstanceId.trim():null;
+        const response = await this.transportLayer.performQuery(query, this.stage, this.resultStart, this.resultSize, instanceId?instanceId:null);
         runInAction(() => {
           this.tableViewRoot = ["data"];
           this.result = response.data;
@@ -1344,6 +1348,10 @@ export class QueryBuilderStore {
 
   setResultStart(start) {
     this.resultStart = start;
+  }
+
+  setResultInstanceId(instanceId) {
+    this.resultInstanceId = instanceId;
   }
 
   setStage(scope) {
