@@ -354,21 +354,42 @@ export class QueryBuilderStore {
     const counters = {};
     groups.forEach(group => {
       group.properties.forEach(prop => {
-        const key = `${prop.attribute}${prop.reverse?":is-reverse":""}`;
+        const key = `${prop.simpleAttributeName}${prop.reverse?":is-reverse":""}`;
         if (!counters[key]) {
-          counters[key] = {
-            property: prop,
-            count: 0
-          };
+          if (Array.isArray(prop.canBe)) {
+            counters[key] = {
+              property: {...prop, canBe:  [...prop.canBe].sort()},
+              count: 0
+            };
+          } else {
+            counters[key] = {
+              property: prop,
+              count: 0
+            };
+          }
+        } else {
+          const property = counters[key].property;
+          if (Array.isArray(prop.canBe)) {
+            if (Array.isArray(property.canBe)) {
+              prop.canBe.forEach(p => {
+                if (!property.canBe.includes(p)) {
+                  property.canBe.push(p);
+                }
+              });
+              property.canBe.sort();
+            } else {
+              property.canBe = [...prop.canBe].sort();
+            }
+          }
         }
         counters[key].count += 1;
       });
     });
-    return Object.values(counters).filter(({count}) => count === groups.length).map(({property}) => property).sort((a, b) => a.label.localeCompare(b.label));
+    return Object.values(counters).filter(({count}) => count > 1 || groups.length === 1).map(({property}) => property).sort((a, b) => a.label.localeCompare(b.label));
   }
 
   isACurrentFieldFilteredCommonProperty(property) {
-    return this.currentFieldFilteredCommonProperties.some(prop => prop.attribute === property.attribute && prop.reverse === property.reverse);
+    return this.currentFieldFilteredCommonProperties.some(prop => prop.simpleAttributeName === property.simpleAttributeName && prop.reverse === property.reverse);
   }
 
   get currentFieldLookupsAttributes() {
