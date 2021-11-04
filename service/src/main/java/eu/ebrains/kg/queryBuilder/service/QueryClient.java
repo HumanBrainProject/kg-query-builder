@@ -31,6 +31,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.BodyInserters;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -134,14 +137,31 @@ public class QueryClient {
         return ResponseEntity.notFound().build();
     }
 
+    private String paramsToString(Map<String, String> map) throws UnsupportedEncodingException {
+        StringBuilder mapAsString = new StringBuilder("");
+        for (String key : map.keySet()) {
+            mapAsString.append("&").append(encodeValue(key)).append("=").append(encodeValue(map.get(key)));
+        }
+        return mapAsString.toString();
+    }
+
+    private String encodeValue(String value) throws UnsupportedEncodingException {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+    }
+
     public Map<?, ?> executeQuery(
             Map<?, ?> query,
             String stage,
             Integer from,
             Integer size,
-            String vocab,
-            String instanceId) {
-        String relativeUrl = String.format("queries?from=%d&size=%d&vocab=%s&stage=%s", from, size, vocab, stage);
+            String instanceId,
+            Map<String, String> allRequestParams) throws UnsupportedEncodingException {
+        //Remove the non-dynamic parameters from the map
+        allRequestParams.remove("stage");
+        allRequestParams.remove("instanceId");
+        allRequestParams.remove("from");
+        allRequestParams.remove("size");
+        String relativeUrl = String.format("queries?from=%d&size=%d&stage=%s%s", from, size, stage, paramsToString(allRequestParams));
         if (instanceId != null) {
             relativeUrl += String.format("&instanceId=%s", instanceId);
         }

@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.io.UnsupportedEncodingException;
+
 @ControllerAdvice(annotations = RestController.class)
 public class RestControllerAdvice {
 
@@ -56,6 +58,11 @@ public class RestControllerAdvice {
 
     @ExceptionHandler({IllegalArgumentException.class})
     protected ResponseEntity<?> illegalArgument(RuntimeException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler({UnsupportedEncodingException.class})
+    protected ResponseEntity<?> unsupportedEncoding(RuntimeException ex, WebRequest request) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }

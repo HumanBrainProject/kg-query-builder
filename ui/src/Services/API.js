@@ -28,11 +28,17 @@ const API = {
     "spaces": () => "/service/api/spaces",
     "types": () => "/service/api/types",
     "structure": () => "/service/api/structure?withLinks=true",
-    "performQuery": (stage, from, size, instanceId) => `/service/api/queries?${
-      ""}${size!==undefined && size!==null?`size=${size}&`:""}${
-      ""}${from!==undefined && from!==null?`from=${from}&`:""}${
-      ""}${instanceId!==undefined && instanceId!==null?`instanceId=${instanceId}&`:""}${
-      ""}${stage?`stage=${stage}`:"" }`,
+    "performQuery": (stage, from, size, instanceId, params) => {
+      const paramsString = Object.entries(params).reduce((acc, [name, value]) => {
+        acc += `&${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
+        return acc;
+      }, "");
+      return `/service/api/queries?${
+        ""}${size!==undefined && size!==null?`size=${size}&`:""}${
+        ""}${from!==undefined && from!==null?`from=${from}&`:""}${
+        ""}${instanceId!==undefined && instanceId!==null?`instanceId=${instanceId}&`:""}${
+        ""}${stage?`stage=${stage}`:"" }${paramsString}`;
+    },
     "getQuery": queryId => `/service/api/queries/${queryId}`,
     "saveQuery": (queryId, space) => `/service/api/queries/${queryId}/${space?`?space=${space}`:"" }`,
     "deleteQuery": queryId => `/service/api/queries/${queryId}`,

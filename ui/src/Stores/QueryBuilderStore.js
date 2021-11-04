@@ -32,6 +32,8 @@ import Field from "./Field";
 const jsdiff = require("diff");
 
 
+const defaultResultSize = 20;
+
 const defaultContext = {
   "@vocab": "https://core.kg.ebrains.eu/vocab/query/",
   "query": "https://schema.hbp.eu/myQuery/",
@@ -159,10 +161,10 @@ export class QueryBuilderStore {
   mode = "build";
   specifications = [];
   includeAdvancedAttributes = false;
-
-  resultSize = 20;
+  resultSize = defaultResultSize;
   resultStart = 0;
   resultInstanceId = "";
+  resultQueryParameters = {};
   result = null;
   tableViewRoot = ["data"];
 
@@ -196,6 +198,7 @@ export class QueryBuilderStore {
       resultSize: observable,
       resultStart: observable,
       resultInstanceId: observable,
+      resultQueryParameters: observable,
       result: observable.shallow,
       tableViewRoot: observable,
       currentField: observable,
@@ -239,6 +242,8 @@ export class QueryBuilderStore {
       setResponseVocab: action,
       selectField: action,
       resetField: action,
+      queryParametersNames: computed,
+      getQueryParameters: action,
       JSONQueryFields: computed,
       JSONQueryProperties: computed,
       JSONMetaProperties: computed,
@@ -251,6 +256,7 @@ export class QueryBuilderStore {
       setResultSize: action,
       setResultStart: action,
       setResultInstanceId: action,
+      setResultQueryParameter: action,
       setStage: action,
       returnToTableViewRoot: action,
       appendTableViewRoot: action,
@@ -470,6 +476,10 @@ export class QueryBuilderStore {
       if (this.mode !== "build" && this.mode !== "edit") {
         this.mode = "build";
       }
+      this.resultStart = 0;
+      this.resultSize = defaultResultSize;
+      this.resultInstanceId = "";
+      this.resultQueryParameters = {};
     }
   }
 
@@ -515,6 +525,10 @@ export class QueryBuilderStore {
       if (this.mode !== "build" && this.mode !== "edit") {
         this.mode = "build";
       }
+      this.resultStart = 0;
+      this.resultSize = defaultResultSize;
+      this.resultInstanceId = "";
+      this.resultQueryParameters = {};
     }
   }
 
@@ -843,6 +857,49 @@ export class QueryBuilderStore {
   resetField() {
     this.currentField = null;
     this.childrenFilterValue = "";
+  }
+
+  getParametersFromField(field) {
+    const parameters = [];
+    if (field.optionsMap && field.optionsMap.has("filter")) {
+      const filter = field.optionsMap.get("filter");
+      if (filter && filter.parameter && typeof filter.parameter === "string") {
+        const parameter = filter.parameter.trim();
+        if (parameter) {
+          parameters.push(parameter);
+        }
+      }
+    }
+    if (Array.isArray(field.merge) && field.merge.length) {
+      field.merge.reduce((acc, f) => {
+        acc.push(...this.getParametersFromField(f));
+        return acc;
+      }, parameters);
+    }
+    if (Array.isArray(field.structure) && field.structure.length) {
+      field.structure.reduce((acc, f) => {
+        acc.push(...this.getParametersFromField(f));
+        return acc;
+      }, parameters);
+    }
+    return parameters;
+  }
+
+  get queryParametersNames() {
+    return Array.from(new Set(this.getParametersFromField(this.rootField).filter(p => !["scope", "size", "start", "instanceId"].includes(p)).sort()));
+  }
+
+  getQueryParameters() {
+    this.queryParametersNames.forEach(name => {
+      if (!this.resultQueryParameters[name]) {
+        this.resultQueryParameters[name] = {
+          name: name,
+          value: ""
+
+        };
+      }
+    });
+    return Object.values(this.resultQueryParameters).filter(p => this.queryParametersNames.includes(p.name));
   }
 
   get JSONQueryFields() {
@@ -1324,7 +1381,11 @@ export class QueryBuilderStore {
       try {
         const query = this.JSONQuery;
         const instanceId = typeof this.resultInstanceId === "string"?this.resultInstanceId.trim():null;
-        const response = await this.transportLayer.performQuery(query, this.stage, this.resultStart, this.resultSize, instanceId?instanceId:null);
+        const params = this.getQueryParameters().reduce((acc, p) => {
+          acc[p.name] = typeof p.value === "string"?p.value:"";
+          return acc;
+        }, {})
+        const response = await this.transportLayer.performQuery(query, this.stage, this.resultStart, this.resultSize, instanceId?instanceId:null, params);
         runInAction(() => {
           this.tableViewRoot = ["data"];
           this.result = response.data;
@@ -1352,6 +1413,17 @@ export class QueryBuilderStore {
 
   setResultInstanceId(instanceId) {
     this.resultInstanceId = instanceId;
+  }
+
+  setResultQueryParameter(name, value) {
+    if (this.resultQueryParameters[name]) {
+      this.resultQueryParameters[name].value = value;
+    } else {
+      this.resultQueryParameters[name] = {
+        name: name,
+        value: value
+      };
+    }
   }
 
   setStage(scope) {

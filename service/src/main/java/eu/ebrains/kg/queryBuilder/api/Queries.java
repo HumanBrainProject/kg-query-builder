@@ -19,6 +19,8 @@ package eu.ebrains.kg.queryBuilder.api;
 import eu.ebrains.kg.queryBuilder.service.QueryClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 @RequestMapping("/queries")
@@ -56,9 +58,9 @@ public class Queries {
             @RequestParam("stage") String stage,
             @RequestParam("from") Integer from,
             @RequestParam("size") Integer size,
-            @RequestParam(value = "vocab", required = false) String vocab,
-            @RequestParam(value = "instanceId", required = false) String instanceId) {
-        return queryClient.executeQuery(query, stage, from, size, vocab, instanceId);
+            @RequestParam(value = "instanceId", required = false) String instanceId,
+            @RequestParam(defaultValue = "{}") Map<String, String> allRequestParams) throws UnsupportedEncodingException {
+        return queryClient.executeQuery(query, stage, from, size, instanceId, allRequestParams);
     }
 
     @PutMapping("/{queryId}")

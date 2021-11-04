@@ -44,11 +44,101 @@ const useStyles = createUseStyles({
       backgroundColor: "transparent"
     }
   },
+  selectBox: {
+    position: "relative",
+    "& select": {
+      display: "inline-block",
+      paddingRight: "20px",
+      color: "white",
+      "-webkit-appearance": "none"
+    },
+    "&:after": {
+      content: "\"\"",
+      position: "absolute",
+      top: "50%",
+      right: "10px",
+      width: 0,
+      height: 0,
+      marginTop: "-3px",
+      borderTop: "6px solid white",
+      borderRight: "6px solid transparent",
+      borderLeft: "6px solid transparent",
+      pointerEvents: "none"
+    }
+  },
   required: {
     color: "var(--bg-color-error-normal)",
     paddingLeft: "3px",
     fontWeight: "bold"
   }
+});
+
+const QueryParameter = observer(({parameter}) => {
+
+  const classes = useStyles();
+
+  const { queryBuilderStore } = useStores();
+
+  const handleChangeParameter = e => queryBuilderStore.setResultQueryParameter(parameter.name, e.target.value);
+
+  return (
+    <Form.Group>
+      <Form.Label>{parameter.name}</Form.Label>
+      <Form.Control
+        className={classes.input}
+        type="text"
+        value={parameter.value}
+        placeholder=""
+        onChange={handleChangeParameter}
+      />
+    </Form.Group>
+  );
+});
+
+const QueryParameters = observer(() => {
+
+  const { queryBuilderStore } = useStores();
+
+  const parameters = queryBuilderStore.getQueryParameters();
+
+  if (!parameters.length) {
+    return null;
+  }
+
+  const rows = parameters.reduce((acc, p) => {
+    if (acc.length && !acc[acc.length-1].col3) {
+      if (!acc[acc.length-1].col2) {
+        acc[acc.length-1]["col2"] = p;
+      } else {
+        acc[acc.length-1]["col3"] = p;
+      }
+    } else {
+      acc.push({"col1": p});
+    };
+    return acc;
+  }, []);
+
+  return (
+    <>
+      {rows.map(row => (
+        <Row key={row.col1.name}>
+          <Col xs={4}>
+            <QueryParameter parameter={row.col1} />
+          </Col>
+          {row.col2 && (
+            <Col xs={4}>
+              <QueryParameter parameter={row.col2} />
+            </Col>
+          )}
+          {row.col3 && (
+            <Col xs={4}>
+              <QueryParameter parameter={row.col3} />
+            </Col>
+          )}
+        </Row>
+      ))}
+    </>
+  );
 });
 
 const ExecutionParams = observer(() => {
@@ -72,22 +162,25 @@ const ExecutionParams = observer(() => {
     queryBuilderStore.executeQuery();
   }
 
+
   return (
     <Form>
       <Row>
-        <Col xs={3}>
+        <Col xs={4}>
           <Form.Group>
-            <Form.Label>Scope<span className={classes.required}>*</span></Form.Label>
-            <Form.Control className={classes.input} as="select" value={queryBuilderStore.stage} onChange={handleChangeStage} >
-              {scopeOptions.map(space => (
-                <option value={space.value} key={space.value}>{space.label}</option>
-              ))}
-            </Form.Control>
+            <Form.Label>scope<span className={classes.required}>*</span></Form.Label>
+            <div className={classes.selectBox}>
+              <Form.Control className={classes.input} as="select" value={queryBuilderStore.stage} onChange={handleChangeStage} >
+                {scopeOptions.map(space => (
+                  <option value={space.value} key={space.value}>{space.label}</option>
+                ))}
+              </Form.Control>
+            </div>
           </Form.Group>
         </Col>
         <Col xs={2}>
           <Form.Group>
-            <Form.Label>Size<span className={classes.required}>*</span></Form.Label>
+            <Form.Label>size<span className={classes.required}>*</span></Form.Label>
             <Form.Control
               className={classes.input}
               type="number"
@@ -99,7 +192,7 @@ const ExecutionParams = observer(() => {
         </Col>
         <Col xs={2}>
           <Form.Group>
-            <Form.Label>Start<span className={classes.required}>*</span></Form.Label>
+            <Form.Label>start<span className={classes.required}>*</span></Form.Label>
             <Form.Control
               className={classes.input}
               type="number"
@@ -109,9 +202,9 @@ const ExecutionParams = observer(() => {
             />
           </Form.Group>
         </Col>
-        <Col xs={5}>
+        <Col xs={4}>
           <Form.Group>
-            <Form.Label>Instance id</Form.Label>
+            <Form.Label>instanceId</Form.Label>
             <Form.Control
               className={classes.input}
               type="text"
@@ -122,6 +215,7 @@ const ExecutionParams = observer(() => {
           </Form.Group>
         </Col>
       </Row>
+      <QueryParameters />
       <Row>
         <Col xs={9} />
         <Col xs={3}>

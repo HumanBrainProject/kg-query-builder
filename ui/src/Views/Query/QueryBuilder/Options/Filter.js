@@ -124,6 +124,10 @@ const useStyles = createUseStyles({
       backgroundColor: "#5a6268",
       borderColor: "#5a6268"
     }
+  },
+  warning: {
+    color: "var(--ft-color-error)",
+    marginRight: "35px"
   }
 });
 
@@ -211,7 +215,7 @@ const Filter = observer(({ filter, show, onChange }) => {
   const handleDeleteParameter = () => {
     const value = filter.value !== undefined?{
       op: filter.op,
-      parameter: filter.value
+      value: filter.value
     }:undefined;
     onChange("filter", value);
   };
@@ -245,11 +249,19 @@ const Filter = observer(({ filter, show, onChange }) => {
             )}
           </div>
           {filter.parameter !== undefined && (
-            <div className={classes.inputRow}>
-              <span className={classes.label}>Parameter:&nbsp;</span>
-              <Form.Control className={classes.input} type="text" value={filter.parameter } placeholder="" onChange={handleChangeParameter} />
-              <button className={classes.deleteButton} onClick={handleDeleteParameter} title="delete parameter"><FontAwesomeIcon icon="times"></FontAwesomeIcon></button>
-            </div>
+            <>
+              <div className={classes.inputRow}>
+                <span className={classes.label}>Parameter:&nbsp;</span>
+                <Form.Control className={classes.input} type="text" value={filter.parameter } placeholder="" onChange={handleChangeParameter} />
+                <button className={classes.deleteButton} onClick={handleDeleteParameter} title="delete parameter"><FontAwesomeIcon icon="times"></FontAwesomeIcon></button>
+              </div>
+              {["scope", "size", "start", "instanceId"].includes(filter.parameter) && (
+                <div className={classes.inputRow}>
+                  <span className={classes.label}></span>
+                  <span className={classes.warning}><FontAwesomeIcon icon="exclamation-triangle" />&nbsp;"{filter.parameter}" is a reserved parameter name and should not be used!</span>
+                </div>
+              )}
+            </>
           )}
           {filter.value !== undefined && (
             <div className={classes.inputRow}>
