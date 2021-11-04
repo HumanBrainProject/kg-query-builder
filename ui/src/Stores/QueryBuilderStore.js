@@ -385,7 +385,7 @@ export class QueryBuilderStore {
                   property.canBe.push(p);
                 }
               });
-              property.canBe.sort();
+              property.canBe = [...property.canBe].sort();
             } else {
               property.canBe = [...prop.canBe].sort();
             }
