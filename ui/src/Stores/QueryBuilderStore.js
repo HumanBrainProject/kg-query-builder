@@ -223,14 +223,8 @@ export class QueryBuilderStore {
       hasQueryChanged: computed,
       hasChanged: computed,
       hasQueries: computed,
-      hasMyQueries: computed,
-      hasMyFilteredQueries: computed,
-      hasOthersQueries: computed,
-      hasOthersFilteredQueries: computed,
-      myQueries: computed,
-      myFilteredQueries: computed,
-      othersQueries: computed,
-      othersFilteredQueries: computed,
+      groupedQueries: computed,
+      groupedFilteredQueries: computed,
       queriesFilterValue: observable,
       setQueriesFilterValue: action,
       childrenFilterValue: observable,
@@ -471,7 +465,7 @@ export class QueryBuilderStore {
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
-      this.space = this.rootStore.authStore.spaces[0];
+      this.space = "myspace";
       this.selectField(this.rootField);
       if (this.mode !== "build" && this.mode !== "edit") {
         this.mode = "build";
@@ -593,44 +587,57 @@ export class QueryBuilderStore {
     return this.specifications.length > 0;
   }
 
-  get hasMyQueries() {
-    return this.myQueries.length > 0;
+  get groupedQueries() {
+    const groups = {};
+    const spaces = this.rootStore.authStore.spacesMap;
+    this.specifications.forEach(spec => {
+      if (spec.space) {
+        const space = spaces[spec.space];
+        if (space) {
+          if (!groups[spec.space]) {
+            groups[spec.space] = {
+              name: space.name,
+              label: space.name === "myspace"?"My private queries":`Shared queries in space ${space.name}`,
+              showUser: true,
+              permissions: {...space.permissions},
+              queries: []
+            };
+          }
+          groups[spec.space].queries = [...groups[spec.space].queries, spec].sort(queryCompare);
+        }
+      }
+    });
+    return Object.values(groups)
+      .filter(group => group.queries.length)
+      .sort((a, b) => {
+        if (a.name === "myspace") {
+          return -1;
+        }
+        if (b.name === "myspace") {
+          return 1;
+        }
+        return a.name.localeCompare(b.name);
+      });
   }
 
-  get hasMyFilteredQueries() {
-    return this.myFilteredQueries.length > 0;
-  }
-
-  get hasOthersQueries() {
-    return this.othersQueries.length > 0;
-  }
-
-  get hasOthersFilteredQueries() {
-    return this.othersFilteredQueries.length > 0;
-  }
-
-  get myQueries() {
-    if (this.rootStore.authStore.user) {
-      return this.specifications.filter(spec => spec.user && (spec.user.id === this.rootStore.authStore.user.id)).sort((a, b) => queryCompare(a, b));
-    }
-    return [];
-  }
-
-  get myFilteredQueries() {
+  get groupedFilteredQueries() {
     const filter = this.queriesFilterValue.toLowerCase();
-    return this.myQueries.filter(query => (query.label && query.label.toLowerCase().includes(filter)) || (query.description && query.description.toLowerCase().includes(filter)) || (query.id && query.id.toLowerCase().includes(filter)));
-  }
-
-  get othersQueries() {
-    if (this.rootStore.authStore.user) {
-      return this.specifications.filter(spec =>  !spec.user || (spec.user.id !== this.rootStore.authStore.user.id)).sort((a, b) =>queryCompare(a, b));
+    if (!filter) {
+      return this.groupedQueries;
     }
-    return this.specifications.sort((a, b) => queryCompare(a, b));
-  }
-
-  get othersFilteredQueries() {
-    const filter = this.queriesFilterValue.toLowerCase();
-    return this.othersQueries.filter(query => (query.label && query.label.toLowerCase().includes(filter)) || (query.description && query.description.toLowerCase().includes(filter)) || (query.id && query.id.toLowerCase().includes(filter)));
+    return this.groupedQueries.reduce((acc, group) => {
+      const queries = group.queries.filter(query => (query.label && query.label.toLowerCase().includes(filter)) || (query.description && query.description.toLowerCase().includes(filter)) || (query.id && query.id.toLowerCase().includes(filter)));
+      if (queries.length) {
+        acc.push({
+          name: group.name,
+          label: group.label,
+          showUser: group.showUser,
+          permissions: {...group.permissions},
+          queries: queries
+        });
+      }
+      return acc;
+    }, []);
   }
 
   setQueriesFilterValue(value) {

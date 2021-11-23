@@ -19,6 +19,7 @@ public class SchemaFieldsConstants {
     public static final String VOCAB = EBRAINS + "vocab/";
     public static final String META = VOCAB + "meta/";
     public static final String META_USER = META + "user";
+    public static final String META_PERMISSIONS = META + "permissions";
     public static final String META_SPACE = META + "space/";
     public static final String META_COLOR = META + "color";
     public static final String META_PROPERTIES = META + "properties";

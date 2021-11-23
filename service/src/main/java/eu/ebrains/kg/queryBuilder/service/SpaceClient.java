@@ -24,14 +24,12 @@
 package eu.ebrains.kg.queryBuilder.service;
 
 import eu.ebrains.kg.queryBuilder.constants.SchemaFieldsConstants;
+import eu.ebrains.kg.queryBuilder.model.Permissions;
 import eu.ebrains.kg.queryBuilder.model.TypeEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -44,18 +42,41 @@ public class SpaceClient {
     }
 
     public Map<?, ?> getSpaces() {
-        String relativeUrl = "spaces?stage=IN_PROGRESS";
-        Map<String, Object> result = kg.client().get().uri(kg.url(relativeUrl))
+        String relativeUrl = "spaces?permissions=true";
+        Map<String, ?> response = kg.client().get().uri(kg.url(relativeUrl))
                 .retrieve()
                 .bodyToMono(Map.class)
                 .block();
-        List<Map<String, Object>> spaces = ((List<Map<String, Object>>) result.get("data")).stream()
+        List<Map<String, Object>> spaces = ((List<Map<String, ?>>) response.get("data")).stream()
                 .filter(space -> {
                             boolean isClientSpace = space.containsKey(SchemaFieldsConstants.META_CLIENT_SPACE) && ((boolean) space.get(SchemaFieldsConstants.META_CLIENT_SPACE));
                             boolean isInternalSpace = space.containsKey(SchemaFieldsConstants.META_INTERNAL_SPACE) && ((boolean) space.get(SchemaFieldsConstants.META_INTERNAL_SPACE));
-                            return !(isClientSpace || isInternalSpace);
+                            boolean canRead = false;
+                            if (space.containsKey(SchemaFieldsConstants.META_PERMISSIONS)) {
+                                List<String> permissions = (List<String>) space.get(SchemaFieldsConstants.META_PERMISSIONS);
+                                canRead = permissions.contains("READ_QUERY");
+                            }
+                            return !(isClientSpace || isInternalSpace) && canRead;
                         }
-                ).collect(Collectors.toList());
+                )
+                .map(space -> {
+                    Map<String, Object> s = new HashMap<>();
+                    s.put("name", space.get(SchemaFieldsConstants.NAME));
+                    List<String> permissionList = (List<String>) space.get(SchemaFieldsConstants.META_PERMISSIONS);
+                    Permissions permissions = Permissions.fromPermissionList(permissionList);
+                    s.put("permissions", permissions);
+                    return s;
+                })
+                .sorted(new Comparator<Map<String, Object>>() {
+                    @Override
+                    public int compare(Map<String, Object> space1, Map<String, Object> space2) {
+                        String spaceName1 = (String) space1.get("name");
+                        String spaceName2 = (String) space2.get("name");
+                        return spaceName1.compareTo(spaceName2);
+                    }
+                })
+                .collect(Collectors.toList());
+        Map<String, Object> result = new HashMap<>();
         result.put("data", spaces);
         result.put("size", spaces.size());
         result.put("total", spaces.size());

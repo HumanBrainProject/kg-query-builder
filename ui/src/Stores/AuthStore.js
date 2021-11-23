@@ -72,6 +72,7 @@ export class AuthStore {
       isUserAuthorized: observable,
       user: observable,
       spaces: observable,
+      spacesMap: computed,
       commit: observable,
       isRetrievingUserProfile: observable,
       userProfileError: observable,
@@ -122,6 +123,13 @@ export class AuthStore {
 
   get hasUserSpaces() {
     return this.areUserSpacesRetrieved && !!this.spaces.length;
+  }
+
+  get spacesMap() {
+    return this.spaces.reduce((acc, space) => {
+      acc[space.name] = space;
+      return acc;
+    }, {});
   }
 
   get areUserSpacesRetrieved() {
@@ -193,7 +201,7 @@ export class AuthStore {
         const { data } = await this.transportLayer.getSpaces();
         //throw {response: { status: 403}};
         runInAction(() => {
-          this.spaces = data && data.data ? data.data.map(space => space["http://schema.org/name"]).sort() : [];
+          this.spaces = data && Array.isArray(data.data)? data.data: [];
           this.isRetrievingSpaces = false;
         });
       } catch(e) {

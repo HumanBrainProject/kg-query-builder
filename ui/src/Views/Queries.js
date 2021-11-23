@@ -58,8 +58,11 @@ const useStyles = createUseStyles({
   },
   body: {
     borderTop: "1px solid var(--border-color-ui-contrast2)",
-    padding: "0 15px 10px 15px",
+    padding: "0 0 10px 15px",
     background: "var(--bg-color-ui-contrast2)"
+  },
+  content: {
+    paddingRight: "15px"
   },
   loader: {
     position: "fixed",
@@ -148,14 +151,16 @@ const Queries = observer(() => {
       <Filter className={classes.filter} value={queryBuilderStore.queriesFilterValue} placeholder="Filter queries" onChange={handleChange} />
       <div className={classes.body}>
         <Scrollbars autoHide>
-          <SavedQueries
-            title="My saved queries"
-            list={queryBuilderStore.myFilteredQueries}
-            enableDelete={true} />
-          <SavedQueries
-            title="Other users queries"
-            list={queryBuilderStore.othersFilteredQueries}
-            showUser={true} />
+          <div className={classes.content}>
+            {queryBuilderStore.groupedFilteredQueries.map(group => (
+              <SavedQueries
+                key={group.name}
+                title={group.label}
+                list={group.queries}
+                showUser={group.showUser}
+                enableDelete={group.permissions.canDelete} />
+            ))}
+          </div>
         </Scrollbars>
       </div>
     </div>

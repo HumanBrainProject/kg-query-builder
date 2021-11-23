@@ -144,7 +144,7 @@ const QueryForm = observer(({ className }) => {
                   {!queryBuilderStore.saveAsMode && queryBuilderStore.space ?
                     <option value={queryBuilderStore.space} >{queryBuilderStore.space}</option> :
                     authStore.spaces.map(space => (
-                      <option value={space} key={space}>{space}</option>
+                      <option value={space.name} key={space.name}>{space.name}</option>
                     ))
                   }
                 </Form.Control>
