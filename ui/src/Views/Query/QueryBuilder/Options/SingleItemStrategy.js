@@ -28,24 +28,26 @@ import { createUseStyles } from "react-jss";
 const useStyles = createUseStyles({
   container: {
     display: "flex",
+    alignItems: "baseline",
     marginBottom: "20px",
-    paddingTop: "10px",
     "&:last-child": {
       marginBottom: 0
     }
   },
   select: {
     display: "inline-block",
-    minWidth: "100px",
-    paddingLeft: "4px",
-    paddingRight: "20px",
+    minWidth: "140px",
+    padding: "0.25rem 20px 0.25rem 6px",
+    borderRadius: "4px",
     backgroundColor: "rgb(108, 117, 125)",
     borderColor: "transparent",
     color: "white",
     "-webkit-appearance": "none",
     "&:hover": {
+      outline: 0,
       backgroundColor: "#5a6268",
-      borderColor: "#5a6268"
+      borderColor: "rgba(64, 169, 243, 0.5)",
+      boxShadow: "0 0 0 0.2rem rgb(0 123 255 / 25%)"
     }
   },
   selectBox: {
