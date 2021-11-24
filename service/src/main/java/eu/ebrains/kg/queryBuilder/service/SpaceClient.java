@@ -64,6 +64,7 @@ public class SpaceClient {
                     s.put("name", space.get(SchemaFieldsConstants.NAME));
                     List<String> permissionList = (List<String>) space.get(SchemaFieldsConstants.META_PERMISSIONS);
                     Permissions permissions = Permissions.fromPermissionList(permissionList);
+                    s.put("isPrivate", "myspace".equals(space.get(SchemaFieldsConstants.NAME)));
                     s.put("permissions", permissions);
                     return s;
                 })

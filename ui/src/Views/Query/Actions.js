@@ -87,7 +87,7 @@ const Actions = observer(({ className }) => {
     <div className={`${classes.container} ${className}`}>
       <div className={classes.save}>
         {queryBuilderStore.isQuerySaved?
-          queryBuilderStore.isOneOfMySavedQueries?
+          queryBuilderStore.canSaveQuery?
             queryBuilderStore.saveAsMode?
               <React.Fragment>
                 <Button variant="secondary" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError} onClick={handleHideSaveDialog}>Cancel</Button>

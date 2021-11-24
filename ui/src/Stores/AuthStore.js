@@ -72,7 +72,9 @@ export class AuthStore {
       isUserAuthorized: observable,
       user: observable,
       spaces: observable,
-      spacesMap: computed,
+      privateSpace: computed,
+      sharedSpaces: computed,
+      allowedSharedSpacesToCreateQueries: computed, 
       commit: observable,
       isRetrievingUserProfile: observable,
       userProfileError: observable,
@@ -86,7 +88,6 @@ export class AuthStore {
       isLogout: observable,
       accessToken: computed,
       isAuthenticated: computed,
-      hasSpaces: computed,
       hasUserSpaces: computed,
       areUserSpacesRetrieved: computed,
       logout: action,
@@ -117,23 +118,37 @@ export class AuthStore {
     return !!this.user;
   }
 
-  get hasSpaces() {
-    return !!this.spaces;
-  }
-
   get hasUserSpaces() {
     return this.areUserSpacesRetrieved && !!this.spaces.length;
   }
 
-  get spacesMap() {
-    return this.spaces.reduce((acc, space) => {
-      acc[space.name] = space;
-      return acc;
-    }, {});
-  }
-
   get areUserSpacesRetrieved() {
     return this.spaces instanceof Array;
+  }
+
+  getSpace(name) {
+    if (!this.areUserSpacesRetrieved) {
+      return null;
+    }
+    return this.spaces.find(s => s.name === name);
+  }
+
+  get privateSpace() {
+    if (!this.areUserSpacesRetrieved) {
+      return null;
+    }
+    return this.spaces.find(s => s.isPrivate);
+  }
+
+  get sharedSpaces() {
+    if (!this.areUserSpacesRetrieved) {
+      return [];
+    }
+    return this.spaces.filter(s => !s.isPrivate);
+  }
+
+  get allowedSharedSpacesToCreateQueries() {
+    return this.sharedSpaces.filter(s => s.permissions && s.permissions.canCreate);
   }
 
   get firstName() {

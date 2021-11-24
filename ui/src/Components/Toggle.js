@@ -49,11 +49,13 @@ const useStyles = createUseStyles({
 });
 
 
-const Toggle = ({ option, label, comment, show, onChange }) => {
+const Toggle = ({ className, option, label, comment, show, onChange }) => {
 
   const classes = useStyles();
 
   const { name, value } = option;
+
+  const isReadOnly = typeof onChange !== "function";
 
   const handleChange = newValue => onChange(name, newValue);
 
@@ -62,9 +64,9 @@ const Toggle = ({ option, label, comment, show, onChange }) => {
   }
 
   return (
-    <div className={classes.option}>
+    <div className={`${classes.option} ${className?className:""}`}>
       <div className={classes.toggle}>
-        <MultiToggle selectedValue={value} onChange={handleChange}>
+        <MultiToggle selectedValue={value} onChange={isReadOnly?null:handleChange}>
           <MultiToggle.Toggle color={"var(--ft-color-loud)"} icon={"check"} value={true} />
           <MultiToggle.Toggle color={"var(--ft-color-loud)"} icon={"times"} value={undefined} />
         </MultiToggle>

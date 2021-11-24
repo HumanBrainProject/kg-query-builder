@@ -30,10 +30,12 @@ const useStyles = createUseStyles({
     textAlign:"center",
     height:"24px",
     lineHeight:"24px",
-    cursor:"pointer",
     fontSize:"0.66em",
     transition:"all .2s ease",
     background:"none",
+    "&:not(.readOnly)": {
+      cursor:"pointer"
+    },
     "&.selected":{
       background:"var(--bg-color-ui-contrast1)",
       borderRadius:"50%",
@@ -54,14 +56,18 @@ const MultiToggleItem = ({ selectedValue, value, color, icon, noscale, onSelect 
 
   const classes = useStyles();
 
+  const isReadOnly = typeof onSelect !== "function";
+
   const handleClick = () => {
     if(typeof onSelect === "function") {
       onSelect(value);
     }
   };
 
+  const className = `${classes.container}${selectedValue === value?" selected":""}${noscale !== undefined?" noscale":""} ${isReadOnly?"readOnly":""}`;
+
   return(
-    <div onClick={handleClick} className={`${classes.container}${selectedValue === value?" selected":""}${noscale !== undefined?" noscale":""}`} style={{color: color}}>
+    <div onClick={isReadOnly?null:handleClick} className={className} style={{color: color}}>
       <FontAwesomeIcon icon={icon || "dot-circle"}/>
     </div>
   );

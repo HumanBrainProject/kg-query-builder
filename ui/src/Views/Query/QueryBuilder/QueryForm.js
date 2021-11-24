@@ -24,7 +24,8 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-import Form from "react-bootstrap/Form";
+
+import SpaceForm from "./SpaceForm";
 import Vocab from "./Vocab";
 
 import { useStores } from "../../../Hooks/UseStores";
@@ -37,29 +38,34 @@ const useStyles = createUseStyles({
     background: "var(--bg-color-ui-contrast2)",
     border: "1px solid var(--border-color-ui-contrast1)",
     color: "var(--ft-color-loud)",
-    padding: "10px",
+    padding: "10px"
+  },
+  label: {
+    display: "flex",
+    alignItems: "center",
+    "& h5": {
+      margin: 0
+    },
+    "& $input": {
+      flex: 1,
+      marginLeft: "3px"
+    }
+  },
+  description: {
+    marginTop: "20px",
     "& h5": {
       display: "inline-block",
       marginTop: 0,
       marginBottom: "8px"
     },
-    "& > $vocab:not(:first-child)": {
-      marginTop: "20px"
-    }
-  },
-  space: {
-    marginTop: "20px",
-    "& form-group": {
-      marginBottom: 0
-    }
-  },
-  description: {
-    marginTop: "20px",
-    "& textarea": {
+    "& $input": {
       minWidth: "100%",
       maxWidth: "100%",
       minHeight: "10rem"
     }
+  },
+  space: {
+    marginTop: "20px"
   },
   input:{
     borderRadius: "2px",
@@ -78,7 +84,11 @@ const useStyles = createUseStyles({
       cursor: "text"
     }
   },
-  vocab:{},
+  vocab:{
+    "&:not(:first-child)": {
+      marginTop: "20px"
+    }
+  },
   author: {
     marginTop: "6px",
     color: "var(--ft-color-normal)"
@@ -92,9 +102,6 @@ const useStyles = createUseStyles({
         color: "var(--ft-color-louder)",
       }
     }
-  },
-  half: {
-    width: "50%"
   }
 });
 
@@ -102,25 +109,23 @@ const QueryForm = observer(({ className }) => {
 
   const classes = useStyles();
 
-  const { queryBuilderStore, authStore } = useStores();
+  const { queryBuilderStore } = useStores();
 
   const handleChangeLabel = e => queryBuilderStore.setLabel(e.target.value);
-
-  const handleChangeSpace = e => queryBuilderStore.setSpace(e.target.value);
 
   const handleChangeDescription = e => queryBuilderStore.setDescription(e.target.value);
 
   const handleChangeVocab = value => queryBuilderStore.setResponseVocab(value);
 
   return (
-    <div className={`${classes.container} ${className}`}>
+    <div className={`${classes.container} ${className?className:""}`} >
       {(queryBuilderStore.isQuerySaved || queryBuilderStore.saveAsMode) && (
         <React.Fragment>
-          <div>
+          <div className={classes.label}>
             <h5>Label :</h5>
             <input
-              className={`form-control ${classes.input} ${classes.half}`}
-              disabled={!(queryBuilderStore.saveAsMode || queryBuilderStore.isOneOfMySavedQueries)}
+              className={`form-control ${classes.input}`}
+              disabled={!(queryBuilderStore.saveAsMode || queryBuilderStore.canSaveQuery)}
               placeholder={""}
               type="text"
               value={queryBuilderStore.label}
@@ -130,27 +135,13 @@ const QueryForm = observer(({ className }) => {
             <h5>Description :</h5>
             <textarea
               className={`form-control ${classes.input}`}
-              disabled={!(queryBuilderStore.saveAsMode || queryBuilderStore.isOneOfMySavedQueries)}
+              disabled={!(queryBuilderStore.saveAsMode || queryBuilderStore.canSaveQuery)}
               placeholder={""}
               type="text"
               value={queryBuilderStore.description}
               onChange={handleChangeDescription} />
           </div>
-          {queryBuilderStore.saveAsMode && (
-            <div className={classes.space}>
-              <Form.Group>
-                <h5>Space :</h5>
-                <Form.Control className={`${classes.input} ${classes.half}`} as="select" value={queryBuilderStore.space} onChange={handleChangeSpace}>
-                  {!queryBuilderStore.saveAsMode && queryBuilderStore.space ?
-                    <option value={queryBuilderStore.space} >{queryBuilderStore.space}</option> :
-                    authStore.spaces.map(space => (
-                      <option value={space.name} key={space.name}>{space.name}</option>
-                    ))
-                  }
-                </Form.Control>
-              </Form.Group>
-            </div>
-          )}
+          <SpaceForm className={classes.space} />
         </React.Fragment>
       )}
       <div className={classes.vocab}>
@@ -160,7 +151,7 @@ const QueryForm = observer(({ className }) => {
           onChange={handleChangeVocab}
         />
       </div>
-      {/* {queryBuilderStore.isQuerySaved && !queryBuilderStore.saveAsMode && !queryBuilderStore.isOneOfMySavedQueries && queryBuilderStore.sourceQuery.user && ( //TODO: Enable this when new user endpoint available
+      {/* {queryBuilderStore.isQuerySaved && !queryBuilderStore.saveAsMode && queryBuilderStore.sourceQuery.user && ( //TODO: Enable this when new user endpoint available
             <div className={classes.author} >
               <span>by user<User user={queryBuilderStore.sourceQuery.user} /></span>
             </div>

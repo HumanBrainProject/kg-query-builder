@@ -39,13 +39,9 @@ const MultiToggle = ({ children, selectedValue, onChange }) => {
 
   const classes = useStyles();
 
-  const handleSelect = value => {
-    if (typeof onChange === "function") {
-      onChange(value);
-    }
-  };
+  const isReadOnly = typeof onChange !== "function";
 
-  const childrenWithProps = React.Children.map(children, child => child && React.cloneElement(child, { selectedValue: selectedValue, onSelect: handleSelect }));
+  const childrenWithProps = React.Children.map(children, child => child && React.cloneElement(child, { selectedValue: selectedValue, onSelect: isReadOnly?null:onChange }));
 
   return(
     <div className={classes.container} style={{gridTemplateColumns:`repeat(${childrenWithProps.length}, 24px)`}}>

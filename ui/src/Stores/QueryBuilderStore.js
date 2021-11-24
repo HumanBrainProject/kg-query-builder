@@ -137,7 +137,7 @@ export class QueryBuilderStore {
   responseVocab = defaultContext.query;
   queryId = null;
   label = "";
-  space = "";
+  space = null;
   description = "";
   stage = "RELEASED";
   sourceQuery = null;
@@ -156,6 +156,7 @@ export class QueryBuilderStore {
   fromQueryId = null;
   fromLabel = "";
   fromDescription = "";
+  fromSpace = null;
   isFetchingQuery = false;
   fetchQueryError = null;
   mode = "build";
@@ -218,7 +219,7 @@ export class QueryBuilderStore {
       hasRootSchema: computed,
       rootSchema: computed,
       isQuerySaved: computed,
-      isOneOfMySavedQueries: computed,
+      canSaveQuery: computed,
       isQueryEmpty: computed,
       hasQueryChanged: computed,
       hasChanged: computed,
@@ -271,6 +272,7 @@ export class QueryBuilderStore {
       fromQueryId: observable,
       fromLabel: observable,
       fromDescription: observable,
+      fromSpace: observable,
       mode: observable,
       setMode: action,
       includeAdvancedAttributes: observable,
@@ -465,7 +467,8 @@ export class QueryBuilderStore {
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
-      this.space = "myspace";
+      this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
+      this.space = toJS(this.rootStore.authStore.privateSpace);
       this.selectField(this.rootField);
       if (this.mode !== "build" && this.mode !== "edit") {
         this.mode = "build";
@@ -515,6 +518,8 @@ export class QueryBuilderStore {
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
+      this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
+      this.space = toJS(this.rootStore.authStore.privateSpace);
       this.resetField();
       if (this.mode !== "build" && this.mode !== "edit") {
         this.mode = "build";
@@ -543,9 +548,8 @@ export class QueryBuilderStore {
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
-      this.fromQueryId = null;
-      this.fromLabel = "";
-      this.fromDescription = "";
+      this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
+      this.space = toJS(this.rootStore.authStore.privateSpace);
       if (this.mode !== "build" && this.mode !== "edit") {
         this.mode = "build";
       }
@@ -564,8 +568,8 @@ export class QueryBuilderStore {
     return this.sourceQuery !== null;
   }
 
-  get isOneOfMySavedQueries() {
-    return this.sourceQuery !== null && this.sourceQuery.user.id === this.rootStore.authStore.user.id;
+  get canSaveQuery() {
+    return !!this.space?.permissions?.canWrite;
   }
 
   get isQueryEmpty() {
@@ -589,16 +593,17 @@ export class QueryBuilderStore {
 
   get groupedQueries() {
     const groups = {};
-    const spaces = this.rootStore.authStore.spacesMap;
+    const authStore = this.rootStore.authStore;
     this.specifications.forEach(spec => {
       if (spec.space) {
-        const space = spaces[spec.space];
+        const space = authStore.getSpace(spec.space);
         if (space) {
           if (!groups[spec.space]) {
             groups[spec.space] = {
               name: space.name,
-              label: space.name === "myspace"?"My private queries":`Shared queries in space ${space.name}`,
+              label: space.isPrivate?"My private queries":`Shared queries in space ${space.name}`,
               showUser: true,
+              isPrivate: space.isPrivate,
               permissions: {...space.permissions},
               queries: []
             };
@@ -610,10 +615,10 @@ export class QueryBuilderStore {
     return Object.values(groups)
       .filter(group => group.queries.length)
       .sort((a, b) => {
-        if (a.name === "myspace") {
+        if (a.isPrivate) {
           return -1;
         }
-        if (b.name === "myspace") {
+        if (b.isPrivate) {
           return 1;
         }
         return a.name.localeCompare(b.name);
@@ -1335,7 +1340,7 @@ export class QueryBuilderStore {
       && this.rootField && this.rootField.schema && this.rootField.schema.id
       && query && !query.isDeleting) {
       this.queryId = query.id;
-      this.space = query.space;
+      this.space = toJS(this.rootStore.authStore.getSpace(query.space));
       this.sourceQuery = query;
       this.updateQuery(query);
       this.isSaving = false;
@@ -1347,6 +1352,7 @@ export class QueryBuilderStore {
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
+      this.fromSpace = toJS(this.rootStore.authStore.getSpace(query.space));
       this.savedQueryHasInconsistencies = this.hasQueryChanged;
       if (this.mode !== "build" && this.mode !== "edit") {
         this.mode = "build";
@@ -1452,11 +1458,13 @@ export class QueryBuilderStore {
       this.fromQueryId = this.queryId;
       this.fromLabel = this.label;
       this.fromDescription = this.description;
+      this.fromSpace = toJS(this.space);
     } else if (!this.isSaving) {
       this.rootField.structure = [];
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
+      this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
     }
   }
 
@@ -1474,15 +1482,19 @@ export class QueryBuilderStore {
       this.fromQueryId = this.queryId;
       this.fromLabel = this.label;
       this.fromDescription = this.description;
+      this.fromSpace = toJS(this.space);
       this.queryId = _.uuid();
       this.label = this.label?(this.label.endsWith("-Copy")?this.label:(this.label + "-Copy")):"";
+      this.space = (this.space && this.space.permissions && this.space.permissions.canCreate)?toJS(this.space):toJS(this.rootStore.authStore.privateSpace);
     } else {
       this.queryId = this.fromQueryId;
       this.label = this.fromLabel;
       this.description = this.fromDescription;
+      this.space = toJS(this.fromSpace);
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
+      this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
     }
 
   }
@@ -1496,7 +1508,7 @@ export class QueryBuilderStore {
   }
 
   setSpace(space) {
-    this.space = space;
+    this.space = toJS(space);
   }
 
   setDescription(description) {
@@ -1512,7 +1524,7 @@ export class QueryBuilderStore {
       const queryId = this.saveAsMode ? this.queryId : this.sourceQuery.id;
       const query = this.JSONQuery;
       try {
-        await this.transportLayer.saveQuery(queryId, query, this.space);
+        await this.transportLayer.saveQuery(queryId, query, this.space?this.space.name:"myspace");
         runInAction(() => {
           if (!this.saveAsMode && this.sourceQuery && this.sourceQuery.user.id === this.rootStore.authStore.user.id) {
             this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
@@ -1543,7 +1555,7 @@ export class QueryBuilderStore {
               meta: query.meta,
               label: query.meta && query.meta.name?query.meta.name:"",
               description: query.meta && query.meta.description?query.meta.description:"",
-              space: query.space,
+              space: this.rootStore.authStore.getSpace(query.space),
               isDeleting: false,
               deleteError: null
             };
@@ -1555,6 +1567,7 @@ export class QueryBuilderStore {
           this.fromQueryId = null;
           this.fromLabel = "";
           this.fromDescription = "";
+          this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
         });
       } catch (e) {
         const message = e.message ? e.message : e;
