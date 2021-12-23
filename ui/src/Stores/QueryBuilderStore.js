@@ -359,7 +359,7 @@ export class QueryBuilderStore {
     const counters = {};
     groups.forEach(group => {
       group.properties.forEach(prop => {
-        const key = `${prop.simpleAttributeName}${prop.reverse?":is-reverse":""}`;
+        const key = `${prop.attribute}${prop.reverse?":is-reverse":""}`;
         if (!counters[key]) {
           if (Array.isArray(prop.canBe)) {
             counters[key] = {
