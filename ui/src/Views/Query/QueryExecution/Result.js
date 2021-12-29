@@ -51,6 +51,11 @@ const useStyles = createUseStyles({
   result: {
     padding:"10px"
   },
+  executionTime: {
+    float: "left",
+    paddingLeft: "10px",
+    paddingTop: "8px"
+  }
 });
 
 const Result = observer(() => {
@@ -71,9 +76,13 @@ const Result = observer(() => {
     return null;
   }
 
+  const executionTime = `${queryBuilderStore.result.durationInMs/1000} seconds`;  
   return (
     <div className={classes.container}>
       <div className={classes.toggle}>
+        <span className={classes.executionTime}>
+          Took {executionTime}.
+        </span>
         <ButtonGroup>
           <Button variant="secondary" onClick={selectJSON}>JSON</Button>
           <Button variant="secondary" onClick={selectTable}>Table</Button>
