@@ -49,14 +49,13 @@ public class SpaceClient {
                 .block();
         List<Map<String, Object>> spaces = ((List<Map<String, ?>>) response.get("data")).stream()
                 .filter(space -> {
-                            boolean isClientSpace = space.containsKey(SchemaFieldsConstants.META_CLIENT_SPACE) && ((boolean) space.get(SchemaFieldsConstants.META_CLIENT_SPACE));
                             boolean isInternalSpace = space.containsKey(SchemaFieldsConstants.META_INTERNAL_SPACE) && ((boolean) space.get(SchemaFieldsConstants.META_INTERNAL_SPACE));
                             boolean canRead = false;
                             if (space.containsKey(SchemaFieldsConstants.META_PERMISSIONS)) {
                                 List<String> permissions = (List<String>) space.get(SchemaFieldsConstants.META_PERMISSIONS);
                                 canRead = permissions.contains("READ_QUERY");
                             }
-                            return !(isClientSpace || isInternalSpace) && canRead;
+                            return !isInternalSpace && canRead;
                         }
                 )
                 .map(space -> {
