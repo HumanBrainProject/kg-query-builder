@@ -67,8 +67,8 @@ const Toggle = ({ className, option, label, comment, show, onChange }) => {
     <div className={`${classes.option} ${className?className:""}`}>
       <div className={classes.toggle}>
         <MultiToggle selectedValue={value} onChange={isReadOnly?null:handleChange}>
-          <MultiToggle.Toggle color={"var(--ft-color-loud)"} icon={"check"} value={true} />
-          <MultiToggle.Toggle color={"var(--ft-color-loud)"} icon={"times"} value={undefined} />
+          <MultiToggle.Toggle color={value?"#40a9f3":"var(--ft-color-normal)"} icon={"check"} value={true} />
+          <MultiToggle.Toggle color={value?"var(--ft-color-normal)":"var(--ft-color-loud)"} icon={"times"} value={undefined} />
         </MultiToggle>
       </div>
       <div className={classes.optionLabel}>
