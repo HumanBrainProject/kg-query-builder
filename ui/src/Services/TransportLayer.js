@@ -86,8 +86,8 @@ export class TransportLayer {
     return this._axios.post(API.endpoints.types(), types);
   }
 
-  async performQuery(query, stage, from, size, instanceId, params) {
-    return this._axios.post(API.endpoints.performQuery(stage, from, size, instanceId, params), query);
+  async performQuery(query, stage, from, size, instanceId, restrictToSpaces, params) {
+    return this._axios.post(API.endpoints.performQuery(stage, from, size, instanceId, restrictToSpaces, params), query);
   }
 
   async listQueries(type) {

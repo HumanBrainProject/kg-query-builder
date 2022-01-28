@@ -165,6 +165,7 @@ export class QueryBuilderStore {
   resultSize = defaultResultSize;
   resultStart = 0;
   resultInstanceId = "";
+  resultRestrictToSpaces = null;
   resultQueryParameters = {};
   result = null;
   tableViewRoot = ["data"];
@@ -199,6 +200,8 @@ export class QueryBuilderStore {
       resultSize: observable,
       resultStart: observable,
       resultInstanceId: observable,
+      resultRestrictToSpaces: observable,
+      setResultRestrictToSpaces: action,
       resultQueryParameters: observable,
       result: observable.shallow,
       tableViewRoot: observable,
@@ -281,6 +284,10 @@ export class QueryBuilderStore {
 
     this.transportLayer = transportLayer;
     this.rootStore = rootStore;
+  }
+
+  setResultRestrictToSpaces(spaces) {
+    this.resultRestrictToSpaces = spaces;
   }
 
   toggleIncludeAdvancedAttributes() {
@@ -477,6 +484,7 @@ export class QueryBuilderStore {
       this.resultSize = defaultResultSize;
       this.resultInstanceId = "";
       this.resultQueryParameters = {};
+      this.resultRestrictToSpaces = null;
     }
   }
 
@@ -528,6 +536,7 @@ export class QueryBuilderStore {
       this.resultSize = defaultResultSize;
       this.resultInstanceId = "";
       this.resultQueryParameters = {};
+      this.resultRestrictToSpaces = null;
     }
   }
 
@@ -1349,6 +1358,11 @@ export class QueryBuilderStore {
       this.runError = null;
       this.saveAsMode = false;
       this.result = null;
+      this.resultStart = 0;
+      this.resultSize = defaultResultSize;
+      this.resultInstanceId = "";
+      this.resultQueryParameters = {};
+      this.resultRestrictToSpaces = null;
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
@@ -1398,7 +1412,7 @@ export class QueryBuilderStore {
           acc[p.name] = typeof p.value === "string"?p.value:"";
           return acc;
         }, {})
-        const response = await this.transportLayer.performQuery(query, this.stage, this.resultStart, this.resultSize, instanceId?instanceId:null, params);
+        const response = await this.transportLayer.performQuery(query, this.stage, this.resultStart, this.resultSize, instanceId?instanceId:null, this.resultRestrictToSpaces, params);
         runInAction(() => {
           this.tableViewRoot = ["data"];
           this.result = response.data;

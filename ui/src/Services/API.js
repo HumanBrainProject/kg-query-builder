@@ -28,7 +28,12 @@ const API = {
     "spaces": () => "/service/api/spaces",
     "types": () => "/service/api/types",
     "structure": () => "/service/api/structure?withLinks=true",
-    "performQuery": (stage, from, size, instanceId, params) => {
+    "performQuery": (stage, from, size, instanceId, restrictToSpaces, params) => {
+      const restrictToSpacesString = (Array.isArray(restrictToSpaces) && restrictToSpaces.length)?
+        "&restrictToSpaces=" + restrictToSpaces.map(space => encodeURIComponent(space)).join(",")
+        :
+        ""
+      ;
       const paramsString = Object.entries(params).reduce((acc, [name, value]) => {
         acc += `&${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
         return acc;
@@ -37,7 +42,7 @@ const API = {
         ""}${size!==undefined && size!==null?`size=${size}&`:""}${
         ""}${from!==undefined && from!==null?`from=${from}&`:""}${
         ""}${instanceId!==undefined && instanceId!==null?`instanceId=${instanceId}&`:""}${
-        ""}${stage?`stage=${stage}`:"" }${paramsString}`;
+        ""}${stage?`stage=${stage}`:"" }${paramsString}${restrictToSpacesString}`;
     },
     "getQuery": queryId => `/service/api/queries/${queryId}`,
     "saveQuery": (queryId, space) => `/service/api/queries/${queryId}/${space?`?space=${space}`:"" }`,

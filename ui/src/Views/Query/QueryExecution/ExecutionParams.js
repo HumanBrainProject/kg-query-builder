@@ -32,6 +32,8 @@ import ReactPiwik from "react-piwik";
 
 import { useStores } from "../../../Hooks/UseStores";
 
+import SpaceRestriction from "./SpaceRestriction";
+
 const useStyles = createUseStyles({
   input: {
     color: "var(--ft-color-loud)",
@@ -149,6 +151,8 @@ const ExecutionParams = observer(() => {
 
   const scopeOptions =  [{label: "Released", value: "RELEASED" }, {label: "In progress", value: "IN_PROGRESS"}];
 
+  const isSpaceRestricted = Array.isArray(queryBuilderStore.resultRestrictToSpaces);
+
   const handleChangeSize = e => queryBuilderStore.setResultSize(e.target.value);
 
   const handleChangeStart = e => queryBuilderStore.setResultStart(e.target.value);
@@ -216,14 +220,35 @@ const ExecutionParams = observer(() => {
         </Col>
       </Row>
       <QueryParameters />
-      <Row>
-        <Col xs={9} />
-        <Col xs={3}>
-          <Button variant="primary" className={"btn-block"} disabled={queryBuilderStore.isQueryEmpty} onClick={handlExecuteQuery} title={!queryBuilderStore.isQueryEmpty?"Run it":"The current query specification is not valid/complete. Please select at least one field."}>
-              Run it
-          </Button>
-        </Col>
-      </Row>
+      {isSpaceRestricted?
+        <>
+          <Row>
+            <Col xs={12}>
+              <SpaceRestriction />
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={9} />
+            <Col xs={3}>
+              <Button variant="primary" className={"btn-block"} disabled={queryBuilderStore.isQueryEmpty} onClick={handlExecuteQuery} title={!queryBuilderStore.isQueryEmpty?"Run it":"The current query specification is not valid/complete. Please select at least one field."}>
+                  Run it
+              </Button>
+            </Col>
+          </Row>
+        </>
+        :
+        <Row>
+          <Col xs={3}>
+            <SpaceRestriction />
+          </Col>
+          <Col xs={6} />
+          <Col xs={3}>
+            <Button variant="primary" className={"btn-block"} disabled={queryBuilderStore.isQueryEmpty} onClick={handlExecuteQuery} title={!queryBuilderStore.isQueryEmpty?"Run it":"The current query specification is not valid/complete. Please select at least one field."}>
+                Run it
+            </Button>
+          </Col>
+        </Row>
+      }
     </Form>
   );
 

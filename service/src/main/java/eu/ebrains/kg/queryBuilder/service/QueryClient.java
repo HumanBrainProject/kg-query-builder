@@ -36,7 +36,9 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class QueryClient {
@@ -100,21 +102,36 @@ public class QueryClient {
 //        return Collections.emptyMap();
     }
 
-    public Map<?, ?> executeStoredQuery(String queryId,
+    public ResponseEntity<Map<?, ?>> executeStoredQuery(String queryId,
                                         Integer from,
                                         Integer size,
                                         String vocab,
-                                        String stage) {
+                                        String stage,
+                                        List<String> restrictToSpaces) {
         String relativeUrl = String.format("queries/%s/instances?from=%s&size=%s&vocab=%s&stage=%s", queryId, from, size, vocab, stage);
-        return kg.client().get().uri(kg.url(relativeUrl))
+        if (restrictToSpaces != null && !restrictToSpaces.isEmpty()) {
+            List<String> encodedSpaces = restrictToSpaces.stream().map(space -> {
+                try {
+                    return encodeValue(space);
+                } catch (UnsupportedEncodingException e) {
+                    return null;
+                }
+            }).filter(Objects::nonNull).collect(Collectors.toList());
+            if (encodedSpaces.size() != restrictToSpaces.size()) {
+                return ResponseEntity.badRequest().build();
+            }
+            relativeUrl += String.format("&restrictToSpaces=%s", String.join(",", restrictToSpaces));
+        }
+        Map<?, ?> result =kg.client().get().uri(kg.url(relativeUrl))
                 .retrieve()
                 .bodyToMono(Map.class)
                 .block();
+        return ResponseEntity.ok(result);
     }
 
     public ResponseEntity<Map<?, ?>> getQueryById(String queryId) {
         String relativeUrl = String.format("queries/%s", queryId);
-        Map result = kg.client().get().uri(kg.url(relativeUrl))
+        Map<?, ?> result = kg.client().get().uri(kg.url(relativeUrl))
                 .retrieve()
                 .bodyToMono(Map.class)
                 .block();
@@ -149,13 +166,14 @@ public class QueryClient {
         return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
     }
 
-    public Map<?, ?> executeQuery(
+    public ResponseEntity<Map<?, ?>> executeQuery(
             Map<?, ?> query,
             String stage,
             Integer from,
             Integer size,
             String instanceId,
-            Map<String, String> allRequestParams) throws UnsupportedEncodingException {
+            Map<String, String> allRequestParams,
+            List<String> restrictToSpaces) throws UnsupportedEncodingException {
         //Remove the non-dynamic parameters from the map
         allRequestParams.remove("stage");
         allRequestParams.remove("instanceId");
@@ -165,11 +183,25 @@ public class QueryClient {
         if (instanceId != null) {
             relativeUrl += String.format("&instanceId=%s", instanceId);
         }
-        return kg.client().post().uri(kg.url(relativeUrl))
+        if (restrictToSpaces != null && !restrictToSpaces.isEmpty()) {
+            List<String> encodedSpaces = restrictToSpaces.stream().map(space -> {
+                try {
+                    return encodeValue(space);
+                } catch (UnsupportedEncodingException e) {
+                    return null;
+                }
+            }).filter(Objects::nonNull).collect(Collectors.toList());
+            if (encodedSpaces.size() != restrictToSpaces.size()) {
+                return ResponseEntity.badRequest().build();
+            }
+            relativeUrl += String.format("&restrictToSpaces=%s", String.join(",", restrictToSpaces));
+        }
+        Map<?, ?> result = kg.client().post().uri(kg.url(relativeUrl))
                 .body(BodyInserters.fromValue(query))
                 .retrieve()
                 .bodyToMono(Map.class)
                 .block();
+        return ResponseEntity.ok(result);
     }
 
     public void saveQuery(Map<?, ?> query, String queryId, String space) {

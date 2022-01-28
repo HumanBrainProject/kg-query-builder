@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Map;
 
 @RequestMapping("/queries")
@@ -39,12 +40,13 @@ public class Queries {
     }
 
     @GetMapping("/{queryId}/instances")
-    public Map<?, ?> executeStoredQuery(@PathVariable("queryId") String queryId,
+    public ResponseEntity<Map<?, ?>> executeStoredQuery(@PathVariable("queryId") String queryId,
                                         @RequestParam("from") Integer from,
                                         @RequestParam("size") Integer size,
                                         @RequestParam("vocab") String vocab,
-                                        @RequestParam("stage") String stage) {
-        return queryClient.executeStoredQuery(queryId, from, size, vocab, stage);
+                                        @RequestParam("stage") String stage,
+                                        @RequestParam(value = "restrictToSpaces", required = false) List<String> restrictToSpaces) {
+        return queryClient.executeStoredQuery(queryId, from, size, vocab, stage, restrictToSpaces);
     }
 
     @GetMapping("/{queryId}")
@@ -53,14 +55,15 @@ public class Queries {
     }
 
     @PostMapping
-    public Map<?, ?> executeQuery(
+    public ResponseEntity<Map<?, ?>> executeQuery(
             @RequestBody Map<?, ?> query,
             @RequestParam("stage") String stage,
             @RequestParam("from") Integer from,
             @RequestParam("size") Integer size,
             @RequestParam(value = "instanceId", required = false) String instanceId,
-            @RequestParam(defaultValue = "{}") Map<String, String> allRequestParams) throws UnsupportedEncodingException {
-        return queryClient.executeQuery(query, stage, from, size, instanceId, allRequestParams);
+            @RequestParam(defaultValue = "{}") Map<String, String> allRequestParams,
+            @RequestParam(value = "restrictToSpaces", required = false) List<String> restrictToSpaces) throws UnsupportedEncodingException {
+        return queryClient.executeQuery(query, stage, from, size, instanceId, allRequestParams, restrictToSpaces);
     }
 
     @PutMapping("/{queryId}")
