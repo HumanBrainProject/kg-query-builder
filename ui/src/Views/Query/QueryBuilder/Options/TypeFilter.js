@@ -106,7 +106,7 @@ const TypeFilter = observer(() => {
 
   const toggleTypeFilter = (type, selected) => queryBuilderStore.currentField.filterType(type, selected);
 
-  if (!queryBuilderStore.currentField || !queryBuilderStore.currentField.types.length) {
+  if (!queryBuilderStore.currentField || !queryBuilderStore.currentField.types.length || queryBuilderStore.currentField === queryBuilderStore.rootField) {
     return null;
   }
 
