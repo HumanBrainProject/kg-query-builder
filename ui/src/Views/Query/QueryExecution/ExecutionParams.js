@@ -26,6 +26,7 @@ import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
+import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import ReactPiwik from "react-piwik";
@@ -72,6 +73,12 @@ const useStyles = createUseStyles({
     color: "var(--bg-color-error-normal)",
     paddingLeft: "3px",
     fontWeight: "bold"
+  },
+  firstRow: {
+    marginBottom: "1rem"
+  },
+  runIt: {
+    textAlign: "right"
   }
 });
 
@@ -169,7 +176,8 @@ const ExecutionParams = observer(() => {
 
   return (
     <Form>
-      <Row>
+      <Container fluid>
+      <Row className={classes.firstRow}>
         <Col xs={4}>
           <Form.Group>
             <Form.Label>scope<span className={classes.required}>*</span></Form.Label>
@@ -229,7 +237,7 @@ const ExecutionParams = observer(() => {
           </Row>
           <Row>
             <Col xs={9} />
-            <Col xs={3}>
+            <Col xs={3} className={classes.runIt}>
               <Button variant="primary" className={"btn-block"} disabled={queryBuilderStore.isQueryEmpty} onClick={handlExecuteQuery} title={!queryBuilderStore.isQueryEmpty?"Run it":"The current query specification is not valid/complete. Please select at least one field."}>
                   Run it
               </Button>
@@ -242,13 +250,14 @@ const ExecutionParams = observer(() => {
             <SpaceRestriction />
           </Col>
           <Col xs={6} />
-          <Col xs={3}>
+          <Col xs={3} className={classes.runIt}>
             <Button variant="primary" className={"btn-block"} disabled={queryBuilderStore.isQueryEmpty} onClick={handlExecuteQuery} title={!queryBuilderStore.isQueryEmpty?"Run it":"The current query specification is not valid/complete. Please select at least one field."}>
                 Run it
             </Button>
           </Col>
         </Row>
       }
+      </Container>
     </Form>
   );
 

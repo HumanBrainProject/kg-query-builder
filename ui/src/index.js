@@ -24,6 +24,7 @@
 import React from "react";
 import { render } from "react-dom";
 import ReactPiwik from "react-piwik";
+import {JssProvider} from "react-jss";
 // import { configure } from "mobx";
 //import reportWebVitals from './reportWebVitals';
 
@@ -51,5 +52,7 @@ new ReactPiwik({
 
 render(
   <React.StrictMode>
-    <App/>
+    <JssProvider id={{minify: process.env.NODE_ENV === 'production'}}>
+      <App />
+    </JssProvider>
   </React.StrictMode>, document.getElementById("root"));
