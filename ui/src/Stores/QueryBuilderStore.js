@@ -1124,7 +1124,7 @@ export class QueryBuilderStore {
             attribute = this.context && this.context[attributeNamespace] ? this.context[attributeNamespace] + simpleAttributeName : null;
           } else if (modelReg.test(relativePath)) {
             attribute = relativePath.match(modelReg)[1];
-          } else if (relativePath === "@id") {
+          } else if (relativePath === "@id" || relativePath === "@type") {
             attribute = relativePath;
           }
           let property = null;
