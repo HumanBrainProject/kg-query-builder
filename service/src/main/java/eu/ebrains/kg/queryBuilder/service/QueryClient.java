@@ -64,6 +64,15 @@ public class QueryClient {
             if (resolvedQueryId != null) {
                 query.put("@id", resolvedQueryId.toString());
             }
+//            List<Map<String, Object>> userList = (List<Map<String, Object>>) query.get(SchemaFieldsConstants.META_USER);
+//            if (!CollectionUtils.isEmpty(userList)) {
+//                Map<String, Object> user = userList.get(0);
+//                UUID userId = idController.getSimplifyFullyQualifiedId(user);
+//                if (userId != null) {
+//                    query.put(SchemaFieldsConstants.META_USER, userId.toString());
+//                }
+//            }
+            query.remove(SchemaFieldsConstants.META_USER);
         });
         return queriesResult;
 //        if(queriesResult != null){ //TODO: Fetch user info from new alternatives endpoint (not ready yet)
@@ -141,14 +150,23 @@ public class QueryClient {
             if (resolvedQueryId != null) {
                 query.put("@id", resolvedQueryId.toString());
             }
-            List<Map<String, Object>> userList = (List<Map<String, Object>>) query.get(SchemaFieldsConstants.META_USER);
-            if (!CollectionUtils.isEmpty(userList)) {
-                Map<String, Object> user = userList.get(0);
-                UUID userId = idController.getSimplifyFullyQualifiedId(user);
-                if (userId != null) {
-                    query.put(SchemaFieldsConstants.META_USER, userId.toString());
-                }
-            }
+//            Map<String, Object> user = (Map<String, Object>) query.get(SchemaFieldsConstants.META_USER);
+//            if (user != null) {
+//                UUID userId = idController.getSimplifyFullyQualifiedId(user);
+//                if (userId != null) {
+//                    query.put(SchemaFieldsConstants.META_USER, userId.toString());
+//                }
+//            }
+// or
+//            List<Map<String, Object>> userList = (List<Map<String, Object>>) query.get(SchemaFieldsConstants.META_USER);
+//            if (!CollectionUtils.isEmpty(userList)) {
+//                Map<String, Object> user = userList.get(0);
+//                UUID userId = idController.getSimplifyFullyQualifiedId(user);
+//                if (userId != null) {
+//                    query.put(SchemaFieldsConstants.META_USER, userId.toString());
+//                }
+//            }
+            query.remove(SchemaFieldsConstants.META_USER);
             return ResponseEntity.ok(query);
         }
         return ResponseEntity.notFound().build();
