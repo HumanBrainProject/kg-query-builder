@@ -114,7 +114,7 @@ const Header = observer(() => {
   return (
     <div className={classes.container}>
       <div className={`${classes.logo} layout-logo`}>
-        <img src={`${window.rootPath}/assets/ebrains.svg`} alt="" width="30" height="30" />
+        <img src={`${window.rootPath}/assets/ebrains.svg`} alt="" height="30" />
         <span>Knowledge Graph Query Builder</span>
       </div>
       {!appStore.globalError &&
