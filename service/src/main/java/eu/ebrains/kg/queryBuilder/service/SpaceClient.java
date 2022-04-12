@@ -47,7 +47,8 @@ public class SpaceClient {
                 .retrieve()
                 .bodyToMono(Map.class)
                 .block();
-        List<Map<String, Object>> spaces = ((List<Map<String, ?>>) response.get("data")).stream()
+        final List<Map<String, ?>> data = response == null ? Collections.emptyList() : (List<Map<String, ?>>) response.get("data");
+        List<Map<String, Object>> spaces = data == null ? Collections.emptyList() : data.stream()
                 .filter(space -> {
                             boolean isInternalSpace = space.containsKey(SchemaFieldsConstants.META_INTERNAL_SPACE) && ((boolean) space.get(SchemaFieldsConstants.META_INTERNAL_SPACE));
                             boolean canRead = false;

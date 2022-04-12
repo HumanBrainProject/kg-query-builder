@@ -58,12 +58,13 @@ public class QueryClient {
                 .retrieve()
                 .bodyToMono(Map.class)
                 .block();
-        List<Map<String, Object>> data = (List<Map<String, Object>>) queriesResult.get("data");
-        data.forEach(query -> {
-            UUID resolvedQueryId = idController.getSimplifyFullyQualifiedId(query);
-            if (resolvedQueryId != null) {
-                query.put("@id", resolvedQueryId.toString());
-            }
+        if(queriesResult!=null) {
+            List<Map<String, Object>> data = (List<Map<String, Object>>) queriesResult.get("data");
+            data.forEach(query -> {
+                UUID resolvedQueryId = idController.getSimplifyFullyQualifiedId(query);
+                if (resolvedQueryId != null) {
+                    query.put("@id", resolvedQueryId.toString());
+                }
 //            List<Map<String, Object>> userList = (List<Map<String, Object>>) query.get(SchemaFieldsConstants.META_USER);
 //            if (!CollectionUtils.isEmpty(userList)) {
 //                Map<String, Object> user = userList.get(0);
@@ -72,8 +73,9 @@ public class QueryClient {
 //                    query.put(SchemaFieldsConstants.META_USER, userId.toString());
 //                }
 //            }
-            query.remove(SchemaFieldsConstants.META_USER);
-        });
+                query.remove(SchemaFieldsConstants.META_USER);
+            });
+        }
         return queriesResult;
 //        if(queriesResult != null){ //TODO: Fetch user info from new alternatives endpoint (not ready yet)
 //            List<Map<String, Object>> data = (List<Map<String, Object>>) queriesResult.get("data");
