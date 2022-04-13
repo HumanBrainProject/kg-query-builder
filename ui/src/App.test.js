@@ -22,7 +22,7 @@
  */
 
 import { render, screen } from '@testing-library/react';
-import App from './App';
+import App from './Views/App';
 
 test.skip('renders learn react link', () => {
   render(<App />);
