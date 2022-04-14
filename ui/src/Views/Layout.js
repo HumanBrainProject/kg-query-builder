@@ -192,6 +192,52 @@ const useStyles = createUseStyles(theme => ({
   }
 }));
 
+
+const NavigationRoutes = observer(({classes}) => {
+  const { appStore, authStore, queryBuilderStore } = useStores();
+  if (!appStore.isInitialized || !authStore.isAuthenticated) {
+    return <Login />;
+  }
+  
+  if(!authStore.isUserAuthorized) {
+    return (
+      <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
+        <Modal.Body>
+          <h1>Welcome</h1>
+          <p>You are currently not granted permission to acccess the application.</p>
+          <p>Please contact our team by email at : <a href={"mailto:kg@ebrains.eu"}>kg@ebrains.eu</a></p>
+        </Modal.Body>
+      </Modal>
+    );
+  }
+  
+  if(!authStore.hasUserSpaces) {
+    return(
+      <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
+        <Modal.Body>
+          <h1>Welcome <span title={authStore.firstName}>{authStore.firstName}</span></h1>
+          <p>You are currently not granted permission to acccess any spaces.</p>
+          <p>Please contact our team by email at : <a href={"mailto:kg@ebrains.eu"}>kg@ebrains.eu</a></p>
+        </Modal.Body>
+      </Modal>
+    )
+  }
+
+  return(
+    <div className={classes.container}>
+      <Routes>
+        <Route path="/" element={<RootSchema />} />
+        <Route path="queries/:id" element={<Query />} >
+          <Route path=":mode" element={<Query />} />
+        </Route>
+        {queryBuilderStore.hasRootSchema && <Route path="queries" element={<Queries />} />}
+        <Route path="*" element={<Navigate to="/" replace={true} />} />  
+      </Routes>
+    </div>
+  )
+})
+
+
 const Layout = observer(() => {
 
   const theme = useTheme();
@@ -200,7 +246,7 @@ const Layout = observer(() => {
 
   const classes = useStyles({ theme });
 
-  const { appStore, authStore, queryBuilderStore } = useStores();
+  const { appStore, authStore } = useStores();
   const commit = authStore.commit;
 
   return (
@@ -210,40 +256,7 @@ const Layout = observer(() => {
         {appStore.globalError ?
           <GlobalError />
           :
-          (!appStore.isInitialized || !authStore.isAuthenticated ?
-            <Login />
-            :
-            (authStore.isUserAuthorized?
-              (authStore.hasUserSpaces?
-                <div className={classes.container}>
-                  <Routes>
-                    <Route path="/" element={<RootSchema />} />
-                    <Route path="queries/:id" element={<Query />} >
-                      <Route path=":mode" element={<Query />} />
-                    </Route>
-                    {queryBuilderStore.hasRootSchema && <Route path="queries" element={<Queries />} />}
-                    <Route path="*" element={<Navigate to="/" replace={true} />} />  
-                  </Routes>
-                </div>
-                :
-                <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
-                  <Modal.Body>
-                    <h1>Welcome <span title={authStore.firstName}>{authStore.firstName}</span></h1>
-                    <p>You are currently not granted permission to acccess any spaces.</p>
-                    <p>Please contact our team by email at : <a href={"mailto:kg@ebrains.eu"}>kg@ebrains.eu</a></p>
-                  </Modal.Body>
-                </Modal>
-              )
-              :
-              <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
-                <Modal.Body>
-                  <h1>Welcome</h1>
-                  <p>You are currently not granted permission to acccess the application.</p>
-                  <p>Please contact our team by email at : <a href={"mailto:kg@ebrains.eu"}>kg@ebrains.eu</a></p>
-                </Modal.Body>
-              </Modal>
-            )
-          )
+          <NavigationRoutes classes={classes}/>
         }
       </div>
       <div className={classes.footer}>
