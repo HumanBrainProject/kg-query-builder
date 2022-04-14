@@ -117,15 +117,15 @@ const Header = observer(() => {
               {authStore.isUserAuthorized && authStore.hasUserSpaces && (
                 queryBuilderStore.hasRootSchema?
                   <React.Fragment>
-                    <Tab Component={HomeTab} current={matchPath({ path: "/", exact: "true" }, location.pathname)} onClick={handleBrowseTypes} label={"Select another type"} hideLabel disable={queryBuilderStore.isSaving} />
-                    <Tab icon={"search"} current={matchPath({ path: "/queries", exact: "true" }, location.pathname)} onClick={handleBrowseStoredQueries} hideLabel label={"Browse stored queries"} disable={queryBuilderStore.isSaving} />
+                    <Tab Component={HomeTab} current={matchPath({ path: "/" }, location.pathname)} onClick={handleBrowseTypes} label={"Select another type"} hideLabel disable={queryBuilderStore.isSaving} />
+                    <Tab icon={"search"} current={matchPath({ path: "/queries" }, location.pathname)} onClick={handleBrowseStoredQueries} hideLabel label={"Browse stored queries"} disable={queryBuilderStore.isSaving} />
                     <Tab icon={"file"} current={false} onClick={handleBuildNewQuery} hideLabel label={"New query"} disable={queryBuilderStore.isSaving} />
                     {queryBuilderStore.queryId && (
-                      <Tab icon={queryBuilderStore.isSaving?"circle-notch":"tag"} iconSpin={queryBuilderStore.isSaving} current={matchPath({ path: "/queries/:id", exact: "true" }, location.pathname)} onClose={handleBrowseStoredQueries} label={queryBuilderStore.label?queryBuilderStore.label:queryBuilderStore.queryId} />
+                      <Tab icon={queryBuilderStore.isSaving?"circle-notch":"tag"} iconSpin={queryBuilderStore.isSaving} current={matchPath({ path: "/queries/:id" }, location.pathname)} onClose={handleBrowseStoredQueries} label={queryBuilderStore.label?queryBuilderStore.label:queryBuilderStore.queryId} />
                     )}
                   </React.Fragment>
                   :
-                  <Tab icon={"home"} current={matchPath({ path: "/", exact: "true" }, location.pathname)} onClick={handleBrowseTypes} label={"Select a type"} hideLabel />
+                  <Tab icon={"home"} current={matchPath({ path: "/" }, location.pathname)} onClick={handleBrowseTypes} label={"Select a type"} hideLabel />
               )}
             </div>
             <div className={classes.fixedTabsRight}>
