@@ -25,9 +25,7 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ReactPiwik from "react-piwik";
-
-
-import { useStores } from "../../Hooks/UseStores";
+import { useNavigate } from "react-router";
 
 const useStyles = createUseStyles({
   container:{
@@ -103,7 +101,7 @@ const useStyles = createUseStyles({
 
 const Tab = ({label, disabled, current, icon, iconColor, iconSpin, Component, hideLabel, path, onClick, onClose}) => {
 
-  const  { history } = useStores();
+  const navigate = useNavigate();
 
   const classes = useStyles();
   const closeable = typeof onClose === "function";
@@ -112,7 +110,7 @@ const Tab = ({label, disabled, current, icon, iconColor, iconSpin, Component, hi
     if (!disabled) {
       e.preventDefault();
       if(path){
-        history.push(path);
+        navigate(path);
       }
       typeof onClick === "function" && onClick(e);
     }

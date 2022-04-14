@@ -30,6 +30,7 @@ import _  from "lodash-uuid";
 import ReactPiwik from "react-piwik";
 
 import { useStores } from "../../Hooks/UseStores";
+import { useNavigate } from "react-router-dom";
 
 // import User from "../../../Components/User";
 
@@ -53,7 +54,9 @@ const Actions = observer(({ className }) => {
 
   const classes = useStyles();
 
-  const { queryBuilderStore, history } = useStores();
+  const navigation = useNavigate();
+
+  const { queryBuilderStore } = useStores();
 
   const handleToggleCompareChanges = () => {
     ReactPiwik.push(["trackEvent", "Query", "Compare", queryBuilderStore.rootField.id]);
@@ -62,7 +65,7 @@ const Actions = observer(({ className }) => {
 
   const handleSave = () => {
     ReactPiwik.push(["trackEvent", "Query", "Save", queryBuilderStore.rootField.id]);
-    queryBuilderStore.saveQuery();
+    queryBuilderStore.saveQuery(navigation);
   }
 
   const handleRevertChanges = () => queryBuilderStore.cancelChanges();
@@ -80,7 +83,7 @@ const Actions = observer(({ className }) => {
     ReactPiwik.push(["trackEvent", "Query", "CopyAsNew", queryBuilderStore.rootField.id]);
     const uuid = _.uuid();
     queryBuilderStore.setAsNewQuery(uuid);
-    history.push(`/queries/${uuid}`);
+    navigation(`/queries/${uuid}`);
   };
 
   return (

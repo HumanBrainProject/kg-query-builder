@@ -25,6 +25,7 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
+import { useNavigate } from "react-router-dom";
 
 import { useStores } from "../../Hooks/UseStores";
 
@@ -64,9 +65,11 @@ const SaveError = observer(() => {
 
   const classes = useStyles();
 
+  const navigation = useNavigate();
+
   const { queryBuilderStore } = useStores();
 
-  const handleSave = () => queryBuilderStore.saveQuery();
+  const handleSave = () => queryBuilderStore.saveQuery(navigation);
 
   const handleCancelSave = () => queryBuilderStore.cancelSaveQuery();
 

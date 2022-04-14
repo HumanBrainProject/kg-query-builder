@@ -25,7 +25,7 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import Modal from "react-bootstrap/Modal";
 import { createUseStyles, useTheme } from "react-jss";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Navigate, Routes, Route } from "react-router-dom";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -208,23 +208,23 @@ const Layout = observer(() => {
       <Header />
       <div className={classes.body}>
         {appStore.globalError ?
-          <Route component={GlobalError} />
+          <GlobalError />
           :
           (!appStore.isInitialized || !authStore.isAuthenticated ?
-            <Route component={Login} />
+            <Login />
             :
             (authStore.isUserAuthorized?
               (authStore.hasUserSpaces?
                 <div className={classes.container}>
-                  <Switch>
-                    <Route path="/" exact={true} component={RootSchema} />
-                    <Route path="/queries/:id" exact={true} render={props => <Query id={props.match.params.id} mode="build" />} />
-                    <Route path="/queries/:id/:mode" exact={true} render={props => <Query id={props.match.params.id} mode={props.match.params.mode} />} />
-                    {queryBuilderStore.hasRootSchema && (
-                      <Route path="/queries" exact={true} component={Queries} />
-                    )}
-                    <Redirect to='/' />
-                  </Switch>
+                  <Routes>
+                    <Route path="/" element={<RootSchema />} />
+                    <Route path="queries" element={queryBuilderStore.hasRootSchema?<Queries />:<Navigate to="/" replace={true} />} >
+                      <Route path=":id" element={<Query />} >
+                        <Route path=":mode" element={<Query />} />
+                      </Route>
+                    </Route>
+                    <Route path="*" element={<Navigate to="/" replace={true} />} />  
+                  </Routes>
                 </div>
                 :
                 <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>

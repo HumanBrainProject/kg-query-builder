@@ -24,7 +24,7 @@
 import React, {useEffect, useRef} from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import _  from "lodash-uuid";
 import ReactPiwik from "react-piwik";
@@ -69,7 +69,7 @@ const Schema = observer(({ type, enableFocus, onKeyDown }) =>  {
 
   const ref = useRef();
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (enableFocus && ref.current) {
@@ -96,7 +96,7 @@ const Schema = observer(({ type, enableFocus, onKeyDown }) =>  {
 
   const selectSchema = () => {
     const uuid = _.uuid();
-    history.push(`/queries/${uuid}`);
+    navigate(`/queries/${uuid}`);
   };
 
 

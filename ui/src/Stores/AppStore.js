@@ -61,8 +61,7 @@ export class AppStore{
     });
 
     this.rootStore = rootStore;
-
-    this.canLogin = !matchPath(window.location.pathname, { path: "/logout", exact: "true" });
+    this.canLogin = !matchPath({ path: "/logout", exact: "true" }, window.location.pathname);
     this.setTheme(localStorage.getItem("theme"));
   }
 
