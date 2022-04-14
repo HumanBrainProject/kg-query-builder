@@ -27,7 +27,7 @@ import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ReactPiwik from "react-piwik";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { useStores } from "../Hooks/UseStores";
 

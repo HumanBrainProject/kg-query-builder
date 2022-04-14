@@ -31,7 +31,7 @@ import ReactPiwik from "react-piwik";
 import { useStores } from "../../Hooks/UseStores";
 
 import PopOverButton from "../../Components/PopOverButton";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 //import User from "../../../Components/User";
 
 const useStyles = createUseStyles({
