@@ -93,7 +93,6 @@ const Query = observer(() => {
 
   const classes = useStyles();
   
-  debugger;
   const params = useParams();
   const {id, mode="build"} = params;
 

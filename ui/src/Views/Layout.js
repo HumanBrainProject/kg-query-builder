@@ -218,11 +218,10 @@ const Layout = observer(() => {
                 <div className={classes.container}>
                   <Routes>
                     <Route path="/" element={<RootSchema />} />
-                    <Route path="queries" element={queryBuilderStore.hasRootSchema?<Queries />:<Navigate to="/" replace={true} />} >
-                      <Route path=":id" element={<Query />} >
-                        <Route path=":mode" element={<Query />} />
-                      </Route>
+                    <Route path="queries/:id" element={<Query />} >
+                      <Route path=":mode" element={<Query />} />
                     </Route>
+                    {queryBuilderStore.hasRootSchema && <Route path="queries" element={<Queries />} />}
                     <Route path="*" element={<Navigate to="/" replace={true} />} />  
                   </Routes>
                 </div>
