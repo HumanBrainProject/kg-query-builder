@@ -27,6 +27,7 @@ import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ReactPiwik from "react-piwik";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -88,9 +89,15 @@ const View = ({mode}) => {
   }
 };
 
-const Query = observer(({id, mode}) => {
+const Query = observer(() => {
 
   const classes = useStyles();
+  
+  const params = useParams();
+  const {id, mode="build"} = params;
+
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const { queryBuilderStore } = useStores();
 
@@ -98,11 +105,11 @@ const Query = observer(({id, mode}) => {
   useEffect(() => {
     ReactPiwik.push(["setCustomUrl", window.location.href]);
     ReactPiwik.push(["trackPageView"]);
-    queryBuilderStore.selectQueryById(id, mode)
+    queryBuilderStore.selectQueryById(id, mode, location, navigate)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const handleRetry = () => queryBuilderStore.selectQueryById(id, mode);
+  const handleRetry = () => queryBuilderStore.selectQueryById(id, mode, location, navigate);
 
   if (queryBuilderStore.isFetchingQuery) {
     return (

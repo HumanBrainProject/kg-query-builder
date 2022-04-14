@@ -21,8 +21,6 @@
  *
  */
 
-import { createBrowserHistory } from "history";
-
 import { AppStore } from "./AppStore";
 import { AuthStore } from "./AuthStore";
 import { TypeStore } from "./TypeStore";
@@ -30,7 +28,6 @@ import { QueryBuilderStore } from "./QueryBuilderStore";
 
 export class RootStore {
 
-  history= null
   authStore= null;
   typeStore= null;
   queryBuilderStore= null;
@@ -43,7 +40,6 @@ export class RootStore {
     }
 
     this.transportLayer = transportLayer;
-    this.history = createBrowserHistory({basename:window.rootPath});
 
     // Domain stores
     this.typeStore = new TypeStore(transportLayer, this);

@@ -24,7 +24,7 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { ThemeProvider } from "react-jss";
-import { Router } from "react-router";
+import { BrowserRouter } from "react-router-dom";
 import { useStores } from "../Hooks/UseStores";
 
 import ErrorBoundary from "./ErrorBoundary";
@@ -32,7 +32,7 @@ import Layout from "./Layout";
 
 const App = observer(() => {
 
-  const { appStore, history } = useStores();
+  const { appStore } = useStores();
 
   const theme = appStore.currentTheme;
 
@@ -53,11 +53,11 @@ const App = observer(() => {
 
   return (
     <ErrorBoundary>
-      <Router history={history}>
+      <BrowserRouter>
         <ThemeProvider theme={theme}>
           <Layout />
         </ThemeProvider>
-      </Router>
+      </BrowserRouter>
     </ErrorBoundary>
   );
 });

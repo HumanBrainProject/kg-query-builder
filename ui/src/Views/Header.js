@@ -21,9 +21,10 @@
  *
  */
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
+import { useLocation, useNavigate } from "react-router-dom";
 import { matchPath } from "react-router-dom";
 import _  from "lodash-uuid";
 import ReactPiwik from "react-piwik";
@@ -79,28 +80,21 @@ const Header = observer(() => {
 
   const classes = useStyles();
 
-  const { appStore, history, authStore, queryBuilderStore } = useStores();
+  const { appStore, authStore, queryBuilderStore } = useStores();
 
-  const [currentLocationPathname, setCurrentLocationPathname] = useState(history.location.pathname);
-
-  useEffect(() => {
-    const unlisten = history.listen(location => {
-      setCurrentLocationPathname(location.pathname);
-    });
-    return unlisten;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const handleBrowseTypes = () => {
     ReactPiwik.push(["trackEvent", "Tab", "BrowseTypes"]);
     queryBuilderStore.clearRootSchema();
-    history.push("/");
+    navigate("/");
   };
 
   const handleBrowseStoredQueries = () => {
     ReactPiwik.push(["trackEvent", "Tab", "BrowseQueries", queryBuilderStore.rootField.id]);
     queryBuilderStore.resetRootSchema();
-    history.push("/queries");
+    navigate("/queries");
   };
 
   const handleBuildNewQuery = () => {
@@ -108,7 +102,7 @@ const Header = observer(() => {
     queryBuilderStore.resetRootSchema();
     const uuid = _.uuid();
     queryBuilderStore.setAsNewQuery(uuid);
-    history.push(`/queries/${uuid}`);
+    navigate(`/queries/${uuid}`);
   };
 
   return (
@@ -123,15 +117,15 @@ const Header = observer(() => {
               {authStore.isUserAuthorized && authStore.hasUserSpaces && (
                 queryBuilderStore.hasRootSchema?
                   <React.Fragment>
-                    <Tab Component={HomeTab} current={matchPath(currentLocationPathname, { path: "/", exact: "true" })} onClick={handleBrowseTypes} label={"Select another type"} hideLabel disable={queryBuilderStore.isSaving} />
-                    <Tab icon={"search"} current={matchPath(currentLocationPathname, { path: "/queries", exact: "true" })} onClick={handleBrowseStoredQueries} hideLabel label={"Browse stored queries"} disable={queryBuilderStore.isSaving} />
+                    <Tab Component={HomeTab} current={matchPath({ path: "/", exact: "true" }, location.pathname)} onClick={handleBrowseTypes} label={"Select another type"} hideLabel disable={queryBuilderStore.isSaving} />
+                    <Tab icon={"search"} current={matchPath({ path: "/queries", exact: "true" }, location.pathname)} onClick={handleBrowseStoredQueries} hideLabel label={"Browse stored queries"} disable={queryBuilderStore.isSaving} />
                     <Tab icon={"file"} current={false} onClick={handleBuildNewQuery} hideLabel label={"New query"} disable={queryBuilderStore.isSaving} />
                     {queryBuilderStore.queryId && (
-                      <Tab icon={queryBuilderStore.isSaving?"circle-notch":"tag"} iconSpin={queryBuilderStore.isSaving} current={matchPath(currentLocationPathname, { path: "/queries/:id", exact: "true" })} onClose={handleBrowseStoredQueries} label={queryBuilderStore.label?queryBuilderStore.label:queryBuilderStore.queryId} />
+                      <Tab icon={queryBuilderStore.isSaving?"circle-notch":"tag"} iconSpin={queryBuilderStore.isSaving} current={matchPath({ path: "/queries/:id", exact: "true" }, location.pathname)} onClose={handleBrowseStoredQueries} label={queryBuilderStore.label?queryBuilderStore.label:queryBuilderStore.queryId} />
                     )}
                   </React.Fragment>
                   :
-                  <Tab icon={"home"} current={matchPath(currentLocationPathname, { path: "/", exact: "true" })} onClick={handleBrowseTypes} label={"Select a type"} hideLabel />
+                  <Tab icon={"home"} current={matchPath({ path: "/", exact: "true" }, location.pathname)} onClick={handleBrowseTypes} label={"Select a type"} hideLabel />
               )}
             </div>
             <div className={classes.fixedTabsRight}>

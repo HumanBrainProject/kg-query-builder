@@ -31,6 +31,7 @@ import ReactPiwik from "react-piwik";
 import { useStores } from "../../Hooks/UseStores";
 
 import PopOverButton from "../../Components/PopOverButton";
+import { useNavigate } from "react-router-dom";
 //import User from "../../../Components/User";
 
 const useStyles = createUseStyles({
@@ -132,7 +133,9 @@ const SavedQuery = observer(({query, enableDelete}) => {
 // const SavedQuery = observer(({query, showUser, enableDelete}) => {
   const classes = useStyles();
 
-  const { queryBuilderStore, history } = useStores();
+  const navigate = useNavigate();
+
+  const { queryBuilderStore } = useStores();
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -140,7 +143,7 @@ const SavedQuery = observer(({query, enableDelete}) => {
     ReactPiwik.push(["trackEvent", "Query", "Select", query.id]);
     e.stopPropagation();
     if (!query.deleteError && !query.isDeleting) {
-      history.push(`/queries/${query.id}`);
+      navigate(`/queries/${query.id}`);
     }
   };
 

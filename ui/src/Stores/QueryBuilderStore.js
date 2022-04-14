@@ -1529,7 +1529,7 @@ export class QueryBuilderStore {
     this.description = description;
   }
 
-  async saveQuery() {
+  async saveQuery(navigation) {
     if (!this.isQueryEmpty && !this.isSaving && !this.saveError && !(this.sourceQuery && this.sourceQuery.isDeleting)) {
       this.isSaving = true;
       if (this.sourceQuery && this.sourceQuery.deleteError) {
@@ -1574,7 +1574,7 @@ export class QueryBuilderStore {
               deleteError: null
             };
             this.specifications.push(this.sourceQuery);
-            this.rootStore.history.push(`/queries/${queryId}/${this.mode}`);
+            navigation(`/queries/${queryId}/${this.mode}`);
           }
           this.saveAsMode = false;
           this.isSaving = false;
@@ -1740,21 +1740,21 @@ export class QueryBuilderStore {
     return this.specifications.find(spec => spec.id === id);
   }
 
-  setMode(mode) {
+  setMode(mode, location, navigate) {
     const id = (this.saveAsMode && this.sourceQuery && this.queryId !== this.sourceQuery.id)?this.sourceQuery.id:this.queryId;
     if (["build", "edit", "execute"].includes(mode)) {
       this.mode = mode;
       const path = `/queries/${id}/${mode}`;
-      if (this.rootStore.history.location.pathname !== path) {
-        this.rootStore.history.push(path);
+      if (location.pathname !== path) {
+        navigate(path);
       }
     } else {
       this.mode = "build";
-      this.rootStore.history.replace(`/queries/${id}/build`);
+      navigate(`/queries/${id}/build`, { replace: true });
     }
   }
 
-  async selectQueryById(id, mode) {
+  async selectQueryById(id, mode, location, navigate) {
     let query = this.findQuery(id);
     if(!query) {
       await this.fetchQueryById(id);
@@ -1766,9 +1766,9 @@ export class QueryBuilderStore {
       if(type) {
         this.selectRootSchema(type);
         this.selectQuery(query);
-        this.setMode(mode);
+        this.setMode(mode, location, navigate);
       } else {
-        this.rootStore.history.replace("/");
+        navigate("/", {replace: true});
         if (this.mode !== "build" && this.mode !== "edit") {
           this.mode = "build";
         }
@@ -1781,7 +1781,7 @@ export class QueryBuilderStore {
         this.setAsNewQuery(id);
       } else {
         this.clearRootSchema();
-        this.rootStore.history.replace("/");
+        navigate("/", {replace: true});
       }
     }
   }
