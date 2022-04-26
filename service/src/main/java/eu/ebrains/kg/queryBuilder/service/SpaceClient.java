@@ -54,7 +54,7 @@ public class SpaceClient {
                             boolean canRead = false;
                             if (space.containsKey(SchemaFieldsConstants.META_PERMISSIONS)) {
                                 List<String> permissions = (List<String>) space.get(SchemaFieldsConstants.META_PERMISSIONS);
-                                canRead = permissions.contains("READ_QUERY");
+                                canRead = permissions.contains("READ");
                             }
                             return !isInternalSpace && canRead;
                         }
