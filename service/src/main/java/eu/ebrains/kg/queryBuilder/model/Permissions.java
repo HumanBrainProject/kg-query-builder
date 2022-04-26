@@ -35,9 +35,9 @@ public class Permissions {
 
     public static Permissions fromPermissionList(List<String> permissions){
         return permissions == null ? null : new Permissions(
-                permissions.contains("CREATE_QUERY"),
-                permissions.contains("WRITE_QUERY"),
-                permissions.contains("DELETE_QUERY")
+                permissions.contains("CREATE"),
+                permissions.contains("WRITE"),
+                permissions.contains("DELETE")
         );
     }
 
