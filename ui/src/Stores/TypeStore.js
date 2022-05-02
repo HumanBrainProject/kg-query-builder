@@ -93,9 +93,6 @@ export class TypeStore {
             color: type.color,
             properties: (Array.isArray(type.properties)?type.properties:[])
               .map(p => {
-                if(p.canBe) {
-                  p.canBe  = p.canBe.map(v => v["https://core.kg.ebrains.eu/vocab/meta/type"]);
-                }
                 if(!p.label) {
                   p.label = p.simpleAttributeName.charAt(0).toUpperCase() + p.simpleAttributeName.slice(1);
                 }
