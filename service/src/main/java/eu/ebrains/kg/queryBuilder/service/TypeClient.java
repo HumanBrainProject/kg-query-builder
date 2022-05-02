@@ -38,16 +38,45 @@ public class TypeClient {
         this.kg = kg;
     }
 
-    public List<TypeEntity> getTypes() {
-        String relativeUrl = "types?stage=IN_PROGRESS&withProperties=true&withIncomingLinks=true&withCounts=false";
-        Map result = kg.client().get().uri(kg.url(relativeUrl))
+    private static class KGResult extends HashMap<String, Object>{}
+
+    private Map<String, Object> fetchTypes(String stage){
+        String relativeUrl = String.format("types?stage=%s&withProperties=true&withIncomingLinks=true", stage);
+       return kg.client().get().uri(kg.url(relativeUrl))
                 .retrieve()
-                .bodyToMono(Map.class)
+                .bodyToMono(KGResult.class)
                 .block();
-        if (result != null) {
-            Object data = result.get("data");
-            if (data instanceof Collection) {
-                return ((Collection<?>) data).stream().filter(d -> d instanceof Map).map(d -> (Map<?, ?>) d).map(TypeEntity::fromMap).collect(Collectors.toList());
+    }
+
+
+
+    public List<TypeEntity> getTypes() {
+        Map<String, Object> resultInProgress = fetchTypes("IN_PROGRESS");
+        if (resultInProgress != null) {
+            Map<String, Object> resultReleased = fetchTypes("RELEASED");
+            if(resultReleased!=null) {
+                Object dataInProgress = resultInProgress.get("data");
+                Object dataReleased = resultReleased.get("data");
+                if (dataInProgress instanceof Collection && dataReleased instanceof Collection) {
+                    final Map<String, TypeEntity> inProgressTypes = ((Collection<?>) dataInProgress).stream().filter(d -> d instanceof Map).map(d -> (Map<?, ?>) d).map(TypeEntity::fromMap).collect(Collectors.toMap(TypeEntity::getId, v -> v));
+                    final Map<String, TypeEntity> releasedTypes = ((Collection<?>) dataReleased).stream().filter(d -> d instanceof Map).map(d -> (Map<?, ?>) d).map(TypeEntity::fromMap).collect(Collectors.toMap(TypeEntity::getId, v -> v));
+                    List<TypeEntity> result = new ArrayList<>();
+                    inProgressTypes.keySet().forEach(k -> {
+                        final TypeEntity entity = inProgressTypes.get(k);
+                        if (releasedTypes.containsKey(k)){
+                            entity.mergeWith(releasedTypes.get(k));
+                        }
+                        result.add(entity);
+                    });
+                    //Add all types which only exist in released
+                    releasedTypes.keySet().forEach(k -> {
+                        if(!inProgressTypes.containsKey(k)){
+                            result.add(releasedTypes.get(k));
+                        }
+                    });
+                    result.sort(Comparator.comparing(TypeEntity::getLabel));
+                    return result;
+                }
             }
         }
         return Collections.emptyList();

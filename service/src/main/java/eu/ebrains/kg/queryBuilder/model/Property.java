@@ -20,12 +20,13 @@ import eu.ebrains.kg.queryBuilder.constants.SchemaFieldsConstants;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Property {
     private String simpleAttributeName;
     private String attribute;
     private String label;
-    private List<Map> canBe;
+    private List<String> canBe;
     private Boolean reverse;
 
     public String getSimpleAttributeName() {
@@ -52,11 +53,11 @@ public class Property {
         this.label = label;
     }
 
-    public List<Map> getCanBe() {
+    public List<String> getCanBe() {
         return canBe;
     }
 
-    public void setCanBe(List<Map> canBe) {
+    public void setCanBe(List<String> canBe) {
         this.canBe = canBe;
     }
 
@@ -68,14 +69,14 @@ public class Property {
         this.reverse = reverse;
     }
 
-    public Property(String simpleAttributeName, String attribute, String label, List<Map> canBe) {
+    public Property(String simpleAttributeName, String attribute, String label, List<String> canBe) {
         this.simpleAttributeName = simpleAttributeName;
         this.attribute = attribute;
         this.label = label;
         this.canBe = canBe;
     }
 
-    public Property(String simpleAttributeName, String attribute, String label, List<Map> canBe, Boolean reverse) {
+    public Property(String simpleAttributeName, String attribute, String label, List<String> canBe, Boolean reverse) {
         this.simpleAttributeName = simpleAttributeName;
         this.attribute = attribute;
         this.label = label;
@@ -87,7 +88,11 @@ public class Property {
         String attribute = (String) (d.get(SchemaFieldsConstants.IDENTIFIER));
         String simpleAttributeName = extractSimpleAttributeName(attribute);
         String label = (String) (d.get(SchemaFieldsConstants.NAME));
-        List<Map> canBe = (List<Map>) d.get(SchemaFieldsConstants.META_TARGET_TYPES);
+        List<Map<String, Object>> canBeMap = (List<Map<String, Object>>) d.get(SchemaFieldsConstants.META_TARGET_TYPES);
+        List<String> canBe = null;
+        if(canBeMap!=null){
+            canBe = canBeMap.stream().map(p -> (String)p.get(SchemaFieldsConstants.META_TARGET_TYPES)).collect(Collectors.toList());
+        }
         return new Property(simpleAttributeName, attribute, label, canBe);
     }
 
@@ -95,7 +100,11 @@ public class Property {
         String attribute = (String) (d.get(SchemaFieldsConstants.IDENTIFIER));
         String simpleAttributeName = extractSimpleAttributeName(attribute);
         String label = propertyReverseLink.get(attribute) != null? (String) propertyReverseLink.get(attribute):(String) (d.get(SchemaFieldsConstants.NAME));
-        List<Map> canBe = (List<Map>) d.get(SchemaFieldsConstants.META_SOURCE_TYPES);
+        List<Map<String, Object>> canBeMap = (List<Map<String, Object>>) d.get(SchemaFieldsConstants.META_SOURCE_TYPES);
+        List<String> canBe = null;
+        if(canBeMap!=null){
+            canBe = canBeMap.stream().map(p -> (String)p.get(SchemaFieldsConstants.META_TARGET_TYPES)).collect(Collectors.toList());
+        }
         return new Property(simpleAttributeName, attribute, label, canBe, true);
     }
 
@@ -108,6 +117,18 @@ public class Property {
             simpleAttributeName = splittedAttribute[splittedAttribute.length - 1];
         }
         return simpleAttributeName;
+    }
+
+    public void merge(Property p){
+        if(p!=null) {
+            if (this.getCanBe() != null && p.getCanBe()!=null){
+                this.getCanBe().addAll(p.getCanBe());
+                this.setCanBe(this.getCanBe().stream().distinct().sorted().collect(Collectors.toList()));
+            }
+            else if(p.getCanBe()!=null){
+                this.setCanBe(p.getCanBe());
+            }
+        }
     }
 
 }
