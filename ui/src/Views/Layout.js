@@ -211,7 +211,7 @@ const NavigationRoutes = observer(({classes}) => {
   
   if(!authStore.isUserAuthorized) {
     return (
-      <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
+      <Modal dialogClassName={classes.noAccessModal} show={true} >
         <Modal.Body>
           <h1>Welcome</h1>
           <p>You are currently not granted permission to acccess the application.</p>
@@ -223,7 +223,7 @@ const NavigationRoutes = observer(({classes}) => {
   
   if(!authStore.hasUserSpaces) {
     return(
-      <Modal dialogClassName={classes.noAccessModal} show={true} onHide={() => {}}>
+      <Modal dialogClassName={classes.noAccessModal} show={true} >
         <Modal.Body>
           <h1>Welcome <span title={authStore.firstName}>{authStore.firstName}</span></h1>
           <p>You are currently not granted permission to acccess any spaces.</p>

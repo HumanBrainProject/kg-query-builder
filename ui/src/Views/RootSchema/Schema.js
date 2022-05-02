@@ -63,6 +63,20 @@ const useStyles = createUseStyles({
   }
 });
 
+const getTypeLabel = type => {
+  if (!type) {
+    return "";
+  }
+  if (type.label) {
+    return type.label;
+  }
+  if (!type.id) {
+    return "";
+  }
+  const parts = type.id.split("/");
+  return parts[parts.length-1];
+};
+
 const Schema = observer(({ type, enableFocus, onKeyDown }) =>  {
 
   const classes = useStyles();
@@ -97,22 +111,6 @@ const Schema = observer(({ type, enableFocus, onKeyDown }) =>  {
   const selectSchema = () => {
     const uuid = _.uuid();
     navigate(`/queries/${uuid}`);
-  };
-
-
-
-  const getTypeLabel = type => {
-    if (!type) {
-      return "";
-    }
-    if (type.label) {
-      return type.label;
-    }
-    if (!type.id) {
-      return "";
-    }
-    const parts = type.id.split("/");
-    return parts[parts.length-1];
   };
 
   const label = getTypeLabel(type);

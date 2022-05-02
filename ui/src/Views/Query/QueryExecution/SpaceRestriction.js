@@ -71,7 +71,7 @@ const Space = ({ space: {name, selected}, onClick }) => {
 
   const handleOnClick = () => typeof onClick === "function" && onClick(name, !selected);
 
-  const handleToggleClick = (name, value) => typeof onClick === "function" && onClick(name, !!value);
+  const handleToggleClick = (_, value) => typeof onClick === "function" && onClick(name, !!value);
 
   return(
     <div className={`${classes.space}  ${selected?"selected":""}`} onClick={handleOnClick} >
