@@ -1184,17 +1184,7 @@ export class QueryBuilderStore {
           }
           let property = null;
           if (attribute) {
-            parentField.lookups.some(id => {
-              const type = this.rootStore.typeStore.types[id];
-              if (type) {
-                property = type.properties.find(property => property.attribute === attribute && (!jsonField.structure || (jsonField.structure && property.canBe)));
-                if (property) {
-                  property = toJS(property);
-                }
-                return !!property;
-              }
-              return false;
-            });
+            parentField.lookups.some(id => this._findAndSetProperty(property, id, attribute, jsonField));
           }
           if (!property) {
             isUnknown = true;
@@ -1281,6 +1271,18 @@ export class QueryBuilderStore {
     }
   }
 
+  _findAndSetProperty(property, id, attribute, jsonField) {
+    const type = this.rootStore.typeStore.types[id];
+    if (type) {
+      property = type.properties.find(property => property.attribute === attribute && (!jsonField.structure || (jsonField.structure && property.canBe)));
+      if (property) {
+        property = toJS(property);
+      }
+      return !!property;
+    }
+    return false;
+  }
+
   _processJsonSpecificationMergeFields(parentField, jsonFields) {
     if (!jsonFields) {
       return;
@@ -1315,17 +1317,7 @@ export class QueryBuilderStore {
           let property = null;
           const parentFieldLookup = (parentField.isRootMerge && parentField.parent) ? parentField.parent : parentField;
           if (attribute && parentFieldLookup.schema && parentFieldLookup.schema.canBe && parentFieldLookup.schema.canBe.length) {
-            parentFieldLookup.schema.canBe.some(id => {
-              const type = this.rootStore.typeStore.types[id];
-              if (type) {
-                property = type.properties.find(property => property.attribute === attribute && (!jsonField.structure || (jsonField.structure && property.canBe)));
-                if (property) {
-                  property = toJS(property);
-                }
-                return !!property;
-              }
-              return false;
-            });
+            parentFieldLookup.schema.canBe.some(id => this._findAndSetProperty(property, id, attribute, jsonField));
           }
           if (!property) {
             isUnknown = true;
