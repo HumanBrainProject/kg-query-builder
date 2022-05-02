@@ -61,6 +61,16 @@ const TooltipContent = observer((value, link) => {
   return value;
 });
 
+const Value = ({value, link}) => {
+  if(isObject(value)) {
+    return link;
+  }
+  if(link) {
+    return <em>object</em>
+  }
+  return value;
+}
+
 const ResultValue = observer(({ name, index, value }) => {
   const classes = useStyles();
 
@@ -111,7 +121,7 @@ const ResultValue = observer(({ name, index, value }) => {
       }
     >
       <div className={`${classes.value} ${link ? "is-link" : ""}`}>
-        {isObject(value) ? link ? link : <em>object</em> : value}
+        <Value value={value} link={link}/>
         <Tooltip placement="top" id={`result-tooltip-${name}-${index}-2`}>
           <TooltipContent value={value} link={link} />
         </Tooltip>
