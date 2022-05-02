@@ -51,7 +51,17 @@ const ComparePart = ({ part }) => {
     return null;
   }
 
-  const className = part.added?classes.added:part.removed?classes.removed:classes.unchanged;
+  const getClassname = () => {
+    if(part.added) {
+      return classes.added;
+    }
+    if(part.removed) {
+      return classes.removed; 
+    }
+    return classes.unchanged;
+  }
+
+  const className = getClassname();
 
   return (
     <span className={className}>{part.value}</span>

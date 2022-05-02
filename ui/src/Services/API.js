@@ -21,33 +21,40 @@
  *
  */
 
-const getSize = (size) => {
+const getSize = size => {
   if (size !== undefined && size !== null) {
     return `size=${size}&`;
   }
   return "";
 };
 
-const getFrom = (from) => {
+const getFrom = from => {
   if (from !== undefined && from !== null) {
     return `from=${from}&`;
   }
   return "";
 };
 
-const getInstanceId = (instanceId) => {
+const getInstanceId = instanceId => {
   if (instanceId !== undefined && instanceId !== null) {
     return `instanceId=${instanceId}&`;
   }
   return "";
 };
 
-const getStage = (stage) => {
+const getStage = stage => {
   if (stage) {
     return `stage=${stage}`;
   }
   return "";
 };
+
+const getSpace = space => {
+  if(space) {
+    return `?space=${space}`;
+  }
+  return "";
+}
 
 const API = {
   endpoints: {
@@ -77,7 +84,7 @@ const API = {
     },
     getQuery: (queryId) => `/service/api/queries/${queryId}`,
     saveQuery: (queryId, space) =>
-      `/service/api/queries/${queryId}/${space ? `?space=${space}` : ""}`,
+      `/service/api/queries/${queryId}/${getSpace(space)}`,
     deleteQuery: (queryId) => `/service/api/queries/${queryId}`,
     listQueries: (type) =>
       `/service/api/queries?type=${encodeURIComponent(type)}`,
