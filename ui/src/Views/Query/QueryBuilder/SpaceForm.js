@@ -33,11 +33,11 @@ const useStyles = createUseStyles({
   container: {
     display: "flex",
     alignItems: "baseline",
-    whiteSpace: "nowrap"
+    whiteSpace: "nowrap",
   },
   toggle: {
     display: "inline-block",
-    margin: "6px 0"
+    margin: "6px 0",
   },
   select: {
     marginBottom: 0,
@@ -46,7 +46,7 @@ const useStyles = createUseStyles({
     width: "100%",
     padding: "0.375rem 20px 0.75rem 6px",
     color: "var(--ft-color-loud)",
-    border:"1px solid transparent",
+    border: "1px solid transparent",
     borderRadius: "2px",
     backgroundColor: "var(--bg-color-blend-contrast1)",
     "-webkit-appearance": "none",
@@ -59,20 +59,20 @@ const useStyles = createUseStyles({
       borderColor: "rgba(64, 169, 243, 0.5)",
       backgroundColor: "transparent",
       outline: 0,
-      boxShadow: "0 0 0 0.2rem rgb(0 123 255 / 25%)"
+      boxShadow: "0 0 0 0.2rem rgb(0 123 255 / 25%)",
     },
-    "&.disabled,&:disabled":{
+    "&.disabled,&:disabled": {
       backgroundColor: "var(--bg-color-blend-contrast1)",
       color: "var(--ft-color-normal)",
-      cursor: "text"
-    }
+      cursor: "text",
+    },
   },
   selectBox: {
     flex: 1,
     position: "relative",
     marginLeft: "5px",
     "&:not(.disabled):after": {
-      content: "\"\"",
+      content: '""',
       position: "absolute",
       top: "50%",
       right: "10px",
@@ -82,61 +82,77 @@ const useStyles = createUseStyles({
       borderTop: "6px solid white",
       borderRight: "6px solid transparent",
       borderLeft: "6px solid transparent",
-      pointerEvents: "none"
-    }
-  }
+      pointerEvents: "none",
+    },
+  },
 });
 
 const SpaceForm = observer(({ className }) => {
-
   const classes = useStyles();
 
   const { queryBuilderStore, authStore } = useStores();
 
-  const handleChangeSpace = e => {
+  const handleChangeSpace = (e) => {
     const space = authStore.getSpace(e.target.value);
-    queryBuilderStore.setSpace(space?space:authStore.privateSpace);
+    queryBuilderStore.setSpace(space ? space : authStore.privateSpace);
   };
 
-  const handleChangePrivate =  (_, isShared) => {
-    if (isShared && authStore.sharedSpaces.length) {
+  const handleChangePrivate = (_, isSpaceShared) => {
+    if (isSpaceShared && authStore.sharedSpaces.length) {
       queryBuilderStore.setSpace(authStore.sharedSpaces[0]);
     } else {
       queryBuilderStore.setSpace(authStore.privateSpace);
     }
-  }
+  };
 
-  const isShared = queryBuilderStore.space && !queryBuilderStore.space.isPrivate;
+  const isShared =
+    queryBuilderStore.space && !queryBuilderStore.space.isPrivate;
 
-  const isReadMode = !queryBuilderStore.saveAsMode || !authStore.sharedSpaces.length
+  const isReadMode =
+    !queryBuilderStore.saveAsMode || !authStore.sharedSpaces.length;
 
-  const sharedSpaces = isReadMode?authStore.sharedSpaces:authStore.allowedSharedSpacesToCreateQueries
+  const sharedSpaces = isReadMode
+    ? authStore.sharedSpaces
+    : authStore.allowedSharedSpacesToCreateQueries;
+
+  const sharedSpaceClass = `${classes.selectBox} ${
+    isReadMode ? "disabled" : ""
+  }`;
+
+  const onChange = isReadMode ? null : handleChangeSpace;
 
   return (
-    <div className={`${classes.container} ${className?className:""}`}>
+    <div className={`${classes.container} ${className ? className : ""}`}>
       <Toggle
         className={classes.toggle}
-        option={{value: isShared?true:undefined}}
+        option={{ value: isShared ? true : undefined }}
         label="Shared"
         show={true}
-        onChange={isReadMode?null:handleChangePrivate}
+        onChange={isReadMode ? null : handleChangePrivate}
       />
-      {isShared? 
+      {isShared ? (
         <>
           &nbsp;in space
-          <div className={`${classes.selectBox} ${isReadMode?"disabled":""}`}>
-            <select className={classes.select} value={queryBuilderStore.space.name}  onChange={isReadMode?null:handleChangeSpace} disabled={isReadMode}>
-              {sharedSpaces.map(space => (
-                <option key={space.name} value={space.name}>{space.name}</option>
+          <div className={sharedSpaceClass}>
+            <select
+              className={classes.select}
+              value={queryBuilderStore.space.name}
+              onChange={onChange}
+              disabled={isReadMode}
+            >
+              {sharedSpaces.map((space) => (
+                <option key={space.name} value={space.name}>
+                  {space.name}
+                </option>
               ))}
             </select>
           </div>
-        </>:<span style={{flex: 1}}></span>
-      }
+        </>
+      ) : (
+        <span style={{ flex: 1 }}></span>
+      )}
     </div>
   );
-
 });
-SpaceForm.displayName = "SpaceForm";
 
 export default SpaceForm;

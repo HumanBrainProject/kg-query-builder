@@ -27,12 +27,13 @@ import ReactJson from "react-json-view";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ThemeRJV from "../../../../Themes/ThemeRJV";
+import { observer } from "mobx-react-lite";
 
 const useStyles = createUseStyles({
   option: {
     marginBottom: "20px",
     "&:last-child": {
-      marginBottom: 0
+      marginBottom: 0,
     },
     "&.unsupported": {
       display: "flex",
@@ -46,12 +47,12 @@ const useStyles = createUseStyles({
         "&:hover": {
           background: "var(--bg-color-ui-contrast1)",
           color: "var(--ft-color-louder)",
-          borderColor: "var(--bg-color-ui-contrast1)"
-        }
+          borderColor: "var(--bg-color-ui-contrast1)",
+        },
       },
       "& $optionLabel": {
         alignSelf: "flex-start",
-        display: "inline"
+        display: "inline",
       },
       "& strong": {
         flex: 1,
@@ -59,49 +60,91 @@ const useStyles = createUseStyles({
         fontWeight: "normal",
         color: "var(--ft-color-loud)",
         "& .react-json-view": {
-          backgroundColor: "transparent !important"
-        }
+          backgroundColor: "transparent !important",
+        },
       },
       "&:last-child": {
-        marginBottom: "10px"
-      }
-    }
+        marginBottom: "10px",
+      },
+    },
   },
   optionLabel: {
     fontWeight: "bold",
     marginBottom: "5px",
     "& small": {
       fontWeight: "normal",
-      fontStyle: "italic"
+      fontStyle: "italic",
     },
     "& strong": {
-      color: "var(--ft-color-loud)"
-    }
+      color: "var(--ft-color-loud)",
+    },
   },
   stringValue: {
-    color: "rgb(253, 151, 31)"
+    color: "rgb(253, 151, 31)",
   },
   boolValue: {
-    color: "rgb(174, 129, 255)"
+    color: "rgb(174, 129, 255)",
   },
   intValue: {
-    color: "rgb(204, 102, 51)"
+    color: "rgb(204, 102, 51)",
   },
   floatValue: {
-    color: "rgb(84, 159, 61)"
+    color: "rgb(84, 159, 61)",
   },
   dateValue: {
-    color: "rgb(45, 89, 168)"
+    color: "rgb(45, 89, 168)",
   },
   typeValue: {
     fontSize: "11px",
     marginRight: "4px",
-    opacity: "0.8"
+    opacity: "0.8",
+  },
+});
+
+const Type = observer(({ classes, value }) => {
+  if (typeof value === "string") {
+    return (
+      <div className={classes.stringValue}>
+        <span className={classes.typeValue}>string</span>&quot;{value}&quot;
+      </div>
+    );
   }
+  if (typeof value === "boolean") {
+    return (
+      <div className={classes.boolValue}>
+        <span className={classes.typeValue}>bool</span>
+        {value ? "true" : "false"}
+      </div>
+    );
+  }
+  if (typeof value === "number") {
+    if (Number.isInteger(value)) {
+      return (
+        <div className={classes.intValue}>
+          <span className={classes.typeValue}>int</span>
+          {value}
+        </div>
+      );
+    }
+    return (
+      <div className={classes.floatValue}>
+        <span className={classes.typeValue}>float</span>
+        {value}
+      </div>
+    );
+  }
+  return (
+    <ReactJson
+      collapsed={true}
+      name={false}
+      theme={ThemeRJV}
+      src={value}
+      enableClipboard={false}
+    />
+  );
 });
 
 const UnsupportedOption = ({ name, value, onChange }) => {
-
   const classes = useStyles();
 
   const handleDelete = () => {
@@ -110,25 +153,22 @@ const UnsupportedOption = ({ name, value, onChange }) => {
 
   return (
     <div className={`${classes.option} unsupported`}>
-      <Button size="sm" variant="secondary" onClick={handleDelete} title={name === "merge" ? `"${name}" property cannot be deleted` : `delete property "${name}"`} disabled={name === "merge"} >
+      <Button
+        size="sm"
+        variant="secondary"
+        onClick={handleDelete}
+        title={
+          name === "merge"
+            ? `"${name}" property cannot be deleted`
+            : `delete property "${name}"`
+        }
+        disabled={name === "merge"}
+      >
         <FontAwesomeIcon icon="times" />
       </Button>
       <div className={classes.optionLabel}>{name}:&nbsp;</div>
       <strong>
-        {typeof value === "string" ?
-          <div className={classes.stringValue}><span className={classes.typeValue}>string</span>&quot;{value}&quot;</div>
-          :
-          typeof value === "boolean" ?
-            <div className={classes.boolValue}><span className={classes.typeValue}>bool</span>{value ? "true" : "false"}</div>
-            :
-            typeof value === "number" ?
-              Number.isInteger(value) ?
-                <div className={classes.intValue}><span className={classes.typeValue}>int</span>{value}</div>
-                :
-                <div className={classes.floatValue}><span className={classes.typeValue}>float</span>{value}</div>
-              :
-              <ReactJson collapsed={true} name={false} theme={ThemeRJV} src={value} enableClipboard={false} />
-        }
+        <Type classes={classes} value={value} />
       </strong>
     </div>
   );

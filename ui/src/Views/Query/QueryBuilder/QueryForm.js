@@ -30,8 +30,6 @@ import Vocab from "./Vocab";
 
 import { useStores } from "../../../Hooks/UseStores";
 
-// import User from "../../../Components/User";
-
 const useStyles = createUseStyles({
   container: {
     position:"relative",
@@ -151,11 +149,6 @@ const QueryForm = observer(({ className }) => {
           onChange={handleChangeVocab}
         />
       </div>
-      {/* {queryBuilderStore.isQuerySaved && !queryBuilderStore.saveAsMode && queryBuilderStore.sourceQuery.user && ( //TODO: Enable this when new user endpoint available
-            <div className={classes.author} >
-              <span>by user<User user={queryBuilderStore.sourceQuery.user} /></span>
-            </div>
-          )} */}
       {false && queryBuilderStore.isQuerySaved && !queryBuilderStore.saveAsMode && !queryBuilderStore.hasQueryChanged && (
         <div className={classes.links}>
           <h6>To go further: </h6>
