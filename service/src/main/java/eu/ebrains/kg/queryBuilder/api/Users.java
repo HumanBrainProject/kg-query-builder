@@ -23,8 +23,7 @@ import eu.ebrains.kg.queryBuilder.service.UserClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.Collections;
-import java.util.Map;
+
 import java.util.UUID;
 
 @RequestMapping("/user")
@@ -46,10 +45,6 @@ public class Users {
             UUID uuid = idController.simplifyFullyQualifiedId(userProfile.getId());
             if(uuid!=null) {
                 userProfile.setId(uuid.toString());
-            }
-            Map<?, ?> userPictures = userClient.getUserPictures(Collections.singletonList(userProfile.getId()));
-            if (userPictures != null && userPictures.get(userProfile.getId()) != null) {
-                userProfile.setPicture(userPictures.get(userProfile.getId()).toString());
             }
             return new KGCoreResult<UserProfile>().setData(userProfile);
         }

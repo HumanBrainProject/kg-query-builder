@@ -52,11 +52,4 @@ public class UserClient {
         return response != null ? response.getData() : null;
     }
 
-    private static class UserPictureMap extends HashMap<String, String> {}
-    public Map<String, String> getUserPictures(List<String> userIds){
-        String relativeUrl = "users/pictures";
-        return kg.client().post().uri(kg.url(relativeUrl))
-                .body(BodyInserters.fromValue(userIds)).retrieve().bodyToMono(UserPictureMap.class).block();
-    }
-
 }

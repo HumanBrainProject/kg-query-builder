@@ -18,9 +18,7 @@ package eu.ebrains.kg.queryBuilder.model;
 
 import eu.ebrains.kg.queryBuilder.constants.SchemaFieldsConstants;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TypeEntity {
@@ -88,4 +86,22 @@ public class TypeEntity {
         properties.addAll(incomingLinksProperties);
         return new TypeEntity(id, name, color, properties);
     }
+
+    private String getDistinctPropertyKey(Property p){
+       return String.format("%s-%b", p.getAttribute(), p.getReverse());
+    }
+
+    public void mergeWith(TypeEntity typeEntity){
+        final Map<String, Property> mappedProperties = typeEntity.getProperties().stream().collect(Collectors.toMap(this::getDistinctPropertyKey, v -> v));
+        Set<String> handledProperties = new HashSet<>();
+        this.properties.forEach(p -> {
+            final String distinctPropertyKey = getDistinctPropertyKey(p);
+            if(mappedProperties.containsKey(distinctPropertyKey)){
+                p.merge(mappedProperties.get(distinctPropertyKey));
+            }
+            handledProperties.add(p.getAttribute());
+        });
+        typeEntity.getProperties().stream().filter(p -> !handledProperties.contains(p.getAttribute())).forEach(p->this.properties.add(p));
+    }
+
 }
