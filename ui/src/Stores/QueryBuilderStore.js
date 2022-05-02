@@ -1095,6 +1095,60 @@ export class QueryBuilderStore {
     return relativePath;
   }
 
+  _getRelativePath(jsonRP, isFlattened) {
+    if(typeof jsonRP === "string") {
+      return jsonRP;
+    }
+    if(isFlattened) {
+      if(jsonRP[0] && typeof jsonRP[0] === "string") {
+        return jsonRP[0];
+      }
+      return jsonRP[0]["@id"];
+    }
+    return jsonRP["@id"];
+  }
+
+  _getReverse(jsonRP, isFlattened) {
+    if(typeof jsonRP === "string") {
+      return false;
+    }
+    if(isFlattened) {
+      if(jsonRP[0] && typeof jsonRP[0] === "string") {
+        return false;
+      }
+      return jsonRP[0].reverse;
+    }
+    return jsonRP.reverse;
+  }
+
+  _getTypeFilter(jsonRP, isFlattened) {
+    if(typeof jsonRP === "string") {
+      return undefined;
+    }
+    if(isFlattened) {
+      if(jsonRP[0] && typeof jsonRP[0] === "string") {
+        return undefined;
+      }
+      return jsonRP[0].typeFilter;
+    }
+    return jsonRP.typeFilter;
+  }
+
+  _getValidTypeFilter(typeFilter) {
+    if(Array.isArray(typeFilter)) {
+      return typeFilter.map(t => {
+        if(t !== null && typeof t === "object") {
+          return t["@id"];
+        }
+        return undefined;
+      })
+    }
+    if(typeFilter !== null && typeof typeFilter === "object" && typeFilter["@id"]) {
+      return [typeFilter["@id"]];
+    }
+    return [];
+  }
+
   _processJsonSpecificationFields(parentField, jsonFields) {
     if (!jsonFields) {
       return;
@@ -1109,9 +1163,9 @@ export class QueryBuilderStore {
           const jsonRP = jsonField.path;
           let isUnknown = false;
           const isFlattened = !!jsonRP && typeof jsonRP !== "string" && jsonRP.length !== undefined && jsonRP.length > 1;
-          const relativePath = jsonRP && (typeof jsonRP === "string" ? jsonRP : (isFlattened ? (jsonRP[0] && (typeof jsonRP[0] === "string" ? jsonRP[0] : jsonRP[0]["@id"])) : (typeof jsonRP === "string" ? jsonRP : jsonRP["@id"])));
-          const reverse = jsonRP && (typeof jsonRP === "string" ? false : (isFlattened ? (jsonRP[0] && (typeof jsonRP[0] === "string" ? false : jsonRP[0].reverse)) : (typeof jsonRP === "string" ? false : jsonRP.reverse)));
-          const typeFilter = jsonRP && (typeof jsonRP === "string" ? undefined : (isFlattened ? (jsonRP[0] && (typeof jsonRP[0] === "string" ? undefined : jsonRP[0].typeFilter)) : (typeof jsonRP === "string" ? undefined : jsonRP.typeFilter)));
+          const relativePath = jsonRP && this._getRelativePath(jsonRP, isFlattened);
+          const reverse = jsonRP && this._getReverse(jsonRP, isFlattened);
+          const typeFilter = jsonRP && this._getTypeFilter(jsonRP, isFlattened);
           let attribute = null;
           let attributeNamespace = null;
           let simpleAttributeName = null;
@@ -1156,7 +1210,7 @@ export class QueryBuilderStore {
           field.isUnknown = isUnknown;
           field.isFlattened = isFlattened;
           field.isReverse = reverse;
-          const validTypeFilter = Array.isArray(typeFilter)?typeFilter.map(t => (t !== null && typeof t === "object")?t["@id"]:undefined):((typeFilter !== null && typeof typeFilter === "object" && typeFilter["@id"])?[typeFilter["@id"]]:[]);
+          const validTypeFilter = this._getValidTypeFilter(typeFilter);
           if (validTypeFilter.length) {
             field.typeFilterEnabled = true;
             field.typeFilter = validTypeFilter;
@@ -1240,8 +1294,8 @@ export class QueryBuilderStore {
           const jsonRP = jsonField.path;
           let isUnknown = false;
           const isFlattened = !!jsonRP && typeof jsonRP !== "string" && jsonRP.length !== undefined && jsonRP.length > 1;
-          const relativePath = jsonRP && (typeof jsonRP === "string" ? jsonRP : (isFlattened ? (jsonRP[0] && (typeof jsonRP[0] === "string" ? jsonRP[0] : jsonRP[0]["@id"])) : (typeof jsonRP === "string" ? jsonRP : jsonRP["@id"])));
-          const reverse = jsonRP && (typeof jsonRP === "string" ? false : (isFlattened ? (jsonRP[0] && (typeof jsonRP[0] === "string" ? false : jsonRP[0].reverse)) : (typeof jsonRP === "string" ? false : jsonRP.reverse)));
+          const relativePath = jsonRP && this._getRelativePath(jsonRP, isFlattened);
+          const reverse = jsonRP && this._getReverse(jsonRP, isFlattened);
           let attribute = null;
           let attributeNamespace = null;
           let simpleAttributeName = null;
