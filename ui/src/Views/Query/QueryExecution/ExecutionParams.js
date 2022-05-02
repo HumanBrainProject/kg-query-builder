@@ -44,8 +44,8 @@ const useStyles = createUseStyles({
     "&:focus": {
       color: "var(--ft-color-loud)",
       borderColor: "rgba(64, 169, 243, 0.5)",
-      backgroundColor: "transparent"
-    }
+      backgroundColor: "transparent",
+    },
   },
   selectBox: {
     position: "relative",
@@ -53,10 +53,10 @@ const useStyles = createUseStyles({
       display: "inline-block",
       paddingRight: "20px",
       color: "white",
-      "-webkit-appearance": "none"
+      "-webkit-appearance": "none",
     },
     "&:after": {
-      content: "\"\"",
+      content: '""',
       position: "absolute",
       top: "50%",
       right: "10px",
@@ -66,29 +66,29 @@ const useStyles = createUseStyles({
       borderTop: "6px solid white",
       borderRight: "6px solid transparent",
       borderLeft: "6px solid transparent",
-      pointerEvents: "none"
-    }
+      pointerEvents: "none",
+    },
   },
   required: {
     color: "var(--bg-color-error-normal)",
     paddingLeft: "3px",
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   firstRow: {
-    marginBottom: "1rem"
+    marginBottom: "1rem",
   },
   runIt: {
-    textAlign: "right"
-  }
+    textAlign: "right",
+  },
 });
 
-const QueryParameter = observer(({parameter}) => {
-
+const QueryParameter = observer(({ parameter }) => {
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
 
-  const handleChangeParameter = e => queryBuilderStore.setResultQueryParameter(parameter.name, e.target.value);
+  const handleChangeParameter = (e) =>
+    queryBuilderStore.setResultQueryParameter(parameter.name, e.target.value);
 
   return (
     <Form.Group>
@@ -105,7 +105,6 @@ const QueryParameter = observer(({parameter}) => {
 });
 
 const QueryParameters = observer(() => {
-
   const { queryBuilderStore } = useStores();
 
   const parameters = queryBuilderStore.getQueryParameters();
@@ -115,21 +114,21 @@ const QueryParameters = observer(() => {
   }
 
   const rows = parameters.reduce((acc, p) => {
-    if (acc.length && !acc[acc.length-1].col3) {
-      if (!acc[acc.length-1].col2) {
-        acc[acc.length-1]["col2"] = p;
+    if (acc.length && !acc[acc.length - 1].col3) {
+      if (!acc[acc.length - 1].col2) {
+        acc[acc.length - 1]["col2"] = p;
       } else {
-        acc[acc.length-1]["col3"] = p;
+        acc[acc.length - 1]["col3"] = p;
       }
     } else {
-      acc.push({"col1": p});
-    };
+      acc.push({ col1: p });
+    }
     return acc;
   }, []);
 
   return (
     <>
-      {rows.map(row => (
+      {rows.map((row) => (
         <Row key={row.col1.name}>
           <Col xs={4}>
             <QueryParameter parameter={row.col1} />
@@ -151,116 +150,155 @@ const QueryParameters = observer(() => {
 });
 
 const ExecutionParams = observer(() => {
-
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
 
-  const scopeOptions =  [{label: "Released", value: "RELEASED" }, {label: "In progress", value: "IN_PROGRESS"}];
+  const scopeOptions = [
+    { label: "Released", value: "RELEASED" },
+    { label: "In progress", value: "IN_PROGRESS" },
+  ];
 
-  const isSpaceRestricted = Array.isArray(queryBuilderStore.resultRestrictToSpaces);
+  const isSpaceRestricted = Array.isArray(
+    queryBuilderStore.resultRestrictToSpaces
+  );
 
-  const handleChangeSize = e => queryBuilderStore.setResultSize(e.target.value);
+  const handleChangeSize = (e) =>
+    queryBuilderStore.setResultSize(e.target.value);
 
-  const handleChangeStart = e => queryBuilderStore.setResultStart(e.target.value);
+  const handleChangeStart = (e) =>
+    queryBuilderStore.setResultStart(e.target.value);
 
-  const handleChangeStage = e => queryBuilderStore.setStage(e.target.value);
+  const handleChangeStage = (e) => queryBuilderStore.setStage(e.target.value);
 
-  const handleChangeInstanceId = e => queryBuilderStore.setResultInstanceId(e.target.value);
+  const handleChangeInstanceId = (e) =>
+    queryBuilderStore.setResultInstanceId(e.target.value);
 
   const handlExecuteQuery = () => {
-    ReactPiwik.push(["trackEvent", "Query", "Execute", queryBuilderStore.rootField.id]);
+    ReactPiwik.push([
+      "trackEvent",
+      "Query",
+      "Execute",
+      queryBuilderStore.rootField.id,
+    ]);
     queryBuilderStore.executeQuery();
-  }
+  };
 
+  const title = !queryBuilderStore.isQueryEmpty
+    ? "Run it"
+    : "The current query specification is not valid/complete. Please select at least one field.";
 
   return (
     <Form>
       <Container fluid>
-      <Row className={classes.firstRow}>
-        <Col xs={4}>
-          <Form.Group>
-            <Form.Label>scope<span className={classes.required}>*</span></Form.Label>
-            <div className={classes.selectBox}>
-              <Form.Control className={classes.input} as="select" value={queryBuilderStore.stage} onChange={handleChangeStage} >
-                {scopeOptions.map(space => (
-                  <option value={space.value} key={space.value}>{space.label}</option>
-                ))}
-              </Form.Control>
-            </div>
-          </Form.Group>
-        </Col>
-        <Col xs={2}>
-          <Form.Group>
-            <Form.Label>size<span className={classes.required}>*</span></Form.Label>
-            <Form.Control
-              className={classes.input}
-              type="number"
-              value={queryBuilderStore.resultSize}
-              placeholder="20"
-              onChange={handleChangeSize}
-            />
-          </Form.Group>
-        </Col>
-        <Col xs={2}>
-          <Form.Group>
-            <Form.Label>start<span className={classes.required}>*</span></Form.Label>
-            <Form.Control
-              className={classes.input}
-              type="number"
-              value={queryBuilderStore.resultStart}
-              placeholder="0"
-              onChange={handleChangeStart}
-            />
-          </Form.Group>
-        </Col>
-        <Col xs={4}>
-          <Form.Group>
-            <Form.Label>instanceId</Form.Label>
-            <Form.Control
-              className={classes.input}
-              type="text"
-              value={queryBuilderStore.resultInstanceId}
-              placeholder=""
-              onChange={handleChangeInstanceId}
-            />
-          </Form.Group>
-        </Col>
-      </Row>
-      <QueryParameters />
-      {isSpaceRestricted?
-        <>
+        <Row className={classes.firstRow}>
+          <Col xs={4}>
+            <Form.Group>
+              <Form.Label>
+                scope<span className={classes.required}>*</span>
+              </Form.Label>
+              <div className={classes.selectBox}>
+                <Form.Control
+                  className={classes.input}
+                  as="select"
+                  value={queryBuilderStore.stage}
+                  onChange={handleChangeStage}
+                >
+                  {scopeOptions.map((space) => (
+                    <option value={space.value} key={space.value}>
+                      {space.label}
+                    </option>
+                  ))}
+                </Form.Control>
+              </div>
+            </Form.Group>
+          </Col>
+          <Col xs={2}>
+            <Form.Group>
+              <Form.Label>
+                size<span className={classes.required}>*</span>
+              </Form.Label>
+              <Form.Control
+                className={classes.input}
+                type="number"
+                value={queryBuilderStore.resultSize}
+                placeholder="20"
+                onChange={handleChangeSize}
+              />
+            </Form.Group>
+          </Col>
+          <Col xs={2}>
+            <Form.Group>
+              <Form.Label>
+                start<span className={classes.required}>*</span>
+              </Form.Label>
+              <Form.Control
+                className={classes.input}
+                type="number"
+                value={queryBuilderStore.resultStart}
+                placeholder="0"
+                onChange={handleChangeStart}
+              />
+            </Form.Group>
+          </Col>
+          <Col xs={4}>
+            <Form.Group>
+              <Form.Label>instanceId</Form.Label>
+              <Form.Control
+                className={classes.input}
+                type="text"
+                value={queryBuilderStore.resultInstanceId}
+                placeholder=""
+                onChange={handleChangeInstanceId}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+        <QueryParameters />
+        {isSpaceRestricted ? (
+          <>
+            <Row>
+              <Col xs={12}>
+                <SpaceRestriction />
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={9} />
+              <Col xs={3} className={classes.runIt}>
+                <Button
+                  variant="primary"
+                  className={"btn-block"}
+                  disabled={queryBuilderStore.isQueryEmpty}
+                  onClick={handlExecuteQuery}
+                  title={title}
+                >
+                  Run it
+                </Button>
+              </Col>
+            </Row>
+          </>
+        ) : (
           <Row>
-            <Col xs={12}>
+            <Col xs={3}>
               <SpaceRestriction />
             </Col>
-          </Row>
-          <Row>
-            <Col xs={9} />
+            <Col xs={6} />
             <Col xs={3} className={classes.runIt}>
-              <Button variant="primary" className={"btn-block"} disabled={queryBuilderStore.isQueryEmpty} onClick={handlExecuteQuery} title={!queryBuilderStore.isQueryEmpty?"Run it":"The current query specification is not valid/complete. Please select at least one field."}>
-                  Run it
+              <Button
+                variant="primary"
+                className={"btn-block"}
+                disabled={queryBuilderStore.isQueryEmpty}
+                onClick={handlExecuteQuery}
+                title={title}
+              >
+                Run it
               </Button>
             </Col>
           </Row>
-        </>
-        :
-        <Row>
-          <Col xs={3}>
-            <SpaceRestriction />
-          </Col>
-          <Col xs={6} />
-          <Col xs={3} className={classes.runIt}>
-            <Button variant="primary" className={"btn-block"} disabled={queryBuilderStore.isQueryEmpty} onClick={handlExecuteQuery} title={!queryBuilderStore.isQueryEmpty?"Run it":"The current query specification is not valid/complete. Please select at least one field."}>
-                Run it
-            </Button>
-          </Col>
-        </Row>
-      }
+        )}
       </Container>
     </Form>
   );
-
 });
 ExecutionParams.displayName = "ExecutionParams";
 

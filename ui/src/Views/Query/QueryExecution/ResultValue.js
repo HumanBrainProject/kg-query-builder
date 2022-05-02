@@ -32,46 +32,56 @@ import isObject from "lodash/isObject";
 import { useStores } from "../../../Hooks/UseStores";
 
 const useStyles = createUseStyles({
-  value:{
-    width:"100%",
-    overflow:"hidden",
-    textOverflow:"ellipsis",
-    whiteSpace:"nowrap",
+  value: {
+    width: "100%",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
     "&.is-link": {
-      cursor: "pointer"
-    }
-  },
-  "@global":{
-    "[id^=result-tooltip-] .tooltip-inner":{
-      maxWidth:"400px",
+      cursor: "pointer",
     },
-    "[id^=result-tooltip-@id] .tooltip-inner":{
-      wordBreak:"break-all"
-    }
-  }
+  },
+  "@global": {
+    "[id^=result-tooltip-] .tooltip-inner": {
+      maxWidth: "400px",
+    },
+    "[id^=result-tooltip-@id] .tooltip-inner": {
+      wordBreak: "break-all",
+    },
+  },
 });
 
-const ResultValue = observer(({name, index, value}) => {
+const TooltipContent = observer((value, link) => {
+  if (isObject(value)) {
+    if (link) {
+      return link;
+    }
+    return <em>{JSON.stringify(value)}</em>;
+  }
+  return value;
+});
 
+const ResultValue = observer(({ name, index, value }) => {
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
 
-  const handleOpenCollection = () => queryBuilderStore.appendTableViewRoot(index,name);
+  const handleOpenCollection = () =>
+    queryBuilderStore.appendTableViewRoot(index, name);
 
-  const getLink =  () => {
+  const getLink = () => {
     const reg = /^https?:\/\/[^.]+\.[^.]+\.[^.]+\/relativeUrl$/;
     if (name === "relativeUrl" || reg.test(name)) {
       return value;
     }
     if (isObject(value)) {
-      const result = Object.keys(value).find(n => {
+      const result = Object.keys(value).find((n) => {
         if (n === "relativeUrl" || reg.test(n)) {
           return true;
         }
         return false;
       });
-      if(result) {
+      if (result) {
         return value[result];
       }
     }
@@ -80,13 +90,11 @@ const ResultValue = observer(({name, index, value}) => {
 
   if (Array.isArray(value)) {
     if (!value.length) {
-      return (
-        <em>empty collection</em>
-      );
+      return <em>empty collection</em>;
     }
     return (
       <Button size="sm" variant="primary" onClick={handleOpenCollection}>
-          Collection ({value.length})
+        Collection ({value.length})
       </Button>
     );
   }
@@ -94,38 +102,22 @@ const ResultValue = observer(({name, index, value}) => {
   const link = getLink();
 
   return (
-    <OverlayTrigger placement="top" overlay={
-      <Tooltip id={`result-tooltip-${name}-${index}`}>
-        {isObject(value)?
-          link?
-            link
-            :
-            <em>{JSON.stringify(value)}</em>
-          :value
-        }
-      </Tooltip>}>
-      <div className={`${classes.value} ${link?"is-link":""}`}>
-        {isObject(value)?
-          link?
-            link
-            :
-            <em>object</em>
-          :value
-        }
+    <OverlayTrigger
+      placement="top"
+      overlay={
+        <Tooltip id={`result-tooltip-${name}-${index}`}>
+          <TooltipContent value={value} link={link} />
+        </Tooltip>
+      }
+    >
+      <div className={`${classes.value} ${link ? "is-link" : ""}`}>
+        {isObject(value) ? link ? link : <em>object</em> : value}
         <Tooltip placement="top" id={`result-tooltip-${name}-${index}-2`}>
-          {isObject(value)?
-            link?
-              link
-              :
-              <em>{JSON.stringify(value)}</em>
-            :value
-          }
+          <TooltipContent value={value} link={link} />
         </Tooltip>
       </div>
     </OverlayTrigger>
   );
-
 });
-ResultValue.displayName = "ResultValue";
 
 export default ResultValue;
