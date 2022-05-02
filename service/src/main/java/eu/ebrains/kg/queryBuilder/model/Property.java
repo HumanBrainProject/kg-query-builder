@@ -91,7 +91,7 @@ public class Property {
         List<Map<String, Object>> canBeMap = (List<Map<String, Object>>) d.get(SchemaFieldsConstants.META_TARGET_TYPES);
         List<String> canBe = null;
         if(canBeMap!=null){
-            canBe = canBeMap.stream().map(p -> (String)p.get(SchemaFieldsConstants.META_TARGET_TYPES)).collect(Collectors.toList());
+            canBe = canBeMap.stream().map(p -> (String)p.get(SchemaFieldsConstants.META_TYPE)).collect(Collectors.toList());
         }
         return new Property(simpleAttributeName, attribute, label, canBe);
     }
