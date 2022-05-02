@@ -21,34 +21,67 @@
  *
  */
 
+const getSize = (size) => {
+  if (size !== undefined && size !== null) {
+    return `size=${size}&`;
+  }
+  return "";
+};
+
+const getFrom = (from) => {
+  if (from !== undefined && from !== null) {
+    return `from=${from}&`;
+  }
+  return "";
+};
+
+const getInstanceId = (instanceId) => {
+  if (instanceId !== undefined && instanceId !== null) {
+    return `instanceId=${instanceId}&`;
+  }
+  return "";
+};
+
+const getStage = (stage) => {
+  if (stage) {
+    return `stage=${stage}`;
+  }
+  return "";
+};
+
 const API = {
   endpoints: {
-    "auth": () => "/service/api/auth/endpoint",
-    "user": () => "/service/api/user",
-    "spaces": () => "/service/api/spaces",
-    "types": () => "/service/api/types",
-    "structure": () => "/service/api/structure?withLinks=true",
-    "performQuery": (stage, from, size, instanceId, restrictToSpaces, params) => {
-      const restrictToSpacesString = (Array.isArray(restrictToSpaces) && restrictToSpaces.length)?
-        "&restrictToSpaces=" + restrictToSpaces.map(space => encodeURIComponent(space)).join(",")
-        :
+    auth: () => "/service/api/auth/endpoint",
+    user: () => "/service/api/user",
+    spaces: () => "/service/api/spaces",
+    types: () => "/service/api/types",
+    structure: () => "/service/api/structure?withLinks=true",
+    performQuery: (stage, from, size, instanceId, restrictToSpaces, params) => {
+      const restrictToSpacesString =
+        Array.isArray(restrictToSpaces) && restrictToSpaces.length
+          ? "&restrictToSpaces=" +
+            restrictToSpaces.map((space) => encodeURIComponent(space)).join(",")
+          : "";
+      const paramsString = Object.entries(params).reduce(
+        (acc, [name, value]) => {
+          acc += `&${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
+          return acc;
+        },
         ""
-      ;
-      const paramsString = Object.entries(params).reduce((acc, [name, value]) => {
-        acc += `&${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
-        return acc;
-      }, "");
-      return `/service/api/queries?${
-        ""}${size!==undefined && size!==null?`size=${size}&`:""}${
-        ""}${from!==undefined && from!==null?`from=${from}&`:""}${
-        ""}${instanceId!==undefined && instanceId!==null?`instanceId=${instanceId}&`:""}${
-        ""}${stage?`stage=${stage}`:"" }${paramsString}${restrictToSpacesString}`;
+      );
+      return `/service/api/queries?${getSize(size)}${getFrom(
+        from
+      )}${getInstanceId(instanceId)}${getStage(
+        stage
+      )}${paramsString}${restrictToSpacesString}`;
     },
-    "getQuery": queryId => `/service/api/queries/${queryId}`,
-    "saveQuery": (queryId, space) => `/service/api/queries/${queryId}/${space?`?space=${space}`:"" }`,
-    "deleteQuery": queryId => `/service/api/queries/${queryId}`,
-    "listQueries": type => `/service/api/queries?type=${encodeURIComponent(type)}`
-  }
+    getQuery: (queryId) => `/service/api/queries/${queryId}`,
+    saveQuery: (queryId, space) =>
+      `/service/api/queries/${queryId}/${space ? `?space=${space}` : ""}`,
+    deleteQuery: (queryId) => `/service/api/queries/${queryId}`,
+    listQueries: (type) =>
+      `/service/api/queries?type=${encodeURIComponent(type)}`,
+  },
 };
 
 export default API;

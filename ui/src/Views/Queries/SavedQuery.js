@@ -32,7 +32,6 @@ import { useStores } from "../../Hooks/UseStores";
 
 import PopOverButton from "../../Components/PopOverButton";
 import { useNavigate } from "react-router-dom";
-//import User from "../../../Components/User";
 
 const useStyles = createUseStyles({
   container:{
@@ -173,10 +172,6 @@ const SavedQuery = observer(({query, enableDelete}) => {
       <div className={classes.name}>
         <FontAwesomeIcon icon={"tag"} />&nbsp;&nbsp;
         <span>{query.label?query.label:query.id} - <small title="queryId">{query.id}</small></span>
-        {/* {showUser && query.user && ( //TODO: Enable this when new user endpoint available
-          <span className={`author ${enableDelete?"extra-padding":""}`}>by user <User user={query.user} />
-          </span>
-        )} */}
         {enableDelete && !query.deleteError && !query.isDeleting && !showDeleteDialog && (
           <button className={classes.deleteButton} title="delete" onClick={handleConfirmDelete}><FontAwesomeIcon icon="times"/></button>
         )}

@@ -145,6 +145,16 @@ const getGlobalUseStyles = () => createUseStyles(theme => {
   return styles;
 });
 
+const getBackgroundSize = theme => {
+  if(theme.background.size) {
+    return theme.background.size;
+  }
+  if(theme.background.image) {
+    return "unset";
+  }
+  return "200%";
+}
+
 const useStyles = createUseStyles(theme => ({
   layout: {
     height: "100vh",
@@ -157,7 +167,7 @@ const useStyles = createUseStyles(theme => ({
     position: "relative",
     overflow: "hidden",
     background: "linear-gradient(var(--bg-gradient-angle), var(--bg-gradient-start), var(--bg-gradient-end))",
-    backgroundSize: theme.background.size?theme.background.size:(theme.background.image?"unset":"200%"),
+    backgroundSize: getBackgroundSize(theme),
     backgroundImage: theme.background.image?`url('${theme.background.image}')`:"unset",
     backgroundPosition: theme.background.position?theme.background.position:"unset"
   },

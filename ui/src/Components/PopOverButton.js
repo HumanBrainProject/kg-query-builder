@@ -81,7 +81,6 @@ const windowHeight = () => {
     e = d.documentElement,
     g = d.getElementsByTagName("body")[0];
   return w.innerHeight || e.clientHeight || g.clientHeight;
-  //return $(window).height();
 };
 
 const PopOverContent = ({onSizeChange, children}) => {
@@ -126,7 +125,7 @@ const PopOverButton = observer(({className, buttonClassName, buttonTitle, iconCo
 
   const handleButtonClick = e => {
     e.stopPropagation();
-    setShowPopOver(showPopOver => !showPopOver);
+    setShowPopOver(prevShowPopOver => !prevShowPopOver);
   };
 
   const handlePopOverClose = e => {

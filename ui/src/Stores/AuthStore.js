@@ -186,7 +186,6 @@ export class AuthStore {
       this.isRetrievingUserProfile = true;
       try {
         const { data } = await this.transportLayer.getUserProfile();
-        //throw {response: { status: 403}};
         runInAction(() => {
           this.isUserAuthorized = true;
           this.user = mapUserProfile(data);
@@ -214,7 +213,6 @@ export class AuthStore {
         this.spacesError = null;
         this.isRetrievingSpaces = true;
         const { data } = await this.transportLayer.getSpaces();
-        //throw {response: { status: 403}};
         runInAction(() => {
           this.spaces = data && Array.isArray(data.data)? data.data: [];
           this.isRetrievingSpaces = false;
@@ -303,8 +301,6 @@ export class AuthStore {
             };
           });
         } catch (e) {
-          // error are already set in the store so no need to do anything here
-          // window.console.log(e);
           this.transportLayer.captureException(e);
         }
       } else {

@@ -122,13 +122,15 @@ const Tab = ({label, disabled, current, icon, iconColor, iconSpin, Component, hi
     onClose(e);
   };
 
+  const color = iconColor?{color:iconColor}:{};
+
   return (
     <div className={`${classes.container} ${disabled? classes.disabled: ""} ${current? classes.current: ""} ${(!path && !onClick)?classes.readOnly:""} ${onClose?classes.closable:""}`} onClick={handleClick} title={label}>
       {Component?
         <Component />
         :
         <React.Fragment>
-          <div className={classes.icon} style={iconColor?{color:iconColor}:{}} title={label}>
+          <div className={classes.icon} style={color} title={label}>
             {icon && (
               <FontAwesomeIcon fixedWidth icon={icon} spin={iconSpin}/>
             )}
