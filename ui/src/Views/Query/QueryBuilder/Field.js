@@ -42,7 +42,7 @@ const useStyles = createUseStyles({
       left: "10px",
       width: "0",
       height: "calc(100% - 20px)",
-      borderLeft: "1px dashed #ccc"
+      borderLeft: "1px dashed #ccc",
     },
     "&::after": {
       display: "block",
@@ -52,22 +52,22 @@ const useStyles = createUseStyles({
       top: "20px",
       width: "10px",
       height: "0",
-      borderTop: "1px dashed #ccc"
+      borderTop: "1px dashed #ccc",
     },
     "&.has-flattened-parent::after": {
-      borderTop: "3px solid #40a9f3"
+      borderTop: "3px solid #40a9f3",
     },
     "&.parent-is-root-merge": {
       "&::before": {
-        marginLeft: "10px"
+        marginLeft: "10px",
       },
       "& > $label": {
-        marginLeft: "10px"
+        marginLeft: "10px",
       },
       "& > $subFields": {
-        marginLeft: "10px"
-      }
-    }
+        marginLeft: "10px",
+      },
+    },
   },
   verticalLineExtraPath: {
     display: "block",
@@ -77,7 +77,7 @@ const useStyles = createUseStyles({
     left: "-11px",
     width: "0",
     height: "24px",
-    borderLeft: "3px solid #40a9f3"
+    borderLeft: "3px solid #40a9f3",
   },
   label: {
     padding: "10px 35px 10px 10px",
@@ -89,39 +89,39 @@ const useStyles = createUseStyles({
     "&:hover": {
       backgroundColor: "var(--bg-color-ui-contrast4)",
       "& $optionsButton": {
-        opacity: 1
-      }
+        opacity: 1,
+      },
     },
     "&.selected": {
       backgroundColor: "var(--bg-color-ui-contrast4)",
       "& $optionsButton": {
-        opacity: 1
-      }
+        opacity: 1,
+      },
     },
     "&.is-unknown": {
       backgroundColor: "var(--bg-color-warn-quiet)",
       "&&.selected": {
-        backgroundColor: "var(--bg-color-warn-normal)"
+        backgroundColor: "var(--bg-color-warn-normal)",
       },
       "&:hover, &.selected:hover": {
-        backgroundColor: "var(--bg-color-warn-loud)"
-      }
+        backgroundColor: "var(--bg-color-warn-loud)",
+      },
     },
     "&.is-invalid, &.is-unknown.is-invalid": {
       backgroundColor: "var(--bg-color-error-quiet)",
       "&&.selected": {
-        backgroundColor: "var(--bg-color-error-normal)"
+        backgroundColor: "var(--bg-color-error-normal)",
       },
       "&:hover, &.selected:hover": {
-        backgroundColor: "var(--bg-color-error-loud)"
-      }
-    }
+        backgroundColor: "var(--bg-color-error-loud)",
+      },
+    },
   },
   merge: {
     color: "greenyellow",
     "& svg": {
-      transform: "scale(2) rotateZ(90deg)"
-    }
+      transform: "scale(2) rotateZ(90deg)",
+    },
   },
   parentIsRootMerge: {
     position: "absolute",
@@ -132,22 +132,22 @@ const useStyles = createUseStyles({
     background: "greenyellow",
     color: "greenyellow",
     "& svg": {
-      transform: "scaleX(1.1) translate(-12px, -7px)rotateZ(180deg)"
-    }
+      transform: "scaleX(1.1) translate(-12px, -7px)rotateZ(180deg)",
+    },
   },
   required: {
-    color: "var(--ft-color-louder)"
+    color: "var(--ft-color-louder)",
   },
   rename: {
     color: "var(--ft-color-louder)",
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   defaultname: {
     color: "var(--ft-color-normal)",
-    fontStyle: "italic"
+    fontStyle: "italic",
   },
   subFields: {
-    paddingLeft: "20px"
+    paddingLeft: "20px",
   },
   optionsButton: {
     position: "absolute",
@@ -156,54 +156,123 @@ const useStyles = createUseStyles({
     opacity: 0.25,
     "&>button.btn": {
       "&:not(:first-child):not(:last-child)": {
-        borderRadius: 0
+        borderRadius: 0,
       },
       "&:first-child": {
         borderTopRightRadius: 0,
-        borderBottomRightRadius: 0
+        borderBottomRightRadius: 0,
       },
       "&:last-child": {
         borderTopLeftRadius: 0,
-        borderBottomLeftRadius: 0
-      }
-    }
+        borderBottomLeftRadius: 0,
+      },
+    },
   },
   link: {
-    transform: "translateY(1px)"
+    transform: "translateY(1px)",
   },
   reverseLink: {
     color: "greenyellow",
-    transform: "translateY(1px)"
+    transform: "translateY(1px)",
   },
   typeFilter: {
     transform: "scale(0.9) translateY(1px)",
-    color: "lightskyblue"
-  }
+    color: "lightskyblue",
+  },
 });
 
-const FieldTypes = observer(({ field}) => {
-
+const FieldTypes = observer(({ field }) => {
   const classes = useStyles();
 
   if (field.typeFilterEnabled && field.typeFilter && field.typeFilter.length) {
     return (
       <React.Fragment>
-        &nbsp;(&nbsp;<FontAwesomeIcon icon="filter" className={classes.typeFilter} title="filtered types" />&nbsp;<Types types={field.typeFilter} />&nbsp;)
+        &nbsp;(&nbsp;
+        <FontAwesomeIcon
+          icon="filter"
+          className={classes.typeFilter}
+          title="filtered types"
+        />
+        &nbsp;
+        <Types types={field.typeFilter} />
+        &nbsp;)
       </React.Fragment>
     );
   }
 
-  if(field.schema.canBe && !!field.schema.canBe.length) {
+  if (field.schema.canBe && !!field.schema.canBe.length) {
     return (
       <React.Fragment>
-        &nbsp;(&nbsp;<Types types={field.schema.canBe} />&nbsp;)
-      </React.Fragment>);
+        &nbsp;(&nbsp;
+        <Types types={field.schema.canBe} />
+        &nbsp;)
+      </React.Fragment>
+    );
   }
   return null;
 });
 
-const Field = observer(({ field }) => {
+const ParentField = observer(({ field }) => {
+  if (field.parent) {
+    return (
+      <React.Fragment>
+        &nbsp;&nbsp;{field.schema.label}
+        <FieldTypes field={field} />
+      </React.Fragment>
+    );
+  }
+  return (
+    <React.Fragment>
+      &nbsp;&nbsp;
+      <Types types={field.schema.canBe} />
+    </React.Fragment>
+  );
+});
 
+const UnknownField = ({ field, classes }) => {
+  if (field.isUnknown) {
+    if (field.schema.simpleAttributeName) {
+      return (
+        <React.Fragment>
+          {field.schema.simpleAttributeName}&nbsp;
+          <span className={classes.canBe} title={field.schema.attribute}>
+            ({" "}
+            {field.schema.attributeNamespace
+              ? field.schema.attributeNamespace
+              : field.schema.attribute}{" "}
+            )
+          </span>
+        </React.Fragment>
+      );
+    }
+    return field.schema.attribute;
+  }
+
+  if (field.parent) {
+    return (
+      <React.Fragment>
+        {field.schema.label}
+        {!field.isRootMerge && <FieldTypes field={field} />}
+      </React.Fragment>
+    );
+  }
+  return <Types types={field.schema.canBe} />;
+};
+
+const AliasField = observer(
+  ({ className, fieldTitle, icon, text, mainClass }) => {
+    return (
+      <span className={mainClass}>
+        &nbsp;&nbsp;
+        <FontAwesomeIcon icon={icon} className={className} title={fieldTitle} />
+        &nbsp;&nbsp;
+        {text}
+      </span>
+    );
+  }
+);
+
+const Field = observer(({ field }) => {
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
@@ -212,17 +281,17 @@ const Field = observer(({ field }) => {
     queryBuilderStore.selectField(field);
   };
 
-  const handleRemoveField = e => {
+  const handleRemoveField = (e) => {
     e.stopPropagation();
     queryBuilderStore.removeField(field);
   };
 
-  const handleMoveUpField = e => {
+  const handleMoveUpField = (e) => {
     e.stopPropagation();
     queryBuilderStore.moveUpField(field);
   };
 
-  const handleMoveDownField = e => {
+  const handleMoveDownField = (e) => {
     e.stopPropagation();
     queryBuilderStore.moveDownField(field);
   };
@@ -230,10 +299,13 @@ const Field = observer(({ field }) => {
   const isFlattened = field.isFlattened;
   const hasFlattenedParent = field.parent && field.parent.isFlattened;
 
-  const fieldIndex = field.parent?field.parent.structure.findIndex(f => f === field):-1;
+  const fieldIndex = field.parent
+    ? field.parent.structure.findIndex((f) => f === field)
+    : -1;
 
   const canMoveUp = fieldIndex >= 1;
-  const canMoveDown = fieldIndex === -1?false:fieldIndex < (field.parent.structure.length -1);
+  const canMoveDown =
+    fieldIndex === -1 ? false : fieldIndex < field.parent.structure.length - 1;
 
   let title = null;
   if (field.isInvalid) {
@@ -245,91 +317,111 @@ const Field = observer(({ field }) => {
   } else if (field.aliasError) {
     title = "alias should not be empty";
   } else if (field.isInvalidLeaf) {
-    title = "Links field must have at least one child field"
+    title = "Links field must have at least one child field";
   }
 
+  const icon = field.isReverse ? "long-arrow-alt-left" : "long-arrow-alt-right";
+  const className = field.isReverse ? classes.reverseLink : classes.link;
+  const fieldTitle = field.isReverse ? "is an incoming link" : null;
+
   return (
-    <div className={`${classes.container} ${field.isMerge ? "is-merge" : ""} ${field.isRootMerge ? "is-root-merge" : ""} ${field.isMerge && !field.isRootMerge ? "is-child-merge" : ""} ${(field.isMerge && field.parentIsRootMerge) ? "parent-is-root-merge" : ""} ${isFlattened ? "flattened" : ""} ${hasFlattenedParent ? "has-flattened-parent" : ""}`}>
-      {hasFlattenedParent &&
+    <div
+      className={`${classes.container} ${field.isMerge ? "is-merge" : ""} ${
+        field.isRootMerge ? "is-root-merge" : ""
+      } ${field.isMerge && !field.isRootMerge ? "is-child-merge" : ""} ${
+        field.isMerge && field.parentIsRootMerge ? "parent-is-root-merge" : ""
+      } ${isFlattened ? "flattened" : ""} ${
+        hasFlattenedParent ? "has-flattened-parent" : ""
+      }`}
+    >
+      {hasFlattenedParent && (
         <div className={classes.verticalLineExtraPath}></div>
-      }
-      <div className={`${classes.label} ${field.isUnknown ? "is-unknown" : ""} ${(field.isInvalid || field.aliasError || field.isInvalidLeaf) ? "is-invalid" : ""} ${field === queryBuilderStore.currentField ? "selected" : ""}`} onClick={handleSelectField} title={title} >
+      )}
+      <div
+        className={`${classes.label} ${field.isUnknown ? "is-unknown" : ""} ${
+          field.isInvalid || field.aliasError || field.isInvalidLeaf
+            ? "is-invalid"
+            : ""
+        } ${field === queryBuilderStore.currentField ? "selected" : ""}`}
+        onClick={handleSelectField}
+        title={title}
+      >
         {field.isMerge && field.parentIsRootMerge && (
           <div className={classes.parentIsRootMerge}>
             <FontAwesomeIcon icon="long-arrow-alt-right" />
           </div>
         )}
-        {field.isFlattened && (!field.isMerge || (field.structure && !!field.structure.length)) && (
-          <span className={classes.required}>
-            <FontAwesomeIcon transform="flip-h" icon="level-down-alt" />&nbsp;&nbsp;
-          </span>
-        )}
+        {field.isFlattened &&
+          (!field.isMerge || (field.structure && !!field.structure.length)) && (
+            <span className={classes.required}>
+              <FontAwesomeIcon transform="flip-h" icon="level-down-alt" />
+              &nbsp;&nbsp;
+            </span>
+          )}
         {field.getOption("required") && (
           <span className={classes.required}>
-            <FontAwesomeIcon transform="shrink-8" icon="asterisk" />&nbsp;&nbsp;
+            <FontAwesomeIcon transform="shrink-8" icon="asterisk" />
+            &nbsp;&nbsp;
           </span>
         )}
-        {field.isRootMerge ?
+        {field.isRootMerge ? (
           <React.Fragment>
             <span className={classes.merge} title="merge">
               <FontAwesomeIcon transform="shrink-8" icon="sitemap" />
             </span>
-            {field.parent?
-              <React.Fragment>
-                &nbsp;&nbsp;{field.schema.label}
-                <FieldTypes field={field} />
-              </React.Fragment>
-              :
-              <React.Fragment>
-                &nbsp;&nbsp;<Types types={field.schema.canBe} />
-              </React.Fragment>
-            }
+            <ParentField field={field} />
           </React.Fragment>
-          :
-          field.isUnknown ?
-            field.schema.simpleAttributeName ?
-              <React.Fragment>
-                {field.schema.simpleAttributeName}&nbsp;
-                <span className={classes.canBe} title={field.schema.attribute}>( {field.schema.attributeNamespace ? field.schema.attributeNamespace : field.schema.attribute} )</span>
-              </React.Fragment>
-              :
-              field.schema.attribute
-            :
-            field.parent?
-              <React.Fragment>
-                {field.schema.label}
-                {!field.isRootMerge && (
-                  <FieldTypes field={field} />
-                )}
-              </React.Fragment>
-              :
-              <Types types={field.schema.canBe} />
-        }
-        {field.parent && !field.parent.isFlattened && (!field.isMerge || field.isRootMerge) && (
-          field.alias ?
-            <span className={classes.rename}>
-              &nbsp;&nbsp;<FontAwesomeIcon icon={field.isReverse?"long-arrow-alt-left":"long-arrow-alt-right"} className={field.isReverse?classes.reverseLink:classes.link} title={field.isReverse?"is an incoming link":null} />&nbsp;&nbsp;
-              {field.alias}
-            </span>
-            :
-            <span className={classes.defaultname}>
-              &nbsp;&nbsp;<FontAwesomeIcon icon={field.isReverse?"long-arrow-alt-left":"long-arrow-alt-right"} className={field.isReverse?classes.reverseLink:classes.link} title={field.isReverse?"is an incoming link":null} />&nbsp;&nbsp;
-              {field.defaultAlias}
-            </span>
+        ) : (
+          <UnknownField field={field} classes={classes} />
         )}
+        {field.parent &&
+          !field.parent.isFlattened &&
+          (!field.isMerge || field.isRootMerge) &&
+          (field.alias ? (
+            <AliasField
+              className={className}
+              fieldTitle={fieldTitle}
+              icon={icon}
+              text={field.alias}
+              mainClass={classes.rename}
+            />
+          ) : (
+            <AliasField
+              className={className}
+              fieldTitle={fieldTitle}
+              icon={icon}
+              text={field.defaultAlias}
+              mainClass={classes.defaultname}
+            />
+          ))}
         {field.parent && (
           <div className={classes.optionsButton}>
             {canMoveUp && (
-              <Button size="sm" variant="primary" onClick={handleMoveUpField} title="move up">
+              <Button
+                size="sm"
+                variant="primary"
+                onClick={handleMoveUpField}
+                title="move up"
+              >
                 <FontAwesomeIcon icon="arrow-up" />
               </Button>
             )}
             {canMoveDown && (
-              <Button size="sm" variant="primary" onClick={handleMoveDownField} title="move down">
+              <Button
+                size="sm"
+                variant="primary"
+                onClick={handleMoveDownField}
+                title="move down"
+              >
                 <FontAwesomeIcon icon="arrow-down" />
               </Button>
             )}
-            <Button size="sm" variant="primary" onClick={handleRemoveField} title="remove">
+            <Button
+              size="sm"
+              variant="primary"
+              onClick={handleRemoveField}
+              title="remove"
+            >
               <FontAwesomeIcon icon="times" />
             </Button>
           </div>
@@ -341,6 +433,5 @@ const Field = observer(({ field }) => {
     </div>
   );
 });
-Field.displayName = "Field";
 
 export default Field;

@@ -44,7 +44,7 @@ import App from "./Views/App";
 
 //reportWebVitals();
 
-new ReactPiwik({
+new ReactPiwik({ //NOSONAR
   url: process.env.REACT_APP_MATOMO_URL,
   siteId: process.env.REACT_APP_MATOMO_SITE_ID,
   trackErrors: true
