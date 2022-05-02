@@ -27,7 +27,7 @@ import Toggle from "../../../Components/Toggle";
 
 const Vocab = ({ defaultValue, value, onChange}) => {
 
-  const handleOnChange = (name, newValue) => onChange(newValue?defaultValue:null);
+  const handleOnChange = (_, newValue) => onChange(newValue?defaultValue:null);
 
   return (
     <Toggle

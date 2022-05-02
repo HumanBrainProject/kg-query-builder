@@ -28,7 +28,7 @@ import Toggle from "../../../../Components/Toggle";
 
 const Flatten = observer(({ field, show, onChange}) => {
 
-  const handleOnChange = (name, value) => onChange(!!value);
+  const handleOnChange = (_, value) => onChange(!!value);
 
   if (!show) {
     return null;

@@ -279,7 +279,8 @@ export class QueryBuilderStore {
       mode: observable,
       setMode: action,
       includeAdvancedAttributes: observable,
-      toggleIncludeAdvancedAttributes: action
+      toggleIncludeAdvancedAttributes: action,
+      saveLabel: computed
     });
 
     this.transportLayer = transportLayer;
@@ -1544,6 +1545,13 @@ export class QueryBuilderStore {
     this.fetchQueriesError = error;
   }
 
+  get saveLabel() {
+    if(this.label && this.label.endsWith("-Copy")) {
+      return this.label;
+    }
+    return this.label + "-Copy";
+  }
+
   setSaveAsMode(mode) {
     this.saveAsMode = mode;
     if (mode) {
@@ -1552,7 +1560,7 @@ export class QueryBuilderStore {
       this.fromDescription = this.description;
       this.fromSpace = toJS(this.space);
       this.queryId = _.uuid();
-      this.label = this.label?(this.label.endsWith("-Copy")?this.label:(this.label + "-Copy")):"";
+      this.label = this.saveLabel;
       this.space = (this.space && this.space.permissions && this.space.permissions.canCreate)?toJS(this.space):toJS(this.rootStore.authStore.privateSpace);
     } else {
       this.queryId = this.fromQueryId;
