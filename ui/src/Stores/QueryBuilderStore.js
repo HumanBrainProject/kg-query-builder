@@ -93,9 +93,9 @@ const rootFieldReservedProperties = [
 const fieldReservedProperties = ["propertyName", "path", "merge", "structure"];
 const optionsToKeepOnFlattenendField = ["ensureOrder", "required", "singleValue"];
 
-const namespaceReg = /^(.+):(.+)$/;
-const attributeReg = /^https?:\/\/.+\/(.+)$/;
-const modelReg = /^\/?((.+)\/(.+)\/(.+)\/(.+))$/;
+const namespaceReg = /^(.+):(.+)$/; //NOSONAR
+const attributeReg = /^https?:\/\/.+\/(.+)$/; //NOSONAR
+const modelReg = /^\/?((.+)\/(.+)\/(.+)\/(.+))$/; //NOSONAR
 
 const isChildOfField = (node, parent, root) => {
   while (node && node !== parent && node !== root) {
@@ -331,7 +331,7 @@ export class QueryBuilderStore {
     const filter = this.childrenFilterValue && this.childrenFilterValue.toLowerCase();
 
     return lookups.reduce((acc, id) => {
-      const reg = /^https?:\/\/.+\/(.+)$/;
+      const reg = /^https?:\/\/.+\/(.+)$/; //NOSONAR
       const type = this.rootStore.typeStore.types[id];
       if (type) {
         const properties = type.properties.filter(prop => (this.includeAdvancedAttributes  || !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))
@@ -1274,7 +1274,7 @@ export class QueryBuilderStore {
   _findAndSetProperty(property, id, attribute, jsonField) {
     const type = this.rootStore.typeStore.types[id];
     if (type) {
-      property = type.properties.find(property => property.attribute === attribute && (!jsonField.structure || (jsonField.structure && property.canBe)));
+      property = type.properties.find(p => p.attribute === attribute && (!jsonField.structure || (jsonField.structure && p.canBe)));
       if (property) {
         property = toJS(property);
       }
