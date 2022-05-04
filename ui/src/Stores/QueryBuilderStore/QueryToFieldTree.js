@@ -22,16 +22,8 @@
  */
 import { toJS } from "mobx";
 
+import { optionsToKeepOnFlattenendField, fieldReservedProperties, namespaceReg, attributeReg, modelReg } from "./QuerySettings";
 import Field from "../Field";
-
-const fieldReservedProperties = ["propertyName", "path", "merge", "structure"];
-
-const optionsToKeepOnFlattenendField = ["ensureOrder", "required", "singleValue"];
-
-const namespaceReg = /^(.+):(.+)$/;
-const attributeReg = /^https?:\/\/.+\/(.+)$/;
-const modelReg = /^\/?((.+)\/(.+)\/(.+)\/(.+))$/;
-
 
 const getRelativePathFromObject = path => {
   if (!path) {
