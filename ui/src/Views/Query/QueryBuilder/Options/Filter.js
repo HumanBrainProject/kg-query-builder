@@ -262,7 +262,7 @@ const Filter = observer(({ filter, show, onChange }) => {
               {["scope", "size", "start", "instanceId"].includes(filter.parameter) && (
                 <div className={classes.inputRow}>
                   <span className={classes.label}></span>
-                  <span className={classes.warning}><FontAwesomeIcon icon="exclamation-triangle" />&nbsp;"{filter.parameter}" is a reserved parameter name and should not be used!</span>
+                  <span className={classes.warning}><FontAwesomeIcon icon="exclamation-triangle" />&nbsp;&quot;{filter.parameter}&quot; is a reserved parameter name and should not be used!</span>
                 </div>
               )}
             </>
