@@ -1,1 +1,1 @@
-# KG Query Builder
+# KG Query Builder UI
