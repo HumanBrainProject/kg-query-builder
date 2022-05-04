@@ -294,7 +294,7 @@ const addJsonFieldToField = (types, context, parentField, jsonField) => {
 };
 
 const addJsonFieldsToField = (types, context, parentField, jsonFields) => {
-  if (!parentField || !jsonFields) {
+  if (!parentField || !jsonFields) {
     return;
   }
   if (!Array.isArray(jsonFields)) {
@@ -326,7 +326,7 @@ const addJsonFieldToMergeField = (types, context, parentField, jsonField) => {
 };
 
 const addJsonFieldsToMergeField = (types, context, parentField, jsonFields) => {
-  if (!parentField || !jsonFields) {
+  if (!parentField || !jsonFields) {
     return;
   }
   if (!Array.isArray(jsonFields)) {

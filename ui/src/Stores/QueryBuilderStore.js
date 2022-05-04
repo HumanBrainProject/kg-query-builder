@@ -285,7 +285,7 @@ export class QueryBuilderStore {
     const filter = this.childrenFilterValue && this.childrenFilterValue.toLowerCase();
 
     return lookups.reduce((acc, id) => {
-      const reg = /^https?:\/\/.+\/(.+)$/;
+      const reg = /^https?:\/\/.+\/(.+)$/; //NOSONAR
       const type = this.rootStore.typeStore.types[id];
       if (type) {
         const properties = type.properties.filter(prop => (this.includeAdvancedAttributes  || !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))

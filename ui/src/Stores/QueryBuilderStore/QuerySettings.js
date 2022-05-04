@@ -69,6 +69,6 @@ export const optionsToKeepOnFlattenendField = ["ensureOrder", "required", "singl
 
 export const fieldReservedProperties = ["propertyName", "path", "merge", "structure"];
 
-export const namespaceReg = /^(.+):(.+)$/;
-export const attributeReg = /^https?:\/\/.+\/(.+)$/;
-export const modelReg = /^\/?((.+)\/(.+)\/(.+)\/(.+))$/;
+export const namespaceReg = /^(.+):(.+)$/;//NOSONAR
+export const attributeReg = /^https?:\/\/.+\/(.+)$/;//NOSONAR
+export const modelReg = /^\/?((.+)\/(.+)\/(.+)\/(.+))$/;//NOSONAR
