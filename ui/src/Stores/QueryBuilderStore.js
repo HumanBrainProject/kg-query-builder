@@ -27,6 +27,8 @@ import isEqual from "lodash/isEqual";
 import remove from "lodash/remove";
 import _  from "lodash-uuid";
 import jsonld from "jsonld";
+
+import processJsonSpecificationMergeFields from "./QueryBuilderStore/QueryToFieldTree";
 import Field from "./Field";
 
 const jsdiff = require("diff");
@@ -49,19 +51,6 @@ const defaultContext = {
     "@id": "path",
     "@type": "@id"
   }
-};
-
-const queryCompare = (a, b) => {
-  if (a.label && b.label) {
-    return a.label.localeCompare(b.label);
-  }
-  if (a.label) {
-    return -1;
-  }
-  if (b.label) {
-    return 1;
-  }
-  return a.id.localeCompare(b.id);
 };
 
 const rootFieldReservedProperties = [
@@ -90,12 +79,23 @@ const rootFieldReservedProperties = [
   "https://core.kg.ebrains.eu/vocab/meta/user",
   "https://core.kg.ebrains.eu/vocab/meta/alternative"
 ];
-const fieldReservedProperties = ["propertyName", "path", "merge", "structure"];
 const optionsToKeepOnFlattenendField = ["ensureOrder", "required", "singleValue"];
 
-const namespaceReg = /^(.+):(.+)$/;
 const attributeReg = /^https?:\/\/.+\/(.+)$/;
 const modelReg = /^\/?((.+)\/(.+)\/(.+)\/(.+))$/;
+
+const queryCompare = (a, b) => {
+  if (a.label && b.label) {
+    return a.label.localeCompare(b.label);
+  }
+  if (a.label) {
+    return -1;
+  }
+  if (b.label) {
+    return 1;
+  }
+  return a.id.localeCompare(b.id);
+};
 
 const isChildOfField = (node, parent, root) => {
   while (node && node !== parent && node !== root) {
@@ -129,6 +129,103 @@ const normalizeUser = user => {
     name: user["http://schema.org/name"],
     picture: user["https://schema.hbp.eu/users/picture"]
   };
+};
+
+const processMergeFields = (json, merge) => {
+  const jsonMerge = [];
+  merge && !!merge.length && merge.forEach(field => {
+    let jsonMergeFields = [];
+    let mergeField = field;
+    while (mergeField) {
+      if (mergeField.schema.attribute) {
+        const attribute = (!attributeReg.test(mergeField.schema.attribute) && modelReg.test(mergeField.schema.attribute)) ? mergeField.schema.attribute.match(modelReg)[1] : mergeField.schema.attribute;
+        const relativePath = mergeField.schema.attributeNamespace && mergeField.schema.simpleAttributeName ? `${mergeField.schema.attributeNamespace}:${mergeField.schema.simpleAttributeName}` : attribute;
+        if (mergeField.schema.reverse) {
+          jsonMergeFields.push({
+            "@id": relativePath,
+            "reverse": true
+          });
+        } else {
+          jsonMergeFields.push(relativePath);
+        }
+        mergeField = mergeField.structure && mergeField.structure.length && mergeField.structure[0];
+      }
+    }
+    if (jsonMergeFields.length > 1) {
+      jsonMerge.push({
+        "path": jsonMergeFields
+      });
+    } else if (jsonMergeFields.length === 1) {
+      jsonMerge.push({
+        "path": jsonMergeFields[0]
+      });
+    }
+  });
+  if (jsonMerge.length > 1) {
+    json.merge = jsonMerge;
+  } else if (jsonMerge.length === 1) {
+    json.merge = jsonMerge[0];
+  }
+};
+
+const processFields = (json, field) => {
+  const jsonFields = [];
+  field.structure && !!field.structure.length && field.structure.forEach(field => {
+    let jsonField = {};
+    jsonField.propertyName = (field.namespace ? field.namespace : "query") + ":" + ((field.alias && field.alias.trim()) || field.schema.simpleAttributeName || field.schema.label || uniqueId("field"));
+    if (field.schema.attribute) {
+      const attribute = (!attributeReg.test(field.schema.attribute) && modelReg.test(field.schema.attribute)) ? field.schema.attribute.match(modelReg)[1] : field.schema.attribute;
+      const relativePath = field.schema.attributeNamespace && field.schema.simpleAttributeName ? `${field.schema.attributeNamespace}:${field.schema.simpleAttributeName}` : attribute;
+      jsonField.path = processPath(field, relativePath);
+    }
+    field.options.forEach(({ name, value }) => jsonField[name] = toJS(value));
+    if (field.merge.length) {
+      processMergeFields(jsonField, field.merge);
+    }
+    if (field.isFlattened) {
+      const topField = field;
+      jsonField.path = [jsonField.path];
+      while (field.isFlattened && field.structure[0]) {
+        field = field.structure[0];
+        const relativePath = field.schema.attributeNamespace && field.schema.simpleAttributeName ? `${field.schema.attributeNamespace}:${field.schema.simpleAttributeName}` : field.schema.attribute;
+        jsonField.path.push(processPath(field, relativePath));
+        if (field.structure && field.structure.length) {
+          jsonField.propertyName = (topField.namespace ? topField.namespace : "query") + ":" + (topField.alias || field.schema.simpleAttributeName || field.schema.label);
+        }
+        field.options.filter(({name}) => !optionsToKeepOnFlattenendField.includes(name)).forEach(({ name, value }) => jsonField[name] = toJS(value));
+      }
+    }
+    if (field.structure && field.structure.length) {
+      processFields(jsonField, field);
+    }
+    jsonFields.push(jsonField);
+  });
+  if (jsonFields.length > 1) {
+    json.structure = jsonFields;
+  } else if (jsonFields.length === 1) {
+    json.structure = jsonFields[0];
+  }
+};
+
+const processPath = (field, relativePath) => {
+  if (field.schema.reverse) {
+    const path = {
+      "@id": relativePath,
+      "reverse": true
+    };
+    if (field.typeFilterEnabled && field.typeFilter.length) {
+      path.typeFilter = field.typeFilter.map(t => ({"@id": t}));
+    }
+    return path;
+  }
+
+  if (field.typeFilterEnabled && field.typeFilter.length) {
+    return {
+      "@id": relativePath,
+      "typeFilter": field.typeFilter.map(t => ({"@id": t}))
+    };
+  }
+  return relativePath;
 };
 
 export class QueryBuilderStore {
@@ -927,9 +1024,9 @@ export class QueryBuilderStore {
   get JSONQueryFields() {
     const json = {};
     if (this.rootField.merge) {
-      this._processMergeFields(json, this.rootField.merge);
+      processMergeFields(json, this.rootField.merge);
     }
-    this._processFields(json, this.rootField);
+    processFields(json, this.rootField);
     if (!json.structure) {
       return undefined;
     }
@@ -999,406 +1096,6 @@ export class QueryBuilderStore {
     return jsdiff.diffJson(this.JSONSourceQuery, this.JSONQuery);
   }
 
-  _processMergeFields(json, merge) {
-    const jsonMerge = [];
-    merge && !!merge.length && merge.forEach(field => {
-      let jsonMergeFields = [];
-      let mergeField = field;
-      while (mergeField) {
-        if (mergeField.schema.attribute) {
-          const attribute = (!attributeReg.test(mergeField.schema.attribute) && modelReg.test(mergeField.schema.attribute)) ? mergeField.schema.attribute.match(modelReg)[1] : mergeField.schema.attribute;
-          const relativePath = mergeField.schema.attributeNamespace && mergeField.schema.simpleAttributeName ? `${mergeField.schema.attributeNamespace}:${mergeField.schema.simpleAttributeName}` : attribute;
-          if (mergeField.schema.reverse) {
-            jsonMergeFields.push({
-              "@id": relativePath,
-              "reverse": true
-            });
-          } else {
-            jsonMergeFields.push(relativePath);
-          }
-          mergeField = mergeField.structure && mergeField.structure.length && mergeField.structure[0];
-        }
-      }
-      if (jsonMergeFields.length > 1) {
-        jsonMerge.push({
-          "path": jsonMergeFields
-        });
-      } else if (jsonMergeFields.length === 1) {
-        jsonMerge.push({
-          "path": jsonMergeFields[0]
-        });
-      }
-    });
-    if (jsonMerge.length > 1) {
-      json.merge = jsonMerge;
-    } else if (jsonMerge.length === 1) {
-      json.merge = jsonMerge[0];
-    }
-  }
-
-  _processFields(json, field) {
-    const jsonFields = [];
-    field.structure && !!field.structure.length && field.structure.forEach(field => {
-      let jsonField = {};
-      jsonField.propertyName = (field.namespace ? field.namespace : "query") + ":" + ((field.alias && field.alias.trim()) || field.schema.simpleAttributeName || field.schema.label || uniqueId("field"));
-      if (field.schema.attribute) {
-        const attribute = (!attributeReg.test(field.schema.attribute) && modelReg.test(field.schema.attribute)) ? field.schema.attribute.match(modelReg)[1] : field.schema.attribute;
-        const relativePath = field.schema.attributeNamespace && field.schema.simpleAttributeName ? `${field.schema.attributeNamespace}:${field.schema.simpleAttributeName}` : attribute;
-        jsonField.path = this._processPath(field, relativePath);
-      }
-      field.options.forEach(({ name, value }) => jsonField[name] = toJS(value));
-      if (field.merge.length) {
-        this._processMergeFields(jsonField, field.merge);
-      }
-      if (field.isFlattened) {
-        const topField = field;
-        jsonField.path = [jsonField.path];
-        while (field.isFlattened && field.structure[0]) {
-          field = field.structure[0];
-          const relativePath = field.schema.attributeNamespace && field.schema.simpleAttributeName ? `${field.schema.attributeNamespace}:${field.schema.simpleAttributeName}` : field.schema.attribute;
-          jsonField.path.push(this._processPath(field, relativePath));
-          if (field.structure && field.structure.length) {
-            jsonField.propertyName = (topField.namespace ? topField.namespace : "query") + ":" + (topField.alias || field.schema.simpleAttributeName || field.schema.label);
-          }
-          field.options.filter(({name}) => !optionsToKeepOnFlattenendField.includes(name)).forEach(({ name, value }) => jsonField[name] = toJS(value));
-        }
-      }
-      if (field.structure && field.structure.length) {
-        this._processFields(jsonField, field);
-      }
-      jsonFields.push(jsonField);
-    });
-    if (jsonFields.length > 1) {
-      json.structure = jsonFields;
-    } else if (jsonFields.length === 1) {
-      json.structure = jsonFields[0];
-    }
-  }
-
-  _processPath(field, relativePath) {
-    if (field.schema.reverse) {
-      const path = {
-        "@id": relativePath,
-        "reverse": true
-      };
-      if (field.typeFilterEnabled && field.typeFilter.length) {
-        path.typeFilter = field.typeFilter.map(t => ({"@id": t}));
-      }
-      return path;
-    }
-
-    if (field.typeFilterEnabled && field.typeFilter.length) {
-      return {
-        "@id": relativePath,
-        "typeFilter": field.typeFilter.map(t => ({"@id": t}))
-      };
-    }
-    return relativePath;
-  }
-
-  _getRelativePath(jsonRP, isFlattened) {
-    if(typeof jsonRP === "string") {
-      return jsonRP;
-    }
-    if(isFlattened) {
-      if(jsonRP[0] && typeof jsonRP[0] === "string") {
-        return jsonRP[0];
-      }
-      return jsonRP[0]["@id"];
-    }
-    return jsonRP["@id"];
-  }
-
-  _getReverse(jsonRP, isFlattened) {
-    if(typeof jsonRP === "string") {
-      return false;
-    }
-    if(isFlattened) {
-      if(jsonRP[0] && typeof jsonRP[0] === "string") {
-        return false;
-      }
-      return jsonRP[0].reverse;
-    }
-    return jsonRP.reverse;
-  }
-
-  _getTypeFilter(jsonRP, isFlattened) {
-    if(typeof jsonRP === "string") {
-      return undefined;
-    }
-    if(isFlattened) {
-      if(jsonRP[0] && typeof jsonRP[0] === "string") {
-        return undefined;
-      }
-      return jsonRP[0].typeFilter;
-    }
-    return jsonRP.typeFilter;
-  }
-
-  _getValidTypeFilter(typeFilter) {
-    if(Array.isArray(typeFilter)) {
-      return typeFilter.map(t => {
-        if(t !== null && typeof t === "object") {
-          return t["@id"];
-        }
-        return undefined;
-      })
-    }
-    if(typeFilter !== null && typeof typeFilter === "object" && typeFilter["@id"]) {
-      return [typeFilter["@id"]];
-    }
-    return [];
-  }
-
-  _processJsonSpecificationFields(parentField, jsonFields) {
-    if (!jsonFields) {
-      return;
-    }
-    if (!jsonFields.length) {
-      jsonFields = [jsonFields];
-    }
-    if (parentField && jsonFields && jsonFields.length) {
-      jsonFields.forEach(jsonField => {
-        let field = null;
-        if (jsonField.path) {
-          const jsonRP = jsonField.path;
-          let isUnknown = false;
-          const isFlattened = !!jsonRP && typeof jsonRP !== "string" && jsonRP.length !== undefined && jsonRP.length > 1;
-          const relativePath = jsonRP && this._getRelativePath(jsonRP, isFlattened);
-          const reverse = jsonRP && this._getReverse(jsonRP, isFlattened);
-          const typeFilter = jsonRP && this._getTypeFilter(jsonRP, isFlattened);
-          let attribute = null;
-          let attributeNamespace = null;
-          let simpleAttributeName = null;
-          if (attributeReg.test(relativePath)) {
-            attribute = relativePath;
-            [, simpleAttributeName] = relativePath.match(attributeReg);
-
-          } else if (namespaceReg.test(relativePath)) {
-            [, attributeNamespace, simpleAttributeName] = relativePath.match(namespaceReg);
-            attribute = this.context && this.context[attributeNamespace] ? this.context[attributeNamespace] + simpleAttributeName : null;
-          } else if (modelReg.test(relativePath)) {
-            attribute = relativePath.match(modelReg)[1];
-          } else if (relativePath === "@id" || relativePath === "@type") {
-            attribute = relativePath;
-          }
-          let property = null;
-          if (attribute) {
-            parentField.lookups.some(id => {
-              const type = this.rootStore.typeStore.types[id];
-              if (type) {
-                property = type.properties.find(property => property.attribute === attribute && (!jsonField.structure || (jsonField.structure && property.canBe)));
-                if (property) {
-                  property = toJS(property);
-                }
-                return !!property;
-              }
-              return false;
-            });
-          }
-          if (!property) {
-            isUnknown = true;
-            property = {
-              attribute: attribute,
-              attributeNamespace: attributeNamespace,
-              simpleAttributeName: simpleAttributeName,
-              reverse: reverse
-            };
-          } else if (attributeNamespace) {
-            property.attributeNamespace = attributeNamespace;
-          }
-          field = new Field(property, parentField);
-          field.isUnknown = isUnknown;
-          field.isFlattened = isFlattened;
-          field.isReverse = reverse;
-          const validTypeFilter = this._getValidTypeFilter(typeFilter);
-          if (validTypeFilter.length) {
-            field.typeFilterEnabled = true;
-            field.typeFilter = validTypeFilter;
-          }
-          if (Array.isArray(property.canBe)) {
-            field.isInvalidLeaf = true;
-          }
-          parentField.isInvalidLeaf = false;
-        }
-
-        if (jsonField.merge) {
-          if (!field) {
-            field = new Field({}, parentField);
-            field.isInvalidLeaf = true;
-            parentField.isInvalidLeaf = false;
-          }
-          field.isMerge = true;
-          this._processJsonSpecificationMergeFields(field, jsonField.merge instanceof Array ? jsonField.merge : [jsonField.merge]);
-        }
-        if (!field) {
-          field = new Field({}, parentField);
-          field.isInvalid = true;
-          field.isUnknown = true;
-          field.isInvalidLeaf = true;
-          parentField.isInvalidLeaf = false;
-        }
-        if ((jsonField.merge && jsonField.path) || (!jsonField.merge && !jsonField.path)) {
-          field.isInvalid = true;
-        }
-        const [, namespace, propertyName] = namespaceReg.test(jsonField.propertyName) ? jsonField.propertyName.match(namespaceReg) : [null, null, null];
-        if (namespace) {
-          field.namespace = namespace;
-        }
-        if (propertyName && propertyName !== field.schema.simpleAttributeName && propertyName !== field.schema.label) {
-          field.alias = propertyName;
-        }
-        Object.entries(jsonField).forEach(([name, value]) => {
-          if (!fieldReservedProperties.includes(name) && (!field.isFlattened || optionsToKeepOnFlattenendField.includes(name))) {
-            field.setOption(name, value);
-          }
-        });
-        if (!parentField.structure || parentField.structure.length === undefined) {
-          parentField.structure = [];
-        }
-        parentField.structure.push(field);
-        if (field.isFlattened) {
-          const flattenRelativePath = jsonField.path.length > 2 ? jsonField.path.slice(1) : jsonField.path[1];
-          const childrenJsonFields = [
-            {
-              path: flattenRelativePath,
-              structure: jsonField.structure
-            }
-          ];
-          Object.entries(jsonField).forEach(([name, value]) => {
-            if (!fieldReservedProperties.includes(name) && !optionsToKeepOnFlattenendField.includes(name)) {
-              childrenJsonFields[0][name] = value;
-            }
-          });
-          this._processJsonSpecificationFields(field, childrenJsonFields);
-          if (flattenRelativePath.length || (field.structure && field.structure.length === 1)) {
-            field.isflattened = true;
-          }
-        } else if (jsonField.structure) {
-          this._processJsonSpecificationFields(field, jsonField.structure instanceof Array ? jsonField.structure : [jsonField.structure]);
-        }
-      });
-    }
-  }
-
-  _processJsonSpecificationMergeFields(parentField, jsonFields) {
-    if (!jsonFields) {
-      return;
-    }
-    if (!jsonFields.length) {
-      jsonFields = [jsonFields];
-    }
-    if (parentField && jsonFields && jsonFields.length) {
-      jsonFields.forEach(jsonField => {
-        let field = null;
-        if (jsonField.path) {
-          const jsonRP = jsonField.path;
-          let isUnknown = false;
-          const isFlattened = !!jsonRP && typeof jsonRP !== "string" && jsonRP.length !== undefined && jsonRP.length > 1;
-          const relativePath = jsonRP && this._getRelativePath(jsonRP, isFlattened);
-          const reverse = jsonRP && this._getReverse(jsonRP, isFlattened);
-          let attribute = null;
-          let attributeNamespace = null;
-          let simpleAttributeName = null;
-          if (attributeReg.test(relativePath)) {
-            attribute = relativePath;
-            [, simpleAttributeName] = relativePath.match(attributeReg);
-
-          } else if (namespaceReg.test(relativePath)) {
-            [, attributeNamespace, simpleAttributeName] = relativePath.match(namespaceReg);
-            attribute = this.context && this.context[attributeNamespace] ? this.context[attributeNamespace] + simpleAttributeName : null;
-          } else if (modelReg.test(relativePath)) {
-            attribute = relativePath.match(modelReg)[1];
-          } else if (relativePath === "@id") {
-            attribute = relativePath;
-          }
-          let property = null;
-          const parentFieldLookup = (parentField.isRootMerge && parentField.parent) ? parentField.parent : parentField;
-          if (attribute && parentFieldLookup.schema && parentFieldLookup.schema.canBe && parentFieldLookup.schema.canBe.length) {
-            parentFieldLookup.schema.canBe.some(id => {
-              const type = this.rootStore.typeStore.types[id];
-              if (type) {
-                property = type.properties.find(property => property.attribute === attribute && (!jsonField.structure || (jsonField.structure && property.canBe)));
-                if (property) {
-                  property = toJS(property);
-                }
-                return !!property;
-              }
-              return false;
-            });
-          }
-          if (!property) {
-            isUnknown = true;
-            property = {
-              attribute: attribute,
-              attributeNamespace: attributeNamespace,
-              simpleAttributeName: simpleAttributeName,
-              reverse: reverse
-            };
-          } else if (attributeNamespace) {
-            property.attributeNamespace = attributeNamespace;
-          }
-          field = new Field(property, parentField);
-          field.isMerge = true;
-          field.isUnknown = isUnknown;
-          field.isFlattened = isFlattened;
-        }
-
-        if (!field) {
-          field = new Field({}, parentField);
-          field.isInvalid = true;
-          field.isUnknown = true;
-        }
-        parentField.isInvalidLeaf = false;
-        if (parentField.isRootMerge) {
-          if (!parentField.merge || parentField.merge.length === undefined) {
-            parentField.merge = [];
-          }
-          parentField.merge.push(field);
-        } else {
-          if (!parentField.structure || parentField.structure.length === undefined) {
-            parentField.structure = [];
-          }
-          parentField.structure.push(field);
-        }
-        if (field.isFlattened) {
-          const flattenRelativePath = jsonField.path.length > 2 ? jsonField.path.slice(1) : jsonField.path[1];
-          const childrenJsonFields = [
-            {
-              path: flattenRelativePath
-            }
-          ];
-          this._processJsonSpecificationMergeFields(field, childrenJsonFields);
-          if (flattenRelativePath.length || (field.mergeFields && field.mergeFields.length === 1)) {
-            field.isflattened = true;
-          }
-        }
-      });
-      if (parentField.isRootMerge && Array.isArray(parentField.merge) && parentField.merge.length < 2) {
-        parentField.isInvalid = true;
-      }
-    }
-  }
-
-  _processJsonSpecification(schema, merge, structure, properties) {
-    if (!schema) {
-      return null;
-    }
-    const rootField = new Field({
-      id: schema.id,
-      label: schema.label,
-      canBe: [schema.id]
-    });
-    if (merge) {
-      rootField.isMerge = true;
-      rootField.isInvalid = true;
-      this._processJsonSpecificationMergeFields(rootField, merge instanceof Array ? merge : [merge]);
-    }
-    this._processJsonSpecificationFields(rootField, structure);
-    properties && Object.entries(properties).forEach(([name, value]) => rootField.setOption(name, value));
-    return rootField;
-  }
-
   selectQuery(query) {
     if (!this.isSaving
       && this.rootField && this.rootField.schema && this.rootField.schema.id
@@ -1451,7 +1148,7 @@ export class QueryBuilderStore {
       this.defaultResponseVocab = this.context.query;
       this.responseVocab = this.context.query;
     }
-    this.rootField = this._processJsonSpecification(toJS(this.rootField.schema), toJS(query.merge), toJS(query.structure), toJS(query.properties));
+    this.rootField = processJsonSpecificationMergeFields(this.rootStore.typeStore.types, this.context, toJS(this.rootField.schema), toJS(query));
     this.selectField(this.rootField);
   }
 
