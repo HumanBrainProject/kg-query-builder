@@ -27,6 +27,7 @@ import { observer } from "mobx-react-lite";
 
 import SpaceForm from "./SpaceForm";
 import Vocab from "./Vocab";
+import Links from "./Links";
 
 import { useStores } from "../../../Hooks/UseStores";
 
@@ -149,22 +150,7 @@ const QueryForm = observer(({ className }) => {
           onChange={handleChangeVocab}
         />
       </div>
-      {false && queryBuilderStore.isQuerySaved && !queryBuilderStore.saveAsMode && !queryBuilderStore.hasQueryChanged && (
-        <div className={classes.links}>
-          <h6>To go further: </h6>
-          <ul>
-            <li>
-              <a href="/apidoc/index.html?url=/apispec/spring%3Fgroup%3D0_public%0A#/query-api/executeStoredQueryUsingGET_2" rel="noopener noreferrer" target="_blank">Service API documentation</a> to query {queryBuilderStore.sourceQuery.id}
-            </li>
-            <li>
-          Get <a href={`/query/${queryBuilderStore.sourceQuery.id}/python`} rel="noopener noreferrer" target="_blank">python code</a> for this stored query
-            </li>
-            <li>
-          Get <a href={`/query/${queryBuilderStore.sourceQuery.id}/python/pip`}rel="noopener noreferrer" target="_blank">PyPi compatible python code</a> for this stored query
-            </li>
-          </ul>
-        </div>
-      )}
+      <Links />
     </div>
   );
 });

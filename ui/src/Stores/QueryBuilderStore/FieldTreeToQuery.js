@@ -123,7 +123,7 @@ const processFields = (json, field) => {
   }
 };
 
-const buildQueryStructureFromFieldTree = field => {
+export const buildQueryStructureFromFieldTree = field => {
   const json = {};
   if (field.merge) {
     processMergeFields(json, field.merge);
@@ -135,5 +135,3 @@ const buildQueryStructureFromFieldTree = field => {
   //Gets rid of the undefined values
   return JSON.parse(JSON.stringify(json.structure));
 };
-
-export default buildQueryStructureFromFieldTree;

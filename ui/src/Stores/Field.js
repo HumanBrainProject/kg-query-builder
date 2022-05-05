@@ -55,7 +55,7 @@ class Field {
   isMerge = false;
   isReverse = false;
   optionsMap = new Map();
-  isUnknown = null;;
+  isUnknown = null;
   isInvalid = false;
   isInvalidLeaf = false;
   aliasError = null;

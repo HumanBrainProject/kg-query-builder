@@ -34,16 +34,8 @@ export class TransportLayer {
   }
 
   captureException = e => {
-    if (e && e.response && e.response.status && e.response.status) {
-      switch (e.response.status) {
-      case 500:
-      {
-        Sentry.captureException(e);
-        break;
-      }
-      default:
-        break;
-      }
+    if (e?.response?.status === 500) {
+      Sentry.captureException(e);
     }
   }
 

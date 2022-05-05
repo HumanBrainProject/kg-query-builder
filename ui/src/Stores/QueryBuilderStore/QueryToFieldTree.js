@@ -338,7 +338,7 @@ const addJsonFieldsToMergeField = (types, context, parentField, jsonFields) => {
   }
 };
 
-const buildFieldTreeFromQuery = (types, context, schema, query) => {
+export const buildFieldTreeFromQuery = (types, context, schema, query) => {
   if (!schema) {
     return null;
   }
@@ -358,5 +358,3 @@ const buildFieldTreeFromQuery = (types, context, schema, query) => {
   properties && Object.entries(properties).forEach(([name, value]) => rootField.setOption(name, value));
   return rootField;
 };
-
-export default buildFieldTreeFromQuery;

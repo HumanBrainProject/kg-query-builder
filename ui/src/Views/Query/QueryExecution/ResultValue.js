@@ -86,10 +86,7 @@ const ResultValue = observer(({ name, index, value }) => {
     }
     if (isObject(value)) {
       const result = Object.keys(value).find((n) => {
-        if (n === "relativeUrl" || reg.test(n)) {
-          return true;
-        }
-        return false;
+        return n === "relativeUrl" || reg.test(n);
       });
       if (result) {
         return value[result];

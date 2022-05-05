@@ -27,11 +27,11 @@ const rootPath = window.rootPath || "";
 
 const userKeys = {
   id: "https://schema.hbp.eu/users/nativeId",
-  username: "http://schema.org/alternateName",
-  email: "http://schema.org/email",
-  displayName: "http://schema.org/name",
-  givenName: "http://schema.org/givenName",
-  familyName: "http://schema.org/familyName",
+  username: "http://schema.org/alternateName", //NOSONAR it's only a schema
+  email: "http://schema.org/email", //NOSONAR it's only a schema
+  displayName: "http://schema.org/name", //NOSONAR it's only a schema
+  givenName: "http://schema.org/givenName", //NOSONAR it's only a schema
+  familyName: "http://schema.org/familyName", //NOSONAR it's only a schema
   picture: "https://schema.hbp.eu/users/picture"
 };
 

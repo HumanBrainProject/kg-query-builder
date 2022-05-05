@@ -62,7 +62,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const RootSchemaModal = observer(() => {
+const RootSchema = observer(() => {
   const [cursor, setCursor] = useState(undefined);
 
   const classes = useStyles();
@@ -105,6 +105,6 @@ const RootSchemaModal = observer(() => {
     </div>
   );
 });
-RootSchemaModal.displayName = "RootSchemaModal";
+RootSchema.displayName = "RootSchema";
 
-export default RootSchemaModal;
+export default RootSchema;

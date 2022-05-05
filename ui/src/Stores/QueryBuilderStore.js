@@ -29,8 +29,8 @@ import _  from "lodash-uuid";
 import jsonld from "jsonld";
 
 import { defaultContext, rootFieldReservedProperties } from "./QueryBuilderStore/QuerySettings";
-import buildFieldTreeFromQuery from "./QueryBuilderStore/QueryToFieldTree";
-import buildQueryStructureFromFieldTree from "./QueryBuilderStore/FieldTreeToQuery";
+import { buildFieldTreeFromQuery } from "./QueryBuilderStore/QueryToFieldTree";
+import { buildQueryStructureFromFieldTree } from "./QueryBuilderStore/FieldTreeToQuery";
 import Field from "./Field";
 
 const jsdiff = require("diff");

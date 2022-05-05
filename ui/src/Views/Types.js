@@ -47,7 +47,7 @@ const extractLabel = type => {
   }
   const idx = type.lastIndexOf("/");
   if (idx !== -1) {
-    return type.substr(idx + 1);
+    return type.substring(idx + 1);
   }
   return type;
 };
