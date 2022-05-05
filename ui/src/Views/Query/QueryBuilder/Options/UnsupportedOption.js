@@ -157,12 +157,7 @@ const UnsupportedOption = ({ name, value, onChange }) => {
         size="sm"
         variant="secondary"
         onClick={handleDelete}
-        title={
-          name === "merge"
-            ? `"${name}" property cannot be deleted`
-            : `delete property "${name}"`
-        }
-        disabled={name === "merge"}
+        title={`delete property "${name}"`}
       >
         <FontAwesomeIcon icon="times" />
       </Button>

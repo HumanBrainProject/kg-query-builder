@@ -94,11 +94,7 @@ const Children = observer(() => {
 
   const handleAddField = (e, schema) => {
     //Don't got to newly chosen field options if ctrl is pressed (or cmd)
-    if (field.isRootMerge) {
-      queryBuilderStore.addMergeChildField(schema, field, !e.ctrlKey && !e.metaKey);
-    } else {
-      queryBuilderStore.addField(schema, field, !e.ctrlKey && !e.metaKey);
-    }
+    queryBuilderStore.addField(schema, field, !e.ctrlKey && !e.metaKey);
   };
 
   const handleChildrenFilterChange = value => queryBuilderStore.setChildrenFilterValue(value);

@@ -29,7 +29,6 @@ import { useStores } from "../../../Hooks/UseStores";
 
 import Name from "./Options/Name";
 import Flatten from "./Options/Flatten";
-import AddMergeButton from "./Options/AddMergeButton";
 import Option from "./Options/Option";
 import TypeFilter from "./Options/TypeFilter";
 
@@ -66,11 +65,6 @@ const Options = observer(() => {
 
   const rootField = queryBuilderStore.rootField;
 
-  const handleAddMergeField = e => {
-    //Don't got to newly chosen field options if ctrl is pressed (or cmd)
-    queryBuilderStore.addMergeField(field, !e.ctrlKey && !e.metaKey);
-  };
-
   const handleChangeFlatten = value => field.setCurrentFieldFlattened(value);
 
   const handleChangeOption = (name, value) => field.setOption(name, value);
@@ -87,19 +81,10 @@ const Options = observer(() => {
           show={field !== rootField
                 && !!field.lookups.length
                 && field.structure.length === 1
-                && !field.isMerge
           }
           onChange={handleChangeFlatten}
         />
       </div>
-      <AddMergeButton
-        field={field}
-        show={!field.isMerge
-              && field !== rootField
-              && !!field.lookups.length
-        }
-        onClick={handleAddMergeField}
-      />
       <TypeFilter />
     </div>
   );

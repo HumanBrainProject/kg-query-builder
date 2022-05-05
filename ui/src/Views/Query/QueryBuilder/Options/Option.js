@@ -37,10 +37,7 @@ const Option = ({ field, rootField, option, onChange }) => {
         option={option}
         label="Required"
         comment="only applicable if parent field is not flattened"
-        show={field !== rootField
-          && !field.parent.isFlattened
-          && (!field.isMerge || field.isRootMerge)
-        }
+        show={field !== rootField  && !field.parent.isFlattened}
         onChange={onChange}
       />
     );
@@ -69,7 +66,6 @@ const Option = ({ field, rootField, option, onChange }) => {
         show={field !== rootField
           && !!field.lookups.length
           && !field.parent.isFlattened
-          && (!field.isMerge || field.isRootMerge)
         }
         onChange={onChange}
       />
@@ -95,14 +91,13 @@ const Option = ({ field, rootField, option, onChange }) => {
         show={field !== rootField
           && !!field.lookups.length
           && !field.parent.isFlattened
-          && (!field.isMerge || field.isRootMerge)
         }
         onChange={onChange}
       />
     );
   }
 
-  if (value !== undefined && (!field.isMerge || field.isRootMerge)) {
+  if (value !== undefined) {
     return (
       <UnsupportedOption name={name} value={value} onChange={onChange} />
     );

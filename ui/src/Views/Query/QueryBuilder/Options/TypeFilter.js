@@ -32,14 +32,18 @@ import Toggle from "../../../../Components/Toggle";
 const useStyles = createUseStyles({
   container: {
     position: "relative",
-    paddingBottom: "10px"
+    paddingTop: "20px",
+    paddingBottom: "10px",
+    "& > div:first-child > div": {
+      marginBottom: 0
+    }
   },
   panel: {
     display: "flex",
     padding: "10px 10px 0 10px",
     flexWrap: "wrap",
     border: "1px solid var(--bg-color-ui-contrast4)",
-    marginTop: "4px"
+    marginTop: "6px"
   },
   typeFilter: {
     display: "inline-block",

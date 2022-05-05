@@ -29,11 +29,6 @@ import uniqueId from "lodash/uniqueId";
 
 const Fields = observer(({ field }) => (
   <div>
-    {field.merge && !!field.merge.length && field.merge.map(mergedField => {
-      return(
-        <Field field={mergedField} key={uniqueId("merge_")} />
-      );
-    })}
     {field.structure && !!field.structure.length && field.structure.map(structureField => {
       return(
         <Field field={structureField} key={uniqueId("field_")} />

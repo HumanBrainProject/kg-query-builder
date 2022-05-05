@@ -56,18 +56,7 @@ const useStyles = createUseStyles({
     },
     "&.has-flattened-parent::after": {
       borderTop: "3px solid #40a9f3",
-    },
-    "&.parent-is-root-merge": {
-      "&::before": {
-        marginLeft: "10px",
-      },
-      "& > $label": {
-        marginLeft: "10px",
-      },
-      "& > $subFields": {
-        marginLeft: "10px",
-      },
-    },
+    }
   },
   verticalLineExtraPath: {
     display: "block",
@@ -115,24 +104,6 @@ const useStyles = createUseStyles({
       "&:hover, &.selected:hover": {
         backgroundColor: "var(--bg-color-error-loud)",
       },
-    },
-  },
-  merge: {
-    color: "greenyellow",
-    "& svg": {
-      transform: "scale(2) rotateZ(90deg)",
-    },
-  },
-  parentIsRootMerge: {
-    position: "absolute",
-    width: "6px",
-    height: "6px",
-    marginTop: "7px",
-    marginLeft: "-16px",
-    background: "greenyellow",
-    color: "greenyellow",
-    "& svg": {
-      transform: "scaleX(1.1) translate(-12px, -7px)rotateZ(180deg)",
     },
   },
   required: {
@@ -212,23 +183,6 @@ const FieldTypes = observer(({ field }) => {
   return null;
 });
 
-const ParentField = observer(({ field }) => {
-  if (field.parent) {
-    return (
-      <React.Fragment>
-        &nbsp;&nbsp;{field.schema.label}
-        <FieldTypes field={field} />
-      </React.Fragment>
-    );
-  }
-  return (
-    <React.Fragment>
-      &nbsp;&nbsp;
-      <Types types={field.schema.canBe} />
-    </React.Fragment>
-  );
-});
-
 const UnknownField = ({ field, classes }) => {
   if (field.isUnknown) {
     if (field.schema.simpleAttributeName) {
@@ -252,7 +206,7 @@ const UnknownField = ({ field, classes }) => {
     return (
       <React.Fragment>
         {field.schema.label}
-        {!field.isRootMerge && <FieldTypes field={field} />}
+        <FieldTypes field={field} />
       </React.Fragment>
     );
   }
@@ -309,11 +263,7 @@ const Field = observer(({ field }) => {
 
   let title = null;
   if (field.isInvalid) {
-    if (field.isMerge) {
-      title = "A merge field must have at least 2 child fields";
-    } else {
-      title = "this is not a recognized property for this type";
-    }
+    title = "this is not a recognized property for this type";
   } else if (field.aliasError) {
     title = "alias should not be empty";
   } else if (field.isInvalidLeaf) {
@@ -321,19 +271,12 @@ const Field = observer(({ field }) => {
   }
 
   const icon = field.isReverse ? "long-arrow-alt-left" : "long-arrow-alt-right";
-  const className = field.isReverse ? classes.reverseLink : classes.link;
+  const className = `${classes.container} ${isFlattened?"flattened":""} ${hasFlattenedParent?"has-flattened-parent":""}`;
+  const linkClassName = field.isReverse ? classes.reverseLink : classes.link;
   const fieldTitle = field.isReverse ? "is an incoming link" : null;
 
   return (
-    <div
-      className={`${classes.container} ${field.isMerge ? "is-merge" : ""} ${
-        field.isRootMerge ? "is-root-merge" : ""
-      } ${field.isMerge && !field.isRootMerge ? "is-child-merge" : ""} ${
-        field.isMerge && field.parentIsRootMerge ? "parent-is-root-merge" : ""
-      } ${isFlattened ? "flattened" : ""} ${
-        hasFlattenedParent ? "has-flattened-parent" : ""
-      }`}
-    >
+    <div className={className} >
       {hasFlattenedParent && (
         <div className={classes.verticalLineExtraPath}></div>
       )}
@@ -346,40 +289,24 @@ const Field = observer(({ field }) => {
         onClick={handleSelectField}
         title={title}
       >
-        {field.isMerge && field.parentIsRootMerge && (
-          <div className={classes.parentIsRootMerge}>
-            <FontAwesomeIcon icon="long-arrow-alt-right" />
-          </div>
-        )}
-        {field.isFlattened &&
-          (!field.isMerge || (field.structure && !!field.structure.length)) && (
+        {field.isFlattened && field.structure && !!field.structure.length && (
             <span className={classes.required}>
               <FontAwesomeIcon transform="flip-h" icon="level-down-alt" />
               &nbsp;&nbsp;
             </span>
           )}
-        {field.getOption("required") && (
+        {field.getOption("required") && !field.parent.isFlattened && (
           <span className={classes.required}>
             <FontAwesomeIcon transform="shrink-8" icon="asterisk" />
             &nbsp;&nbsp;
           </span>
         )}
-        {field.isRootMerge ? (
-          <React.Fragment>
-            <span className={classes.merge} title="merge">
-              <FontAwesomeIcon transform="shrink-8" icon="sitemap" />
-            </span>
-            <ParentField field={field} />
-          </React.Fragment>
-        ) : (
-          <UnknownField field={field} classes={classes} />
-        )}
+        <UnknownField field={field} classes={classes} />
         {field.parent &&
           !field.parent.isFlattened &&
-          (!field.isMerge || field.isRootMerge) &&
           (field.alias ? (
             <AliasField
-              className={className}
+              className={linkClassName}
               fieldTitle={fieldTitle}
               icon={icon}
               text={field.alias}
@@ -387,7 +314,7 @@ const Field = observer(({ field }) => {
             />
           ) : (
             <AliasField
-              className={className}
+              className={linkClassName}
               fieldTitle={fieldTitle}
               icon={icon}
               text={field.defaultAlias}

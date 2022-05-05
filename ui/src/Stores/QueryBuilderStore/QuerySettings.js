@@ -28,10 +28,6 @@ export const defaultContext = {
     "@id": "propertyName",
     "@type": "@id"
   },
-  "merge": {
-    "@type": "@id",
-    "@id": "merge"
-  },
   "path": {
     "@id": "path",
     "@type": "@id"

@@ -100,9 +100,6 @@ const QueryEditor = observer(() => {
         (name === "propertyName" && path === "@context") ||
         (name === "@type" && path === "@context/propertyName") ||
         (name === "@id" && path === "@context/propertyName") ||
-        (name === "merge" && path === "@context") ||
-        (name === "@type" && path === "@context/merge") ||
-        (name === "@id" && path === "@context/merge")  ||
         (name === "path" && path === "@context") ||
         (name === "@type" && path === "@context/path") ||
         (name === "@id" && path === "@context/path") ) {

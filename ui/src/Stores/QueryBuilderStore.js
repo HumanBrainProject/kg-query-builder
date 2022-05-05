@@ -22,7 +22,6 @@
  */
 
 import { observable, action, computed, runInAction, toJS, makeObservable } from "mobx";
-import uniqueId from "lodash/uniqueId";
 import isEqual from "lodash/isEqual";
 import remove from "lodash/remove";
 import _  from "lodash-uuid";
@@ -188,8 +187,6 @@ export class QueryBuilderStore {
       childrenFilterValue: observable,
       setChildrenFilterValue: action,
       addField: action,
-      addMergeField: action,
-      addMergeChildField: action,
       removeField: action,
       setResponseVocab: action,
       selectField: action,
@@ -254,17 +251,7 @@ export class QueryBuilderStore {
     if (!field) {
       return [];
     }
-    if (field.isRootMerge && field !== this.rootField) {
-      if (field.parent) {
-        return field.parent.lookups;
-      }
-      return [];
-    }
-
-    if (!field.isFlattened ||
-                (field.isMerge &&
-                  (field.isRootMerge ||
-                    (!field.isRootMerge && (!field.structure || !field.structure.length))))) {
+    if (!field.isFlattened) {
       return field.lookups;
     }
     return [];
@@ -636,10 +623,6 @@ export class QueryBuilderStore {
         newField.isInvalidLeaf = true;
       }
       parent.isInvalidLeaf = false;
-      if (parent.isMerge && !parent.isRootMerge) {
-        newField.isMerge = true;
-        newField.isFlattened = !!newField.lookups.length;
-      }
       if (schema.reverse) {
         newField.isReverse = true;
       }
@@ -647,105 +630,6 @@ export class QueryBuilderStore {
         parent.structure = [];
       }
       parent.structure.push(newField);
-      const rootMerge = newField.rootMerge;
-      if (rootMerge) {
-        this.checkMergeFields(rootMerge);
-      }
-      if (gotoField) {
-        this.selectField(newField);
-      }
-    }
-  }
-
-  addMergeField(parent, gotoField = true) {
-    if (parent === undefined) {
-      parent = this.showModalFieldChoice || this.rootField;
-      this.showModalFieldChoice = null;
-    }
-    if (!parent.isRootMerge && parent !== this.rootFields) {
-      if (!this.context["@vocab"]) {
-        this.context["@vocab"] = toJS(defaultContext["@vocab"]);
-      }
-      if (!this.context.query) {
-        this.context.query = this.responseVocab;
-      }
-      if (!this.context.propertyName) {
-        this.context.propertyName = toJS(defaultContext.propertyName);
-      }
-      if (!this.context.path) {
-        this.context.path = toJS(defaultContext.path);
-      }
-      if (!this.context.merge) {
-        this.context.merge = toJS(defaultContext.merge);
-      }
-      const newField = new Field({}, parent);
-      newField.isMerge = true;
-      newField.alias = uniqueId("field");
-      newField.isInvalidLeaf = true;
-      parent.isInvalidLeaf = false;
-      if (!parent.structure || parent.structure.length === undefined) {
-        parent.structure = [];
-      }
-      parent.structure.push(newField);
-      if (gotoField) {
-        this.selectField(newField);
-      }
-    }
-  }
-
-  checkMergeFields(parent) {
-    if (parent.isRootMerge) {
-      parent.structure.forEach(field => {
-        let isUnknown = true;
-        parent.lookups.some(id => {
-          const type = this.rootStore.typeStore.types[id];
-          if (type) {
-            if (type.properties.find(property => property.attribute === field.schema.attribute && ((!field.schema.canBe && !property.canBe) || (isEqual(toJS(field.schema.canBe), toJS(property.canBe)))))) {
-              isUnknown = false;
-              return true;
-            }
-          }
-          return false;
-        });
-        field.isUnknown = isUnknown;
-      });
-    }
-  }
-
-  addMergeChildField(schema, parent, gotoField = true) {
-    if (parent === undefined) {
-      parent = this.showModalFieldChoice || this.rootField;
-      this.showModalFieldChoice = null;
-    }
-    if (parent.isRootMerge) {
-      if (!this.context["@vocab"]) {
-        this.context["@vocab"] = toJS(defaultContext["@vocab"]);
-      }
-      if (!this.context.query) {
-        this.context.query = this.responseVocab;
-      }
-      if (!this.context.propertyName) {
-        this.context.propertyName = toJS(defaultContext.propertyName);
-      }
-      if (!this.context.path) {
-        this.context.path = toJS(defaultContext.path);
-      }
-      if (!this.context.merge) {
-        this.context.merge = toJS(defaultContext.merge);
-      }
-      const newField = new Field(schema, parent);
-      newField.isMerge = true;
-      newField.isFlattened = !!newField.lookups.length;
-      if (!parent.merge || parent.merge.length === undefined) {
-        parent.merge = [];
-      }
-      if (Array.isArray(schema.canBe)) {
-        newField.isInvalidLeaf = true;
-      }
-      parent.isInvalidLeaf = false;
-      parent.merge.push(newField);
-      parent.isInvalid = (parent.merge.length < 2);
-      this.checkMergeFields(parent);
       if (gotoField) {
         this.selectField(newField);
       }
@@ -790,24 +674,10 @@ export class QueryBuilderStore {
       if (isChildOfField(this.currentField, field, this.rootField)) {
         this.resetField();
       }
-      if (field.isMerge && field.parentIsRootMerge) {
-        remove(field.parent.merge, childField => field === childField);
-        field.parent.isInvalid = (field.parent.merge.length < 2);
-        if (!field.parent.merge.length) {
-          field.parent.isInvalidLeaf = true;
-          field.parent.isFlattened = false;
-        }
-        this.checkMergeFields(field.parent);
-      } else {
-        remove(field.parent.structure, childField => field === childField);
-        if (!field.parent.structure.length) {
-          field.parent.isInvalidLeaf = true;
-          field.parent.isFlattened = false;
-        }
-        const rootMerge = field.rootMerge;
-        if (rootMerge) {
-          this.checkMergeFields(rootMerge);
-        }
+      remove(field.parent.structure, childField => field === childField);
+      if (!field.parent.structure.length) {
+        field.parent.isInvalidLeaf = true;
+        field.parent.isFlattened = false;
       }
       if (field === currentField) {
         this.selectField(parentField);
@@ -845,12 +715,6 @@ export class QueryBuilderStore {
           parameters.push(parameter);
         }
       }
-    }
-    if (Array.isArray(field.merge) && field.merge.length) {
-      field.merge.reduce((acc, f) => {
-        acc.push(...this.getParametersFromField(f));
-        return acc;
-      }, parameters);
     }
     if (Array.isArray(field.structure) && field.structure.length) {
       field.structure.reduce((acc, f) => {
@@ -1151,7 +1015,6 @@ export class QueryBuilderStore {
             this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
             this.sourceQuery.description = query.meta && query.meta.description?query.meta.description:"";
             this.sourceQuery.context = query["@context"];
-            this.sourceQuery.merge = query.merge;
             this.sourceQuery.structure = query.structure;
             this.sourceQuery.meta = query.meta;
             this.sourceQuery.properties = getProperties(query);
@@ -1170,7 +1033,6 @@ export class QueryBuilderStore {
                 picture: this.rootStore.authStore.user.picture
               },
               context: query["@context"],
-              merge: query.merge,
               structure: query.structure,
               properties: getProperties(query),
               meta: query.meta,
@@ -1331,7 +1193,6 @@ export class QueryBuilderStore {
       id: queryId,
       user: normalizeUser(jsonSpec["https://core.kg.ebrains.eu/vocab/meta/user"]),
       context: compacted["@context"],
-      merge: compacted.merge,
       structure: compacted.structure,
       properties: getProperties(compacted),
       meta: compacted.meta,

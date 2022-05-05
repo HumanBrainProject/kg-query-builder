@@ -29,10 +29,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const useStyles = createUseStyles({
   option: {
-    marginBottom: "20px",
-    "&:last-child": {
-      marginBottom: 0
-    }
+    marginBottom: "20px"
   },
   optionLabel: {
     fontWeight: "bold",
@@ -70,26 +67,17 @@ const Name = observer(({ field, rootField }) => {
 
   const handleChangeName = e => field.setAlias(e.target.value);
 
-  if (field === rootField
-    || field.parent.isFlattened
-    || (field.isMerge && !field.isRootMerge)
-  ) {
+  if (field === rootField || field.parent.isFlattened) {
     return null;
   }
 
   return (
     <div className={classes.option} >
-      {field.isRootMerge ?
-        <div className={classes.optionLabel}>
-          <strong><FontAwesomeIcon transform="shrink-8" icon="asterisk" /></strong>Merge name
-        </div>
-        :
-        <div className={classes.optionLabel}>
-            Target name <small>(only applicable if parent field is not flattened)</small>
-        </div>
-      }
+      <div className={classes.optionLabel}>
+          Target name <small>(only applicable if parent field is not flattened)</small>
+      </div>
       <div>
-        <Form.Control className={classes.targetInput} type="text" required={field.isRootMerge} value={field.alias || ""} placeholder={field.defaultAlias} onChange={handleChangeName} />
+        <Form.Control className={classes.targetInput} type="text" value={field.alias || ""} placeholder={field.defaultAlias} onChange={handleChangeName} />
         {field.aliasError && (
           <div className={classes.aliasError}>
             <FontAwesomeIcon icon="exclamation-triangle" />&nbsp;Empty value is not accepted

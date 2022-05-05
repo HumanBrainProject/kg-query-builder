@@ -45,32 +45,32 @@ const getRelativePathFromArray = paths => {
   return getRelativePathFromObject(paths[0]);
 };
 
-const getRelativePath = (path, isFlattened) => {
-  if(isFlattened) {
+const getRelativePath = path => {
+  if(Array.isArray(path)) {
     return getRelativePathFromArray(path);
   }
   return getRelativePathFromObject(path);
 };
 
-const isReversFromObject = object => {
+const isReverseFromObject = object => {
   if (object instanceof Object) {
     return !!object.reverse;
   }
   return false;
 };
 
-const isReversFromArray = list => {
+const isReverseFromArray = list => {
   if (!Array.isArray(list) || list.length === 0) {
     return false;
   }
-  return isReversFromObject(list[0]);
+  return isReverseFromObject(list[0]);
 };
 
-const getIsReverse = (object, isFlattened) => {
-  if(isFlattened) {
-   return isReversFromArray(object)
+const getIsReverse = object => {
+  if(Array.isArray(object)) {
+   return isReverseFromArray(object)
   }
-  return isReversFromObject(object);
+  return isReverseFromObject(object);
 };
 
 const getTypeFromObject = object => {
@@ -107,8 +107,8 @@ const getTypeFiltertFromArray = list => {
   return getTypeFiltertFromObject(list[0]);
 };
 
-const getTypeFilter = (object, isFlattened) => {
-  if(isFlattened) {
+const getTypeFilter = object => {
+  if(Array.isArray(object)) {
     return getTypeFiltertFromArray(object);
   }
   return getTypeFiltertFromObject(object);
@@ -133,7 +133,7 @@ const getPropertyFromLookups = (types, lookups, attribute, isLeaf) => {
   return null;
 };
 
-const getProperty = (types, context, lookups, relativePath, isMerge, isReverse, isLeaf) => {
+const getProperty = (types, context, lookups, relativePath, isReverse, isLeaf) => {
   let attribute = null;
   let attributeNamespace = null;
   let simpleAttributeName = null;
@@ -146,9 +146,7 @@ const getProperty = (types, context, lookups, relativePath, isMerge, isReverse, 
     attribute = context && context[attributeNamespace] ? context[attributeNamespace] + simpleAttributeName : null;
   } else if (modelReg.test(relativePath)) {
     attribute = relativePath.match(modelReg)[1];
-  } else if (relativePath === "@id") {
-    attribute = relativePath;
-  } else if (!isMerge && relativePath === "@type") {
+  } else if (relativePath === "@id" || relativePath === "@type") {
     attribute = relativePath;
   }
   let property = getPropertyFromLookups(types, lookups, attribute, isLeaf);
@@ -169,11 +167,10 @@ const getProperty = (types, context, lookups, relativePath, isMerge, isReverse, 
 const getField = (types, context, parentField, path, isLeaf) => {
   if (path) {
     const isFlattened = getIsFlattened(path);
-    const relativePath = getRelativePath(path, isFlattened);
-    const isReverse = getIsReverse(path, isFlattened);
-    const typeFilter = getTypeFilter(path, isFlattened);
-    const lookups = getParentFieldLookups(parentField, false);
-    const property = getProperty(types, context, lookups, relativePath, false, isReverse, isLeaf);
+    const relativePath = getRelativePath(path);
+    const isReverse = getIsReverse(path);
+    const typeFilter = getTypeFilter(path);
+    const property = getProperty(types, context, parentField.lookups, relativePath, isReverse, isLeaf);
     const { isUnknown, ...schema } = property;
     
     const field = new Field(schema, parentField);
@@ -199,30 +196,11 @@ const getField = (types, context, parentField, path, isLeaf) => {
 
 const getIsFlattened = object => Array.isArray(object) && object.length > 1;
 
-const getParentFieldLookups = (parentField, isMerge) => {
-  if (!isMerge) {
-    return parentField.lookups;
-  }
-  const field = (parentField.isRootMerge && parentField.parent) ? parentField.parent : parentField;
-  if (field.schema?.canBe?.length) {
-    return field.schema.canBe;
-  }
-  return null;
-};
-
-const addFieldToParentProperty = (parentField, propertyName, field) => {
-  if (!Array.isArray(parentField[propertyName])) {
-    parentField[propertyName] = [];
-  }
-  parentField[propertyName].push(field);
-};
-
 const addFieldToParent = (parentField, field) => {
-  if (parentField.isRootMerge) {
-    addFieldToParentProperty(parentField, "merge", field);
-  } else {
-    addFieldToParentProperty(parentField, "structure", field);
+  if (!Array.isArray(parentField["structure"])) {
+    parentField["structure"] = [];
   }
+  parentField["structure"].push(field);
   parentField.isInvalidLeaf = false;
 };
 
@@ -277,17 +255,12 @@ const addChildrenOfField = (types, context, field, jsonField) => {
 const addJsonFieldToField = (types, context, parentField, jsonField) => {
   const hasPath = !!jsonField.path;
   const isLeaf = !jsonField.structure;
-  const isMerge = !!jsonField.merge;
   const field = getField(types, context, parentField, jsonField.path, isLeaf);
 
-  if ((isMerge && hasPath) || (!isMerge && !hasPath)) {
+  if (!hasPath) {
     field.isInvalid = true;
   }
 
-  if (isMerge) {
-    field.isMerge = true
-    addJsonFieldsToMergeField(types, context, field, jsonField.merge);
-  }
   setFieldProperties(field, jsonField);
   addFieldToParent(parentField, field);
   addChildrenOfField(types, context, field, jsonField);
@@ -303,57 +276,16 @@ const addJsonFieldsToField = (types, context, parentField, jsonFields) => {
   jsonFields.forEach(jsonField => addJsonFieldToField(types, context, parentField, jsonField));
 };
 
-const addChildrenOfMergeField = (types, context, field, jsonField) => {
-  if (field.isFlattened) {
-    const flattenRelativePath = getFlattenRelativePath(jsonField.path);
-    const childrenJsonFields = [
-      {
-        path: flattenRelativePath
-      }
-    ];
-    addJsonFieldsToMergeField(types, context, field, childrenJsonFields);
-    if (flattenRelativePath.length || (field.merge && field.merge.length === 1)) {
-      field.isflattened = true;
-    }
-  }
-};
-
-const addJsonFieldToMergeField = (types, context, parentField, jsonField) => {
-  const isLeaf = !jsonField.structure;
-  const field = getField(types, context, parentField, jsonField.path, isLeaf)
-  addFieldToParent(parentField, field);
-  addChildrenOfMergeField(types, context, field, jsonField);
-};
-
-const addJsonFieldsToMergeField = (types, context, parentField, jsonFields) => {
-  if (!parentField || !jsonFields) {
-    return;
-  }
-  if (!Array.isArray(jsonFields)) {
-    jsonFields = [jsonFields];
-  }
-  jsonFields.forEach(jsonField => addJsonFieldToMergeField(types, context, parentField, jsonField));
-  if (parentField.isRootMerge && Array.isArray(parentField.merge) && parentField.merge.length < 2) {
-    parentField.isInvalid = true;
-  }
-};
-
 export const buildFieldTreeFromQuery = (types, context, schema, query) => {
   if (!schema) {
     return null;
   }
-  const { merge, structure, properties } = query;
+  const { structure, properties } = query;
   const rootField = new Field({
     id: schema.id,
     label: schema.label,
     canBe: [schema.id]
   });
-  if (merge) {
-    rootField.isMerge = true;
-    rootField.isInvalid = true;
-    const jsonFields = Array.isArray(merge)? merge : [merge];
-    addJsonFieldsToMergeField(types, context, rootField, jsonFields);
-  }
   addJsonFieldsToField(types, context, rootField, structure);
   properties && Object.entries(properties).forEach(([name, value]) => rootField.setOption(name, value));
   return rootField;
