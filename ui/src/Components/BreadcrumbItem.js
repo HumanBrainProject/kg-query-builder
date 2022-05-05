@@ -47,26 +47,26 @@ const useStyles = createUseStyles({
       transform: "rotate(45deg)",
       background: "var(--list-bg-hover)",
       borderTop: "1px solid var(--border-color-ui-contrast2)",
-      borderRight: "1px solid var(--border-color-ui-contrast2)",
+      borderRight: "1px solid var(--border-color-ui-contrast2)"
     },
     "&:first-child::before": {
-      display: "none",
+      display: "none"
     },
     "&:first-child": {
-      padding: "0 20px 0 20px",
+      padding: "0 20px 0 20px"
     },
     "&.clickable": {
-      cursor: "pointer",
+      cursor: "pointer"
     },
     "&.clickable:hover": {
       background: "var(--list-bg-selected)",
       "& + ::before": {
-        background: "var(--list-bg-selected)",
+        background: "var(--list-bg-selected)"
       }
     },
     "&:last-child": {
       background: "var(--list-bg-selected)",
-      cursor: "default",
+      cursor: "default"
     }
   }
 });

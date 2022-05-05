@@ -87,8 +87,8 @@ const API = {
       `/service/api/queries/${queryId}/${getSpace(space)}`,
     deleteQuery: (queryId) => `/service/api/queries/${queryId}`,
     listQueries: (type) =>
-      `/service/api/queries?type=${encodeURIComponent(type)}`,
-  },
+      `/service/api/queries?type=${encodeURIComponent(type)}`
+  }
 };
 
 export default API;

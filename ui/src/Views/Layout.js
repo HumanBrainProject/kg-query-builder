@@ -111,7 +111,7 @@ const getGlobalUseStyles = () => createUseStyles(theme => {
     "@global button, @global input[type=button], @global a": {
       "-webkit-touch-callout": "none",
       userSelect: "none"
-    },
+    }
   };
 
   if (theme.name === "cupcake") {
@@ -174,7 +174,7 @@ const useStyles = createUseStyles(theme => ({
   container: {
     width: "100%",
     height: "100%",
-    color: "var(--ft-color-normal)",
+    color: "var(--ft-color-normal)"
   },
   status: {
     background: "var(--bg-color-ui-contrast1)",

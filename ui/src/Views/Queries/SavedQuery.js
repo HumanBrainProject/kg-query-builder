@@ -104,12 +104,12 @@ const useStyles = createUseStyles({
     height: "100%",
     padding: "5px 10px",
     display: "block",
-    color: "var(--ft-color-normal)",
+    color: "var(--ft-color-normal)"
   },
   error: {
     position:"absolute",
     top:"-5px",
-    right:"-5px",
+    right:"-5px"
   },
   errorButton: {
     color: "var(--ft-color-error)"
@@ -123,7 +123,7 @@ const useStyles = createUseStyles({
     marginTop:"5px",
     whiteSpace:"nowrap",
     textOverflow:"ellipsis",
-    fontSize:"0.9em",
+    fontSize:"0.9em"
   }
 });
 

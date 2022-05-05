@@ -40,7 +40,7 @@ const useStyles = createUseStyles({
   },
   unchanged: {
 
-  },
+  }
 });
 
 const ComparePart = ({ part }) => {

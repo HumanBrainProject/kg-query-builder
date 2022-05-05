@@ -36,7 +36,7 @@ const useStyles = createUseStyles({
     background: "var(--bg-color-ui-contrast2)",
     border: "1px solid var(--border-color-ui-contrast1)",
     color:"var(--ft-color-normal)"
-  },
+  }
 });
 
 const Representation = observer(({ className }) => {

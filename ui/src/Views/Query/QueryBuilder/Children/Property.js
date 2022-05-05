@@ -41,7 +41,7 @@ const useStyles = createUseStyles({
       fontStyle: "italic"
     },
     "&:hover": {
-      background: "var(--bg-color-ui-contrast4)",
+      background: "var(--bg-color-ui-contrast4)"
     }
   },
   reverseLink: {

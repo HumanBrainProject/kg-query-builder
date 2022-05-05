@@ -44,8 +44,8 @@ const useStyles = createUseStyles({
     "&:focus": {
       color: "var(--ft-color-loud)",
       borderColor: "rgba(64, 169, 243, 0.5)",
-      backgroundColor: "transparent",
-    },
+      backgroundColor: "transparent"
+    }
   },
   selectBox: {
     position: "relative",
@@ -53,7 +53,7 @@ const useStyles = createUseStyles({
       display: "inline-block",
       paddingRight: "20px",
       color: "white",
-      "-webkit-appearance": "none",
+      "-webkit-appearance": "none"
     },
     "&:after": {
       content: '""',
@@ -66,20 +66,20 @@ const useStyles = createUseStyles({
       borderTop: "6px solid white",
       borderRight: "6px solid transparent",
       borderLeft: "6px solid transparent",
-      pointerEvents: "none",
-    },
+      pointerEvents: "none"
+    }
   },
   required: {
     color: "var(--bg-color-error-normal)",
     paddingLeft: "3px",
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
   firstRow: {
-    marginBottom: "1rem",
+    marginBottom: "1rem"
   },
   runIt: {
-    textAlign: "right",
-  },
+    textAlign: "right"
+  }
 });
 
 const QueryParameter = observer(({ parameter }) => {

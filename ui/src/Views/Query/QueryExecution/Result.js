@@ -42,7 +42,7 @@ const useStyles = createUseStyles({
     height: "100%",
     color:"var(--ft-color-loud)",
     background:"var(--bg-color-ui-contrast3)",
-    border: "1px solid var(--border-color-ui-contrast1)",
+    border: "1px solid var(--border-color-ui-contrast1)"
   },
   toggle: {
     textAlign: "right",

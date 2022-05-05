@@ -33,11 +33,11 @@ const useStyles = createUseStyles({
   container: {
     display: "flex",
     alignItems: "baseline",
-    whiteSpace: "nowrap",
+    whiteSpace: "nowrap"
   },
   toggle: {
     display: "inline-block",
-    margin: "6px 0",
+    margin: "6px 0"
   },
   select: {
     marginBottom: 0,
@@ -59,13 +59,13 @@ const useStyles = createUseStyles({
       borderColor: "rgba(64, 169, 243, 0.5)",
       backgroundColor: "transparent",
       outline: 0,
-      boxShadow: "0 0 0 0.2rem rgb(0 123 255 / 25%)",
+      boxShadow: "0 0 0 0.2rem rgb(0 123 255 / 25%)"
     },
     "&.disabled,&:disabled": {
       backgroundColor: "var(--bg-color-blend-contrast1)",
       color: "var(--ft-color-normal)",
-      cursor: "text",
-    },
+      cursor: "text"
+    }
   },
   selectBox: {
     flex: 1,
@@ -82,9 +82,9 @@ const useStyles = createUseStyles({
       borderTop: "6px solid white",
       borderRight: "6px solid transparent",
       borderLeft: "6px solid transparent",
-      pointerEvents: "none",
-    },
-  },
+      pointerEvents: "none"
+    }
+  }
 });
 
 const SpaceForm = observer(({ className }) => {

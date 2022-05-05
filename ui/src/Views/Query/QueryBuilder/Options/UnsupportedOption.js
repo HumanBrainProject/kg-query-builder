@@ -33,7 +33,7 @@ const useStyles = createUseStyles({
   option: {
     marginBottom: "20px",
     "&:last-child": {
-      marginBottom: 0,
+      marginBottom: 0
     },
     "&.unsupported": {
       display: "flex",
@@ -47,12 +47,12 @@ const useStyles = createUseStyles({
         "&:hover": {
           background: "var(--bg-color-ui-contrast1)",
           color: "var(--ft-color-louder)",
-          borderColor: "var(--bg-color-ui-contrast1)",
-        },
+          borderColor: "var(--bg-color-ui-contrast1)"
+        }
       },
       "& $optionLabel": {
         alignSelf: "flex-start",
-        display: "inline",
+        display: "inline"
       },
       "& strong": {
         flex: 1,
@@ -60,45 +60,45 @@ const useStyles = createUseStyles({
         fontWeight: "normal",
         color: "var(--ft-color-loud)",
         "& .react-json-view": {
-          backgroundColor: "transparent !important",
-        },
+          backgroundColor: "transparent !important"
+        }
       },
       "&:last-child": {
-        marginBottom: "10px",
-      },
-    },
+        marginBottom: "10px"
+      }
+    }
   },
   optionLabel: {
     fontWeight: "bold",
     marginBottom: "5px",
     "& small": {
       fontWeight: "normal",
-      fontStyle: "italic",
+      fontStyle: "italic"
     },
     "& strong": {
-      color: "var(--ft-color-loud)",
-    },
+      color: "var(--ft-color-loud)"
+    }
   },
   stringValue: {
-    color: "rgb(253, 151, 31)",
+    color: "rgb(253, 151, 31)"
   },
   boolValue: {
-    color: "rgb(174, 129, 255)",
+    color: "rgb(174, 129, 255)"
   },
   intValue: {
-    color: "rgb(204, 102, 51)",
+    color: "rgb(204, 102, 51)"
   },
   floatValue: {
-    color: "rgb(84, 159, 61)",
+    color: "rgb(84, 159, 61)"
   },
   dateValue: {
-    color: "rgb(45, 89, 168)",
+    color: "rgb(45, 89, 168)"
   },
   typeValue: {
     fontSize: "11px",
     marginRight: "4px",
-    opacity: "0.8",
-  },
+    opacity: "0.8"
+  }
 });
 
 const Type = observer(({ classes, value }) => {

@@ -38,17 +38,17 @@ const useStyles = createUseStyles({
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
     "&.is-link": {
-      cursor: "pointer",
-    },
+      cursor: "pointer"
+    }
   },
   "@global": {
     "[id^=result-tooltip-] .tooltip-inner": {
-      maxWidth: "400px",
+      maxWidth: "400px"
     },
     "[id^=result-tooltip-@id] .tooltip-inner": {
-      wordBreak: "break-all",
-    },
-  },
+      wordBreak: "break-all"
+    }
+  }
 });
 
 const TooltipContent = observer((value, link) => {

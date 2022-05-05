@@ -46,7 +46,7 @@ const useStyles = createUseStyles({
       color: "var(--ft-color-loud)",
       background: "var(--list-bg-hover)"
     }
-  },
+  }
 });
 
 const SavingMessage = observer(() => {

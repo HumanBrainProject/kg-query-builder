@@ -42,7 +42,7 @@ const useStyles = createUseStyles({
       left: "10px",
       width: "0",
       height: "calc(100% - 20px)",
-      borderLeft: "1px dashed #ccc",
+      borderLeft: "1px dashed #ccc"
     },
     "&::after": {
       display: "block",
@@ -52,10 +52,10 @@ const useStyles = createUseStyles({
       top: "20px",
       width: "10px",
       height: "0",
-      borderTop: "1px dashed #ccc",
+      borderTop: "1px dashed #ccc"
     },
     "&.has-flattened-parent::after": {
-      borderTop: "3px solid #40a9f3",
+      borderTop: "3px solid #40a9f3"
     }
   },
   verticalLineExtraPath: {
@@ -66,7 +66,7 @@ const useStyles = createUseStyles({
     left: "-11px",
     width: "0",
     height: "24px",
-    borderLeft: "3px solid #40a9f3",
+    borderLeft: "3px solid #40a9f3"
   },
   label: {
     padding: "10px 35px 10px 10px",
@@ -78,47 +78,47 @@ const useStyles = createUseStyles({
     "&:hover": {
       backgroundColor: "var(--bg-color-ui-contrast4)",
       "& $optionsButton": {
-        opacity: 1,
-      },
+        opacity: 1
+      }
     },
     "&.selected": {
       backgroundColor: "var(--bg-color-ui-contrast4)",
       "& $optionsButton": {
-        opacity: 1,
-      },
+        opacity: 1
+      }
     },
     "&.is-unknown": {
       backgroundColor: "var(--bg-color-warn-quiet)",
       "&&.selected": {
-        backgroundColor: "var(--bg-color-warn-normal)",
+        backgroundColor: "var(--bg-color-warn-normal)"
       },
       "&:hover, &.selected:hover": {
-        backgroundColor: "var(--bg-color-warn-loud)",
-      },
+        backgroundColor: "var(--bg-color-warn-loud)"
+      }
     },
     "&.is-invalid, &.is-unknown.is-invalid": {
       backgroundColor: "var(--bg-color-error-quiet)",
       "&&.selected": {
-        backgroundColor: "var(--bg-color-error-normal)",
+        backgroundColor: "var(--bg-color-error-normal)"
       },
       "&:hover, &.selected:hover": {
-        backgroundColor: "var(--bg-color-error-loud)",
-      },
-    },
+        backgroundColor: "var(--bg-color-error-loud)"
+      }
+    }
   },
   required: {
-    color: "var(--ft-color-louder)",
+    color: "var(--ft-color-louder)"
   },
   rename: {
     color: "var(--ft-color-louder)",
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
   defaultname: {
     color: "var(--ft-color-normal)",
-    fontStyle: "italic",
+    fontStyle: "italic"
   },
   subFields: {
-    paddingLeft: "20px",
+    paddingLeft: "20px"
   },
   optionsButton: {
     position: "absolute",
@@ -127,29 +127,29 @@ const useStyles = createUseStyles({
     opacity: 0.25,
     "&>button.btn": {
       "&:not(:first-child):not(:last-child)": {
-        borderRadius: 0,
+        borderRadius: 0
       },
       "&:first-child": {
         borderTopRightRadius: 0,
-        borderBottomRightRadius: 0,
+        borderBottomRightRadius: 0
       },
       "&:last-child": {
         borderTopLeftRadius: 0,
-        borderBottomLeftRadius: 0,
-      },
-    },
+        borderBottomLeftRadius: 0
+      }
+    }
   },
   link: {
-    transform: "translateY(1px)",
+    transform: "translateY(1px)"
   },
   reverseLink: {
     color: "greenyellow",
-    transform: "translateY(1px)",
+    transform: "translateY(1px)"
   },
   typeFilter: {
     transform: "scale(0.9) translateY(1px)",
-    color: "lightskyblue",
-  },
+    color: "lightskyblue"
+  }
 });
 
 const FieldTypes = observer(({ field }) => {

@@ -58,7 +58,7 @@ const useStyles = createUseStyles({
     background: "var(--bg-color-ui-contrast2)"
   },
   content: {
-    padding: "0 10px",
+    padding: "0 10px"
   }
 });
 

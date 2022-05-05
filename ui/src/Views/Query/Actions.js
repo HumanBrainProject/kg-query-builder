@@ -38,14 +38,14 @@ const useStyles = createUseStyles({
     background: "var(--bg-color-ui-contrast2)",
     border: "1px solid var(--border-color-ui-contrast1)",
     color: "var(--ft-color-loud)",
-    padding: "10px",
+    padding: "10px"
   },
   save: {
     textAlign: "right",
     "& button": {
-      marginLeft: "10px",
-    },
-  },
+      marginLeft: "10px"
+    }
+  }
 });
 
 const SaveQuery = observer(({ cancelDisabled, saveDisabled, onCancel, onSave }) => {
@@ -71,7 +71,7 @@ const MultipleActions = observer(({
   onCopyAsNew,
   onRevert,
   onSaveAs,
-  onSave,
+  onSave
 }) => {
   const { queryBuilderStore } = useStores();
   return (

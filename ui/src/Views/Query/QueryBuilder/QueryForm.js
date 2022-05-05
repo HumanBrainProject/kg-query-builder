@@ -98,7 +98,7 @@ const useStyles = createUseStyles({
     "& a, & a:visited, &a:active": {
       color: "var(--ft-color-loud)",
       "&:hover": {
-        color: "var(--ft-color-louder)",
+        color: "var(--ft-color-louder)"
       }
     }
   }

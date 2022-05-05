@@ -64,7 +64,7 @@ const useStyles = createUseStyles({
     }
   },
   readOnly: {
-    cursor: "default",
+    cursor: "default"
   },
   current:{
     backgroundColor:"var(--bg-color-ui-contrast3)",
