@@ -46,7 +46,7 @@ const getRelativePath = field => {
   if (field.schema.attributeNamespace && field.schema.simpleAttributeName) {
     return `${field.schema.attributeNamespace}:${field.schema.simpleAttributeName}`;
   }
-  return getAttribute(field);;
+  return getAttribute(field);
 };
 
 const getPath = field => {
