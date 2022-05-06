@@ -301,45 +301,55 @@ export class QueryBuilderStore {
   }
 
   get currentFieldFilteredCommonProperties() {
+
+    const addPropToNewCounter = (counters, key, prop) => {
+      if (Array.isArray(prop.canBe)) {
+        counters[key] = {
+          property: {...prop, canBe:  [...prop.canBe].sort()},
+          count: 1
+        };
+      } else {
+        counters[key] = {
+          property: prop,
+          count: 1
+        };
+      }
+    };
+
+    const addPropToCounter = (counters, key, prop) => {
+      const property = counters[key].property;
+      if (Array.isArray(prop.canBe)) {
+        if (Array.isArray(property.canBe)) {
+          const toAdd = prop.canBe.filter(p => !property.canBe.includes(p));
+          property.canBe = [...property.canBe, ...toAdd].sort();
+        } else {
+          property.canBe = [...prop.canBe].sort();
+        }
+      }
+      counters[key].count += 1;
+    };
+
+    const addPropToCounters = (counters, prop) => {
+      const key = `${prop.attribute}${prop.reverse?":is-reverse":""}`;
+      if (!counters[key]) {
+        addPropToNewCounter(counters, key, prop);
+      } else {
+        addPropToCounter(counters, key, prop);
+      }
+    };
+
     const groups = this.currentFieldFilteredPropertiesGroups;
     if (!groups.length) {
       return [];
     }
     const counters = {};
     groups.forEach(group => {
-      group.properties.forEach(prop => {
-        const key = `${prop.attribute}${prop.reverse?":is-reverse":""}`;
-        if (!counters[key]) {
-          if (Array.isArray(prop.canBe)) {
-            counters[key] = {
-              property: {...prop, canBe:  [...prop.canBe].sort()},
-              count: 0
-            };
-          } else {
-            counters[key] = {
-              property: prop,
-              count: 0
-            };
-          }
-        } else {
-          const property = counters[key].property;
-          if (Array.isArray(prop.canBe)) {
-            if (Array.isArray(property.canBe)) {
-              prop.canBe.forEach(p => {
-                if (!property.canBe.includes(p)) {
-                  property.canBe.push(p);
-                }
-              });
-              property.canBe = [...property.canBe].sort();
-            } else {
-              property.canBe = [...prop.canBe].sort();
-            }
-          }
-        }
-        counters[key].count += 1;
-      });
+      group.properties.forEach(prop => addPropToCounters(counters, prop));
     });
-    return Object.values(counters).filter(({count}) => count > 1 || groups.length === 1).map(({property}) => property).sort((a, b) => a.label.localeCompare(b.label));
+    return Object.values(counters)
+      .filter(({count}) => count > 1 || groups.length === 1)
+      .map(({property}) => property)
+      .sort((a, b) => a.label.localeCompare(b.label));
   }
 
   isACurrentFieldFilteredCommonProperty(property) {

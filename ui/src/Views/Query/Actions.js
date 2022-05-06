@@ -34,7 +34,7 @@ import SaveAsButton from "./Actions/SaveAsButton";
 import SaveButton from "./Actions/SaveButton";
 import UndoChangesButton from "./Actions/UndoChangesButton";
 
-const UpdatableQuerySaveAsModeActions = observer(() => {
+const QuerySaveAsModeActions = observer(() => {
   const { queryBuilderStore } = useStores();
   return (
     <>
@@ -44,7 +44,7 @@ const UpdatableQuerySaveAsModeActions = observer(() => {
   );
 });
 
-const UpdatableQueryDefaultModeActions = observer(() => {
+const UpdatableQueryActions = observer(() => {
 
   const { queryBuilderStore } = useStores();
   const { hasQueryChanged, isQueryEmpty, hasChanged, sourceQuery } = queryBuilderStore;
@@ -64,17 +64,7 @@ const UpdatableQueryDefaultModeActions = observer(() => {
   );
 });
 
-const ReadOnlyQuerySaveAsModeActions = observer(() => {
-  const { queryBuilderStore } = useStores();
-  return (
-    <>
-      <CancelButton />
-      <SaveButton disabled={queryBuilderStore.isQueryEmpty} />
-    </>
-  );
-});
-
-const ReadOnlyQueryDefaultModeActions = observer(() => {
+const ReadOnlyQueryActions = observer(() => {
   const { queryBuilderStore } = useStores();
   return (
     <>
@@ -86,17 +76,7 @@ const ReadOnlyQueryDefaultModeActions = observer(() => {
   );
 });
 
-const NewQuerySaveAsModeActions = observer(() => {
-  const { queryBuilderStore } = useStores();
-  return (
-    <>
-      <CancelButton />
-      <SaveButton disabled={ queryBuilderStore.isQueryEmpty} />
-    </>
-  );
-});
-
-const NewQueryDefaultModeActions = observer(() => {
+const NewQueryActions = observer(() => {
   const { queryBuilderStore } = useStores();
   return (
     <>
@@ -105,30 +85,6 @@ const NewQueryDefaultModeActions = observer(() => {
       <SaveAsButton disabled={!queryBuilderStore.hasChanged} />
     </>
   );
-});
-
-const NewQueryActions = observer(() => {
-  const { queryBuilderStore } = useStores();
-  if (queryBuilderStore.saveAsMode) {
-    return <NewQuerySaveAsModeActions />;
-  }
-  return <NewQueryDefaultModeActions />;
-});
-
-const ReadOnlyQueryActions = observer(() => {
-  const { queryBuilderStore } = useStores();
-  if (queryBuilderStore.saveAsMode) {
-    return <ReadOnlyQuerySaveAsModeActions />;
-  }
-  return <ReadOnlyQueryDefaultModeActions />;
-});
-
-const UpdatableQueryActions = observer(() => {
-  const { queryBuilderStore } = useStores();
-  if (queryBuilderStore.saveAsMode) {
-    <UpdatableQuerySaveAsModeActions />;
-  }
-  return <UpdatableQueryDefaultModeActions />;
 });
 
 const SavedQueryActions = observer(() => {
@@ -141,6 +97,9 @@ const SavedQueryActions = observer(() => {
 
 const Actions = observer(() => {
   const { queryBuilderStore } = useStores();
+  if (queryBuilderStore.saveAsMode) {
+    return <QuerySaveAsModeActions />;
+  }
   if (queryBuilderStore.isQuerySaved) {
     return <SavedQueryActions />;
   }
