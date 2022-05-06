@@ -302,7 +302,9 @@ export class QueryBuilderStore {
 
   get currentFieldFilteredCommonProperties() {
 
-    const addPropToNewCounter = (counters, key, prop) => {
+    const counters = {};
+
+    const addPropToNewCounter = (key, prop) => {
       if (Array.isArray(prop.canBe)) {
         counters[key] = {
           property: {...prop, canBe:  [...prop.canBe].sort()},
@@ -316,7 +318,7 @@ export class QueryBuilderStore {
       }
     };
 
-    const addPropToCounter = (counters, key, prop) => {
+    const addPropToCounter = (key, prop) => {
       const property = counters[key].property;
       if (Array.isArray(prop.canBe)) {
         if (Array.isArray(property.canBe)) {
@@ -329,12 +331,12 @@ export class QueryBuilderStore {
       counters[key].count += 1;
     };
 
-    const addPropToCounters = (counters, prop) => {
+    const addPropToCounters = prop => {
       const key = `${prop.attribute}${prop.reverse?":is-reverse":""}`;
       if (!counters[key]) {
-        addPropToNewCounter(counters, key, prop);
+        addPropToNewCounter(key, prop);
       } else {
-        addPropToCounter(counters, key, prop);
+        addPropToCounter(key, prop);
       }
     };
 
@@ -342,9 +344,9 @@ export class QueryBuilderStore {
     if (!groups.length) {
       return [];
     }
-    const counters = {};
+
     groups.forEach(group => {
-      group.properties.forEach(prop => addPropToCounters(counters, prop));
+      group.properties.forEach(prop => addPropToCounters(prop));
     });
     return Object.values(counters)
       .filter(({count}) => count > 1 || groups.length === 1)
