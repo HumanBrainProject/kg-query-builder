@@ -26,6 +26,7 @@ import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import Form from "react-bootstrap/Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
 
 const useStyles = createUseStyles({
   option: {
@@ -80,7 +81,7 @@ const Name = observer(({ field, rootField }) => {
         <Form.Control className={classes.targetInput} type="text" value={field.alias || ""} placeholder={field.defaultAlias} onChange={handleChangeName} />
         {field.aliasError && (
           <div className={classes.aliasError}>
-            <FontAwesomeIcon icon="exclamation-triangle" />&nbsp;Empty value is not accepted
+            <FontAwesomeIcon icon={faExclamationTriangle} />&nbsp;Empty value is not accepted
           </div>
         )}
       </div>

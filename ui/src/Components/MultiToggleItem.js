@@ -24,6 +24,7 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faDotCircle} from "@fortawesome/free-solid-svg-icons/faDotCircle";
 
 const useStyles = createUseStyles({
   container:{
@@ -68,7 +69,7 @@ const MultiToggleItem = ({ selectedValue, value, color, icon, noscale, onSelect 
 
   return(
     <div onClick={isReadOnly?null:handleClick} className={className} style={{color: color}}>
-      <FontAwesomeIcon icon={icon || "dot-circle"}/>
+      <FontAwesomeIcon icon={icon || faDotCircle}/>
     </div>
   );
 };

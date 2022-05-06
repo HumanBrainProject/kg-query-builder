@@ -26,6 +26,8 @@ import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faChevronRight} from "@fortawesome/free-solid-svg-icons/faChevronRight";
+import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
 import _  from "lodash-uuid";
 import ReactPiwik from "react-piwik";
 
@@ -117,10 +119,10 @@ const Schema = observer(({ type, enableFocus, onKeyDown }) =>  {
 
   return (
     <div tabIndex={-1} ref={ref} className={classes.container} onClick={handleClick} onKeyDown={handleKeyDown}>
-      <Icon icon="circle" color={type.color}/>
+      <Icon icon={faCircle} color={type.color}/>
       {label} - <small>{type.id}</small>
       <div className={classes.nextIcon} >
-        <FontAwesomeIcon icon={"chevron-right"} size="lg" />
+        <FontAwesomeIcon icon={faChevronRight} size="lg" />
       </div>
     </div>
   );

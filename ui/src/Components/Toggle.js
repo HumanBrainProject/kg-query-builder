@@ -23,6 +23,8 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
+import {faCheck} from "@fortawesome/free-solid-svg-icons/faCheck";
+import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
 
 import MultiToggle from "./MultiToggle";
 
@@ -67,8 +69,8 @@ const Toggle = ({ className, option, label, comment, show, onChange }) => {
     <div className={`${classes.option} ${className?className:""}`}>
       <div className={classes.toggle}>
         <MultiToggle selectedValue={value} onChange={isReadOnly?null:handleChange}>
-          <MultiToggle.Toggle color={value?"#40a9f3":"var(--ft-color-normal)"} icon={"check"} value={true} />
-          <MultiToggle.Toggle color={value?"var(--ft-color-normal)":"var(--ft-color-loud)"} icon={"times"} value={undefined} />
+          <MultiToggle.Toggle color={value?"#40a9f3":"var(--ft-color-normal)"} icon={faCheck} value={true} />
+          <MultiToggle.Toggle color={value?"var(--ft-color-normal)":"var(--ft-color-loud)"} icon={faTimes} value={undefined} />
         </MultiToggle>
       </div>
       <div className={classes.optionLabel}>

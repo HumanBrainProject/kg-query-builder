@@ -25,6 +25,13 @@ import React, {useState} from "react";
 import { createUseStyles } from "react-jss";
 import {observer} from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
+import {faTrashAlt} from "@fortawesome/free-solid-svg-icons/faTrashAlt";
+import {faUndoAlt} from "@fortawesome/free-solid-svg-icons/faUndoAlt";
+import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
+import {faTag} from "@fortawesome/free-solid-svg-icons/faTag";
+import {faCircleNotch} from "@fortawesome/free-solid-svg-icons/faCircleNotch";
+import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
 import Button from "react-bootstrap/Button";
 import ReactPiwik from "react-piwik";
 
@@ -170,19 +177,19 @@ const SavedQuery = observer(({query, enableDelete}) => {
   return (
     <div className={`${classes.container} ${query.isDeleting?"is-deleting":""}`} key={query.id} onClick={handleSelect} onMouseLeave={handleCloseDeleteDialog} >
       <div className={classes.name}>
-        <FontAwesomeIcon icon={"tag"} />&nbsp;&nbsp;
+        <FontAwesomeIcon icon={faTag} />&nbsp;&nbsp;
         <span>{query.label?query.label:query.id} - <small title="queryId">{query.id}</small></span>
         {enableDelete && !query.deleteError && !query.isDeleting && !showDeleteDialog && (
-          <button className={classes.deleteButton} title="delete" onClick={handleConfirmDelete}><FontAwesomeIcon icon="times"/></button>
+          <button className={classes.deleteButton} title="delete" onClick={handleConfirmDelete}><FontAwesomeIcon icon={faTimes}/></button>
         )}
         {enableDelete && !query.deleteError && !query.isDeleting && (
           <div className={`${classes.deleteDialog} ${showDeleteDialog?"show":""}`}>
-            <Button variant="danger" size="sm" onClick={handleDelete}><FontAwesomeIcon icon="trash-alt"/>&nbsp;Delete</Button>
+            <Button variant="danger" size="sm" onClick={handleDelete}><FontAwesomeIcon icon={faTrashAlt}/>&nbsp;Delete</Button>
           </div>
         )}
         {enableDelete && !query.deleteError && query.isDeleting && (
           <div className={classes.deleting} title={`deleting query ${query.id}...`}>
-            <FontAwesomeIcon icon={"circle-notch"} spin/>
+            <FontAwesomeIcon icon={faCircleNotch} spin/>
           </div>
         )}
         {enableDelete && query.deleteError && (
@@ -191,16 +198,16 @@ const SavedQuery = observer(({query, enableDelete}) => {
             buttonClassName={classes.errorButton}
             buttonTitle={query.deleteError}
             iconComponent={FontAwesomeIcon}
-            iconProps={{icon: "exclamation-triangle"}}
+            iconProps={{icon: faExclamationTriangle}}
             okComponent={() => (
               <React.Fragment>
-                <FontAwesomeIcon icon="redo-alt"/>&nbsp;Retry
+                <FontAwesomeIcon icon={faRedoAlt}/>&nbsp;Retry
               </React.Fragment>
             )}
             onOk={handleDelete}
             cancelComponent={() => (
               <React.Fragment>
-                <FontAwesomeIcon icon="undo-alt"/>&nbsp;Cancel
+                <FontAwesomeIcon icon={faUndoAlt}/>&nbsp;Cancel
               </React.Fragment>
             )}
             onCancel={handleCancelDelete}

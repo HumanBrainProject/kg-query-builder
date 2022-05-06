@@ -26,6 +26,8 @@ import { createUseStyles } from "react-jss";
 import {observer} from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
+import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
 import { Scrollbars } from "react-custom-scrollbars";
 import ReactPiwik from "react-piwik";
 
@@ -115,10 +117,10 @@ const Queries = observer(() => {
   if (queryBuilderStore.fetchQueriesError) {
     return (
       <div className={classes.error}>
-        <BGMessage icon={"ban"}>
+        <BGMessage icon={faBan}>
           {queryBuilderStore.fetchQueriesError}<br /><br />
           <Button variant="primary" onClick={handleFetchSavedQueries}>
-            <FontAwesomeIcon icon={"redo-alt"} /> &nbsp; Refresh
+            <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Refresh
           </Button>
         </BGMessage>
       </div>
@@ -136,10 +138,10 @@ const Queries = observer(() => {
   if (!queryBuilderStore.hasQueries) {
     return (
       <div className={classes.error}>
-        <BGMessage icon={"ban"}>
+        <BGMessage icon={faBan}>
           No saved queries available yet for {queryBuilderStore.rootSchema.label}<small> - {queryBuilderStore.rootSchema.id}</small><br /><br />
           <Button variant="primary" onClick={handleFetchSavedQueries}>
-            <FontAwesomeIcon icon={"redo-alt"} /> &nbsp; Retry
+            <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
           </Button>
         </BGMessage>
       </div>

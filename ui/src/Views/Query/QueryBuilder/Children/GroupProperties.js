@@ -25,6 +25,7 @@ import React from "react";
 import Icon from "../../../../Components/Icon";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
+import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
 
 import Property from "./Property";
 
@@ -53,7 +54,7 @@ const GroupProperties = observer(({group, prefix, onClick }) => {
 
   return (
     <div className={classes.container}>
-      <h5>{prefix} <Icon icon="circle" color={color}/> {label} <small> - {id}</small></h5>
+      <h5>{prefix} <Icon icon={faCircle} color={color}/> {label} <small> - {id}</small></h5>
       {properties.map(property => (
         <Property key={`${property.attribute}${property.reverse?"reverse":""}`} property={property} onClick={onClick} />
       ))}

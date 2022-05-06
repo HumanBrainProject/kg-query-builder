@@ -25,6 +25,9 @@ import React from "react";
 import {observer} from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTools} from "@fortawesome/free-solid-svg-icons/faTools";
+import {faCode} from "@fortawesome/free-solid-svg-icons/faCode";
+import {faPlay} from "@fortawesome/free-solid-svg-icons/faPlay";
 import ReactPiwik from "react-piwik";
 import { useStores } from "../../Hooks/UseStores";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -98,9 +101,9 @@ const Tabs = observer(() => {
 
   return (
     <div className={classes.tabs}>
-      <Tab className={classes.tab} icon="tools"  mode="build"    active={queryBuilderStore.mode === "build"}   onClick={setMode} title="build query" disabled={queryBuilderStore.isSaving} />
-      <Tab className={classes.tab} icon="code"   mode="edit"     active={queryBuilderStore.mode === "edit"}    onClick={setMode} title="edit query" disabled={queryBuilderStore.isSaving} />
-      <Tab className={classes.tab} icon="play"   mode="execute"  active={queryBuilderStore.mode === "execute"} onClick={setMode} title="execute query" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} />
+      <Tab className={classes.tab} icon={faTools} mode="build"   active={queryBuilderStore.mode === "build"}   onClick={setMode} title="build query"   disabled={queryBuilderStore.isSaving} />
+      <Tab className={classes.tab} icon={faCode}  mode="edit"    active={queryBuilderStore.mode === "edit"}    onClick={setMode} title="edit query"    disabled={queryBuilderStore.isSaving} />
+      <Tab className={classes.tab} icon={faPlay}  mode="execute" active={queryBuilderStore.mode === "execute"} onClick={setMode} title="execute query" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} />
     </div>
   );
 });

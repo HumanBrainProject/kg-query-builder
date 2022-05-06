@@ -25,6 +25,15 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
+import {faArrowUp} from "@fortawesome/free-solid-svg-icons/faArrowUp";
+import {faArrowDown} from "@fortawesome/free-solid-svg-icons/faArrowDown";
+import {faFilter} from "@fortawesome/free-solid-svg-icons/faFilter";
+import {faLevelDownAlt} from "@fortawesome/free-solid-svg-icons/faLevelDownAlt";
+import {faAsterisk} from "@fortawesome/free-solid-svg-icons/faAsterisk";
+import {faLongArrowAltLeft} from "@fortawesome/free-solid-svg-icons/faLongArrowAltLeft";
+import {faLongArrowAltRight} from "@fortawesome/free-solid-svg-icons/faLongArrowAltRight";
+
 import Button from "react-bootstrap/Button";
 
 import { useStores } from "../../../Hooks/UseStores";
@@ -160,7 +169,7 @@ const FieldTypes = observer(({ field }) => {
       <React.Fragment>
         &nbsp;(&nbsp;
         <FontAwesomeIcon
-          icon="filter"
+          icon={faFilter}
           className={classes.typeFilter}
           title="filtered types"
         />
@@ -270,7 +279,7 @@ const Field = observer(({ field }) => {
     title = "Links field must have at least one child field";
   }
 
-  const icon = field.isReverse ? "long-arrow-alt-left" : "long-arrow-alt-right";
+  const icon = field.isReverse ? faLongArrowAltLeft : faLongArrowAltRight;
   const className = `${classes.container} ${isFlattened?"flattened":""} ${hasFlattenedParent?"has-flattened-parent":""}`;
   const linkClassName = field.isReverse ? classes.reverseLink : classes.link;
   const fieldTitle = field.isReverse ? "is an incoming link" : null;
@@ -291,13 +300,13 @@ const Field = observer(({ field }) => {
       >
         {field.isFlattened && field.structure && !!field.structure.length && (
             <span className={classes.required}>
-              <FontAwesomeIcon transform="flip-h" icon="level-down-alt" />
+              <FontAwesomeIcon transform="flip-h" icon={faLevelDownAlt} />
               &nbsp;&nbsp;
             </span>
           )}
         {field.getOption("required") && !field.parent.isFlattened && (
           <span className={classes.required}>
-            <FontAwesomeIcon transform="shrink-8" icon="asterisk" />
+            <FontAwesomeIcon transform="shrink-8" icon={faAsterisk} />
             &nbsp;&nbsp;
           </span>
         )}
@@ -330,7 +339,7 @@ const Field = observer(({ field }) => {
                 onClick={handleMoveUpField}
                 title="move up"
               >
-                <FontAwesomeIcon icon="arrow-up" />
+                <FontAwesomeIcon icon={faArrowUp} />
               </Button>
             )}
             {canMoveDown && (
@@ -340,7 +349,7 @@ const Field = observer(({ field }) => {
                 onClick={handleMoveDownField}
                 title="move down"
               >
-                <FontAwesomeIcon icon="arrow-down" />
+                <FontAwesomeIcon icon={faArrowDown} />
               </Button>
             )}
             <Button
@@ -349,7 +358,7 @@ const Field = observer(({ field }) => {
               onClick={handleRemoveField}
               title="remove"
             >
-              <FontAwesomeIcon icon="times" />
+              <FontAwesomeIcon icon={faTimes} />
             </Button>
           </div>
         )}

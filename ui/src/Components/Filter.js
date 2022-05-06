@@ -25,6 +25,7 @@ import React, { useRef, useEffect} from "react";
 import { createUseStyles } from "react-jss";
 import Form from "react-bootstrap/Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faSearch} from "@fortawesome/free-solid-svg-icons/faSearch";
 
 const useStyles = createUseStyles({
 
@@ -57,7 +58,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const Filter = ({ value, className, placeholder="filter...", icon="search", onChange, onKeyDown }) => {
+const Filter = ({ value, className, placeholder="filter...", icon=faSearch, onChange, onKeyDown }) => {
 
   const classes = useStyles();
 

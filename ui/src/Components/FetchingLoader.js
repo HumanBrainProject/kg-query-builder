@@ -24,6 +24,7 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faCircleNotch} from "@fortawesome/free-solid-svg-icons/faCircleNotch";
 
 const useStyles = createUseStyles({
   fetchingPanel: {
@@ -48,7 +49,7 @@ const FetchingLoader = ({ children }) => {
 
   return (
     <div className={`${classes.fetchingPanel} fetchingPanel`}>
-      <FontAwesomeIcon icon="circle-notch" spin/>
+      <FontAwesomeIcon icon={faCircleNotch} spin/>
       <span className={`${classes.fetchingLabel} fetchingLabel`}>
         {children}
       </span>

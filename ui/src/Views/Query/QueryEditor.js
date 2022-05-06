@@ -28,6 +28,7 @@ import { observer } from "mobx-react-lite";
 import { Scrollbars } from "react-custom-scrollbars";
 import Alert from "react-bootstrap/Alert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
 
 import { useStores } from "../../Hooks/UseStores";
 
@@ -118,7 +119,7 @@ const QueryEditor = observer(() => {
       <div className={classes.error} onClick={handleOnErrorClose} >
         {error && (
           <Alert variant="danger" onClose={handleOnErrorClose} dismissible>
-            <FontAwesomeIcon icon="ban" />{error}
+            <FontAwesomeIcon icon={faBan} />{error}
           </Alert>
         )}
       </div>

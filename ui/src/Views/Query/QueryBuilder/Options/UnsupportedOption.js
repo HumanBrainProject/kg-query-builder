@@ -26,6 +26,7 @@ import { createUseStyles } from "react-jss";
 import ReactJson from "react-json-view";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
 import ThemeRJV from "../../../../Themes/ThemeRJV";
 import { observer } from "mobx-react-lite";
 
@@ -159,7 +160,7 @@ const UnsupportedOption = ({ name, value, onChange }) => {
         onClick={handleDelete}
         title={`delete property "${name}"`}
       >
-        <FontAwesomeIcon icon="times" />
+        <FontAwesomeIcon icon={faTimes} />
       </Button>
       <div className={classes.optionLabel}>{name}:&nbsp;</div>
       <strong>

@@ -27,6 +27,9 @@ import { createUseStyles } from "react-jss";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
+import {faPlus} from "@fortawesome/free-solid-svg-icons/faPlus";
+import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
 
 const useStyles = createUseStyles({
   container: {
@@ -231,7 +234,7 @@ const Filter = observer(({ filter, show, onChange }) => {
   return (
     <div className={classes.container} >
       {(!filter || filter.op === "NONE")?(
-        <Button variant="secondary" className={classes.addFilterButton} onClick={handleAddFilter}><FontAwesomeIcon icon="plus"></FontAwesomeIcon>&nbsp;add filter</Button>
+        <Button variant="secondary" className={classes.addFilterButton} onClick={handleAddFilter}><FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>&nbsp;add filter</Button>
       ):(
         <div className={classes.panel} >
           <div className={classes.inputRow}>
@@ -246,10 +249,10 @@ const Filter = observer(({ filter, show, onChange }) => {
               <option value="MBB">Minimal bounding box</option>
             </select></div>
             {filter.parameter === undefined && filter.op !== "IS_EMPTY" && (
-              <Button variant="secondary"className={classes.addButton} onClick={handleAddParameter}><FontAwesomeIcon icon="plus"></FontAwesomeIcon>&nbsp;add parameter</Button>
+              <Button variant="secondary"className={classes.addButton} onClick={handleAddParameter}><FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>&nbsp;add parameter</Button>
             )}
             {filter.value === undefined && filter.op !== "IS_EMPTY" && (
-              <Button variant="secondary" className={classes.addButton} onClick={handleAddValue}><FontAwesomeIcon icon="plus"></FontAwesomeIcon>&nbsp;add value</Button>
+              <Button variant="secondary" className={classes.addButton} onClick={handleAddValue}><FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>&nbsp;add value</Button>
             )}
           </div>
           {filter.parameter !== undefined && (
@@ -257,12 +260,12 @@ const Filter = observer(({ filter, show, onChange }) => {
               <div className={classes.inputRow}>
                 <span className={classes.label}>Parameter:&nbsp;</span>
                 <Form.Control className={classes.input} type="text" value={filter.parameter } placeholder="" onChange={handleChangeParameter} />
-                <button className={classes.deleteButton} onClick={handleDeleteParameter} title="delete parameter"><FontAwesomeIcon icon="times"></FontAwesomeIcon></button>
+                <button className={classes.deleteButton} onClick={handleDeleteParameter} title="delete parameter"><FontAwesomeIcon icon={faTimes}></FontAwesomeIcon></button>
               </div>
               {["scope", "size", "start", "instanceId"].includes(filter.parameter) && (
                 <div className={classes.inputRow}>
                   <span className={classes.label}></span>
-                  <span className={classes.warning}><FontAwesomeIcon icon="exclamation-triangle" />&nbsp;&quot;{filter.parameter}&quot; is a reserved parameter name and should not be used!</span>
+                  <span className={classes.warning}><FontAwesomeIcon icon={faExclamationTriangle} />&nbsp;&quot;{filter.parameter}&quot; is a reserved parameter name and should not be used!</span>
                 </div>
               )}
             </>
@@ -271,7 +274,7 @@ const Filter = observer(({ filter, show, onChange }) => {
             <div className={classes.inputRow}>
               <span className={classes.label}>Value:&nbsp;</span>
               <Form.Control className={classes.input} type="text" value={filter.value } placeholder="" onChange={handleChangeValue} />
-              <button className={classes.deleteButton} onClick={handleDeleteValue} title="delete value"><FontAwesomeIcon icon="times"></FontAwesomeIcon></button>
+              <button className={classes.deleteButton} onClick={handleDeleteValue} title="delete value"><FontAwesomeIcon icon={faTimes}></FontAwesomeIcon></button>
             </div>
           )}
         </div>

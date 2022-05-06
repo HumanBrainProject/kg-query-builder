@@ -24,6 +24,7 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
 import ReactPiwik from "react-piwik";
 import { useNavigate } from "react-router-dom";
 
@@ -142,7 +143,7 @@ const Tab = ({label, disabled, current, icon, iconColor, iconSpin, Component, hi
           )}
           {closeable && (
             <div className={classes.close} onClick={handleClose}>
-              <FontAwesomeIcon icon={"times"}/>
+              <FontAwesomeIcon icon={faTimes}/>
             </div>
           )}
         </React.Fragment>

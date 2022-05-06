@@ -26,6 +26,10 @@ import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faSave} from "@fortawesome/free-solid-svg-icons/faSave";
+import {faCopy} from "@fortawesome/free-solid-svg-icons/faCopy";
+import {faUndoAlt} from "@fortawesome/free-solid-svg-icons/faUndoAlt";
+import {faGlasses} from "@fortawesome/free-solid-svg-icons/faGlasses";
 import _ from "lodash-uuid";
 import ReactPiwik from "react-piwik";
 
@@ -38,12 +42,13 @@ const useStyles = createUseStyles({
     background: "var(--bg-color-ui-contrast2)",
     border: "1px solid var(--border-color-ui-contrast1)",
     color: "var(--ft-color-loud)",
-    padding: "10px"
+    padding: "10px 10px 0 0"
   },
   save: {
     textAlign: "right",
     "& button": {
-      marginLeft: "10px"
+      marginLeft: "10px",
+      marginBottom: "10px"
     }
   }
 });
@@ -55,7 +60,7 @@ const SaveQuery = observer(({ cancelDisabled, saveDisabled, onCancel, onSave }) 
         Cancel
       </Button>
       <Button variant="primary" disabled={saveDisabled} onClick={onSave}>
-        <FontAwesomeIcon icon="save" />
+        <FontAwesomeIcon icon={faSave} />
         &nbsp;Save
       </Button>
     </React.Fragment>
@@ -78,7 +83,7 @@ const MultipleActions = observer(({
     <React.Fragment>
       {queryBuilderStore.hasChanged && (
         <Button disabled={compareDisabled} onClick={onCompare}>
-          <FontAwesomeIcon icon="glasses" />
+          <FontAwesomeIcon icon={faGlasses} />
           &nbsp;Compare
         </Button>
       )}
@@ -88,23 +93,23 @@ const MultipleActions = observer(({
           onClick={onCopyAsNew}
           disabled={copyAsNewDisabled}
         >
-          <FontAwesomeIcon icon="copy" />
+          <FontAwesomeIcon icon={faCopy} />
           &nbsp;Copy as a new query
         </Button>
       )}
       {queryBuilderStore.hasChanged &&
         !queryBuilderStore.savedQueryHasInconsistencies && (
           <Button variant="secondary" onClick={onRevert}>
-            <FontAwesomeIcon icon="undo-alt" />
+            <FontAwesomeIcon icon={faUndoAlt} />
             &nbsp;Undo changes
           </Button>
         )}
       <Button variant="secondary" disabled={saveAsDisabled} onClick={onSaveAs}>
-        <FontAwesomeIcon icon="save" />
+        <FontAwesomeIcon icon={faSave} />
         &nbsp;Save As
       </Button>
       <Button variant="primary" disabled={saveDisabled} onClick={onSave}>
-        <FontAwesomeIcon icon="save" />
+        <FontAwesomeIcon icon={faSave} />
         &nbsp;Save
       </Button>
     </React.Fragment>
@@ -255,7 +260,7 @@ const Actions = observer(({ className }) => {
               }
               onClick={handleToggleCompareChanges}
             >
-              <FontAwesomeIcon icon="glasses" />
+              <FontAwesomeIcon icon={faGlasses} />
               &nbsp;Compare
             </Button>
           )}
@@ -268,7 +273,7 @@ const Actions = observer(({ className }) => {
                 }
                 onClick={handleRevertChanges}
               >
-                <FontAwesomeIcon icon="undo-alt" />
+                <FontAwesomeIcon icon={faUndoAlt} />
                 &nbsp;Undo changes
               </Button>
             )}
@@ -280,7 +285,7 @@ const Actions = observer(({ className }) => {
                 queryBuilderStore.isSaving || !!queryBuilderStore.saveError
               }
             >
-              <FontAwesomeIcon icon="copy" />
+              <FontAwesomeIcon icon={faCopy} />
               &nbsp;Copy as a new query
             </Button>
           )}
@@ -293,7 +298,7 @@ const Actions = observer(({ className }) => {
             }
             onClick={handleShowSaveDialog}
           >
-            <FontAwesomeIcon icon="save" />
+            <FontAwesomeIcon icon={faSave} />
             &nbsp;Save As
           </Button>
         </div>
@@ -331,7 +336,7 @@ const Actions = observer(({ className }) => {
           disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError}
           onClick={handleResetQuery}
         >
-          <FontAwesomeIcon icon="undo-alt" />
+          <FontAwesomeIcon icon={faUndoAlt} />
           &nbsp;Reset
         </Button>
         {queryBuilderStore.isQuerySaved && (
@@ -342,7 +347,7 @@ const Actions = observer(({ className }) => {
               queryBuilderStore.isSaving || !!queryBuilderStore.saveError
             }
           >
-            <FontAwesomeIcon icon="copy" />
+            <FontAwesomeIcon icon={faCopy} />
             &nbsp;Copy as a new query
           </Button>
         )}
@@ -355,7 +360,7 @@ const Actions = observer(({ className }) => {
           }
           onClick={handleShowSaveDialog}
         >
-          <FontAwesomeIcon icon="save" />
+          <FontAwesomeIcon icon={faSave} />
           &nbsp;Save As
         </Button>
       </div>

@@ -25,6 +25,7 @@ import React from "react";
 import {observer} from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faUser} from "@fortawesome/free-solid-svg-icons/faUser";
 
 const useStyles = createUseStyles({
   avatar: {
@@ -54,7 +55,7 @@ const Avatar = observer(({ user, size=20 }) => {
   }
 
   return (
-    <FontAwesomeIcon icon="user" title={user.name?user.name:user.id} className={`${classes.avatar} avatar default`} />
+    <FontAwesomeIcon icon={faUser} title={user.name?user.name:user.id} className={`${classes.avatar} avatar default`} />
   );
 });
 Avatar.displayName = "Avatar";

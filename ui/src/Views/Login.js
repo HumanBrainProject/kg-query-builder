@@ -26,6 +26,8 @@ import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
+import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
 
 
 import { useStores } from "../Hooks/UseStores";
@@ -113,11 +115,11 @@ const Login = observer(() => {
     return (
       <div className={classes.container}>
         <div className={classes.error}>
-          <BGMessage icon={"ban"}>
+          <BGMessage icon={faBan}>
             {`There was a problem initializing (${appStore.initializationError}).
               If the problem persists, please contact the support.`}<br /><br />
             <Button variant="primary" onClick={handleRetryToInitialize}>
-              <FontAwesomeIcon icon={"redo-alt"} /> &nbsp; Retry
+              <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
             </Button>
           </BGMessage>
         </div>

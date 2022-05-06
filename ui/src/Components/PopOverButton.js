@@ -25,6 +25,7 @@ import React, {useRef, useEffect, useState} from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
 import Button from "react-bootstrap/Button";
 import Overlay from "react-bootstrap/Overlay";
 import Popover from "react-bootstrap/Popover";
@@ -178,7 +179,7 @@ const PopOverButton = observer(({className, buttonClassName, buttonTitle, iconCo
                 )}
               </div>
             )}
-            <button className={classes.popOverCloseButton} onClick={handlePopOverClose} title="close"><FontAwesomeIcon icon="times"></FontAwesomeIcon></button>
+            <button className={classes.popOverCloseButton} onClick={handlePopOverClose} title="close"><FontAwesomeIcon icon={faTimes}></FontAwesomeIcon></button>
           </PopOverContent>
         </Popover>
       </Overlay>

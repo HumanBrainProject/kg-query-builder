@@ -26,6 +26,8 @@ import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
+import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
 
 import { useStores } from "../../Hooks/UseStores";
 
@@ -102,17 +104,17 @@ const QueryExecution = observer(() => {
       </div>
       <Result />
       {queryBuilderStore.runError && (
-        <BGMessage icon={"ban"}>
+        <BGMessage icon={faBan}>
           There was a network problem fetching the query.<br/>
           If the problem persists, please contact the support.<br/>
           <small>{queryBuilderStore.runError}</small><br/><br/>
           {queryBuilderStore.isQueryEmpty?
             <Button variant="primary" onClick={handlClearError}>
-              <FontAwesomeIcon icon={"redo-alt"}/>&nbsp;&nbsp; OK
+              <FontAwesomeIcon icon={faRedoAlt}/>&nbsp;&nbsp; OK
             </Button>
             :
             <Button variant="primary" onClick={handlExecuteQuery}>
-              <FontAwesomeIcon icon={"redo-alt"}/>&nbsp;&nbsp; Retry
+              <FontAwesomeIcon icon={faRedoAlt}/>&nbsp;&nbsp; Retry
             </Button>
           }
         </BGMessage>

@@ -24,6 +24,7 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
+import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -64,7 +65,7 @@ export const Type = ({type}) => {
 
   return (
     <span title={typeof type === "string"?type:JSON.stringify(type)}>
-      <Icon icon="circle" color={color} />{label}
+      <Icon icon={faCircle} color={color} />{label}
     </span>
   );
 };

@@ -27,6 +27,11 @@ import { createUseStyles } from "react-jss";
 import { useLocation, useNavigate, matchPath } from "react-router-dom";
 import _  from "lodash-uuid";
 import ReactPiwik from "react-piwik";
+import {faSearch} from "@fortawesome/free-solid-svg-icons/faSearch";
+import {faFile} from "@fortawesome/free-solid-svg-icons/faFile";
+import {faHome} from "@fortawesome/free-solid-svg-icons/faHome";
+import {faCircleNotch} from "@fortawesome/free-solid-svg-icons/faCircleNotch";
+import {faTag} from "@fortawesome/free-solid-svg-icons/faTag";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -104,7 +109,7 @@ const Header = observer(() => {
     navigate(`/queries/${uuid}`);
   };
 
-  const icon = queryBuilderStore.isSaving?"circle-notch":"tag"; 
+  const icon = queryBuilderStore.isSaving?faCircleNotch:faTag; 
   const label = queryBuilderStore.label?queryBuilderStore.label:queryBuilderStore.queryId;
 
   return (
@@ -120,14 +125,14 @@ const Header = observer(() => {
                 queryBuilderStore.hasRootSchema?
                   <React.Fragment>
                     <Tab Component={HomeTab} current={matchPath({ path: "/" }, location.pathname)} onClick={handleBrowseTypes} label={"Select another type"} hideLabel disable={queryBuilderStore.isSaving} />
-                    <Tab icon={"search"} current={matchPath({ path: "/queries" }, location.pathname)} onClick={handleBrowseStoredQueries} hideLabel label={"Browse stored queries"} disable={queryBuilderStore.isSaving} />
-                    <Tab icon={"file"} current={false} onClick={handleBuildNewQuery} hideLabel label={"New query"} disable={queryBuilderStore.isSaving} />
+                    <Tab icon={faSearch} current={matchPath({ path: "/queries" }, location.pathname)} onClick={handleBrowseStoredQueries} hideLabel label={"Browse stored queries"} disable={queryBuilderStore.isSaving} />
+                    <Tab icon={faFile} current={false} onClick={handleBuildNewQuery} hideLabel label={"New query"} disable={queryBuilderStore.isSaving} />
                     {queryBuilderStore.queryId && (
                       <Tab icon={icon} iconSpin={queryBuilderStore.isSaving} current={matchPath({ path: "/queries/:id" }, location.pathname)} onClose={handleBrowseStoredQueries} label={label} />
                     )}
                   </React.Fragment>
                   :
-                  <Tab icon={"home"} current={matchPath({ path: "/" }, location.pathname)} onClick={handleBrowseTypes} label={"Select a type"} hideLabel />
+                  <Tab icon={faHome} current={matchPath({ path: "/" }, location.pathname)} onClick={handleBrowseTypes} label={"Select a type"} hideLabel />
               )}
             </div>
             <div className={classes.fixedTabsRight}>

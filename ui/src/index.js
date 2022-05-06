@@ -30,8 +30,6 @@ import {JssProvider} from "react-jss";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import "./Services/IconsImport";
-
 import App from "./Views/App";
 
 // configure({

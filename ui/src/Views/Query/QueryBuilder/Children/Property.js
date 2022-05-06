@@ -24,6 +24,7 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faLongArrowAltLeft} from "@fortawesome/free-solid-svg-icons/faLongArrowAltLeft";
 import { observer } from "mobx-react-lite";
 
 import Types from "../../../Types";
@@ -62,7 +63,7 @@ const Property = observer(({ property, onClick }) => {
     <div className={classes.property} onClick={handleClick}>
       {property.reverse && (
         <React.Fragment>
-          <FontAwesomeIcon icon="long-arrow-alt-left" className={classes.reverseLink} title="is an incoming link" />&nbsp;
+          <FontAwesomeIcon icon={faLongArrowAltLeft} className={classes.reverseLink} title="is an incoming link" />&nbsp;
         </React.Fragment>
       )}
       {label} - <small>{attribute}</small>

@@ -29,6 +29,9 @@ import Popover from "react-bootstrap/Popover";
 import Button from "react-bootstrap/Button";
 import uniqueId from "lodash/uniqueId";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faCheck} from "@fortawesome/free-solid-svg-icons/faCheck";
+import {faCamera} from "@fortawesome/free-solid-svg-icons/faCamera";
+import {faPlus} from "@fortawesome/free-solid-svg-icons/faPlus";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import ReactPiwik from "react-piwik";
 
@@ -262,8 +265,8 @@ const UserProfileTab = observer(({ className, size=30 }) => {
             <div className={classes.popOverContent}>
               <button className={classes.profilePictureButton} >
                 <Avatar user={authStore.user} size={100} />
-                <FontAwesomeIcon icon={"camera"} size="5x" className={classes.profilePictureCamera} />
-                <FontAwesomeIcon icon={"plus"} size="2x" className={classes.profilePicturePlus} />
+                <FontAwesomeIcon icon={faCamera} size="5x" className={classes.profilePictureCamera} />
+                <FontAwesomeIcon icon={faPlus} size="2x" className={classes.profilePicturePlus} />
               </button>
               <input type="file" accept="image/*" ref={imageFileRef} style={{display: "none"}} />
               <div>
@@ -283,7 +286,7 @@ const UserProfileTab = observer(({ className, size=30 }) => {
               </div>
             </div>
             <div className={`${classes.tokenCopiedBar} ${tokenCopied?"show":""}`}>
-              <div className={classes.tokenCopied}><FontAwesomeIcon icon={"check"} />&nbsp;Token copied to clipboard!</div>
+              <div className={classes.tokenCopied}><FontAwesomeIcon icon={faCheck} />&nbsp;Token copied to clipboard!</div>
             </div>
           </PopOverContent>
         </Popover>

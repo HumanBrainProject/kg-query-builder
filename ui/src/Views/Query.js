@@ -26,6 +26,8 @@ import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
+import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 import ReactPiwik from "react-piwik";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
@@ -123,10 +125,10 @@ const Query = observer(() => {
 
   if (queryBuilderStore.fetchQueryError) {
     return (
-      <BGMessage icon={"ban"}>
+      <BGMessage icon={faBan}>
         {queryBuilderStore.fetchQueryError}
         <Button variant="primary" onClick={handleRetry}>
-          <FontAwesomeIcon icon={"redo-alt"} />&nbsp;&nbsp; Retry
+          <FontAwesomeIcon icon={faRedoAlt} />&nbsp;&nbsp; Retry
         </Button>
       </BGMessage>
     );
