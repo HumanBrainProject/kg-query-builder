@@ -37,10 +37,10 @@ export const defaultContext = {
 export const rootFieldReservedProperties = [
   "root_schema",
   "schema:root_schema",
-  "http://schema.org/root_schema",
+  "http://schema.org/root_schema", //NOSONAR it's a schema
   "identifier",
   "schema:identifier",
-  "http://schema.org/identifier",
+  "http://schema.org/identifier", //NOSONAR it's a schema
   "@id",
   "@type",
   "@context",

@@ -79,7 +79,7 @@ const normalizeUser = user => {
   }
   return {
     id: user["@id"],
-    name: user["http://schema.org/name"],
+    name: user["http://schema.org/name"], //NOSONAR it's a schema
     picture: user["https://schema.hbp.eu/users/picture"]
   };
 };
