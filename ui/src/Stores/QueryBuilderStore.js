@@ -955,6 +955,9 @@ export class QueryBuilderStore {
   }
 
   get saveLabel() {
+    if (!this.label) {
+      return this.label;
+    }
     if(this.label && this.label.endsWith("-Copy")) {
       return this.label;
     }

@@ -160,7 +160,7 @@ const SavedQuery = observer(({query, enableDelete}) => {
 
   const handleDelete = e => {
     ReactPiwik.push(["trackEvent", "Query", "Delete", query.id]);
-    e.stopPropagation();
+    e && e.stopPropagation();
     setShowDeleteDialog(false);
     queryBuilderStore.deleteQuery(query);
   };
@@ -171,7 +171,7 @@ const SavedQuery = observer(({query, enableDelete}) => {
   };
 
   const handleCancelDelete = e => {
-    e.stopPropagation();
+    e && e.stopPropagation();
     queryBuilderStore.cancelDeleteQuery(query);
   };
   return (

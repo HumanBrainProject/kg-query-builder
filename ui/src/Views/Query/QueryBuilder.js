@@ -72,7 +72,20 @@ const useStyles = createUseStyles({
   },
   form: {},
   representation:{},
-  actions:{}
+  actions: {
+    position: "relative",
+    background: "var(--bg-color-ui-contrast2)",
+    border: "1px solid var(--border-color-ui-contrast1)",
+    color: "var(--ft-color-loud)",
+    padding: "10px 10px 0 0",
+    "& > div": {
+      textAlign: "right",
+      "& > button": {
+        marginLeft: "10px",
+        marginBottom: "10px"
+      }
+    }
+  }
 });
 
 const QueryBuilder = observer(() => {
@@ -89,7 +102,11 @@ const QueryBuilder = observer(() => {
       <div className={`${classes.body} ${queryBuilderStore.isQuerySaved || !queryBuilderStore.isQueryEmpty?"hasChanged":""}`}>
         <QueryForm className={classes.form} />
         <Representation className={classes.representation} />
-        <Actions className={classes.actions} />
+        <div className={classes.actions}>
+          <div>
+            <Actions />
+          </div>
+        </div>
       </div>
       <div className={classes.options}>
         <Options />

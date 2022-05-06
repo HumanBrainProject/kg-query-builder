@@ -50,6 +50,20 @@ const useStyles = createUseStyles({
     border: "1px solid var(--border-color-ui-contrast1)",
     padding:"10px"
   },
+  actions: {
+    position: "relative",
+    background: "var(--bg-color-ui-contrast2)",
+    border: "1px solid var(--border-color-ui-contrast1)",
+    color: "var(--ft-color-loud)",
+    padding: "10px 10px 0 0",
+    "& > div": {
+      textAlign: "right",
+      "& > button": {
+        marginLeft: "10px",
+        marginBottom: "10px"
+      }
+    }
+  },
   error: {
     cursor: "pointer",
     "& [role=\"alert\"]": {
@@ -128,7 +142,11 @@ const QueryEditor = observer(() => {
           <ReactJson collapsed={false} name={false} theme={ThemeRJV} src={queryBuilderStore.JSONQuery} onEdit={handleOnEdit} onAdd={handleOnAdd} onDelete={handleOnDelete}  />
         </Scrollbars>
       </div>
-      <Actions />
+      <div className={classes.actions}>
+        <div>
+          <Actions />
+        </div>
+      </div>
     </div>
   );
 });

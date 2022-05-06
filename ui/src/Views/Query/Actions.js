@@ -22,350 +22,129 @@
  */
 
 import React from "react";
-import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faSave} from "@fortawesome/free-solid-svg-icons/faSave";
-import {faCopy} from "@fortawesome/free-solid-svg-icons/faCopy";
-import {faUndoAlt} from "@fortawesome/free-solid-svg-icons/faUndoAlt";
-import {faGlasses} from "@fortawesome/free-solid-svg-icons/faGlasses";
-import _ from "lodash-uuid";
-import ReactPiwik from "react-piwik";
 
 import { useStores } from "../../Hooks/UseStores";
-import { useNavigate } from "react-router-dom";
 
-const useStyles = createUseStyles({
-  container: {
-    position: "relative",
-    background: "var(--bg-color-ui-contrast2)",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    color: "var(--ft-color-loud)",
-    padding: "10px 10px 0 0"
-  },
-  save: {
-    textAlign: "right",
-    "& button": {
-      marginLeft: "10px",
-      marginBottom: "10px"
-    }
-  }
-});
+import CancelButton from "./Actions/CancelButton";
+import CompareButton from "./Actions/CompareButton";
+import CopyAsNewQueryButton from "./Actions/CopyAsNewQueryButton";
+import ResetButton from "./Actions/ResetButton";
+import SaveAsButton from "./Actions/SaveAsButton";
+import SaveButton from "./Actions/SaveButton";
+import UndoChangesButton from "./Actions/UndoChangesButton";
 
-const SaveQuery = observer(({ cancelDisabled, saveDisabled, onCancel, onSave }) => {
+const UpdatableQuerySaveAsModeActions = observer(() => {
+  const { queryBuilderStore } = useStores();
   return (
-    <React.Fragment>
-      <Button variant="secondary" disabled={cancelDisabled} onClick={onCancel}>
-        Cancel
-      </Button>
-      <Button variant="primary" disabled={saveDisabled} onClick={onSave}>
-        <FontAwesomeIcon icon={faSave} />
-        &nbsp;Save
-      </Button>
-    </React.Fragment>
+    <>
+      <CancelButton />
+      <SaveButton disabled={queryBuilderStore.isQueryEmpty} />
+    </>
   );
 });
 
-const MultipleActions = observer(({
-  compareDisabled,
-  copyAsNewDisabled,
-  saveAsDisabled,
-  saveDisabled,
-  onCompare,
-  onCopyAsNew,
-  onRevert,
-  onSaveAs,
-  onSave
-}) => {
+const UpdatableQueryDefaultModeActions = observer(() => {
+
   const { queryBuilderStore } = useStores();
+  const { hasQueryChanged, isQueryEmpty, hasChanged, sourceQuery } = queryBuilderStore;
+
+  const compareDisabled = !hasQueryChanged;
+  const saveAsDisabled = isQueryEmpty;
+  const saveDisabled = !hasChanged || isQueryEmpty || sourceQuery?.isDeleting;
+
   return (
-    <React.Fragment>
-      {queryBuilderStore.hasChanged && (
-        <Button disabled={compareDisabled} onClick={onCompare}>
-          <FontAwesomeIcon icon={faGlasses} />
-          &nbsp;Compare
-        </Button>
-      )}
-      {queryBuilderStore.isQuerySaved && (
-        <Button
-          variant="secondary"
-          onClick={onCopyAsNew}
-          disabled={copyAsNewDisabled}
-        >
-          <FontAwesomeIcon icon={faCopy} />
-          &nbsp;Copy as a new query
-        </Button>
-      )}
-      {queryBuilderStore.hasChanged &&
-        !queryBuilderStore.savedQueryHasInconsistencies && (
-          <Button variant="secondary" onClick={onRevert}>
-            <FontAwesomeIcon icon={faUndoAlt} />
-            &nbsp;Undo changes
-          </Button>
-        )}
-      <Button variant="secondary" disabled={saveAsDisabled} onClick={onSaveAs}>
-        <FontAwesomeIcon icon={faSave} />
-        &nbsp;Save As
-      </Button>
-      <Button variant="primary" disabled={saveDisabled} onClick={onSave}>
-        <FontAwesomeIcon icon={faSave} />
-        &nbsp;Save
-      </Button>
-    </React.Fragment>
+    <>
+      <CompareButton disabled={compareDisabled} />
+      <CopyAsNewQueryButton />
+      <UndoChangesButton />
+      <SaveAsButton disabled={saveAsDisabled} />
+      <SaveButton disabled={saveDisabled} />
+    </>
   );
 });
 
-const Actions = observer(({ className }) => {
-  const classes = useStyles();
-
-  const navigation = useNavigate();
-
+const ReadOnlyQuerySaveAsModeActions = observer(() => {
   const { queryBuilderStore } = useStores();
+  return (
+    <>
+      <CancelButton />
+      <SaveButton disabled={queryBuilderStore.isQueryEmpty} />
+    </>
+  );
+});
 
-  const handleToggleCompareChanges = () => {
-    ReactPiwik.push([
-      "trackEvent",
-      "Query",
-      "Compare",
-      queryBuilderStore.rootField.id,
-    ]);
-    queryBuilderStore.toggleCompareChanges();
-  };
+const ReadOnlyQueryDefaultModeActions = observer(() => {
+  const { queryBuilderStore } = useStores();
+  return (
+    <>
+      <CompareButton disabled={!queryBuilderStore.hasQueryChanged} />
+      <UndoChangesButton />
+      <CopyAsNewQueryButton  />
+      <SaveAsButton disabled={queryBuilderStore.isQueryEmpty} />
+    </>
+  );
+});
 
-  const handleSave = () => {
-    ReactPiwik.push([
-      "trackEvent",
-      "Query",
-      "Save",
-      queryBuilderStore.rootField.id,
-    ]);
-    queryBuilderStore.saveQuery(navigation);
-  };
+const NewQuerySaveAsModeActions = observer(() => {
+  const { queryBuilderStore } = useStores();
+  return (
+    <>
+      <CancelButton />
+      <SaveButton disabled={ queryBuilderStore.isQueryEmpty} />
+    </>
+  );
+});
 
-  const handleRevertChanges = () => queryBuilderStore.cancelChanges();
+const NewQueryDefaultModeActions = observer(() => {
+  const { queryBuilderStore } = useStores();
+  return (
+    <>
+      <ResetButton />
+      <CopyAsNewQueryButton />
+      <SaveAsButton disabled={!queryBuilderStore.hasChanged} />
+    </>
+  );
+});
 
-  const handleShowSaveDialog = () => {
-    ReactPiwik.push([
-      "trackEvent",
-      "Query",
-      "SaveAs",
-      queryBuilderStore.rootField.id,
-    ]);
-    queryBuilderStore.setSaveAsMode(true);
-  };
-
-  const handleHideSaveDialog = () => queryBuilderStore.setSaveAsMode(false);
-
-  const handleResetQuery = () => queryBuilderStore.resetRootSchema();
-
-  const handleNewQuery = () => {
-    ReactPiwik.push([
-      "trackEvent",
-      "Query",
-      "CopyAsNew",
-      queryBuilderStore.rootField.id,
-    ]);
-    const uuid = _.uuid();
-    queryBuilderStore.setAsNewQuery(uuid);
-    navigation(`/queries/${uuid}`);
-  };
-
-  if (queryBuilderStore.isQuerySaved) {
-    if (queryBuilderStore.canSaveQuery) {
-      if (queryBuilderStore.saveAsMode) {
-        return (
-          <div className={`${classes.container} ${className}`}>
-            <div className={classes.save}>
-              <SaveQuery
-                cancelDisabled={
-                  queryBuilderStore.isSaving || !!queryBuilderStore.saveError
-                }
-                saveDisabled={
-                  queryBuilderStore.isSaving ||
-                  !!queryBuilderStore.saveError ||
-                  queryBuilderStore.isQueryEmpty
-                }
-                onCancel={handleHideSaveDialog}
-                onSave={handleSave}
-              />
-            </div>
-          </div>
-        );
-      }
-      return (
-        <div className={`${classes.container} ${className}`}>
-          <div className={classes.save}>
-            <MultipleActions
-              compareDisabled={
-                queryBuilderStore.isSaving ||
-                !!queryBuilderStore.saveError ||
-                !queryBuilderStore.hasQueryChanged
-              }
-              copyAsNewDisabled={
-                queryBuilderStore.isSaving || !!queryBuilderStore.saveError
-              }
-              saveAsDisabled={
-                queryBuilderStore.isSaving ||
-                !!queryBuilderStore.saveError ||
-                queryBuilderStore.isQueryEmpty
-              }
-              saveDisabled={
-                queryBuilderStore.isSaving ||
-                !!queryBuilderStore.saveError ||
-                !queryBuilderStore.hasChanged ||
-                queryBuilderStore.isQueryEmpty ||
-                (queryBuilderStore.sourceQuery &&
-                  queryBuilderStore.sourceQuery.isDeleting)
-              }
-              onCompare={handleToggleCompareChanges}
-              onCopyAsNew={handleNewQuery}
-              onSaveAs={handleShowSaveDialog}
-              onSave={handleSave}
-              onRevert={handleRevertChanges}
-            />
-          </div>
-        </div>
-      );
-    }
-    if (queryBuilderStore.saveAsMode) {
-      return (
-        <div className={`${classes.container} ${className}`}>
-          <div className={classes.save}>
-            <SaveQuery
-              cancelDisabled={
-                queryBuilderStore.isSaving || !!queryBuilderStore.saveError
-              }
-              saveDisabled={
-                queryBuilderStore.isSaving ||
-                !!queryBuilderStore.saveError ||
-                queryBuilderStore.isQueryEmpty
-              }
-              onCancel={handleHideSaveDialog}
-              onSave={handleSave}
-            />
-          </div>
-        </div>
-      );
-    }
-    return (
-      <div className={`${classes.container} ${className}`}>
-        <div className={classes.save}>
-          {queryBuilderStore.hasChanged && (
-            <Button
-              disabled={
-                queryBuilderStore.isSaving ||
-                !!queryBuilderStore.saveError ||
-                !queryBuilderStore.hasQueryChanged
-              }
-              onClick={handleToggleCompareChanges}
-            >
-              <FontAwesomeIcon icon={faGlasses} />
-              &nbsp;Compare
-            </Button>
-          )}
-          {queryBuilderStore.hasChanged &&
-            !queryBuilderStore.savedQueryHasInconsistencies && (
-              <Button
-                variant="secondary"
-                disabled={
-                  queryBuilderStore.isSaving || !!queryBuilderStore.saveError
-                }
-                onClick={handleRevertChanges}
-              >
-                <FontAwesomeIcon icon={faUndoAlt} />
-                &nbsp;Undo changes
-              </Button>
-            )}
-          {queryBuilderStore.isQuerySaved && (
-            <Button
-              variant="secondary"
-              onClick={handleNewQuery}
-              disabled={
-                queryBuilderStore.isSaving || !!queryBuilderStore.saveError
-              }
-            >
-              <FontAwesomeIcon icon={faCopy} />
-              &nbsp;Copy as a new query
-            </Button>
-          )}
-          <Button
-            variant="secondary"
-            disabled={
-              queryBuilderStore.isSaving ||
-              !!queryBuilderStore.saveError ||
-              queryBuilderStore.isQueryEmpty
-            }
-            onClick={handleShowSaveDialog}
-          >
-            <FontAwesomeIcon icon={faSave} />
-            &nbsp;Save As
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
+const NewQueryActions = observer(() => {
+  const { queryBuilderStore } = useStores();
   if (queryBuilderStore.saveAsMode) {
-    return (
-      <div className={`${classes.container} ${className}`}>
-        <div className={classes.save}>
-          <SaveQuery
-            cancelDisabled={
-              queryBuilderStore.isSaving || !!queryBuilderStore.saveError
-            }
-            saveDisabled={
-              queryBuilderStore.isSaving ||
-              !!queryBuilderStore.saveError ||
-              !queryBuilderStore.hasChanged ||
-              queryBuilderStore.isQueryEmpty
-            }
-            onCancel={handleHideSaveDialog}
-            onSave={handleSave}
-          />
-        </div>
-      </div>
-    );
+    return <NewQuerySaveAsModeActions />;
   }
+  return <NewQueryDefaultModeActions />;
+});
 
-  return (
-    <div className={`${classes.container} ${className}`}>
-      <div className={classes.save}>
-        <Button
-          variant="secondary"
-          disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError}
-          onClick={handleResetQuery}
-        >
-          <FontAwesomeIcon icon={faUndoAlt} />
-          &nbsp;Reset
-        </Button>
-        {queryBuilderStore.isQuerySaved && (
-          <Button
-            variant="secondary"
-            onClick={handleNewQuery}
-            disabled={
-              queryBuilderStore.isSaving || !!queryBuilderStore.saveError
-            }
-          >
-            <FontAwesomeIcon icon={faCopy} />
-            &nbsp;Copy as a new query
-          </Button>
-        )}
-        <Button
-          variant="secondary"
-          disabled={
-            queryBuilderStore.isSaving ||
-            !!queryBuilderStore.saveError ||
-            !queryBuilderStore.hasChanged
-          }
-          onClick={handleShowSaveDialog}
-        >
-          <FontAwesomeIcon icon={faSave} />
-          &nbsp;Save As
-        </Button>
-      </div>
-    </div>
-  );
+const ReadOnlyQueryActions = observer(() => {
+  const { queryBuilderStore } = useStores();
+  if (queryBuilderStore.saveAsMode) {
+    return <ReadOnlyQuerySaveAsModeActions />;
+  }
+  return <ReadOnlyQueryDefaultModeActions />;
+});
+
+const UpdatableQueryActions = observer(() => {
+  const { queryBuilderStore } = useStores();
+  if (queryBuilderStore.saveAsMode) {
+    <UpdatableQuerySaveAsModeActions />;
+  }
+  return <UpdatableQueryDefaultModeActions />;
+});
+
+const SavedQueryActions = observer(() => {
+  const { queryBuilderStore } = useStores();
+  if (queryBuilderStore.canSaveQuery) {
+    return <UpdatableQueryActions />;
+  }
+  return <ReadOnlyQueryActions />;
+});
+
+const Actions = observer(() => {
+  const { queryBuilderStore } = useStores();
+  if (queryBuilderStore.isQuerySaved) {
+    return <SavedQueryActions />;
+  }
+  return <NewQueryActions />;
 });
 
 export default Actions;
