@@ -33,10 +33,9 @@ import { useStores } from "../../../Hooks/UseStores";
 
 const SaveButton = observer(({ disabled }) => {
 
-  const navigation = useNavigate();
+  const navigate = useNavigate();
 
   const { queryBuilderStore } = useStores();
-  const { isSaving, saveError } = queryBuilderStore;
 
   const onClick = () => {
     ReactPiwik.push([
@@ -45,11 +44,11 @@ const SaveButton = observer(({ disabled }) => {
       "Save",
       queryBuilderStore.rootField.id,
     ]);
-    queryBuilderStore.saveQuery(navigation);
+    queryBuilderStore.saveQuery(navigate);
   };
 
   return (
-      <Button variant="primary" disabled={disabled || isSaving || !!saveError} onClick={onClick}>
+      <Button variant="primary" disabled={disabled} onClick={onClick}>
         <FontAwesomeIcon icon={faSave} />&nbsp;Save
       </Button>
   );

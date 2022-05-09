@@ -30,12 +30,11 @@ import { useStores } from "../../../Hooks/UseStores";
 const CancelButton = observer(() => {
 
   const { queryBuilderStore } = useStores();
-  const { isSaving, saveError } = queryBuilderStore;
   
   const onClick = () => queryBuilderStore.setSaveAsMode(false);
 
   return (
-      <Button variant="secondary" disabled={isSaving || !!saveError} onClick={onClick}>Cancel</Button>
+      <Button variant="secondary" onClick={onClick}>Cancel</Button>
   );
 });
 

@@ -32,7 +32,6 @@ import { useStores } from "../../../Hooks/UseStores";
 const UndoChangesButton = observer(() => {
 
   const { queryBuilderStore } = useStores();
-  const { isSaving, saveError } = queryBuilderStore;
 
   const onClick = () => queryBuilderStore.cancelChanges();
 
@@ -41,7 +40,7 @@ const UndoChangesButton = observer(() => {
   }
 
   return (
-      <Button variant="primary" disabled={isSaving || !!saveError} onClick={onClick}>
+      <Button variant="primary" onClick={onClick}>
         <FontAwesomeIcon icon={faUndoAlt} />&nbsp;Undo changes
       </Button>
   );

@@ -23,36 +23,30 @@
 
 import React from "react";
 import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faGlasses} from "@fortawesome/free-solid-svg-icons/faGlasses";
-import ReactPiwik from "react-piwik";
+import { useNavigate } from "react-router-dom";
 
-import { useStores } from "../../../Hooks/UseStores";
+import { useStores } from "../../Hooks/UseStores";
 
-const CompareButton = observer(({ disabled }) => {
+import ActionError from "../../Components/ActionError";
+
+const DeleteError = observer(() => {
+
+  const navigate = useNavigate();
 
   const { queryBuilderStore } = useStores();
 
-  const onClick = () => {
-    ReactPiwik.push([
-      "trackEvent",
-      "Query",
-      "Compare",
-      queryBuilderStore.rootField.id,
-    ]);
-    queryBuilderStore.toggleCompareChanges();
-  };
+  const handleDelete = () =>  queryBuilderStore.deleteQuery(queryBuilderStore.sourceQuery, navigate);
 
-  if (!queryBuilderStore.hasChanged) {
+  const handleCancelDelete = () => queryBuilderStore.cancelDeleteQuery(queryBuilderStore.sourceQuery);
+
+  if (!queryBuilderStore.sourceQuery?.deleteError) {
     return null;
   }
 
   return (
-      <Button disabled={disabled} onClick={onClick}>
-        <FontAwesomeIcon icon={faGlasses} />&nbsp;Compare
-      </Button>
+    <ActionError error={queryBuilderStore.sourceQuery.deleteError} onCancel={handleCancelDelete} onRetry={handleDelete} />
   );
 });
+DeleteError.displayName = "DeleteError";
 
-export default CompareButton;
+export default DeleteError;

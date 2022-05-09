@@ -129,9 +129,7 @@ const Queries = observer(() => {
 
   if (queryBuilderStore.isFetchingQueries) {
     return (
-      <div className={classes.loader}>
-        <FetchingLoader>{`Fetching saved queries for ${queryBuilderStore.rootSchema.id}...`}</FetchingLoader>
-      </div>
+      <FetchingLoader>{`Fetching saved queries for ${queryBuilderStore.rootSchema.id}...`}</FetchingLoader>
     );
   }
 

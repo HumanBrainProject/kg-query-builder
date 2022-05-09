@@ -176,6 +176,7 @@ export class QueryBuilderStore {
       rootSchema: computed,
       isQuerySaved: computed,
       canSaveQuery: computed,
+      canDeleteQuery: computed,
       isQueryEmpty: computed,
       hasQueryChanged: computed,
       hasChanged: computed,
@@ -533,6 +534,10 @@ export class QueryBuilderStore {
 
   get canSaveQuery() {
     return !!this.space?.permissions?.canWrite;
+  }
+
+  get canDeleteQuery() {
+    return !!this.space?.permissions?.canDelete;
   }
 
   get isQueryEmpty() {
@@ -1015,31 +1020,23 @@ export class QueryBuilderStore {
     this.description = description;
   }
 
-  async saveQuery(navigation) {
-    if (!this.isQueryEmpty && !this.isSaving && !this.saveError && !(this.sourceQuery && this.sourceQuery.isDeleting)) {
+  async saveQuery(navigate) {
+    if (!this.isQueryEmpty && !this.isSaving && !(this.sourceQuery && this.sourceQuery.isDeleting)) {
       this.isSaving = true;
+      this.saveError = null;
       if (this.sourceQuery && this.sourceQuery.deleteError) {
         this.sourceQuery.deleteError = null;
       }
       const queryId = this.saveAsMode ? this.queryId : this.sourceQuery.id;
       const query = this.JSONQuery;
+      if (!this.space) {
+        this.space = toJS(this.rootStore.authStore.privateSpace);
+      }
+      const spaceName = this.space?this.space.name:"myspace";
       try {
-        await this.transportLayer.saveQuery(queryId, query, this.space?this.space.name:"myspace");
+        await this.transportLayer.saveQuery(queryId, query, spaceName);
         runInAction(() => {
-          if (!this.saveAsMode && this.sourceQuery && this.sourceQuery.user.id === this.rootStore.authStore.user.id) {
-            this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
-            this.sourceQuery.description = query.meta && query.meta.description?query.meta.description:"";
-            this.sourceQuery.context = query["@context"];
-            this.sourceQuery.structure = query.structure;
-            this.sourceQuery.meta = query.meta;
-            this.sourceQuery.properties = getProperties(query);
-          } else if (!this.saveAsMode) {
-            this.sourceQuery = this.findQuery(queryId);
-            this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
-            this.sourceQuery.description = query.meta && query.meta.description?query.meta.description:"";
-            this.sourceQuery.specification = query;
-            this.sourceQuery.meta = query.meta;
-          } else {
+          if (this.saveAsMode) {
             this.sourceQuery = {
               id: queryId,
               user: {
@@ -1053,19 +1050,40 @@ export class QueryBuilderStore {
               meta: query.meta,
               label: query.meta && query.meta.name?query.meta.name:"",
               description: query.meta && query.meta.description?query.meta.description:"",
-              space: this.rootStore.authStore.getSpace(query.space),
+              space: spaceName,
               isDeleting: false,
               deleteError: null
             };
             this.specifications.push(this.sourceQuery);
-            navigation(`/queries/${queryId}/${this.mode}`);
+            this.saveAsMode = false;
+            this.isSaving = false;
+            this.fromQueryId = null;
+            this.fromLabel = "";
+            this.fromDescription = "";
+            this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
+            navigate(`/queries/${queryId}/${this.mode}`);
+          } else {
+            if (this.sourceQuery) {
+              this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
+              this.sourceQuery.description = query.meta && query.meta.description?query.meta.description:"";
+              this.sourceQuery.context = query["@context"];
+              this.sourceQuery.structure = query.structure;
+              this.sourceQuery.meta = query.meta;
+              this.sourceQuery.properties = getProperties(query);
+            } else {
+              this.sourceQuery = this.findQuery(queryId);
+              this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
+              this.sourceQuery.description = query.meta && query.meta.description?query.meta.description:"";
+              this.sourceQuery.specification = query;
+              this.sourceQuery.meta = query.meta;
+            }
+            this.saveAsMode = false;
+            this.isSaving = false;
+            this.fromQueryId = null;
+            this.fromLabel = "";
+            this.fromDescription = "";
+            this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
           }
-          this.saveAsMode = false;
-          this.isSaving = false;
-          this.fromQueryId = null;
-          this.fromLabel = "";
-          this.fromDescription = "";
-          this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
         });
       } catch (e) {
         const message = e.message ? e.message : e;
@@ -1084,9 +1102,10 @@ export class QueryBuilderStore {
     }
   }
 
-  async deleteQuery(query) {
-    if (query && !query.isDeleting && !query.deleteError && !(query === this.sourceQuery && this.isSaving)) {
+  async deleteQuery(query, navigate) {
+    if (query && !query.isDeleting && !(query === this.sourceQuery && this.isSaving)) {
       query.isDeleting = true;
+      query.deleteError = null;
       try {
         await this.transportLayer.deleteQuery(query.id);
         runInAction(() => {
@@ -1097,6 +1116,12 @@ export class QueryBuilderStore {
           const index = this.specifications.findIndex(spec => spec.id === query.id);
           if (index !== -1) {
             this.specifications.splice(index, 1);
+          }
+          if (navigate) {
+            this.resetRootSchema();
+            const uuid = _.uuid();
+            this.setAsNewQuery(uuid);
+            navigate(`/queries/${uuid}`);
           }
         });
       } catch (e) {

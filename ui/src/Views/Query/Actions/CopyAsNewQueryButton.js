@@ -37,7 +37,6 @@ const CopyAsNewQueryButton = observer(() => {
   const navigation = useNavigate();
 
   const { queryBuilderStore } = useStores();
-  const { isSaving, saveError } = queryBuilderStore;
 
   const onClick = () => {
     ReactPiwik.push([
@@ -56,7 +55,7 @@ const CopyAsNewQueryButton = observer(() => {
   }
 
   return (
-      <Button variant="secondary" disabled={isSaving || !!saveError} onClick={onClick}>
+      <Button variant="secondary" onClick={onClick}>
         <FontAwesomeIcon icon={faCopy} />&nbsp;Copy as a new query
       </Button>
   );

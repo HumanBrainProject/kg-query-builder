@@ -33,7 +33,6 @@ import { useStores } from "../../../Hooks/UseStores";
 const SaveAsButton = observer(({ disabled }) => {
 
   const { queryBuilderStore } = useStores();
-  const { isSaving, saveError } = queryBuilderStore;
 
   const onClick = () => {
     ReactPiwik.push([
@@ -46,7 +45,7 @@ const SaveAsButton = observer(({ disabled }) => {
   };
 
   return (
-      <Button variant="secondary" disabled={disabled || isSaving || !!saveError} onClick={onClick}>
+      <Button variant="secondary" disabled={disabled} onClick={onClick}>
         <FontAwesomeIcon icon={faSave} />&nbsp;Save As
       </Button>
   );

@@ -42,6 +42,8 @@ import BGMessage from "../Components/BGMessage";
 import CompareChangesModal from "./Query/CompareChangesModal";
 import SaveError from "./Query/SaveError";
 import SavingMessage from "./Query/SavingMessage";
+import DeleteError from "./Query/DeleteError";
+import DeletingMessage from "./Query/DeletingMessage";
 
 const useStyles = createUseStyles({
   container: {
@@ -115,11 +117,7 @@ const Query = observer(() => {
 
   if (queryBuilderStore.isFetchingQuery) {
     return (
-      <div className={classes.loader}>
-        <FetchingLoader>
-              Fetching query with id {id} ...
-        </FetchingLoader>
-      </div>
+      <FetchingLoader>Fetching query with id {id} ... </FetchingLoader>
     );
   }
 
@@ -143,6 +141,8 @@ const Query = observer(() => {
         </div>
         <SavingMessage />
         <SaveError />
+        <DeletingMessage />
+        <DeleteError />
         <CompareChangesModal />
       </div>
     );

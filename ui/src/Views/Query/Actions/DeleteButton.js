@@ -21,38 +21,56 @@
  *
  */
 
-import React from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faGlasses} from "@fortawesome/free-solid-svg-icons/faGlasses";
+import {faTrashAlt} from "@fortawesome/free-solid-svg-icons/faTrashAlt";
 import ReactPiwik from "react-piwik";
+import { useNavigate } from "react-router-dom";
 
 import { useStores } from "../../../Hooks/UseStores";
 
-const CompareButton = observer(({ disabled }) => {
+import Dialog from "../../../Components/Dialog";
+
+
+const DeleteButton = observer(({ disabled }) => {
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const navigate = useNavigate();
 
   const { queryBuilderStore } = useStores();
 
-  const onClick = () => {
-    ReactPiwik.push([
-      "trackEvent",
-      "Query",
-      "Compare",
-      queryBuilderStore.rootField.id,
-    ]);
-    queryBuilderStore.toggleCompareChanges();
+  const handleConfirmDelete = () => {
+    setShowDeleteDialog(true);
   };
 
-  if (!queryBuilderStore.hasChanged) {
+  const handleDelete = () => {
+    ReactPiwik.push(["trackEvent", "Query", "Delete", queryBuilderStore.rootField.id]);
+    setShowDeleteDialog(false);
+    queryBuilderStore.deleteQuery(queryBuilderStore.sourceQuery, navigate);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteDialog(false);
+    queryBuilderStore.cancelDeleteQuery(queryBuilderStore.sourceQuery);
+  };
+
+  if (!queryBuilderStore.sourceQuery || !queryBuilderStore.canDeleteQuery) {
     return null;
   }
 
   return (
-      <Button disabled={disabled} onClick={onClick}>
-        <FontAwesomeIcon icon={faGlasses} />&nbsp;Compare
-      </Button>
+      <>
+        <Button variant="danger" disabled={disabled} onClick={handleConfirmDelete}>
+          <FontAwesomeIcon icon={faTrashAlt} />&nbsp;Delete {showDeleteDialog}
+        </Button>
+        {showDeleteDialog && (
+          <Dialog message="Are you sure you want to delete this query?" onCancel={handleCancelDelete} onConfirm={handleDelete} />
+        )}
+      </>
   );
 });
 
-export default CompareButton;
+export default DeleteButton;

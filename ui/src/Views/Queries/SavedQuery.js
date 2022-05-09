@@ -162,7 +162,7 @@ const SavedQuery = observer(({query, enableDelete}) => {
     ReactPiwik.push(["trackEvent", "Query", "Delete", query.id]);
     e && e.stopPropagation();
     setShowDeleteDialog(false);
-    queryBuilderStore.deleteQuery(query);
+    queryBuilderStore.deleteQuery(query, null);
   };
 
   const handleCloseDeleteDialog = e => {

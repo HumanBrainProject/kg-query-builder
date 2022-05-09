@@ -33,6 +33,7 @@ import ResetButton from "./Actions/ResetButton";
 import SaveAsButton from "./Actions/SaveAsButton";
 import SaveButton from "./Actions/SaveButton";
 import UndoChangesButton from "./Actions/UndoChangesButton";
+import DeleteButton from "./Actions/DeleteButton";
 
 const QuerySaveAsModeActions = observer(() => {
   const { queryBuilderStore } = useStores();
@@ -58,6 +59,7 @@ const UpdatableQueryActions = observer(() => {
       <CompareButton disabled={compareDisabled} />
       <CopyAsNewQueryButton />
       <UndoChangesButton />
+      <DeleteButton />
       <SaveAsButton disabled={saveAsDisabled} />
       <SaveButton disabled={saveDisabled} />
     </>

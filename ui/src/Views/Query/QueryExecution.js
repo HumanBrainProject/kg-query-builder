@@ -120,11 +120,7 @@ const QueryExecution = observer(() => {
         </BGMessage>
       )}
       {queryBuilderStore.isRunning && (
-        <div className={classes.fetchingPanel}>
-          <FetchingLoader>
-              Fetching query...
-          </FetchingLoader>
-        </div>
+        <FetchingLoader> Fetching query...</FetchingLoader>
       )}
     </div>
   );

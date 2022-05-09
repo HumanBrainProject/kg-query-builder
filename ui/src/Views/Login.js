@@ -55,23 +55,6 @@ const useStyles = createUseStyles({
       margin: "20px 0"
     }
   },
-  loader: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    zIndex: 10000,
-    background: "var(--bg-color-blend-contrast1)",
-    "& .fetchingPanel": {
-      width: "auto",
-      padding: "30px",
-      border: "1px solid var(--border-color-ui-contrast1)",
-      borderRadius: "4px",
-      color: "var(--ft-color-loud)",
-      background: "var(--list-bg-hover)"
-    }
-  },
   error: {
     color: "var(--ft-color-loud)",
     "& button + button": {
@@ -130,9 +113,7 @@ const Login = observer(() => {
   if (appStore.initializingMessage) {
     return (
       <div className={classes.container}>
-        <div className={classes.loader}>
-          <FetchingLoader>{appStore.initializingMessage}</FetchingLoader>
-        </div>
+       <FetchingLoader>{appStore.initializingMessage}</FetchingLoader>
       </div>
     );
   }

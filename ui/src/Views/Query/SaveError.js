@@ -22,48 +22,14 @@
  */
 
 import React from "react";
-import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
 
 import { useStores } from "../../Hooks/UseStores";
 
-const useStyles = createUseStyles({
-  container: {
-    position: "fixed",
-    top: "0",
-    left: "0",
-    width: "100%",
-    height: "100%",
-    background: "var(--bg-color-blend-contrast1)",
-    zIndex: "1200",
-    "& > div": {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      minWidth: "220px",
-      transform: "translate(-50%, -50%)",
-      padding: "20px",
-      borderRadius: "5px",
-      background: "white",
-      textAlign: "center",
-      boxShadow: "2px 2px 4px #7f7a7a",
-      "& h5": {
-        margin: "0",
-        paddingBottom: "20px",
-        color: "red"
-      },
-      "& button + button, & a + button, & a + a": {
-        marginLeft: "20px"
-      }
-    }
-  }
-});
+import ActionError from "../../Components/ActionError";
 
 const SaveError = observer(() => {
-
-  const classes = useStyles();
 
   const navigation = useNavigate();
 
@@ -78,15 +44,7 @@ const SaveError = observer(() => {
   }
 
   return (
-    <div className={classes.container}>
-      <div>
-        <h5>{queryBuilderStore.saveError}</h5>
-        <div>
-          <Button variant="secondary" onClick={handleCancelSave}>Cancel</Button>
-          <Button variant="primary" onClick={handleSave}>Retry</Button>
-        </div>
-      </div>
-    </div>
+    <ActionError error={queryBuilderStore.saveError} onCancel={handleCancelSave} onRetry={handleSave} />
   );
 });
 SaveError.displayName = "SaveError";

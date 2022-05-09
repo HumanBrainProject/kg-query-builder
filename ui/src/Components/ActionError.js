@@ -23,54 +23,57 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faCircleNotch} from "@fortawesome/free-solid-svg-icons/faCircleNotch";
+import Button from "react-bootstrap/Button";
 
 const useStyles = createUseStyles({
   container: {
     position: "fixed",
-    top: 0,
-    left: 0,
+    top: "0",
+    left: "0",
     width: "100%",
     height: "100%",
-    zIndex: 10000,
-    background: "var(--bg-color-blend-contrast1)"
-  },
-  panel: {
-    position: "absolute !important",
-    top: "50%",
-    left: "50%",
-    width: "auto",
-    padding: "30px",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    borderRadius: "4px",
-    transform: "translate(-50%, -50%)",
-    fontSize: "1.2em",
-    fontWeight: "lighter",
-    textAlign:"center",
-    color: "var(--ft-color-loud)",
-    background: "var(--list-bg-hover)"
-  },
-  label: {
-    paddingLeft: "6px",
-    display:"inline-block"
+    background: "var(--bg-color-blend-contrast1)",
+    zIndex: "1200",
+    "& > div": {
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      minWidth: "220px",
+      padding: "30px",
+      transform: "translate(-50%, -50%)",
+      borderRadius: "4px",
+      fontSize: "1.2em",
+      fontWeight: "lighter",
+      textAlign:"center",
+      color: "var(--ft-color-loud)",
+      background: "var(--list-bg-hover)",
+      "& h5": {
+        margin: "0",
+        paddingBottom: "20px",
+        color: "red"
+      },
+      "& button + button, & a + button, & a + a": {
+        marginLeft: "20px"
+      }
+    }
   }
 });
 
-const FetchingLoader = ({ children }) => {
+const ActionError = ({error, onCancel, onRetry}) => {
 
   const classes = useStyles();
 
   return (
     <div className={classes.container}>
-      <div className={classes.panel}>
-        <FontAwesomeIcon icon={faCircleNotch} spin/>
-        <span className={classes.label}>
-          {children}
-        </span>
+      <div>
+        <h5>{error}</h5>
+        <div>
+          <Button variant="secondary" onClick={onCancel}>Cancel</Button>
+          <Button variant="primary" onClick={onRetry}>Retry</Button>
+        </div>
       </div>
     </div>
   );
 };
 
-export default FetchingLoader;
+export default ActionError;

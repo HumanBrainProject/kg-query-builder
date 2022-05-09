@@ -23,36 +23,23 @@
 
 import React from "react";
 import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faGlasses} from "@fortawesome/free-solid-svg-icons/faGlasses";
-import ReactPiwik from "react-piwik";
 
-import { useStores } from "../../../Hooks/UseStores";
+import { useStores } from "../../Hooks/UseStores";
 
-const CompareButton = observer(({ disabled }) => {
+import FetchingLoader from "../../Components/FetchingLoader";
+
+const DeletingMessage = observer(() => {
 
   const { queryBuilderStore } = useStores();
 
-  const onClick = () => {
-    ReactPiwik.push([
-      "trackEvent",
-      "Query",
-      "Compare",
-      queryBuilderStore.rootField.id,
-    ]);
-    queryBuilderStore.toggleCompareChanges();
-  };
-
-  if (!queryBuilderStore.hasChanged) {
+  if (!queryBuilderStore.sourceQuery?.isDeleting) {
     return null;
   }
 
   return (
-      <Button disabled={disabled} onClick={onClick}>
-        <FontAwesomeIcon icon={faGlasses} />&nbsp;Compare
-      </Button>
+    <FetchingLoader>Deleting query {queryBuilderStore.queryId}...</FetchingLoader>
   );
 });
+DeletingMessage.displayName = "DeletingMessage";
 
-export default CompareButton;
+export default DeletingMessage;

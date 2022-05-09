@@ -32,12 +32,11 @@ import { useStores } from "../../../Hooks/UseStores";
 const ResetButton = observer(() => {
 
   const { queryBuilderStore } = useStores();
-  const { isSaving, saveError } = queryBuilderStore;
 
   const onClick = () => queryBuilderStore.resetRootSchema();
 
   return (
-      <Button variant="secondary" disabled={isSaving || !!saveError} onClick={onClick}>
+      <Button variant="secondary" onClick={onClick}>
         <FontAwesomeIcon icon={faUndoAlt} />&nbsp;Reset
       </Button>
   );

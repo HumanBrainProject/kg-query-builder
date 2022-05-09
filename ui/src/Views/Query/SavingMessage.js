@@ -22,36 +22,13 @@
  */
 
 import React from "react";
-import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 
 import { useStores } from "../../Hooks/UseStores";
 
 import FetchingLoader from "../../Components/FetchingLoader";
 
-const useStyles = createUseStyles({
-  container: {
-    position:"fixed",
-    top:0,
-    left:0,
-    width: "100%",
-    height: "100%",
-    zIndex: 10000,
-    background: "var(--bg-color-blend-contrast1)",
-    "& .fetchingPanel": {
-      width: "auto",
-      padding: "30px",
-      border: "1px solid var(--border-color-ui-contrast1)",
-      borderRadius: "4px",
-      color: "var(--ft-color-loud)",
-      background: "var(--list-bg-hover)"
-    }
-  }
-});
-
 const SavingMessage = observer(() => {
-
-  const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
 
@@ -60,9 +37,7 @@ const SavingMessage = observer(() => {
   }
 
   return (
-    <div className={classes.container}>
-      <FetchingLoader>{`Saving query "${queryBuilderStore.queryId}"...`}</FetchingLoader>
-    </div>
+    <FetchingLoader>Saving query {queryBuilderStore.queryId}</FetchingLoader>
   );
 });
 SavingMessage.displayName = "SavingMessage";
