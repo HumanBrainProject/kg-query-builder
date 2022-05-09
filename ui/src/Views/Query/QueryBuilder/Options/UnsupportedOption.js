@@ -144,6 +144,7 @@ const Type = observer(({ classes, value }) => {
     />
   );
 });
+Type.displayName = "Type";
 
 const UnsupportedOption = ({ name, value, onChange }) => {
   const classes = useStyles();

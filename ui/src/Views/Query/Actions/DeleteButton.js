@@ -72,5 +72,6 @@ const DeleteButton = observer(({ disabled }) => {
       </>
   );
 });
+DeleteButton.displayName = "DeleteButton";
 
 export default DeleteButton;

@@ -50,5 +50,6 @@ const SaveAsButton = observer(({ disabled }) => {
       </Button>
   );
 });
+SaveAsButton.displayName = "SaveAsButton";
 
 export default SaveAsButton;

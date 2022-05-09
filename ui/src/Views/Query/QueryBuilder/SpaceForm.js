@@ -154,5 +154,6 @@ const SpaceForm = observer(({ className }) => {
     </div>
   );
 });
+SpaceForm.displayName = "SpaceForm";
 
 export default SpaceForm;

@@ -103,6 +103,7 @@ const QueryParameter = observer(({ parameter }) => {
     </Form.Group>
   );
 });
+QueryParameter.displayName = "QueryParameter";
 
 const QueryParameters = observer(() => {
   const { queryBuilderStore } = useStores();

@@ -71,5 +71,6 @@ const Property = observer(({ property, onClick }) => {
     </div>
   );
 });
+Property.displayName = "Property";
 
 export default Property;

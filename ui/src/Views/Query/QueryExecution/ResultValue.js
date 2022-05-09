@@ -126,5 +126,6 @@ const ResultValue = observer(({ name, index, value }) => {
     </OverlayTrigger>
   );
 });
+ResultValue.displayName = "ResultValue";
 
 export default ResultValue;

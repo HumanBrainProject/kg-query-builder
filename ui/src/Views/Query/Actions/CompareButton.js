@@ -54,5 +54,6 @@ const CompareButton = observer(({ disabled }) => {
       </Button>
   );
 });
+CompareButton.displayName = "CompareButton";
 
 export default CompareButton;

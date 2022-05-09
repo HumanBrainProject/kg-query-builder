@@ -61,5 +61,6 @@ const GroupProperties = observer(({group, prefix, onClick }) => {
     </div>
   );
 });
+GroupProperties.displayName = "GroupProperties";
 
 export default GroupProperties;

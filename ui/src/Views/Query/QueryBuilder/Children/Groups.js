@@ -38,5 +38,6 @@ const Groups = observer(({ groups, prefix, onClick }) => {
     ))
   );
 });
+Groups.displayName = "Groups";
 
 export default Groups;

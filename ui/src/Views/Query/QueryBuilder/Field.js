@@ -191,6 +191,7 @@ const FieldTypes = observer(({ field }) => {
   }
   return null;
 });
+FieldTypes.displayName = "FieldTypes";
 
 const UnknownField = ({ field, classes }) => {
   if (field.isUnknown) {
@@ -369,5 +370,6 @@ const Field = observer(({ field }) => {
     </div>
   );
 });
+Field.displayName = "Field";
 
 export default Field;

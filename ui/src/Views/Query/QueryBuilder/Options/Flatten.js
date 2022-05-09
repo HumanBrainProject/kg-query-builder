@@ -46,5 +46,6 @@ const Flatten = observer(({ field, show, onChange}) => {
     />
   );
 });
+Flatten.displayName = "Flatten";
 
 export default Flatten;

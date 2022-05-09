@@ -56,5 +56,6 @@ const Properties = observer(({ properties, label, onClick }) => {
     </div>
   );
 });
+Properties.displayName = "Properties";
 
 export default Properties;
