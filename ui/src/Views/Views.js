@@ -22,37 +22,28 @@
  */
 
 import React from "react";
-import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-import { Scrollbars } from "react-custom-scrollbars-2";
+import { Navigate, Routes, Route } from "react-router-dom";
 
-import { useStores } from "../../../Hooks/UseStores";
+import { useStores } from "../Hooks/UseStores";
 
-import Field from "./Field";
+import Queries from "./Queries";
+import RootSchema from "./RootSchema";
+import Query from "./Query";
 
-const useStyles = createUseStyles({
-  container: {
-    position:"relative",
-    background: "var(--bg-color-ui-contrast2)",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    color:"var(--ft-color-normal)"
-  }
-});
+const Views = observer(() => {
 
-const Representation = observer(({ className }) => {
-
-  const classes = useStyles();
-
-  const { queryBuilderStore } = useStores();
+const {queryBuilderStore } = useStores();
 
   return (
-    <div className={`${classes.container} ${className}`}>
-      <Scrollbars autoHide>
-        <Field field={queryBuilderStore.rootField} />
-      </Scrollbars>
-    </div>
+    <Routes>
+      <Route path="/" element={<RootSchema />} />
+      <Route path="queries/:id" element={<Query />} />
+      <Route path="queries/:id/:mode" element={<Query />} />
+      {queryBuilderStore.hasRootSchema && <Route path="queries" element={<Queries />} />}
+      <Route path="*" element={<Navigate to="/" replace={true} />} />  
+    </Routes>
   );
 });
-Representation.displayName = "Representation";
 
-export default Representation;
+export default Views;

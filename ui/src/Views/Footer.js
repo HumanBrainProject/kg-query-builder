@@ -20,39 +20,45 @@
  * (Human Brain Project SGA1, SGA2 and SGA3).
  *
  */
-
 import React from "react";
-import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-import { Scrollbars } from "react-custom-scrollbars-2";
+import { createUseStyles } from "react-jss";
 
-import { useStores } from "../../../Hooks/UseStores";
-
-import Field from "./Field";
+import { useStores } from "../Hooks/UseStores";
 
 const useStyles = createUseStyles({
-  container: {
-    position:"relative",
-    background: "var(--bg-color-ui-contrast2)",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    color:"var(--ft-color-normal)"
+  status: {
+    background: "var(--bg-color-ui-contrast1)",
+    color: "var(--ft-color-loud)",
+    paddingLeft: "10px"
+  },
+  footer: {
+    position: "relative"
+  },
+  build: {
+    color: "var(--ft-color-loud)",
+    position: "absolute",
+    top: "0px",
+    right: "10px"
   }
 });
 
-const Representation = observer(({ className }) => {
-
-  const classes = useStyles();
-
-  const { queryBuilderStore } = useStores();
-
-  return (
-    <div className={`${classes.container} ${className}`}>
-      <Scrollbars autoHide>
-        <Field field={queryBuilderStore.rootField} />
-      </Scrollbars>
+const Footer = observer(() => {
+    const classes = useStyles();
+    const { authStore } = useStores();
+    const commit = authStore.commit;
+    
+    return(
+      <div className={classes.footer}>
+      <div className={`${classes.status} layout-status`}>
+              Copyright &copy; {new Date().getFullYear()} EBRAINS. All rights reserved.
+      </div>
+      <div className={classes.build}>
+        {commit && <span >build: <i>{commit}</i></span>}
+      </div>
     </div>
-  );
-});
-Representation.displayName = "Representation";
+    );
+  })
 
-export default Representation;
+  export default Footer;
+  

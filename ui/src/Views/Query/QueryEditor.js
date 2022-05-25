@@ -25,7 +25,7 @@ import React, { useRef, useState } from "react";
 import ReactJson from "react-json-view";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-import { Scrollbars } from "react-custom-scrollbars";
+import { Scrollbars } from "react-custom-scrollbars-2";
 import Alert from "react-bootstrap/Alert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";

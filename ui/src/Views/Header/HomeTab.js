@@ -26,7 +26,7 @@ import { observer } from "mobx-react-lite";
 
 import { useStores } from "../../Hooks/UseStores";
 
-import Types from "../Types";
+import PropertyTypes from "../PropertyTypes";
 
 const HomeTab = observer(() => {
 
@@ -38,7 +38,7 @@ const HomeTab = observer(() => {
 
   return (
     <div>
-      <Types types={queryBuilderStore.rootSchema.canBe} />&nbsp;-&nbsp;<small>{queryBuilderStore.rootSchema.id}</small>
+      <PropertyTypes types={queryBuilderStore.rootSchema.canBe} />&nbsp;-&nbsp;<small>{queryBuilderStore.rootSchema.id}</small>
     </div>
   );
 });

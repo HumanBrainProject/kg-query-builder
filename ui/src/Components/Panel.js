@@ -23,36 +23,34 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import { Scrollbars } from "react-custom-scrollbars-2";
 
-import { useStores } from "../../../Hooks/UseStores";
-
-import Field from "./Field";
+import BGMessage from "./BGMessage";
 
 const useStyles = createUseStyles({
   container: {
-    position:"relative",
-    background: "var(--bg-color-ui-contrast2)",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    color:"var(--ft-color-normal)"
-  }
+    height: "100%"
+  },
+  panel: {
+    color: "var(--ft-color-loud)",
+    "& button + button": {
+      marginLeft: "60px"
+    }
+  },
 });
 
-const Representation = observer(({ className }) => {
+const Panel = ({icon, children}) => {
 
   const classes = useStyles();
 
-  const { queryBuilderStore } = useStores();
-
   return (
-    <div className={`${classes.container} ${className}`}>
-      <Scrollbars autoHide>
-        <Field field={queryBuilderStore.rootField} />
-      </Scrollbars>
+    <div className={classes.container}>
+      <div className={classes.panel}>
+        <BGMessage icon={icon}>
+          {children}
+        </BGMessage>
+      </div>
     </div>
   );
-});
-Representation.displayName = "Representation";
+};
 
-export default Representation;
+export default Panel;

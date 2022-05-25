@@ -37,7 +37,6 @@ const App = observer(() => {
   const theme = appStore.currentTheme;
 
   useEffect(() => {
-    appStore.initialize();
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);

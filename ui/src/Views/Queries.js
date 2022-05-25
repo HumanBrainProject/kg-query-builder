@@ -27,14 +27,13 @@ import {observer} from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
-import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
-import { Scrollbars } from "react-custom-scrollbars";
+import { Scrollbars } from "react-custom-scrollbars-2";
 import ReactPiwik from "react-piwik";
 
 import { useStores } from "../Hooks/UseStores";
 
-import FetchingLoader from "../Components/FetchingLoader";
-import BGMessage from "../Components/BGMessage";
+import SpinnerPanel from "../Components/SpinnerPanel";
+import ErrorPanel from "../Components/ErrorPanel";
 import Filter from "../Components/Filter";
 import SavedQueries from "./Queries/SavedQueries";
 
@@ -116,33 +115,29 @@ const Queries = observer(() => {
 
   if (queryBuilderStore.fetchQueriesError) {
     return (
-      <div className={classes.error}>
-        <BGMessage icon={faBan}>
-          {queryBuilderStore.fetchQueriesError}<br /><br />
-          <Button variant="primary" onClick={handleFetchSavedQueries}>
-            <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Refresh
-          </Button>
-        </BGMessage>
-      </div>
+      <ErrorPanel>
+        {queryBuilderStore.fetchQueriesError}<br /><br />
+        <Button variant="primary" onClick={handleFetchSavedQueries}>
+          <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Refresh
+        </Button>
+      </ErrorPanel>
     );
   }
 
   if (queryBuilderStore.isFetchingQueries) {
     return (
-      <FetchingLoader>{`Fetching saved queries for ${queryBuilderStore.rootSchema.id}...`}</FetchingLoader>
+      <SpinnerPanel text={`Fetching saved queries for ${queryBuilderStore.rootSchema.id}...`} />
     );
   }
 
   if (!queryBuilderStore.hasQueries) {
     return (
-      <div className={classes.error}>
-        <BGMessage icon={faBan}>
-          No saved queries available yet for {queryBuilderStore.rootSchema.label}<small> - {queryBuilderStore.rootSchema.id}</small><br /><br />
-          <Button variant="primary" onClick={handleFetchSavedQueries}>
-            <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
-          </Button>
-        </BGMessage>
-      </div>
+      <ErrorPanel>
+        No saved queries available yet for {queryBuilderStore.rootSchema.label}<small> - {queryBuilderStore.rootSchema.id}</small><br /><br />
+        <Button variant="primary" onClick={handleFetchSavedQueries}>
+          <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
+        </Button>
+      </ErrorPanel>
     );
   }
 

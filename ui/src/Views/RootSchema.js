@@ -24,7 +24,7 @@
 import React, {useState, useEffect} from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
-import { Scrollbars } from "react-custom-scrollbars";
+import { Scrollbars } from "react-custom-scrollbars-2";
 import ReactPiwik from "react-piwik";
 
 import { useStores } from "../Hooks/UseStores";
@@ -87,7 +87,7 @@ const RootSchema = observer(() => {
     }
     if (e.keyCode === 38 && cursor > 0) {
       setCursor(prevCursor => prevCursor - 1);
-    } else if (e.keyCode === 40 && cursor < typeStore.filteredSpaceTypeList.length - 1) {
+    } else if (e.keyCode === 40 && cursor < typeStore.filteredTypeList.length - 1) {
       setCursor(prevCursor => prevCursor + 1);
     }
   };

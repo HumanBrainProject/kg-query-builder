@@ -25,7 +25,7 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Modal from "react-bootstrap/Modal";
-import { Scrollbars } from "react-custom-scrollbars";
+import { Scrollbars } from "react-custom-scrollbars-2";
 
 import CompareChanges from "./CompareChanges/CompareChanges";
 

@@ -22,6 +22,7 @@
  */
 
 import { observable, computed, action, runInAction, makeObservable } from "mobx";
+import * as Sentry from "@sentry/browser";
 
 const rootPath = window.rootPath || "";
 
@@ -49,8 +50,11 @@ const mapUserProfile = data => {
 
 export class AuthStore {
   isUserAuthorized = false;
+  isUserAuthorizationInitialized = false;
+  isSpacesInitialized = false;
+  isSpacesFetched = false;
   user = null;
-  spaces = null;
+  spaces = [];
   isRetrievingUserProfile = false;
   userProfileError = null;
   isRetrievingSpaces = false;
@@ -58,7 +62,7 @@ export class AuthStore {
   authError = null;
   authSuccess = false;
   isTokenExpired = false;
-  isInitializing = true;
+  isInitializing = false;
   initializationError = null;
   isLogout = false;
   keycloak = null;
@@ -70,6 +74,7 @@ export class AuthStore {
   constructor(transportLayer) {
     makeObservable(this, {
       isUserAuthorized: observable,
+      isUserAuthorizationInitialized: observable,
       user: observable,
       spaces: observable,
       privateSpace: computed,
@@ -79,6 +84,8 @@ export class AuthStore {
       isRetrievingUserProfile: observable,
       userProfileError: observable,
       isRetrievingSpaces: observable,
+      isSpacesInitialized: observable,
+      isSpacesFetched: observable,
       spacesError: observable,
       authError: observable,
       authSuccess: observable,
@@ -88,11 +95,10 @@ export class AuthStore {
       isLogout: observable,
       accessToken: computed,
       isAuthenticated: computed,
-      hasUserSpaces: computed,
-      areUserSpacesRetrieved: computed,
+      hasSpaces: computed,
       logout: action,
       retrieveUserProfile: action,
-      retrieveUserSpaces: action,
+      retrieveSpaces: action,
       initializeKeycloak: action,
       login: action,
       authenticate: action,
@@ -101,9 +107,6 @@ export class AuthStore {
 
     this.transportLayer = transportLayer;
 
-    if (Storage === undefined) {
-      throw new Error("The browser must support WebStorage API");
-    }
   }
 
   get accessToken() {
@@ -118,32 +121,19 @@ export class AuthStore {
     return !!this.user;
   }
 
-  get hasUserSpaces() {
-    return this.areUserSpacesRetrieved && !!this.spaces.length;
-  }
-
-  get areUserSpacesRetrieved() {
-    return this.spaces instanceof Array;
+  get hasSpaces() {
+    return !!this.spaces.length;
   }
 
   getSpace(name) {
-    if (!this.areUserSpacesRetrieved) {
-      return null;
-    }
     return this.spaces.find(s => s.name === name);
   }
 
   get privateSpace() {
-    if (!this.areUserSpacesRetrieved) {
-      return null;
-    }
     return this.spaces.find(s => s.isPrivate);
   }
 
   get sharedSpaces() {
-    if (!this.areUserSpacesRetrieved) {
-      return [];
-    }
     return this.spaces.filter(s => !s.isPrivate);
   }
 
@@ -175,15 +165,18 @@ export class AuthStore {
     this.isTokenExpired = true;
     this.isUserAuthorized = false;
     this.user = null;
-    this.spaces = null;
+    this.spaces = [];
+    this.isUserAuthorizationInitialized = false;
+    this.isSpacesInitialized = false;
     this.keycloak.logout({redirectUri: `${window.location.protocol}//${window.location.host}${rootPath}/logout`});
     this.isLogout = true;
   }
 
   async retrieveUserProfile() {
-    if (this.isAuthenticated && !this.user) {
+    if (this.isAuthenticated && !this.isRetrievingUserProfile && !this.user) {
       this.userProfileError = null;
       this.isRetrievingUserProfile = true;
+      this.isUserAuthorizationInitialized = true;
       try {
         const { data } = await this.transportLayer.getUserProfile();
         runInAction(() => {
@@ -196,38 +189,43 @@ export class AuthStore {
           if (e.response && e.response.status === 403) {
             this.isUserAuthorized = false;
             this.isRetrievingUserProfile = false;
+            this.isUserAuthorizationInitialized = false;
           } else {
             this.isUserAuthorized = false;
             this.userProfileError = e.message ? e.message : e;
             this.isRetrievingUserProfile = false;
+            this.isUserAuthorizationInitialized = false;
           }
         });
-        this.transportLayer.captureException(e);
       }
     }
   }
 
-  async retrieveUserSpaces() {
-    if(this.isAuthenticated && this.isUserAuthorized && !this.isRetrievingSpaces) {
+  async retrieveSpaces() {
+    if(this.isAuthenticated && this.isUserAuthorized && !this.isSpacesFetched && !this.isRetrievingSpaces) {
       try {
         this.spacesError = null;
         this.isRetrievingSpaces = true;
+        this.isSpacesInitialized = true;
         const { data } = await this.transportLayer.getSpaces();
         runInAction(() => {
           this.spaces = data && Array.isArray(data.data)? data.data: [];
+          this.isSpacesFetched = true;
           this.isRetrievingSpaces = false;
         });
       } catch(e) {
         runInAction(() => {
           if (e.response && e.response.status === 403) {
             this.spaces = [];
+            this.isSpacesFetched = true;
             this.isRetrievingSpaces = false;
+            this.isSpacesInitialized = false;
           } else {
             this.spacesError = e.message ? e.message : e;
             this.isRetrievingSpaces = false;
+            this.isSpacesInitialized = false;
           }
         });
-        this.transportLayer.captureException(e);
       }
     }
   }
@@ -261,7 +259,7 @@ export class AuthStore {
           this.isTokenExpired = true;
         }));
     };
-    keycloak.init({ onLoad: "login-required", pkceMethod: "S256"});
+    keycloak.init({ onLoad: "login-required", pkceMethod: "S256" });
   }
 
   login() {
@@ -271,6 +269,9 @@ export class AuthStore {
   }
 
   async authenticate() {
+    if (this.isInitializing || this.authSuccess) {
+      return;
+    }
     this.isLogout = false;
     this.isInitializing = true;
     this.authError = null;
@@ -279,30 +280,33 @@ export class AuthStore {
       runInAction(() => {
         this.endpoint =  data && data.data? data.data.endpoint :null;
         this.commit = data && data.commit? data.commit:null;
+        const sentryUrl = data?.data?.sentryUrl;
+        if (sentryUrl) {
+          Sentry.init({
+            dsn: sentryUrl,
+            environment: window.location.host
+          });
+        }
       });
       if(this.endpoint) {
-        try {
-          await new Promise((resolve, reject) => {
-            const keycloakScript = document.createElement("script");
-            keycloakScript.src = this.endpoint + "/js/keycloak.js";
-            keycloakScript.async = true;
+        await new Promise((resolve, reject) => {
+          const keycloakScript = document.createElement("script");
+          keycloakScript.src = this.endpoint + "/js/keycloak.js";
+          keycloakScript.async = true;
 
-            document.head.appendChild(keycloakScript);
-            keycloakScript.onload = () => {
-              this.initializeKeycloak(resolve, reject);
-            };
-            keycloakScript.onerror = () => {
-              document.head.removeChild(keycloakScript);
-              runInAction(() => {
-                this.isInitializing = false;
-                this.authError = `Failed to load resource! (${keycloakScript.src})`;
-              });
-              reject(this.authError);
-            };
-          });
-        } catch (e) {
-          this.transportLayer.captureException(e);
-        }
+          document.head.appendChild(keycloakScript);
+          keycloakScript.onload = () => {
+            this.initializeKeycloak(resolve, reject);
+          };
+          keycloakScript.onerror = () => {
+            document.head.removeChild(keycloakScript);
+            runInAction(() => {
+              this.isInitializing = false;
+              this.authError = `Failed to load resource! (${keycloakScript.src})`;
+            });
+            reject(this.authError);
+          };
+        });
       } else {
         runInAction(() => {
           this.isInitializing = false;

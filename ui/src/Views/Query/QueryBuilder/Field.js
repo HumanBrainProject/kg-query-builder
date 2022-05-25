@@ -37,7 +37,7 @@ import {faLongArrowAltRight} from "@fortawesome/free-solid-svg-icons/faLongArrow
 import Button from "react-bootstrap/Button";
 
 import { useStores } from "../../../Hooks/UseStores";
-import Types from "../../Types";
+import PropertyTypes from "../../PropertyTypes";
 
 import Fields from "./Fields";
 
@@ -174,7 +174,7 @@ const FieldTypes = observer(({ field }) => {
           title="filtered types"
         />
         &nbsp;
-        <Types types={field.typeFilter} />
+        <PropertyTypes types={field.typeFilter} />
         &nbsp;)
       </React.Fragment>
     );
@@ -184,7 +184,7 @@ const FieldTypes = observer(({ field }) => {
     return (
       <React.Fragment>
         &nbsp;(&nbsp;
-        <Types types={field.schema.canBe} />
+        <PropertyTypes types={field.schema.canBe} />
         &nbsp;)
       </React.Fragment>
     );
@@ -220,7 +220,7 @@ const UnknownField = ({ field, classes }) => {
       </React.Fragment>
     );
   }
-  return <Types types={field.schema.canBe} />;
+  return <PropertyTypes types={field.schema.canBe} />;
 };
 
 const AliasField = observer(

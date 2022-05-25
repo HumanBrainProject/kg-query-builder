@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2018 - 2021 Swiss Federal Institute of Technology Lausanne (EPFL)
  *
@@ -22,71 +21,61 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
+import React, { useEffect } from "react";
+import { observer } from "mobx-react-lite";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
+import Button from "react-bootstrap/Button"
 
 import { useStores } from "../Hooks/UseStores";
 
-import Icon from "../Components/Icon";
+import SpinnerPanel from "../Components/SpinnerPanel";
+import ErrorPanel from "../Components/ErrorPanel";
+import Views from "./Views";
 
-const useStyles = createUseStyles({
-  types: {
-    "& > div::before": {
-      content: "', '",
-      color: "var(--ft-color-loud)"
-    },
-    "& > div:first-child::before": {
-      content: "''"
-    }
-  }
-});
-
-const extractLabel = type => {
-  if (typeof type !== "string") {
-    return "<unknown filter>";
-  }
-  const idx = type.lastIndexOf("/");
-  if (idx !== -1) {
-    return type.substring(idx + 1);
-  }
-  return type;
-};
-
-export const Type = ({type}) => {
+const Types = observer(() => {
 
   const { typeStore } = useStores();
 
-  const t = typeStore.types[type];
-  const label = t?t.label:extractLabel(type);
-  const color = t?t.color:null;
+  const handeRetry = () => typeStore.fetch();
 
-  
+  useEffect(() => {
+    typeStore.fetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  return (
-    <span title={typeof type === "string"?type:JSON.stringify(type)}>
-      <Icon icon={faCircle} color={color} />{label}
-    </span>
-  );
-};
+  if (typeStore.fetchError) {
+    return (
+      <ErrorPanel>
+        There was a problem retrieving the types ({typeStore.fetchError}).
+          If the problem persists, please contact the support.<br /><br />
+        <Button variant={"primary"} onClick={handeRetry}>
+          <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
+        </Button>
+      </ErrorPanel>
+    );
+  }
 
-const Types = ({types}) => {
+  if (!typeStore.isFetched || typeStore.isFetching) {
+    return <SpinnerPanel text="Fetching types..." />;
+  }  
 
-  const classes = useStyles();
-
-  if (!Array.isArray(types) || !types.length) {
-    return null;
+  if (!typeStore.typeList.length) {
+    return (
+      <ErrorPanel>
+          No types available.
+          If the problem persists, please contact the support.<br /><br />
+          <Button variant={"primary"} onClick={handeRetry}>
+          <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
+        </Button>
+      </ErrorPanel>
+    );
   }
 
   return (
-    <span className={classes.types}>
-      {types.map((type, index) => (
-        <Type type={type} key={type?type:index} />
-      ))}
-    </span>
+    <Views />
   );
-};
+});
+Types.displayName = "Types";
 
 export default Types;
-
-

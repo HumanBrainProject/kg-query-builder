@@ -22,37 +22,14 @@
  */
 
 import React from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import { Scrollbars } from "react-custom-scrollbars-2";
+import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
 
-import { useStores } from "../../../Hooks/UseStores";
+import Panel from "./Panel";
 
-import Field from "./Field";
+const ErrorPanel = ({children}) => (
+  <Panel icon={faBan} >
+    {children}
+  </Panel>
+);
 
-const useStyles = createUseStyles({
-  container: {
-    position:"relative",
-    background: "var(--bg-color-ui-contrast2)",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    color:"var(--ft-color-normal)"
-  }
-});
-
-const Representation = observer(({ className }) => {
-
-  const classes = useStyles();
-
-  const { queryBuilderStore } = useStores();
-
-  return (
-    <div className={`${classes.container} ${className}`}>
-      <Scrollbars autoHide>
-        <Field field={queryBuilderStore.rootField} />
-      </Scrollbars>
-    </div>
-  );
-});
-Representation.displayName = "Representation";
-
-export default Representation;
+export default ErrorPanel;

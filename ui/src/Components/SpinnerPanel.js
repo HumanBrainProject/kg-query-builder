@@ -23,36 +23,43 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import { Scrollbars } from "react-custom-scrollbars-2";
 
-import { useStores } from "../../../Hooks/UseStores";
-
-import Field from "./Field";
+import Spinner from "./Spinner";
 
 const useStyles = createUseStyles({
   container: {
-    position:"relative",
-    background: "var(--bg-color-ui-contrast2)",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    color:"var(--ft-color-normal)"
+    height: "100%"
+  },
+  panel: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    zIndex: 10000,
+    background: "var(--bg-color-blend-contrast1)",
+    "& .spinnerPanel": {
+      width: "auto",
+      padding: "30px",
+      border: "1px solid var(--border-color-ui-contrast1)",
+      borderRadius: "4px",
+      color: "var(--ft-color-loud)",
+      background: "var(--list-bg-hover)"
+    }
   }
 });
 
-const Representation = observer(({ className }) => {
+const SpinnerPanel = ({text}) => {
 
   const classes = useStyles();
 
-  const { queryBuilderStore } = useStores();
-
   return (
-    <div className={`${classes.container} ${className}`}>
-      <Scrollbars autoHide>
-        <Field field={queryBuilderStore.rootField} />
-      </Scrollbars>
+    <div className={classes.container}>
+      <div className={classes.panel}>
+        <Spinner>{text}</Spinner>
+      </div>
     </div>
   );
-});
-Representation.displayName = "Representation";
+};
 
-export default Representation;
+export default SpinnerPanel;

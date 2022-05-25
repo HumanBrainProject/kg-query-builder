@@ -27,50 +27,32 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faCircleNotch} from "@fortawesome/free-solid-svg-icons/faCircleNotch";
 
 const useStyles = createUseStyles({
-  container: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    zIndex: 10000,
-    background: "var(--bg-color-blend-contrast1)"
-  },
-  panel: {
+  spinnerPanel: {
     position: "absolute !important",
     top: "50%",
     left: "50%",
-    width: "auto",
-    padding: "30px",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    borderRadius: "4px",
     transform: "translate(-50%, -50%)",
     fontSize: "1.2em",
     fontWeight: "lighter",
-    textAlign:"center",
-    color: "var(--ft-color-loud)",
-    background: "var(--list-bg-hover)"
+    width:"100%",
+    textAlign:"center"
   },
-  label: {
+  spinnerLabel: {
     paddingLeft: "6px",
     display:"inline-block"
   }
 });
 
-const FetchingLoader = ({ children }) => {
-
+const Spinner = ({children}) => {
   const classes = useStyles();
-
   return (
-    <div className={classes.container}>
-      <div className={classes.panel}>
-        <FontAwesomeIcon icon={faCircleNotch} spin/>
-        <span className={classes.label}>
-          {children}
-        </span>
-      </div>
+    <div className={`${classes.spinnerPanel} spinnerPanel`}>
+      <FontAwesomeIcon icon={faCircleNotch} spin/>
+      <span className={`${classes.spinnerLabel} spinnerLabel`}>
+        {children}
+      </span>
     </div>
   );
 };
 
-export default FetchingLoader;
+export default Spinner;

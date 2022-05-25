@@ -23,18 +23,14 @@
 
 import React from "react";
 import { observer } from "mobx-react-lite";
-import Modal from "react-bootstrap/Modal";
 import { createUseStyles, useTheme } from "react-jss";
-import { Navigate, Routes, Route } from "react-router-dom";
 
 import { useStores } from "../Hooks/UseStores";
 
-import Header from "./Header";
-import Login from "./Login";
 import GlobalError from "./GlobalError";
-import Queries from "./Queries";
-import RootSchema from "./RootSchema";
-import Query from "./Query";
+import Header from "./Header";
+import Footer from "./Footer";
+import Authenticate from "./Authenticate";
 
 const getGlobalUseStyles = () => createUseStyles(theme => {
   const styles = {
@@ -156,7 +152,7 @@ const getBackgroundSize = theme => {
 }
 
 const useStyles = createUseStyles(theme => ({
-  layout: {
+  container: {
     height: "100vh",
     display: "grid",
     overflow: "hidden",
@@ -169,83 +165,10 @@ const useStyles = createUseStyles(theme => ({
     background: "linear-gradient(var(--bg-gradient-angle), var(--bg-gradient-start), var(--bg-gradient-end))",
     backgroundSize: getBackgroundSize(theme),
     backgroundImage: theme.background.image?`url('${theme.background.image}')`:"unset",
-    backgroundPosition: theme.background.position?theme.background.position:"unset"
-  },
-  container: {
-    width: "100%",
-    height: "100%",
+    backgroundPosition: theme.background.position?theme.background.position:"unset",
     color: "var(--ft-color-normal)"
-  },
-  status: {
-    background: "var(--bg-color-ui-contrast1)",
-    color: "var(--ft-color-loud)",
-    paddingLeft: "10px"
-  },
-  noAccessModal: {
-    maxWidth: "min(max(500px, 50%),750px)",
-    "&.modal-dialog": {
-      marginTop: "40vh",
-      "& .modal-body": {
-        padding: "15px 30px",
-        fontSize: "1.6rem"
-      }
-    }
-  },
-  footer: {
-    position: "relative"
-  },
-  build: {
-    color: "var(--ft-color-loud)",
-    position: "absolute",
-    top: "0px",
-    right: "10px"
   }
 }));
-
-
-const NavigationRoutes = observer(({classes}) => {
-  const { appStore, authStore, queryBuilderStore } = useStores();
-  if (!appStore.isInitialized || !authStore.isAuthenticated) {
-    return <Login />;
-  }
-  
-  if(!authStore.isUserAuthorized) {
-    return (
-      <Modal dialogClassName={classes.noAccessModal} show={true} >
-        <Modal.Body>
-          <h1>Welcome</h1>
-          <p>You are currently not granted permission to acccess the application.</p>
-          <p>Please contact our team by email at : <a href={"mailto:kg@ebrains.eu"}>kg@ebrains.eu</a></p>
-        </Modal.Body>
-      </Modal>
-    );
-  }
-  
-  if(!authStore.hasUserSpaces) {
-    return(
-      <Modal dialogClassName={classes.noAccessModal} show={true} >
-        <Modal.Body>
-          <h1>Welcome <span title={authStore.firstName}>{authStore.firstName}</span></h1>
-          <p>You are currently not granted permission to acccess any spaces.</p>
-          <p>Please contact our team by email at : <a href={"mailto:kg@ebrains.eu"}>kg@ebrains.eu</a></p>
-        </Modal.Body>
-      </Modal>
-    )
-  }
-
-  return(
-    <div className={classes.container}>
-      <Routes>
-        <Route path="/" element={<RootSchema />} />
-        <Route path="queries/:id" element={<Query />} />
-        <Route path="queries/:id/:mode" element={<Query />} />
-        {queryBuilderStore.hasRootSchema && <Route path="queries" element={<Queries />} />}
-        <Route path="*" element={<Navigate to="/" replace={true} />} />  
-      </Routes>
-    </div>
-  )
-})
-
 
 const Layout = observer(() => {
 
@@ -255,27 +178,19 @@ const Layout = observer(() => {
 
   const classes = useStyles({ theme });
 
-  const { appStore, authStore } = useStores();
-  const commit = authStore.commit;
+  const { appStore } = useStores();
 
   return (
-    <div className={classes.layout}>
+    <div className={classes.container}>
       <Header />
       <div className={classes.body}>
         {appStore.globalError ?
           <GlobalError />
           :
-          <NavigationRoutes classes={classes}/>
+          <Authenticate/>
         }
       </div>
-      <div className={classes.footer}>
-        <div className={`${classes.status} layout-status`}>
-                Copyright &copy; {new Date().getFullYear()} EBRAINS. All rights reserved.
-        </div>
-        <div className={classes.build}>
-          {commit && <span >build: <i>{commit}</i></span>}
-        </div>
-      </div>
+      <Footer />
     </div>
   );
 });

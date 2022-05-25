@@ -26,7 +26,7 @@ import { observer } from "mobx-react-lite";
 
 import { useStores } from "../../Hooks/UseStores";
 
-import FetchingLoader from "../../Components/FetchingLoader";
+import SpinnerPanel from "../../Components/SpinnerPanel";
 
 const SavingMessage = observer(() => {
 
@@ -37,7 +37,7 @@ const SavingMessage = observer(() => {
   }
 
   return (
-    <FetchingLoader>Saving query {queryBuilderStore.queryId}</FetchingLoader>
+    <SpinnerPanel text={`Saving query ${queryBuilderStore.queryId}`} />
   );
 });
 SavingMessage.displayName = "SavingMessage";

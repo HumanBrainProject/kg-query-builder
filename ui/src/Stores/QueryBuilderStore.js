@@ -223,7 +223,7 @@ export class QueryBuilderStore {
       cancelDeleteQuery: action,
       fetchQueries: action,
       setDescription: action,
-      fetchQueryById: action,
+      fetchQuery: action,
       fromQueryId: observable,
       fromLabel: observable,
       fromDescription: observable,
@@ -1185,7 +1185,10 @@ export class QueryBuilderStore {
     }
   }
 
-  async fetchQueryById(queryId) {
+  async fetchQuery(queryId) {
+    if (this.findQuery(queryId) || this.isFetchingQuery) {
+      return;
+    }
     this.isFetchingQuery = true;
     this.fetchQueryError = null;
     try {
@@ -1195,7 +1198,7 @@ export class QueryBuilderStore {
         const query = await this.normalizeQuery(jsonSpecification);
         runInAction(() => this.specifications.push(query));
       } catch (e) {
-        runInAction(() => this.fetchQueriesError = `Error while trying to expand/compact JSON-LD (${e})`);
+        runInAction(() => this.fetchQueryError = `Error while trying to expand/compact JSON-LD (${e})`);
       }
       runInAction(() => this.isFetchingQuery = false);
     } catch (e) {
@@ -1248,50 +1251,12 @@ export class QueryBuilderStore {
     return this.specifications.find(spec => spec.id === id);
   }
 
-  setMode(mode, location, navigate) {
-    const id = (this.saveAsMode && this.sourceQuery && this.queryId !== this.sourceQuery.id)?this.sourceQuery.id:this.queryId;
-    if (["build", "edit", "execute"].includes(mode)) {
-      this.mode = mode;
-      const path = `/queries/${id}/${mode}`;
-      if (location.pathname !== path) {
-        navigate(path);
-      }
-    } else {
-      this.mode = "build";
-      navigate(`/queries/${id}/build`, { replace: true });
-    }
+  isValidMode(mode) {
+    return ["build", "edit", "execute"].includes(mode);
   }
 
-  async selectQueryById(id, mode, location, navigate) {
-    let query = this.findQuery(id);
-    if(!query) {
-      await this.fetchQueryById(id);
-      query = this.findQuery(id);
-    }
-    if(query) {
-      const typeName = query.meta.type;
-      const type = this.rootStore.typeStore.types[typeName];
-      if(type) {
-        this.selectRootSchema(type);
-        this.selectQuery(query);
-        this.setMode(mode, location, navigate);
-      } else {
-        navigate("/", {replace: true});
-        if (this.mode !== "build" && this.mode !== "edit") {
-          this.mode = "build";
-        }
-      }
-    } else {
-      if (this.mode !== "build" && this.mode !== "edit") {
-        this.mode = "build";
-      }
-      if(this.hasRootSchema) {
-        this.setAsNewQuery(id);
-      } else {
-        this.clearRootSchema();
-        navigate("/", {replace: true});
-      }
-    }
+  setMode(mode) {
+    this.mode = mode;
   }
 }
 

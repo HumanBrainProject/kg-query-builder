@@ -32,7 +32,7 @@ import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
 import { useStores } from "../../Hooks/UseStores";
 
 import BGMessage from "../../Components/BGMessage";
-import FetchingLoader from "../../Components/FetchingLoader";
+import SpinnerPanel from "../../Components/SpinnerPanel";
 import Result from "../Query/QueryExecution/Result";
 import ExecutionParams from "../Query/QueryExecution/ExecutionParams";
 
@@ -120,7 +120,7 @@ const QueryExecution = observer(() => {
         </BGMessage>
       )}
       {queryBuilderStore.isRunning && (
-        <FetchingLoader> Fetching query...</FetchingLoader>
+        <SpinnerPanel text="Fetching query..." />
       )}
     </div>
   );

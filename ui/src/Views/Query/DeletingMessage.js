@@ -26,7 +26,7 @@ import { observer } from "mobx-react-lite";
 
 import { useStores } from "../../Hooks/UseStores";
 
-import FetchingLoader from "../../Components/FetchingLoader";
+import SpinnerPanel from "../../Components/SpinnerPanel";
 
 const DeletingMessage = observer(() => {
 
@@ -37,7 +37,7 @@ const DeletingMessage = observer(() => {
   }
 
   return (
-    <FetchingLoader>Deleting query {queryBuilderStore.queryId}...</FetchingLoader>
+    <SpinnerPanel text={`Deleting query ${queryBuilderStore.queryId}...`} />
   );
 });
 DeletingMessage.displayName = "DeletingMessage";

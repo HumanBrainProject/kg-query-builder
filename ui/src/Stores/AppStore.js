@@ -21,8 +21,7 @@
  *
  */
 
-import { observable, action, computed, runInAction, makeObservable } from "mobx";
-import { matchPath } from "react-router-dom";
+import { observable, action, computed, makeObservable } from "mobx";
 
 import DefaultTheme from "../Themes/Default";
 import BrightTheme from "../Themes/Bright";
@@ -34,11 +33,6 @@ themes[BrightTheme.name] = BrightTheme;
 export class AppStore{
   globalError = null;
   _currentThemeName = DefaultTheme.name;
-  historySettings = null;
-  initializingMessage = null;
-  initializationError = null;
-  canLogin = true;
-  isInitialized = false;
 
   rootStore = null;
 
@@ -47,84 +41,14 @@ export class AppStore{
       globalError: observable,
       _currentThemeName: observable,
       currentTheme: computed,
-      historySettings: observable,
-      initializingMessage: observable,
-      initializationError: observable,
-      canLogin: observable,
-      isInitialized: observable,
-      initialize: action,
       setGlobalError: action,
       dismissGlobalError: action,
-      login: action,
       setTheme: action,
       toggleTheme: action
     });
 
     this.rootStore = rootStore;
-    this.canLogin = !matchPath({ path: "/logout" }, window.location.pathname);
     this.setTheme(localStorage.getItem("theme"));
-  }
-
-  async initialize() {
-    if (this.canLogin && !this.isInitialized) {
-      this.initializingMessage = "Initializing the application...";
-      this.initializationError = null;
-      if(!this.rootStore.authStore.isAuthenticated) {
-        this.initializingMessage = "User authenticating...";
-        await this.rootStore.authStore.authenticate();
-        if (this.rootStore.authStore.authError) {
-          runInAction(() => {
-            this.initializationError = this.rootStore.authStore.authError;
-            this.initializingMessage = null;
-          });
-        }
-      }
-      if(this.rootStore.authStore.isAuthenticated && !this.rootStore.authStore.hasUserProfile) {
-        runInAction(() => {
-          this.initializingMessage = "Retrieving user profile...";
-        });
-        await this.rootStore.authStore.retrieveUserProfile();
-        runInAction(() => {
-          if (this.rootStore.authStore.userProfileError) {
-            this.initializationError = this.rootStore.authStore.userProfileError;
-            this.initializingMessage = null;
-          } else if (!this.rootStore.authStore.isUserAuthorized && !this.rootStore.authStore.isRetrievingUserProfile) {
-            this.isInitialized = true;
-            this.initializingMessage = null;
-          }
-        });
-      }
-      if(this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && !this.rootStore.authStore.areUserSpacesRetrieved) {
-        runInAction(() => {
-          this.initializingMessage = "Retrieving spaces...";
-        });
-        await this.rootStore.authStore.retrieveUserSpaces();
-        if (this.rootStore.authStore.spacesError) {
-          runInAction(() => {
-            this.initializationError = this.rootStore.authStore.spacesError;
-            this.initializingMessage = null;
-          });
-        }
-      }
-      if (this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && this.rootStore.authStore.areUserSpacesRetrieved) {
-        runInAction(() => {
-          this.initializingMessage = "Retrieving types...";
-        });
-        await this.rootStore.typeStore.fetch();
-        if(this.rootStore.typeStore.fetchError) {
-          runInAction(() => {
-            this.initializationError = this.rootStore.typeStore.fetchError;
-            this.initializingMessage = null;
-          });
-        }
-      }
-      if (this.rootStore.authStore.isAuthenticated && this.rootStore.authStore.isUserAuthorized && this.rootStore.authStore.areUserSpacesRetrieved && this.rootStore.typeStore.isFetched) {
-        runInAction(() => {
-          this.initializingMessage = null;
-          this.isInitialized = true;
-        });
-      }
-    }
   }
 
   setGlobalError(error, info) {
@@ -134,16 +58,6 @@ export class AppStore{
   dismissGlobalError() {
     this.globalError = null;
   }
-
-  login = () => {
-    if (this.canLogin) {
-      this.rootStore.authStore.login();
-    } else {
-      window.history.replaceState(window.history.state, "Knowledge Graph Query Builder", "/");
-      this.canLogin = true;
-      this.initialize(true);
-    }
-  };
 
   get currentTheme() {
     return themes[this._currentThemeName];

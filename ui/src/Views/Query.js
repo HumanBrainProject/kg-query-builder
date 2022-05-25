@@ -26,10 +26,9 @@ import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
 import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 import ReactPiwik from "react-piwik";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Navigate } from "react-router-dom";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -37,13 +36,13 @@ import Tabs from "./Query/Tabs";
 import QueryBuilder from "./Query/QueryBuilder";
 import QueryEditor from "./Query/QueryEditor";
 import QueryExecution from "./Query/QueryExecution";
-import FetchingLoader from "../Components/FetchingLoader";
-import BGMessage from "../Components/BGMessage";
 import CompareChangesModal from "./Query/CompareChangesModal";
 import SaveError from "./Query/SaveError";
 import SavingMessage from "./Query/SavingMessage";
 import DeleteError from "./Query/DeleteError";
 import DeletingMessage from "./Query/DeletingMessage";
+import SpinnerPanel from "../Components/SpinnerPanel";
+import ErrorPanel from "../Components/ErrorPanel";
 
 const useStyles = createUseStyles({
   container: {
@@ -100,35 +99,68 @@ const Query = observer(() => {
   const params = useParams();
   const {id, mode="build"} = params;
 
-  const location = useLocation();
   const navigate = useNavigate();
 
-  const { queryBuilderStore } = useStores();
+  const { queryBuilderStore, typeStore } = useStores();
 
-  
+  const selectQuery = async () => {
+    let query = queryBuilderStore.findQuery(id);
+    if(!query) {
+      await queryBuilderStore.fetchQuery(id);
+      query = queryBuilderStore.findQuery(id);
+    }
+    if(query) {
+      const typeName = query.meta.type;
+      const type = typeStore.types[typeName];
+      if(type) {
+        queryBuilderStore.selectRootSchema(type);
+        queryBuilderStore.selectQuery(query);
+        queryBuilderStore.setMode(mode);
+      } else {
+        navigate("/", {replace: true});
+      }
+    } else if (!queryBuilderStore.fetchQueryError && !queryBuilderStore.isFetchingQuery) {
+      if(queryBuilderStore.hasRootSchema) {
+        queryBuilderStore.setAsNewQuery(id);
+      } else {
+        queryBuilderStore.clearRootSchema();
+        navigate("/", {replace: true});
+      }
+    }
+  };
+
   useEffect(() => {
     ReactPiwik.push(["setCustomUrl", window.location.href]);
     ReactPiwik.push(["trackPageView"]);
-    queryBuilderStore.selectQueryById(id, mode, location, navigate)
+    if (queryBuilderStore.isValidMode(mode)) {
+      selectQuery();
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const handleRetry = () => queryBuilderStore.selectQueryById(id, mode, location, navigate);
+  const handleContinue = () => navigate("/");
+
+  if (!queryBuilderStore.isValidMode(mode)) {
+    return (
+      <Navigate to={`/queries/${id}/build`} />
+    );
+  }
 
   if (queryBuilderStore.isFetchingQuery) {
     return (
-      <FetchingLoader>Fetching query with id {id} ... </FetchingLoader>
+      <SpinnerPanel text={`Fetching query with id ${id} ... `} />
     );
   }
 
   if (queryBuilderStore.fetchQueryError) {
     return (
-      <BGMessage icon={faBan}>
-        {queryBuilderStore.fetchQueryError}
-        <Button variant="primary" onClick={handleRetry}>
+      <ErrorPanel>
+        {queryBuilderStore.fetchQueryError}<br /><br />
+        <Button variant="primary" onClick={selectQuery}>
           <FontAwesomeIcon icon={faRedoAlt} />&nbsp;&nbsp; Retry
         </Button>
-      </BGMessage>
+        <Button variant={"primary"} onClick={handleContinue}>Continue</Button>
+      </ErrorPanel>
     );
   }
 

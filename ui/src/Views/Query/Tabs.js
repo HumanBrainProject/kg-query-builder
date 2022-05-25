@@ -96,7 +96,13 @@ const Tabs = observer(() => {
 
   const setMode = mode => {
     ReactPiwik.push(["trackEvent", "Type", "ChangeMode", mode]);
-    queryBuilderStore.setMode(mode, location, navigate);
+
+    const id = (queryBuilderStore.saveAsMode && queryBuilderStore.sourceQuery && queryBuilderStore.queryId !== queryBuilderStore.sourceQuery.id)?queryBuilderStore.sourceQuery.id:queryBuilderStore.queryId;
+    queryBuilderStore.setMode(mode);
+    const path = `/queries/${id}/${mode}`;
+    if (location.pathname !== path) {
+      navigate(path);
+    }
   }
 
   return (

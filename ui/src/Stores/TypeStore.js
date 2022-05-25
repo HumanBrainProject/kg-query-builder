@@ -27,9 +27,10 @@ import debounce from "lodash/debounce";
 export class TypeStore {
   filterValue = "";
   types = {};
-  spaceTypeList = [];
+  typeList = [];
   fetchError = null;
   isFetching = false;
+  isFetched = false;
   typesQueue = new Set();
   queueThreshold = 5000;
   queueTimeout = 250;
@@ -43,13 +44,13 @@ export class TypeStore {
     makeObservable(this, {
       filterValue: observable,
       types: observable,
-      spaceTypeList: observable,
+      typeList: observable,
       fetchError: observable,
       isFetching: observable,
       fetchingQueueError: observable,
       isFetchingQueue: observable,
-      isFetched: computed,
-      filteredSpaceTypeList: computed,
+      isFetched: observable,
+      filteredTypeList: computed,
       hasTypes: computed,
       setFilterValue: action,
       fetch: action,
@@ -62,17 +63,13 @@ export class TypeStore {
     this.rootStore = rootStore;
   }
 
-  get isFetched() {
-    return !this.fetchError && this.spaceTypeList.length;
-  }
-
-  get filteredSpaceTypeList() {
-    return this.spaceTypeList.filter(type => type.label.toLowerCase().indexOf(this.filterValue.trim().toLowerCase()) !== -1);
+  get filteredTypeList() {
+    return this.typeList.filter(type => type.label.toLowerCase().indexOf(this.filterValue.trim().toLowerCase()) !== -1);
   }
 
   get hasTypes() {
     return (
-      !!this.spaceTypeList.length
+      !!this.typeList.length
     );
   }
 
@@ -80,8 +77,8 @@ export class TypeStore {
     this.filterValue = value;
   }
 
-  async fetch(forceFetch=false) {
-    if (!this.isFetching && (!this.types.length || !!forceFetch)) {
+  async fetch() {
+    if (!this.isFetching) {
       this.isFetching = true;
       this.fetchError = null;
       try {
@@ -100,15 +97,17 @@ export class TypeStore {
               })
               .sort((a, b) => a.label.localeCompare(b.label))
           }));
-          this.spaceTypeList = types.sort((a, b) => a.label.localeCompare(b.label));
+          this.typeList = types.sort((a, b) => a.label.localeCompare(b.label));
           types.forEach(type => this.types[type.id] = type);
           this.isFetching = false;
+          this.isFetched = true;
         });
       } catch (e) {
         const message = e.message ? e.message : e;
         runInAction(() => {
           this.fetchError = `Error while fetching types (${message})`;
           this.isFetching = false;
+          this.isFetched = false;
         });
       }
     }

@@ -51,7 +51,7 @@ const Schemas = observer(({cursor, onKeyDown}) =>  {
 
   return (
     <div className={classes.container}>
-      {typeStore.filteredSpaceTypeList.map((type, index) =>
+      {typeStore.filteredTypeList.map((type, index) =>
         (<div className={cursor === index ? classes.activeSchema: ""} key={type.id}>
           <Schema key={type.id} type={type} enableFocus={cursor === index} onKeyDown={onKeyDown}/>
         </div>)

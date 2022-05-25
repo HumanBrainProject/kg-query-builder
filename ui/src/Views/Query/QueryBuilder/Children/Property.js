@@ -27,7 +27,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faLongArrowAltLeft} from "@fortawesome/free-solid-svg-icons/faLongArrowAltLeft";
 import { observer } from "mobx-react-lite";
 
-import Types from "../../../Types";
+import PropertyTypes from "../../../PropertyTypes";
 
 const useStyles = createUseStyles({
   property: {
@@ -67,7 +67,7 @@ const Property = observer(({ property, onClick }) => {
         </React.Fragment>
       )}
       {label} - <small>{attribute}</small>
-      <Types types={canBe} />
+      <PropertyTypes types={canBe} />
     </div>
   );
 });
