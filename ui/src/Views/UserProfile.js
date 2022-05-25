@@ -33,7 +33,7 @@ import ErrorPanel from "../Components/ErrorPanel";
 
 import Spaces from "./Spaces";
 
-const Authenticate = observer(() => {
+const UserProfile = observer(() => {
 
   const { authStore } = useStores();
 
@@ -83,6 +83,6 @@ const Authenticate = observer(() => {
   )
 
 });
-Authenticate.displayName = "Authenticate";
+UserProfile.displayName = "UserProfile";
 
-export default Authenticate;
+export default UserProfile;
