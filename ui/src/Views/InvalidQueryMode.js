@@ -22,31 +22,16 @@
  */
 
 import React from "react";
-import { observer } from "mobx-react-lite";
-import { Navigate, Routes, Route } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
-import { useStores } from "../Hooks/UseStores";
-
-import Queries from "./Queries";
-import RootSchema from "./RootSchema";
-import Query from "./Query";
-import InvalidQueryMode from "./InvalidQueryMode";
-
-const Views = observer(() => {
-
-const {queryBuilderStore } = useStores();
+const InvalidQueryMode = () => {
+  
+  const params = useParams();
+  const { id } = params;
 
   return (
-    <Routes>
-      <Route path="/" element={<RootSchema />} />
-      <Route path="queries/:id" element={<Query mode="build" />} />
-      <Route path="queries/:id/edit" element={<Query mode="edit" />} />
-      <Route path="queries/:id/execute" element={<Query mode="execute" />} />
-      <Route path="queries/:id/*" element={<InvalidQueryMode />} />
-      {queryBuilderStore.hasRootSchema && <Route path="queries" element={<Queries />} />}
-      <Route path="*" element={<Navigate to="/" replace={true} />} />  
-    </Routes>
+    <Navigate to={`/queries/${id}`} replace={true} /> 
   );
-});
+};
 
-export default Views;
+export default InvalidQueryMode;
