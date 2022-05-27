@@ -21,27 +21,25 @@
  *
  */
 
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import ReactJson from "react-json-view";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import { Scrollbars } from "react-custom-scrollbars-2";
 
 import { useStores } from "../../../Hooks/UseStores";
 
 import ThemeRJV from "../../../Themes/ThemeRJV";
-import ResultTable from "./ResultTable";
 
 const useStyles = createUseStyles({
-  container:{
-    position:"relative",
+  container: {
+    position: "relative",
     display: "grid",
     gridTemplateRows: "auto 1fr",
     height: "100%",
-    color:"var(--ft-color-loud)",
-    background:"var(--bg-color-ui-contrast3)",
+    color: "var(--ft-color-loud)",
+    background: "var(--bg-color-ui-contrast3)",
     border: "1px solid var(--border-color-ui-contrast1)"
   },
   toggle: {
@@ -49,7 +47,7 @@ const useStyles = createUseStyles({
     padding: "10px 10px 0 0"
   },
   result: {
-    padding:"10px"
+    padding: "10px"
   },
   executionTime: {
     float: "left",
@@ -58,48 +56,48 @@ const useStyles = createUseStyles({
   }
 });
 
-const Result = observer(() => {
+const download = content => {
+  const a = document.createElement("a");
+  const file = new Blob([content], { type: "text/plain" });
+  a.href = URL.createObjectURL(file);
+  a.download = "result.json";
+  a.click();
+};
 
+const Result = observer(() => {
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
 
-  const [viewAsTable, setViewAsTable] = useState(false);
-
   const scrollRef = useRef();
 
-  const selectTable = () => setViewAsTable(true);
-
-  const selectJSON = () => setViewAsTable(false);
+  const handeDownload = () => download(JSON.stringify(queryBuilderStore.result));
 
   if (!queryBuilderStore.result) {
     return null;
   }
 
-  const executionTime = `${queryBuilderStore.result.durationInMs/1000} seconds`;  
+  const executionTime = `${queryBuilderStore.result.durationInMs / 1000} seconds`;
   return (
     <div className={classes.container}>
       <div className={classes.toggle}>
-        <span className={classes.executionTime}>
-          Took {executionTime}.
-        </span>
-        <ButtonGroup>
-          <Button variant="secondary" onClick={selectJSON}>JSON</Button>
-          <Button variant="secondary" onClick={selectTable}>Table</Button>
-        </ButtonGroup>
+        <span className={classes.executionTime}>Took {executionTime}.</span>
+        <Button variant="secondary" onClick={handeDownload}>
+          Download
+        </Button>
       </div>
       <div className={classes.result}>
         <Scrollbars autoHide ref={scrollRef}>
-          {viewAsTable?
-            <ResultTable />
-            :
-            <ReactJson collapsed={1} name={false} theme={ThemeRJV} src={queryBuilderStore.result} />
-          }
+          <ReactJson
+            collapsed={1}
+            name={false}
+            theme={ThemeRJV}
+            src={queryBuilderStore.result}
+          />
         </Scrollbars>
       </div>
     </div>
   );
-
 });
 Result.displayName = "Result";
 
