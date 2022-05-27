@@ -27,7 +27,7 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faSave} from "@fortawesome/free-solid-svg-icons/faSave";
 import ReactPiwik from "react-piwik";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, matchPath } from "react-router-dom";
 
 import { useStores } from "../../../Hooks/UseStores";
 
@@ -44,7 +44,8 @@ const SaveButton = observer(({ disabled }) => {
       "Save",
       queryBuilderStore.rootField.id,
     ]);
-    queryBuilderStore.saveQuery(navigate);
+    const match = matchPath({path:"/queries/:id/:mode"}, location.pathname);
+    queryBuilderStore.saveQuery(navigate, match?.params?.mode);
   };
 
   return (

@@ -77,6 +77,9 @@ const useStyles = createUseStyles({
     background: "var(--bg-color-ui-contrast2)",
     border: "1px solid var(--border-color-ui-contrast2)",
     borderLeft: "none"
+  },
+  unknownType: {
+    background: "var(--bg-color-warn-quiet)"
   }
 });
 
@@ -106,7 +109,7 @@ const Header = observer(() => {
     queryBuilderStore.resetRootSchema();
     const uuid = _.uuid();
     queryBuilderStore.setAsNewQuery(uuid);
-    navigate(`/queries/${uuid}`);
+    navigate(`/queries/${uuid}${queryBuilderStore.hasSupportedRootSchema?"":"/edit"}`);
   };
 
   const icon = queryBuilderStore.isSaving?faCircleNotch:faTag; 
@@ -124,9 +127,9 @@ const Header = observer(() => {
               {authStore.isUserAuthorized && authStore.hasSpaces && (
                 queryBuilderStore.hasRootSchema?
                   <React.Fragment>
-                    <Tab Component={HomeTab} current={matchPath({ path: "/" }, location.pathname)} onClick={handleBrowseTypes} label={"Select another type"} hideLabel disable={queryBuilderStore.isSaving} />
+                    <Tab Component={HomeTab} className={queryBuilderStore.hasSupportedRootSchema?null:classes.unknownType} current={matchPath({ path: "/" }, location.pathname)} onClick={handleBrowseTypes} label={"Select another type"} hideLabel disable={queryBuilderStore.isSaving} />
                     <Tab icon={faSearch} current={matchPath({ path: "/queries" }, location.pathname)} onClick={handleBrowseStoredQueries} hideLabel label={"Browse stored queries"} disable={queryBuilderStore.isSaving} />
-                    <Tab icon={faFile} current={false} onClick={handleBuildNewQuery} hideLabel label={"New query"} disable={queryBuilderStore.isSaving} />
+                    <Tab icon={faFile} current={false} onClick={handleBuildNewQuery} hideLabel label={"New query"} disabled={queryBuilderStore.isSaving} />
                     {queryBuilderStore.queryId && (
                       <Tab icon={icon} iconSpin={queryBuilderStore.isSaving} current={matchPath({ path: "/queries/:id" }, location.pathname)} onClose={handleBrowseStoredQueries} label={label} />
                     )}

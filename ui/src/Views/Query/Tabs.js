@@ -30,7 +30,7 @@ import {faCode} from "@fortawesome/free-solid-svg-icons/faCode";
 import {faPlay} from "@fortawesome/free-solid-svg-icons/faPlay";
 import ReactPiwik from "react-piwik";
 import { useStores } from "../../Hooks/UseStores";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = createUseStyles({
   tabs: {
@@ -85,31 +85,26 @@ const Tab = ({ className, disabled, active, icon, mode, title, onClick }) => {
   );
 };
 
-const Tabs = observer(() => {
+const Tabs = observer(({ mode }) => {
 
   const classes = useStyles();
 
-  const location = useLocation();
   const navigate = useNavigate();
 
   const { queryBuilderStore } = useStores();
 
-  const setMode = mode => {
-    ReactPiwik.push(["trackEvent", "Type", "ChangeMode", mode]);
-
+  const setMode = selectedMode => {
+    ReactPiwik.push(["trackEvent", "Type", "ChangeMode", selectedMode]);
     const id = (queryBuilderStore.saveAsMode && queryBuilderStore.sourceQuery && queryBuilderStore.queryId !== queryBuilderStore.sourceQuery.id)?queryBuilderStore.sourceQuery.id:queryBuilderStore.queryId;
-    queryBuilderStore.setMode(mode);
-    const path = `/queries/${id}/${mode}`;
-    if (location.pathname !== path) {
-      navigate(path);
-    }
+    const path = (selectedMode === "build")?`/queries/${id}`:`/queries/${id}/${selectedMode}`;
+    navigate(path);
   }
 
   return (
     <div className={classes.tabs}>
-      <Tab className={classes.tab} icon={faTools} mode="build"   active={queryBuilderStore.mode === "build"}   onClick={setMode} title="build query"   disabled={queryBuilderStore.isSaving} />
-      <Tab className={classes.tab} icon={faCode}  mode="edit"    active={queryBuilderStore.mode === "edit"}    onClick={setMode} title="edit query"    disabled={queryBuilderStore.isSaving} />
-      <Tab className={classes.tab} icon={faPlay}  mode="execute" active={queryBuilderStore.mode === "execute"} onClick={setMode} title="execute query" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} />
+      <Tab className={classes.tab} icon={faTools} mode="build"   active={mode === "build"}   onClick={setMode} title="build query"   disabled={queryBuilderStore.isSaving} />
+      <Tab className={classes.tab} icon={faCode}  mode="edit"    active={mode === "edit"}    onClick={setMode} title="edit query"    disabled={queryBuilderStore.isSaving} />
+      <Tab className={classes.tab} icon={faPlay}  mode="execute" active={mode === "execute"} onClick={setMode} title="execute query" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} />
     </div>
   );
 });

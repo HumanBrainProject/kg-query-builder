@@ -112,7 +112,6 @@ export class QueryBuilderStore {
   fromSpace = null;
   isFetchingQuery = false;
   fetchQueryError = null;
-  mode = "build";
   specifications = [];
   includeAdvancedAttributes = false;
   resultSize = defaultResultSize;
@@ -172,8 +171,9 @@ export class QueryBuilderStore {
       resetRootSchema: action,
       clearRootSchema: action,
       setAsNewQuery: action,
-      hasRootSchema: computed,
       rootSchema: computed,
+      hasRootSchema: computed,
+      hasSupportedRootSchema: computed,
       isQuerySaved: computed,
       canSaveQuery: computed,
       canDeleteQuery: computed,
@@ -228,8 +228,6 @@ export class QueryBuilderStore {
       fromLabel: observable,
       fromDescription: observable,
       fromSpace: observable,
-      mode: observable,
-      setMode: action,
       includeAdvancedAttributes: observable,
       toggleIncludeAdvancedAttributes: action,
       saveLabel: computed
@@ -432,9 +430,6 @@ export class QueryBuilderStore {
       this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
       this.space = toJS(this.rootStore.authStore.privateSpace);
       this.selectField(this.rootField);
-      if (this.mode !== "build" && this.mode !== "edit") {
-        this.mode = "build";
-      }
       this.resultStart = 0;
       this.resultSize = defaultResultSize;
       this.resultInstanceId = "";
@@ -445,16 +440,15 @@ export class QueryBuilderStore {
 
   resetRootSchema() {
     if (!this.isSaving) {
+      const queryId = this.queryId;
       const rootField = this.rootField;
       this.clearRootSchema();
-      if (rootField) {
+      if (queryId && rootField) {
+        this.queryId = queryId
         this.rootField = new Field(rootField.schema);
         this.selectField(this.rootField);
       }
       this.rootField.isInvalidLeaf = true;
-      if (this.mode !== "build" && this.mode !== "edit") {
-        this.mode = "build";
-      }
     }
   }
 
@@ -484,9 +478,6 @@ export class QueryBuilderStore {
       this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
       this.space = toJS(this.rootStore.authStore.privateSpace);
       this.resetField();
-      if (this.mode !== "build" && this.mode !== "edit") {
-        this.mode = "build";
-      }
       this.resultStart = 0;
       this.resultSize = defaultResultSize;
       this.resultInstanceId = "";
@@ -514,18 +505,24 @@ export class QueryBuilderStore {
       this.fromDescription = "";
       this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
       this.space = toJS(this.rootStore.authStore.privateSpace);
-      if (this.mode !== "build" && this.mode !== "edit") {
-        this.mode = "build";
-      }
     }
   }
 
-  get hasRootSchema() {
-    return !!this.rootField && !!this.rootField.schema;
+  get rootSchema() {
+    return this.rootField?.schema;
   }
 
-  get rootSchema() {
-    return this.rootField && this.rootField.schema;
+  get hasRootSchema() {
+    return !!this.rootSchema;
+  }
+
+  get hasSupportedRootSchema() {
+    if (!this.hasRootSchema) {
+      return false;
+    }
+    const typeName = this.rootSchema.id;
+    const type = this.rootStore.typeStore.types[typeName];
+    return !!type;
   }
 
   get isQuerySaved() {
@@ -849,9 +846,6 @@ export class QueryBuilderStore {
       this.fromDescription = "";
       this.fromSpace = toJS(this.rootStore.authStore.getSpace(query.space));
       this.savedQueryHasInconsistencies = this.hasQueryChanged;
-      if (this.mode !== "build" && this.mode !== "edit") {
-        this.mode = "build";
-      }
     }
   }
 
@@ -877,7 +871,25 @@ export class QueryBuilderStore {
       this.defaultResponseVocab = this.context.query;
       this.responseVocab = this.context.query;
     }
-    this.rootField = buildFieldTreeFromQuery(this.rootStore.typeStore.types, this.context, toJS(this.rootField.schema), toJS(query));
+    const typeName = query?.meta?.type;
+    const type = this.rootStore.typeStore.types[typeName];
+    if(type) {
+      const schema = {
+        id: type.id,
+        label: type.label,
+        canBe: [type.id]
+      };
+      this.rootField = buildFieldTreeFromQuery(this.rootStore.typeStore.types, this.context, schema, toJS(query));
+    } else {
+      const unknownType = typeName?typeName:"<undefined>";
+      const unknownSchema = {
+        id: unknownType,
+        label: unknownType,
+        canBe: typeName?[typeName]:[]
+      };
+      this.rootField = buildFieldTreeFromQuery(this.rootStore.typeStore.types, this.context, unknownSchema, toJS(query));
+      this.rootField.isUnknown = true;
+    }
     this.selectField(this.rootField);
   }
 
@@ -1020,7 +1032,7 @@ export class QueryBuilderStore {
     this.description = description;
   }
 
-  async saveQuery(navigate) {
+  async saveQuery(navigate, mode) {
     if (!this.isQueryEmpty && !this.isSaving && !(this.sourceQuery && this.sourceQuery.isDeleting)) {
       this.isSaving = true;
       this.saveError = null;
@@ -1061,7 +1073,8 @@ export class QueryBuilderStore {
             this.fromLabel = "";
             this.fromDescription = "";
             this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
-            navigate(`/queries/${queryId}/${this.mode}`);
+            const path = mode?`/queries/${queryId}/${mode}`:`/queries/${queryId}`;
+            navigate(path);
           } else {
             if (this.sourceQuery) {
               this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
@@ -1253,10 +1266,6 @@ export class QueryBuilderStore {
 
   findQuery(id) {
     return this.specifications.find(spec => spec.id === id);
-  }
-
-  setMode(mode) {
-    this.mode = mode;
   }
 }
 

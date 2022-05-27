@@ -33,7 +33,9 @@ const ResetButton = observer(() => {
 
   const { queryBuilderStore } = useStores();
 
-  const onClick = () => queryBuilderStore.resetRootSchema();
+  const onClick = () => {
+    queryBuilderStore.resetRootSchema();
+  };
 
   return (
       <Button variant="secondary" onClick={onClick}>

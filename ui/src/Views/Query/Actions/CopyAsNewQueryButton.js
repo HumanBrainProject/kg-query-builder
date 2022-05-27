@@ -34,7 +34,7 @@ import { useStores } from "../../../Hooks/UseStores";
 
 const CopyAsNewQueryButton = observer(() => {
 
-  const navigation = useNavigate();
+  const navigate = useNavigate();
 
   const { queryBuilderStore } = useStores();
 
@@ -47,7 +47,7 @@ const CopyAsNewQueryButton = observer(() => {
     ]);
     const uuid = _.uuid();
     queryBuilderStore.setAsNewQuery(uuid);
-    navigation(`/queries/${uuid}`);
+    navigate(`/queries/${uuid}`);
   };
 
   if (!queryBuilderStore.isQuerySaved) {

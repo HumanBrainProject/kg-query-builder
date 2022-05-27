@@ -23,7 +23,7 @@
 
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, matchPath } from "react-router-dom";
 
 import { useStores } from "../../Hooks/UseStores";
 
@@ -31,11 +31,14 @@ import ActionError from "../../Components/ActionError";
 
 const SaveError = observer(() => {
 
-  const navigation = useNavigate();
+  const navigate = useNavigate();
 
   const { queryBuilderStore } = useStores();
 
-  const handleSave = () => queryBuilderStore.saveQuery(navigation);
+  const handleSave = () => {
+    const match = matchPath({path:"/queries/:id/:mode"}, location.pathname);
+    queryBuilderStore.saveQuery(navigate, match?.params?.mode);
+  }
 
   const handleCancelSave = () => queryBuilderStore.cancelSaveQuery();
 

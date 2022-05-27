@@ -100,7 +100,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const Tab = ({label, disabled, current, icon, iconColor, iconSpin, Component, hideLabel, path, onClick, onClose}) => {
+const Tab = ({label, className, disabled, current, icon, iconColor, iconSpin, Component, hideLabel, path, onClick, onClose}) => {
 
   const navigate = useNavigate();
 
@@ -126,7 +126,7 @@ const Tab = ({label, disabled, current, icon, iconColor, iconSpin, Component, hi
   const color = iconColor?{color:iconColor}:{};
 
   return (
-    <div className={`${classes.container} ${disabled? classes.disabled: ""} ${current? classes.current: ""} ${(!path && !onClick)?classes.readOnly:""} ${onClose?classes.closable:""}`} onClick={handleClick} title={label}>
+    <div className={`${classes.container} ${className?className:""} ${disabled? classes.disabled: ""} ${current? classes.current: ""} ${(!path && !onClick)?classes.readOnly:""} ${onClose?classes.closable:""}`} onClick={handleClick} title={label}>
       {Component?
         <Component />
         :

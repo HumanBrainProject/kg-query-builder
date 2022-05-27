@@ -194,7 +194,7 @@ const FieldTypes = observer(({ field }) => {
 FieldTypes.displayName = "FieldTypes";
 
 const UnknownField = ({ field, classes }) => {
-  if (field.isUnknown) {
+  if (field.isUnknown && field.parent) {
     if (field.schema.simpleAttributeName) {
       return (
         <React.Fragment>

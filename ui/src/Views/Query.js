@@ -104,20 +104,31 @@ const Query = observer(({ mode }) => {
   const { queryBuilderStore, typeStore } = useStores();
 
   const selectQuery = async () => {
-    let query = queryBuilderStore.findQuery(id);
-    if(!query) {
-      await queryBuilderStore.fetchQuery(id);
-      query = queryBuilderStore.findQuery(id);
-    }
-    if(query) {
-      const typeName = query.meta.type;
-      const type = typeStore.types[typeName];
-      if(type) {
-        queryBuilderStore.selectRootSchema(type);
-        queryBuilderStore.selectQuery(query);
-        queryBuilderStore.setMode(mode);
-      } else {
-        navigate("/", {replace: true});
+    if (id != queryBuilderStore.queryId) {
+      let query = queryBuilderStore.findQuery(id);
+      if(!query) {
+        await queryBuilderStore.fetchQuery(id);
+        query = queryBuilderStore.findQuery(id);
+      }
+      if(query) {
+        const typeName = query.meta.type;
+        const type = typeStore.types[typeName];
+        if(type) {
+          queryBuilderStore.selectRootSchema(type);
+          queryBuilderStore.selectQuery(query);
+        } else {
+          const unknownType = typeName?typeName:"<undefined>";
+          const unknownSchema = {
+            id: unknownType,
+            label: unknownType,
+            canBe: typeName?[typeName]:[]
+          };
+          queryBuilderStore.selectRootSchema(unknownSchema);
+          queryBuilderStore.selectQuery(query);
+          if (mode !== "edit") {
+            navigate(`/queries/${id}/edit`)
+          }
+        }
       }
     }
   };
@@ -152,9 +163,9 @@ const Query = observer(({ mode }) => {
   if(queryBuilderStore.hasRootSchema) {
     return (
       <div className={classes.container}>
-        <Tabs />
+        <Tabs mode={mode} />
         <div className={classes.body}>
-          <View mode={queryBuilderStore.mode} />
+          <View mode={mode} />
         </div>
         <SavingMessage />
         <SaveError />
