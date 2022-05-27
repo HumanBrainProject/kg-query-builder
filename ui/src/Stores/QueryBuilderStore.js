@@ -1216,8 +1216,12 @@ export class QueryBuilderStore {
         }
         case 404:
         {
-          // It means that the query does not exist.
-          return;
+          if (this.hasRootSchema) { // it's a new query created from ui
+            this.setAsNewQuery(queryId);
+          } else {
+            this.fetchQueryError = `Query id "${queryId}" does not exist`;
+          }
+          break;
         }
         default: {
           this.fetchQueryError = `Error while fetching query with id "${queryId}" (${message})`;
@@ -1249,10 +1253,6 @@ export class QueryBuilderStore {
 
   findQuery(id) {
     return this.specifications.find(spec => spec.id === id);
-  }
-
-  isValidMode(mode) {
-    return ["build", "edit", "execute"].includes(mode);
   }
 
   setMode(mode) {

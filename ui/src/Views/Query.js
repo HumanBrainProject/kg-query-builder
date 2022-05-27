@@ -28,7 +28,7 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 import ReactPiwik from "react-piwik";
-import { useNavigate, useParams, Navigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -92,12 +92,12 @@ const View = ({mode}) => {
   }
 };
 
-const Query = observer(() => {
+const Query = observer(({ mode }) => {
 
   const classes = useStyles();
   
   const params = useParams();
-  const {id, mode="build"} = params;
+  const { id } = params;
 
   const navigate = useNavigate();
 
@@ -119,32 +119,17 @@ const Query = observer(() => {
       } else {
         navigate("/", {replace: true});
       }
-    } else if (!queryBuilderStore.fetchQueryError && !queryBuilderStore.isFetchingQuery) {
-      if(queryBuilderStore.hasRootSchema) {
-        queryBuilderStore.setAsNewQuery(id);
-      } else {
-        queryBuilderStore.clearRootSchema();
-        navigate("/", {replace: true});
-      }
     }
   };
 
   useEffect(() => {
     ReactPiwik.push(["setCustomUrl", window.location.href]);
     ReactPiwik.push(["trackPageView"]);
-    if (queryBuilderStore.isValidMode(mode)) {
-      selectQuery();
-    }
+    selectQuery();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleContinue = () => navigate("/");
-
-  if (!queryBuilderStore.isValidMode(mode)) {
-    return (
-      <Navigate to={`/queries/${id}/build`} />
-    );
-  }
 
   if (queryBuilderStore.isFetchingQuery) {
     return (
