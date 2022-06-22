@@ -118,15 +118,29 @@ const getPropertyFromLookups = (types, lookups, attribute, isLeaf) => {
   if (!(types instanceof Object) || !Array.isArray(lookups) || !attribute) {
     return null;
   }
-  let property = null;
-  lookups.some(id => {
+  let property = lookups.reduce((acc, id) => {
     const type = types[id];
     if (type) {
-      property = type.properties.find(p => p.attribute === attribute && (isLeaf || p.canBe));
-      return !!property;
+      const prop = type.properties.find(p => p.attribute === attribute && (isLeaf || p.canBe));
+      if (prop) {
+        if (Array.isArray(acc.canBe) && Array.isArray(prop.canBe) && prop.canBe.length) {
+          const canBe = new Set(acc.canBe);
+          prop.canBe.forEach(p => canBe.add(p));
+          acc = {
+            ...acc,
+            ...prop,
+            canBe: Array.from(canBe)
+          };
+        } else {
+          acc = {
+            ...acc,
+            ...prop
+          };
+        }
+      }
+      return acc;
     }
-    return false;
-  });
+  }, {});
   if (property) {
     return toJS(property);
   }
@@ -170,6 +184,8 @@ const getField = (types, context, parentField, path, isLeaf) => {
     const relativePath = getRelativePath(path);
     const isReverse = getIsReverse(path);
     const typeFilter = getTypeFilter(path);
+    // eslint-disable-next-line no-debugger
+    debugger;
     const property = getProperty(types, context, parentField.lookups, relativePath, isReverse, isLeaf);
     const { isUnknown, ...schema } = property;
     
