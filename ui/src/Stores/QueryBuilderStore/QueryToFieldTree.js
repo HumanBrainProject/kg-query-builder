@@ -141,7 +141,7 @@ const getPropertyFromLookups = (types, lookups, attribute, isLeaf) => {
       return acc;
     }
   }, {});
-  if (property) {
+  if (Object.keys(property).length) {
     return toJS(property);
   }
   return null;
@@ -184,8 +184,6 @@ const getField = (types, context, parentField, path, isLeaf) => {
     const relativePath = getRelativePath(path);
     const isReverse = getIsReverse(path);
     const typeFilter = getTypeFilter(path);
-    // eslint-disable-next-line no-debugger
-    debugger;
     const property = getProperty(types, context, parentField.lookups, relativePath, isReverse, isLeaf);
     const { isUnknown, ...schema } = property;
     
