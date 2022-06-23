@@ -22,20 +22,41 @@
  */
 
 import React from "react";
-import {observer} from "mobx-react-lite";
-import Field from "./Field";
-import uniqueId from "lodash/uniqueId";
+import { observer } from "mobx-react-lite";
 
+import PropertyTypes from "../../../PropertyTypes";
+import Types from "./Types";
 
-const Fields = observer(({ field }) => (
-  <div>
-    {field.structure && !!field.structure.length && field.structure.map(structureField => {
-      return(
-        <Field field={structureField} key={uniqueId("field_")} />
+const Type = observer(({ field }) => {
+  if (field.isUnknown && field.parent) {
+    if (field.schema.simpleAttributeName) {
+      return (
+        <React.Fragment>
+          {field.schema.simpleAttributeName}&nbsp;
+          <span title={field.schema.attribute}>
+            ({" "}
+            {field.schema.attributeNamespace
+              ? field.schema.attributeNamespace
+              : field.schema.attribute}{" "}
+            )
+          </span>
+        </React.Fragment>
       );
-    })}
-  </div>
-));
-Fields.displayName = "Fields";
+    }
+    return field.schema.attribute;
+  }
 
-export default Fields;
+  if (field.parent) {
+    return (
+      <React.Fragment>
+        {field.schema.label}
+        <Types field={field} />
+      </React.Fragment>
+    );
+  }
+  return <PropertyTypes types={field.schema.canBe} />;
+});
+Type.displayName = "Type";
+
+
+export default Type;

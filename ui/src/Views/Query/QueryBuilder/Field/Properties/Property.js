@@ -23,39 +23,54 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faLongArrowAltLeft} from "@fortawesome/free-solid-svg-icons/faLongArrowAltLeft";
 import { observer } from "mobx-react-lite";
 
-import Property from "./Property";
+import PropertyTypes from "../../../../PropertyTypes";
 
 const useStyles = createUseStyles({
-  container: {
+  property: {
     color: "var(--ft-color-loud)",
-    "& h5": {
-      margin: "18px 0 6px 5px",
-      "& small": {
-        color: "var(--ft-color-quiet)",
-        fontStyle: "italic"
-      }
+    fontWeight: "normal",
+    cursor: "pointer",
+    padding: "10px",
+    margin: "1px",
+    background: "var(--bg-color-ui-contrast1)",
+    "& small": {
+      color: "var(--ft-color-quiet)",
+      fontStyle: "italic"
+    },
+    "&:hover": {
+      background: "var(--bg-color-ui-contrast4)"
     }
+  },
+  reverseLink: {
+    color: "greenyellow",
+    transform: "translateY(1px)"
   }
 });
 
-const Properties = observer(({ properties, label, onClick }) => {
+const Property = observer(({ property, onClick }) => {
+
   const classes = useStyles();
 
-  if (!Array.isArray(properties) || !properties.length) {
-    return null;
-  }
+  const { attribute, label, canBe } = property;
+
+  const handleClick = e => onClick(e, property);
 
   return (
-    <div className={classes.container}>
-      <h5>{label}</h5>
-      {properties.map(property => (
-        <Property key={`${property.attribute}${property.reverse?"reverse":""}`} property={property} onClick={onClick} />
-      ))}
+    <div className={classes.property} onClick={handleClick}>
+      {property.reverse && (
+        <React.Fragment>
+          <FontAwesomeIcon icon={faLongArrowAltLeft} className={classes.reverseLink} title="is an incoming link" />&nbsp;
+        </React.Fragment>
+      )}
+      {label} - <small>{attribute}</small>
+      <PropertyTypes types={canBe} />
     </div>
   );
 });
-Properties.displayName = "Properties";
+Property.displayName = "Property";
 
-export default Properties;
+export default Property;

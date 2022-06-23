@@ -26,12 +26,12 @@ import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { Scrollbars } from "react-custom-scrollbars-2";
 
-import { useStores } from "../../../Hooks/UseStores";
+import { useStores } from "../../../../Hooks/UseStores";
 
-import Filter from "../../../Components/Filter";
-import Groups from "./Children/Groups";
-import Properties from "./Children/Properties";
-import Toggle from "../../../Components/Toggle";
+import Filter from "../../../../Components/Filter";
+import Groups from "./Properties/Groups";
+import List from "./Properties/List";
+import Toggle from "../../../../Components/Toggle";
 
 const useStyles = createUseStyles({
   container: {
@@ -73,7 +73,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const Children = observer(() => {
+const Properties = observer(() => {
 
   const classes = useStyles();
 
@@ -107,7 +107,7 @@ const Children = observer(() => {
         <Filter className={classes.filter} value={queryBuilderStore.childrenFilterValue} placeholder="Filter properties" onChange={handleChildrenFilterChange} />
         <div className={classes.body}>
           <Scrollbars autoHide ref={scrollRef}>
-            <Properties
+            <List
               properties={lookupsCommonsAttributes}
               label="Attributes"
               onClick={handleAddField}
@@ -117,7 +117,7 @@ const Children = observer(() => {
               prefix="Attributes specific to"
               onClick={handleAddField}
             />
-            <Properties
+            <List
               properties={lookupsCommonsLinks}
               label="Links"
               onClick={handleAddField}
@@ -143,6 +143,6 @@ const Children = observer(() => {
     </div>
   );
 });
-Children.displayName = "Children";
+Properties.displayName = "Properties";
 
-export default Children;
+export default Properties;

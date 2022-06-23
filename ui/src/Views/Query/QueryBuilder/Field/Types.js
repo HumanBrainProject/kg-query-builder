@@ -22,45 +22,46 @@
  */
 
 import React from "react";
-import Icon from "../../../../Components/Icon";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faFilter} from "@fortawesome/free-solid-svg-icons/faFilter";
 
-import Property from "./Property";
+import PropertyTypes from "../../../PropertyTypes";
 
 const useStyles = createUseStyles({
-  container: {
-    color: "var(--ft-color-loud)",
-    "& h5": {
-      margin: "18px 0 6px 5px",
-      "& small": {
-        color: "var(--ft-color-quiet)",
-        fontStyle: "italic"
-      }
-    }
+  typeFilter: {
+    transform: "scale(0.9) translateY(1px)",
+    color: "lightskyblue"
   }
 });
 
-const GroupProperties = observer(({group, prefix, onClick }) => {
-
+const Types = observer(({ field }) => {
   const classes = useStyles();
 
-  const { id, label, color, properties } = group;
-
-  if (!Array.isArray(properties) || !properties.length) {
-    return null;
+  if (field.typeFilterEnabled && field.typeFilter && field.typeFilter.length) {
+    return (
+      <React.Fragment>
+        &nbsp;(&nbsp;
+        <FontAwesomeIcon icon={faFilter} className={classes.typeFilter} title="filtered types"  />
+        &nbsp;
+        <PropertyTypes types={field.typeFilter} />
+        &nbsp;)
+      </React.Fragment>
+    );
   }
 
-  return (
-    <div className={classes.container}>
-      <h5>{prefix} <Icon icon={faCircle} color={color}/> {label} <small> - {id}</small></h5>
-      {properties.map(property => (
-        <Property key={`${property.attribute}${property.reverse?"reverse":""}`} property={property} onClick={onClick} />
-      ))}
-    </div>
-  );
+  if (field.schema.canBe && !!field.schema.canBe.length) {
+    return (
+      <React.Fragment>
+        &nbsp;(&nbsp;
+        <PropertyTypes types={field.schema.canBe} />
+        &nbsp;)
+      </React.Fragment>
+    );
+  }
+  return null;
 });
-GroupProperties.displayName = "GroupProperties";
+Types.displayName = "Types";
 
-export default GroupProperties;
+export default Types;

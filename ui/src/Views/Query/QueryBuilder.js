@@ -30,8 +30,8 @@ import { useStores } from "../../Hooks/UseStores";
 import QueryForm from "./QueryBuilder/QueryForm";
 import Representation from "./QueryBuilder/Representation";
 import Actions from "./Actions";
-import Options from "./QueryBuilder/Options";
-import Children from "./QueryBuilder/Children";
+import Options from "./QueryBuilder/Field/Options";
+import Properties from "./QueryBuilder/Field/Properties";
 
 const useStyles = createUseStyles({
   container: {
@@ -110,7 +110,7 @@ const QueryBuilder = observer(() => {
       </div>
       <div className={classes.options}>
         <Options />
-        <Children />
+        <Properties />
       </div>
     </div>
   );

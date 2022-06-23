@@ -24,7 +24,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 
-import Toggle from "../../../../Components/Toggle";
+import Toggle from "../../../../../Components/Toggle";
 
 const Flatten = observer(({ field, show, onChange}) => {
 

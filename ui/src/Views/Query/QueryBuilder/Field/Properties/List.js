@@ -23,54 +23,39 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faLongArrowAltLeft} from "@fortawesome/free-solid-svg-icons/faLongArrowAltLeft";
 import { observer } from "mobx-react-lite";
 
-import PropertyTypes from "../../../PropertyTypes";
+import Property from "./Property";
 
 const useStyles = createUseStyles({
-  property: {
+  container: {
     color: "var(--ft-color-loud)",
-    fontWeight: "normal",
-    cursor: "pointer",
-    padding: "10px",
-    margin: "1px",
-    background: "var(--bg-color-ui-contrast1)",
-    "& small": {
-      color: "var(--ft-color-quiet)",
-      fontStyle: "italic"
-    },
-    "&:hover": {
-      background: "var(--bg-color-ui-contrast4)"
+    "& h5": {
+      margin: "18px 0 6px 5px",
+      "& small": {
+        color: "var(--ft-color-quiet)",
+        fontStyle: "italic"
+      }
     }
-  },
-  reverseLink: {
-    color: "greenyellow",
-    transform: "translateY(1px)"
   }
 });
 
-const Property = observer(({ property, onClick }) => {
-
+const List = observer(({ properties, label, onClick }) => {
   const classes = useStyles();
 
-  const { attribute, label, canBe } = property;
-
-  const handleClick = e => onClick(e, property);
+  if (!Array.isArray(properties) || !properties.length) {
+    return null;
+  }
 
   return (
-    <div className={classes.property} onClick={handleClick}>
-      {property.reverse && (
-        <React.Fragment>
-          <FontAwesomeIcon icon={faLongArrowAltLeft} className={classes.reverseLink} title="is an incoming link" />&nbsp;
-        </React.Fragment>
-      )}
-      {label} - <small>{attribute}</small>
-      <PropertyTypes types={canBe} />
+    <div className={classes.container}>
+      <h5>{label}</h5>
+      {properties.map(property => (
+        <Property key={`${property.attribute}${property.reverse?"reverse":""}`} property={property} onClick={onClick} />
+      ))}
     </div>
   );
 });
-Property.displayName = "Property";
+List.displayName = "List";
 
-export default Property;
+export default List;
