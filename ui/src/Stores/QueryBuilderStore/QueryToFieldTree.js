@@ -138,8 +138,8 @@ const getPropertyFromLookups = (types, lookups, attribute, isLeaf) => {
           };
         }
       }
-      return acc;
-    }
+    } 
+    return acc;
   }, {});
   if (Object.keys(property).length) {
     return toJS(property);
