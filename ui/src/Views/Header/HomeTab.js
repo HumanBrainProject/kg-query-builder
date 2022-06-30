@@ -23,10 +23,12 @@
 
 import React from "react";
 import { observer } from "mobx-react-lite";
+import {faCaretDown} from "@fortawesome/free-solid-svg-icons/faCaretDown";
 
 import { useStores } from "../../Hooks/UseStores";
 
 import PropertyTypes from "../PropertyTypes";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const HomeTab = observer(() => {
 
@@ -39,6 +41,7 @@ const HomeTab = observer(() => {
   return (
     <div>
       <PropertyTypes types={queryBuilderStore.rootSchema.canBe} />&nbsp;-&nbsp;<small>{queryBuilderStore.rootSchema.id}</small>
+      <FontAwesomeIcon icon={faCaretDown} style={{marginLeft: "5px"}} />
     </div>
   );
 });

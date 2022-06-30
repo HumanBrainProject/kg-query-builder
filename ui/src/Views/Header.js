@@ -100,13 +100,13 @@ const Header = observer(() => {
 
   const handleBrowseStoredQueries = () => {
     ReactPiwik.push(["trackEvent", "Tab", "BrowseQueries", queryBuilderStore.rootField.id]);
-    queryBuilderStore.resetRootSchema();
+    queryBuilderStore.resetQuery();
     navigate("/queries");
   };
 
   const handleBuildNewQuery = () => {
     ReactPiwik.push(["trackEvent", "Tab", "NewQuery", queryBuilderStore.rootField.id]);
-    queryBuilderStore.resetRootSchema();
+    queryBuilderStore.initializeFromRootField();
     const uuid = _.uuid();
     queryBuilderStore.setAsNewQuery(uuid);
     navigate(`/queries/${uuid}${queryBuilderStore.hasSupportedRootSchema?"":"/edit"}`);

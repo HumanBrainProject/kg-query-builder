@@ -230,7 +230,9 @@ export class QueryBuilderStore {
       fromSpace: observable,
       includeAdvancedAttributes: observable,
       toggleIncludeAdvancedAttributes: action,
-      saveLabel: computed
+      saveLabel: computed,
+      resetQuery: action,
+      initializeFromRootField: action
     });
 
     this.transportLayer = transportLayer;
@@ -438,13 +440,25 @@ export class QueryBuilderStore {
     }
   }
 
+  resetQuery() {
+    this.resetRootSchema();
+    this.queryId = null;
+  }
+
+  initializeFromRootField() {
+    const rootField = this.rootField;
+    this.rootField = new Field(rootField.schema);
+    this.selectField(this.rootField);
+    this.rootField.isInvalidLeaf = true;
+  }
+
   resetRootSchema() {
     if (!this.isSaving) {
       const queryId = this.queryId;
       const rootField = this.rootField;
       this.clearRootSchema();
       if (queryId && rootField) {
-        this.queryId = queryId
+        this.queryId = queryId;
         this.rootField = new Field(rootField.schema);
         this.selectField(this.rootField);
       }
@@ -504,7 +518,7 @@ export class QueryBuilderStore {
       this.fromLabel = "";
       this.fromDescription = "";
       this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
-      this.space = toJS(this.rootStore.authStore.privateSpace);
+      this.space = toJS(this.rootStore.authStore.privateSpace);      
     }
   }
 
