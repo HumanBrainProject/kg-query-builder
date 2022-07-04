@@ -122,7 +122,8 @@ const useStyles = createUseStyles({
     color: "var(--ft-color-error)"
   },
   textError: {
-    margin: 0,
+    color: "var(--ft-color-error)",
+    margin: "0px 15px",
     wordBreak: "keep-all"
   },
   description: {

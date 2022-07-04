@@ -47,7 +47,7 @@ const useStyles = createUseStyles({
       fontWeight: "lighter",
       textAlign:"center",
       color: "var(--ft-color-loud)",
-      background: "var(--list-bg-hover)",
+      background: "#0a2332",
       "& h5": {
         margin: "0",
         paddingBottom: "20px"

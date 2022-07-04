@@ -36,7 +36,7 @@ import { useNavigate } from "react-router-dom";
 const useStyles = createUseStyles({
   tabs: {
     borderRight: "1px solid var(--border-color-ui-contrast1)",
-    background: "var(--bg-color-ui-contrast2)"
+    background: "linear-gradient(180deg, rgba(5,10,20,0.4) 0%, rgba(10,40,50,0.4) 100%)"
   },
   tab: {
     color: "var(--ft-color-normal)",

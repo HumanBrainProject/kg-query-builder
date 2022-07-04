@@ -46,7 +46,7 @@ const useStyles = createUseStyles({
     outline: 0
   },
   popOver: {
-    background: "var(--list-bg-hover)",
+    background: "#0a2332",
     border: "1px solid var(--list-border-hover)",
     "& .arrow:after": {
       borderBottomColor: "var(--list-border-hover) !important"
