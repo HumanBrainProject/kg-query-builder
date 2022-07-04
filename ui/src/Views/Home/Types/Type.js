@@ -96,6 +96,7 @@ const Type = observer(({ type, enableFocus, onKeyDown }) =>  {
   const selectType = () => {
     if (type.id !== queryBuilderStore.rootSchemaId) {
       ReactPiwik.push(["trackEvent", "Type", "Select", type.id]);
+      localStorage.setItem("type", type.id);
       queryBuilderStore.selectRootSchema(type);
     }
   };

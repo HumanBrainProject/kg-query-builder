@@ -26,6 +26,8 @@ import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";;
 import ReactPiwik from "react-piwik";
 
+import { useStores } from "../Hooks/UseStores";
+
 import Types from "./Home/Types";
 import Selection from "./Home/Selection";
 
@@ -50,9 +52,20 @@ const Home = observer(() => {
 
   const classes = useStyles();
 
+  const { typeStore, queryBuilderStore } = useStores();
+
   useEffect(() => {
     ReactPiwik.push(["setCustomUrl", window.location.href]);
     ReactPiwik.push(["trackPageView"]);
+    if (!queryBuilderStore.hasRootSchema) {
+      const typeId = localStorage.getItem("type");
+      const type = typeId && typeStore.types[typeId];
+      if (type) {
+          queryBuilderStore.selectRootSchema(type);
+      } else {
+        localStorage.removeItem("type");
+      }
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

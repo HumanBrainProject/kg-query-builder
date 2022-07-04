@@ -112,6 +112,9 @@ const Query = observer(({ mode }) => {
       }
       if(query) {
         const typeName = query.meta.type;
+        if (localStorage.getItem("type")) {
+          localStorage.setItem("type", typeName);
+        }
         const type = typeStore.types[typeName];
         if(type) {
           queryBuilderStore.selectRootSchema(type);
