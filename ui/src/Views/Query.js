@@ -140,7 +140,10 @@ const Query = observer(({ mode }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const handleContinue = () => navigate("/");
+  const handleContinue = () => {
+    queryBuilderStore.clearQuery();
+    navigate("/");
+  };
 
   if (queryBuilderStore.isFetchingQuery) {
     return (
