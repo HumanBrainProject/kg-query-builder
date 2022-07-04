@@ -46,13 +46,18 @@ const useStyles = createUseStyles({
   },
   body:{
     color:"var(--ft-color-loud)",
-    background:"var(--bg-color-ui-contrast3)",
+    background1:"var(--bg-color-ui-contrast3)",
+    background: "rgba(0,0,0,0.4)",
     border: "1px solid var(--border-color-ui-contrast1)",
-    padding:"10px"
+    padding:"10px",
+    "& .react-json-view": {
+      backgroundColor: "rgba(0,0,0,0.3) !important"
+    }
   },
   actions: {
     position: "relative",
-    background: "var(--bg-color-ui-contrast2)",
+    background1: "var(--bg-color-ui-contrast2)",
+    background: "linear-gradient(90deg, rgba(5,25,35,0.4) 0%, rgba(5,20,35,0.8) 100%)",
     border: "1px solid var(--border-color-ui-contrast1)",
     color: "var(--ft-color-loud)",
     padding: "10px 10px 0 0",

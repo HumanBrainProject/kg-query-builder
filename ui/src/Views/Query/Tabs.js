@@ -25,6 +25,7 @@ import React from "react";
 import {observer} from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faHome} from "@fortawesome/free-solid-svg-icons/faHome";
 import {faTools} from "@fortawesome/free-solid-svg-icons/faTools";
 import {faCode} from "@fortawesome/free-solid-svg-icons/faCode";
 import {faPlay} from "@fortawesome/free-solid-svg-icons/faPlay";
@@ -93,8 +94,15 @@ const Tabs = observer(({ mode }) => {
 
   const { queryBuilderStore } = useStores();
 
+  const goHome = () => {
+    ReactPiwik.push(["trackEvent", "Tab", "Home"]);
+    queryBuilderStore.clearQueries();
+    queryBuilderStore.clearQuery();
+    navigate("/");
+  };
+
   const setMode = selectedMode => {
-    ReactPiwik.push(["trackEvent", "Type", "ChangeMode", selectedMode]);
+    ReactPiwik.push(["trackEvent", "Tab", "ChangeMode", selectedMode]);
     const id = (queryBuilderStore.saveAsMode && queryBuilderStore.sourceQuery && queryBuilderStore.queryId !== queryBuilderStore.sourceQuery.id)?queryBuilderStore.sourceQuery.id:queryBuilderStore.queryId;
     const path = (selectedMode === "build")?`/queries/${id}`:`/queries/${id}/${selectedMode}`;
     navigate(path);
@@ -102,6 +110,7 @@ const Tabs = observer(({ mode }) => {
 
   return (
     <div className={classes.tabs}>
+      <Tab className={classes.tab} icon={faHome}                 active={false}              onClick={goHome}  title="home"          disabled={queryBuilderStore.isSaving} />
       <Tab className={classes.tab} icon={faTools} mode="build"   active={mode === "build"}   onClick={setMode} title="build query"   disabled={queryBuilderStore.isSaving} />
       <Tab className={classes.tab} icon={faCode}  mode="edit"    active={mode === "edit"}    onClick={setMode} title="edit query"    disabled={queryBuilderStore.isSaving} />
       <Tab className={classes.tab} icon={faPlay}  mode="execute" active={mode === "execute"} onClick={setMode} title="execute query" disabled={queryBuilderStore.isSaving || !!queryBuilderStore.saveError || queryBuilderStore.isQueryEmpty} />

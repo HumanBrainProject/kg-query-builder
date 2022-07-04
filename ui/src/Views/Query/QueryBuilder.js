@@ -65,7 +65,8 @@ const useStyles = createUseStyles({
     position:"relative",
     display: "grid",
     gridTemplateRows: "auto 1fr",
-    background: "var(--bg-color-ui-contrast2)",
+    background1: "var(--bg-color-ui-contrast2)",
+    background: "linear-gradient(135deg, rgba(5,20,40,0.6) 0%, rgba(5,25,40,0.9) 100%)",
     border: "1px solid var(--border-color-ui-contrast1)",
     color: "var(--ft-color-loud)",
     padding: "10px"
@@ -74,7 +75,8 @@ const useStyles = createUseStyles({
   representation:{},
   actions: {
     position: "relative",
-    background: "var(--bg-color-ui-contrast2)",
+    background1: "var(--bg-color-ui-contrast2)",
+    background: "linear-gradient(90deg, rgba(5,25,35,0.4) 0%, rgba(5,20,35,0.8) 100%)",
     border: "1px solid var(--border-color-ui-contrast1)",
     color: "var(--ft-color-loud)",
     padding: "10px 10px 0 0",

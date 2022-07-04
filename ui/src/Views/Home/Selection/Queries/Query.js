@@ -34,11 +34,11 @@ import {faCircleNotch} from "@fortawesome/free-solid-svg-icons/faCircleNotch";
 import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
 import Button from "react-bootstrap/Button";
 import ReactPiwik from "react-piwik";
-
-import { useStores } from "../../Hooks/UseStores";
-
-import PopOverButton from "../../Components/PopOverButton";
 import { useNavigate } from "react-router-dom";
+
+import { useStores } from "../../../../Hooks/UseStores";
+
+import PopOverButton from "../../../../Components/PopOverButton";
 
 const useStyles = createUseStyles({
   container:{
@@ -46,10 +46,10 @@ const useStyles = createUseStyles({
     cursor:"pointer",
     margin:"4px 0",
     padding:"10px",
-    background:"var(--bg-color-ui-contrast1)",
+    background: "rgba(0,0,0,0.4)",
     color:"var(--ft-color-normal)",
     "&:hover": {
-      background:"var(--bg-color-ui-contrast4)",
+      background: "linear-gradient(90deg, rgba(30,60,70,0.9) 0%, rgba(20,50,60,0.9) 100%)",
       "& $deleteButton": {
         color: "var(--ft-color-normal)",
         "&:hover, &:active, &:focus": {
@@ -135,7 +135,7 @@ const useStyles = createUseStyles({
 });
 
 
-const SavedQuery = observer(({query, enableDelete}) => {
+const Query = observer(({query, enableDelete}) => {
 // const SavedQuery = observer(({query, showUser, enableDelete}) => {
   const classes = useStyles();
 
@@ -222,6 +222,6 @@ const SavedQuery = observer(({query, enableDelete}) => {
     </div>
   );
 });
-SavedQuery.displayName = "SavedQuery";
+Query.displayName = "Query";
 
-export default SavedQuery;
+export default Query;

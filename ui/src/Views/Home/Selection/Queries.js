@@ -28,77 +28,49 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import ReactPiwik from "react-piwik";
 
-import { useStores } from "../Hooks/UseStores";
+import { useStores } from "../../../Hooks/UseStores";
 
-import SpinnerPanel from "../Components/SpinnerPanel";
-import ErrorPanel from "../Components/ErrorPanel";
-import Filter from "../Components/Filter";
-import SavedQueries from "./Queries/SavedQueries";
+import Spinner from "../../../Components/Spinner";
+import ErrorPanel from "../../../Components/ErrorPanel";
+import Filter from "../../../Components/Filter";
+import List from "./Queries/List";
 
 const useStyles = createUseStyles({
   panel: {
     position: "relative",
     display: "grid",
     gridTemplateRows: "auto 1fr",
-    height: "85vh",
-    width: "90%",
-    margin: "auto",
-    marginTop: "5vh",
-    background: "var(--bg-color-ui-contrast2)",
     color: "var(--ft-color-normal)",
     border: "1px solid var(--border-color-ui-contrast2)",
-    overflow: "hidden",
-    "@media screen and (min-width:1024px)": {
-      width: "900px"
-    }
+    overflow: "hidden"
   },
   filter: {
-    border: 0
+    border: 0,
+    background: "linear-gradient(90deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 100%)"
   },
   body: {
     borderTop: "1px solid var(--border-color-ui-contrast2)",
-    padding: "0 0 10px 15px",
-    background: "var(--bg-color-ui-contrast2)"
+    padding: "0 0 10px 15px"
   },
   content: {
     paddingRight: "15px"
   },
-  loader: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    zIndex: 10000,
-    background: "var(--bg-color-blend-contrast1)",
-    "& .fetchingPanel": {
-      width: "auto",
-      padding: "30px",
-      border: "1px solid var(--border-color-ui-contrast1)",
-      borderRadius: "4px",
-      color: "var(--ft-color-loud)",
-      background: "var(--list-bg-hover)"
-    }
-  },
-  error: {
-    color: "var(--ft-color-loud)",
-    "& button + button": {
-      marginLeft: "60px"
-    }
+  spinner: {
+    position: "relative !important",
+    top: "15px",
+    left: "5px",
+    transform: "none"
   }
 });
 
-const Queries = observer(() => {
+const Queries = observer(({className}) => {
 
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
 
   useEffect(() => {
-    ReactPiwik.push(["setCustomUrl", window.location.href]);
-    ReactPiwik.push(["trackPageView"]);
     if (queryBuilderStore.hasRootSchema) {
       queryBuilderStore.fetchQueries();
     }
@@ -126,7 +98,9 @@ const Queries = observer(() => {
 
   if (queryBuilderStore.isFetchingQueries) {
     return (
-      <SpinnerPanel text={`Fetching saved queries for ${queryBuilderStore.rootSchema.id}...`} />
+      <Spinner className={classes.spinner}>
+        Fetching queries for {queryBuilderStore.rootSchema.label}...
+      </Spinner>
     );
   }
 
@@ -142,13 +116,13 @@ const Queries = observer(() => {
   }
 
   return (
-    <div className={classes.panel} >
+    <div className={`${classes.panel} ${className?className:""}`} >
       <Filter className={classes.filter} value={queryBuilderStore.queriesFilterValue} placeholder="Filter queries" onChange={handleChange} />
       <div className={classes.body}>
         <Scrollbars autoHide>
           <div className={classes.content}>
             {queryBuilderStore.groupedFilteredQueries.map(group => (
-              <SavedQueries
+              <List
                 key={group.name}
                 title={group.label}
                 list={group.queries}

@@ -157,16 +157,16 @@ const useStyles = createUseStyles(theme => ({
     display: "grid",
     overflow: "hidden",
     gridTemplateColumns: "1fr",
-    gridTemplateRows: "auto 1fr 20px"
-  },
-  body: {
-    position: "relative",
-    overflow: "hidden",
+    gridTemplateRows: "auto 1fr 20px",
     background: "linear-gradient(var(--bg-gradient-angle), var(--bg-gradient-start), var(--bg-gradient-end))",
     backgroundSize: getBackgroundSize(theme),
     backgroundImage: theme.background.image?`url('${theme.background.image}')`:"unset",
     backgroundPosition: theme.background.position?theme.background.position:"unset",
     color: "var(--ft-color-normal)"
+  },
+  body: {
+    position: "relative",
+    overflow: "hidden"
   }
 }));
 

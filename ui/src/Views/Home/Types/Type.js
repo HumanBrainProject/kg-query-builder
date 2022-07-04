@@ -24,39 +24,38 @@
 import React, {useEffect, useRef} from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
-import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faChevronRight} from "@fortawesome/free-solid-svg-icons/faChevronRight";
 import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
-import _  from "lodash-uuid";
 import ReactPiwik from "react-piwik";
 
-import Icon from "../../Components/Icon";
+import Icon from "../../../Components/Icon";
 
-import { useStores } from "../../Hooks/UseStores";
+import { useStores } from "../../../Hooks/UseStores";
 
 const useStyles = createUseStyles({
   container: {
     position: "relative",
     margin: "4px 1px",
     padding: "15px 10px",
-    background: "var(--bg-color-ui-contrast1)",
     color: "var(--ft-color-loud)",
     fontSize: "1.2em",
     fontWeight: "normal",
     cursor: "pointer",
     transition: "background .3s ease-in-out",
+    background: "rgba(0,0,0,0.4)",
     "& small": {
       color: "var(--ft-color-quiet)",
       fontStyle: "italic"
     },
-    "&:hover": {
-      background: "var(--bg-color-ui-contrast4)",
+    "&:hover, &$selected": {
+      background: "linear-gradient(90deg, rgba(30,60,70,0.9) 0%, rgba(20,50,60,0.9) 100%)",
       "& $nextIcon": {
         color: "var(--ft-color-loud)"
       }
     }
   },
+  selected: {},
   nextIcon: {
     position: "absolute",
     top: "16px",
@@ -79,13 +78,11 @@ const getTypeLabel = type => {
   return parts[parts.length-1];
 };
 
-const Schema = observer(({ type, enableFocus, onKeyDown }) =>  {
+const Type = observer(({ type, enableFocus, onKeyDown }) =>  {
 
   const classes = useStyles();
 
   const ref = useRef();
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (enableFocus && ref.current) {
@@ -96,29 +93,26 @@ const Schema = observer(({ type, enableFocus, onKeyDown }) =>  {
 
   const { queryBuilderStore } = useStores();
 
-  const handleClick = () => {
-    ReactPiwik.push(["trackEvent", "Type", "Select", type.id]);
-    queryBuilderStore.selectRootSchema(type);
-    selectSchema();
+  const selectType = () => {
+    if (type.id !== queryBuilderStore.rootSchemaId) {
+      ReactPiwik.push(["trackEvent", "Type", "Select", type.id]);
+      queryBuilderStore.selectRootSchema(type);
+    }
   };
+
+  const handleClick = () => selectType();
 
   const handleKeyDown= e => {
     if(e.keyCode === 13) {
-      queryBuilderStore.selectRootSchema(type);
-      selectSchema();
+      selectType();
     }
     onKeyDown(e);
-  };
-
-  const selectSchema = () => {
-    const uuid = _.uuid();
-    navigate(`/queries/${uuid}`);
   };
 
   const label = getTypeLabel(type);
 
   return (
-    <div tabIndex={-1} ref={ref} className={classes.container} onClick={handleClick} onKeyDown={handleKeyDown}>
+    <div tabIndex={-1} ref={ref} className={`${classes.container} ${type.id === queryBuilderStore.rootSchemaId?classes.selected:""}`} onClick={handleClick} onKeyDown={handleKeyDown}>
       <Icon icon={faCircle} color={type.color}/>
       {label} - <small>{type.id}</small>
       <div className={classes.nextIcon} >
@@ -127,6 +121,6 @@ const Schema = observer(({ type, enableFocus, onKeyDown }) =>  {
     </div>
   );
 });
-Schema.displayName = "Schema";
+Type.displayName = "Type";
 
-export default Schema;
+export default Type;

@@ -36,13 +36,15 @@ const useStyles = createUseStyles({
     cursor: "pointer",
     padding: "10px",
     margin: "1px",
-    background: "var(--bg-color-ui-contrast1)",
+    background1: "var(--bg-color-ui-contrast1)",
+    background: "rgba(0,0,0,0.4)",
     "& small": {
       color: "var(--ft-color-quiet)",
       fontStyle: "italic"
     },
     "&:hover": {
-      background: "var(--bg-color-ui-contrast4)"
+      background1: "var(--bg-color-ui-contrast4)",
+      background: "linear-gradient(90deg, rgba(40,70,80,0.9) 0%, rgba(45,75,85,0.9) 100%)"
     }
   },
   reverseLink: {

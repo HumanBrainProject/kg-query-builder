@@ -25,9 +25,9 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
-import { useStores } from "../../Hooks/UseStores";
+import { useStores } from "../../../Hooks/UseStores";
 
-import Schema from "./Schema";
+import Type from "./Type";
 
 const useStyles = createUseStyles({
   container: {
@@ -43,7 +43,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const Schemas = observer(({cursor, onKeyDown}) =>  {
+const List = observer(({cursor, onKeyDown}) =>  {
 
   const classes = useStyles();
 
@@ -53,12 +53,12 @@ const Schemas = observer(({cursor, onKeyDown}) =>  {
     <div className={classes.container}>
       {typeStore.filteredTypeList.map((type, index) =>
         (<div className={cursor === index ? classes.activeSchema: ""} key={type.id}>
-          <Schema key={type.id} type={type} enableFocus={cursor === index} onKeyDown={onKeyDown}/>
+          <Type key={type.id} type={type} enableFocus={cursor === index} onKeyDown={onKeyDown}/>
         </div>)
       )}
     </div>
   );
 });
-Schemas.displayName = "Schemas";
+List.displayName = "List";
 
-export default Schemas;
+export default List;

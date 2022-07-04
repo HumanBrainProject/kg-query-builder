@@ -21,48 +21,48 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import {observer} from "mobx-react-lite";
+import React, {useEffect} from "react";
+import { observer } from "mobx-react-lite";
+import { createUseStyles } from "react-jss";;
+import ReactPiwik from "react-piwik";
 
-import SavedQuery from "./SavedQuery";
+import Types from "./Home/Types";
+import Selection from "./Home/Selection";
 
 const useStyles = createUseStyles({
-  container:{
-    color: "var(--ft-color-loud)"
-  },
-  title: {
-    display: "flex",
-    marginBottom: "10px",
-    paddingBottom: "10px",
-    paddingTop: "20px",
-    borderBottom: "1px solid var(--border-color-ui-contrast5)",
-    "& h4": {
-      flex: 1,
-      display: "inline-block",
-      margin: 0,
-      padding: 0
+  container: {
+    position: "relative",
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    columnGap: "10px",
+    height: "100%",
+    padding: "10px",
+    background: "transparent",
+    color: "var(--ft-color-normal)",
+    overflow: "hidden",
+    "@media screen and (min-width:2048px)": {
+      width: "1800px"
     }
   }
 });
 
-const SavedQueries = observer(({title, list, showUser, enableDelete}) => {
+const Home = observer(() => {
+
   const classes = useStyles();
-  if (!list || !list.length) {
-    return null;
-  }
+
+  useEffect(() => {
+    ReactPiwik.push(["setCustomUrl", window.location.href]);
+    ReactPiwik.push(["trackPageView"]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className={classes.container}>
-      <div className={classes.title}>
-        <h4>{title}</h4>
-      </div>
-      {list.map(query => (
-        <SavedQuery key={query.id} query={query} showUser={showUser} enableDelete={enableDelete} />
-      ))}
+      <Types />
+      <Selection />
     </div>
   );
 });
-SavedQueries.displayName = "SavedQueries";
+Home.displayName = "Home";
 
-export default SavedQueries;
+export default Home;

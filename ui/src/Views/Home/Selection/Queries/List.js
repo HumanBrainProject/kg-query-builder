@@ -22,46 +22,48 @@
  */
 
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { createUseStyles } from "react-jss";
+import {observer} from "mobx-react-lite";
 
-import PropertyTypes from "../../../PropertyTypes";
-import Types from "./Types";
+import Query from "./Query";
 
-const Type = observer(({ field }) => {
-  if (field.isUnknown && field.parent) {
-    if (field.schema.simpleAttributeName) {
-      return (
-        <React.Fragment>
-          {field.schema.simpleAttributeName}&nbsp;
-          <span title={field.schema.attribute}>
-            ({" "}
-            {field.schema.attributeNamespace
-              ? field.schema.attributeNamespace
-              : field.schema.attribute}{" "}
-            )
-          </span>
-        </React.Fragment>
-      );
+const useStyles = createUseStyles({
+  container:{
+    color: "var(--ft-color-loud)"
+  },
+  title: {
+    display: "flex",
+    marginBottom: "10px",
+    paddingBottom: "10px",
+    paddingTop: "20px",
+    borderBottom: "1px solid var(--border-color-ui-contrast5)",
+    "& h4": {
+      flex: 1,
+      display: "inline-block",
+      margin: 0,
+      padding: 0,
+      fontSize: "1.2rem"
     }
-    return field.schema.attribute;
+  }
+});
+
+const List = observer(({title, list, showUser, enableDelete}) => {
+  const classes = useStyles();
+  if (!list || !list.length) {
+    return null;
   }
 
-  if (field.parent) {
-    return (
-      <React.Fragment>
-        {field.schema.label}
-        <Types field={field} />
-      </React.Fragment>
-    );
-  }
   return (
-    <>
-      <PropertyTypes types={field.schema.canBe} />
-      &nbsp;- <small>{field.schema.id}</small>
-    </>
+    <div className={classes.container}>
+      <div className={classes.title}>
+        <h4>{title}</h4>
+      </div>
+      {list.map(query => (
+        <Query key={query.id} query={query} showUser={showUser} enableDelete={enableDelete} />
+      ))}
+    </div>
   );
 });
-Type.displayName = "Type";
+List.displayName = "List";
 
-
-export default Type;
+export default List;
