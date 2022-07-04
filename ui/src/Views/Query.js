@@ -160,7 +160,7 @@ const Query = observer(({ mode }) => {
     );
   }
 
-  if(queryBuilderStore.hasRootSchema) {
+  if(queryBuilderStore.hasRootSchema && queryBuilderStore.queryId) {
     return (
       <div className={classes.container}>
         <Tabs mode={mode} />

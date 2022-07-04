@@ -104,6 +104,10 @@ const Queries = observer(({className}) => {
     );
   }
 
+  if (!queryBuilderStore.isQueriesFetched) {
+    return null;
+  }
+
   if (!queryBuilderStore.hasQueries) {
     return (
       <ErrorPanel>

@@ -98,6 +98,7 @@ export class QueryBuilderStore {
   rootField = null;
   fetchQueriesError = null;
   isFetchingQueries = false;
+  isQueriesFetched = false;
   isSaving = false;
   saveError = null;
   isRunning = false;
@@ -143,6 +144,7 @@ export class QueryBuilderStore {
       rootField: observable,
       fetchQueriesError: observable,
       isFetchingQueries: observable,
+      isQueriesFetched: observable,
       isSaving: observable,
       saveError: observable,
       isRunning: observable,
@@ -1188,6 +1190,7 @@ export class QueryBuilderStore {
     if (!this.isFetchingQueries) {
       this.specifications = [];
       this.queriesFilterValue = "";
+      this.isQueriesFetched = false;
       this.fetchQueriesError = null;
       if (this.rootField && this.rootField.schema && this.rootField.schema.id) {
         this.isFetchingQueries = true;
@@ -1207,6 +1210,7 @@ export class QueryBuilderStore {
                 });
               }
             });
+            this.isQueriesFetched = true;
             this.isFetchingQueries = false;
           });
         } catch (e) {
@@ -1214,6 +1218,7 @@ export class QueryBuilderStore {
             this.specifications = [];
             const message = e.message ? e.message : e;
             this.fetchQueriesError = `Error while fetching saved queries for "${this.rootField.id}" (${message})`;
+            this.isQueriesFetched = true;
             this.isFetchingQueries = false;
           });
         }
@@ -1222,9 +1227,10 @@ export class QueryBuilderStore {
   }
 
   clearQueries() {
+    this.isQueriesFetched = false;
+    this.fetchQueriesError = null;
     this.specifications = [];
     this.queriesFilterValue = "";
-    this.fetchQueriesError = null;
   }
 
   async fetchQuery(queryId) {
