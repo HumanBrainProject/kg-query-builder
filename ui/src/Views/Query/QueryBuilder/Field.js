@@ -86,27 +86,28 @@ const useStyles = createUseStyles({
       }
     },
     "&.selected": {
-      backgroundColor: "var(--bg-color-ui-contrast4)",
+      background1: "var(--bg-color-ui-contrast4)",
+      background: "linear-gradient(90deg, rgba(35,55,70,1) 0%, rgba(30,50,70,0.9) 100%)",
       "& $actions": {
         opacity: 1
       }
     },
     "&.is-unknown": {
-      backgroundColor: "var(--bg-color-warn-quiet)",
+      background: "var(--bg-color-warn-quiet)",
       "&&.selected": {
-        backgroundColor: "var(--bg-color-warn-normal)"
+        background: "var(--bg-color-warn-normal)"
       },
       "&:hover, &.selected:hover": {
-        backgroundColor: "var(--bg-color-warn-loud)"
+        background: "var(--bg-color-warn-loud)"
       }
     },
     "&.is-invalid, &.is-unknown.is-invalid": {
-      backgroundColor: "var(--bg-color-error-quiet)",
+      background: "var(--bg-color-error-quiet)",
       "&&.selected": {
-        backgroundColor: "var(--bg-color-error-normal)"
+        background: "var(--bg-color-error-normal)"
       },
       "&:hover, &.selected:hover": {
-        backgroundColor: "var(--bg-color-error-loud)"
+        background: "var(--bg-color-error-loud)"
       }
     },
     "& small": {

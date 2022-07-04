@@ -705,7 +705,6 @@ export class QueryBuilderStore {
       this.queryId = null;
       this.label = "";
       this.description = "";
-      this.sourceQuery = null;
       this.context = null;
       this.specifications = [];
       this.saveError = null;
@@ -743,7 +742,7 @@ export class QueryBuilderStore {
   selectField(field) {
     this.currentField = field;
     this.childrenFilterValue = "";
-    this.rootStore.typeStore.addTypesToTetch(this.currentField.lookups);
+    this.rootStore.typeStore.addTypesToFetch(this.currentField.lookups);
   }
 
   resetField() {

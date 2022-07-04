@@ -54,7 +54,7 @@ export class TypeStore {
       hasTypes: computed,
       setFilterValue: action,
       fetch: action,
-      addTypesToTetch: action,
+      addTypesToFetch: action,
       processQueue: action,
       fetchQueue: action
     });
@@ -113,7 +113,7 @@ export class TypeStore {
     }
   }
 
-  addTypesToTetch(types) {
+  addTypesToFetch(types) {
     types
       .filter(id => !this.types[id])
       .forEach(id => this.typesQueue.add(id));
