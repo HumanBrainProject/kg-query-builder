@@ -39,7 +39,6 @@ const useStyles = createUseStyles({
     gridTemplateRows: "auto 1fr",
     height: "100%",
     color: "var(--ft-color-loud)",
-    background1: "var(--bg-color-ui-contrast3)",
     background: "linear-gradient(90deg, rgba(5,25,35,0.4) 0%, rgba(5,20,35,0.8) 100%)",
     border: "1px solid var(--border-color-ui-contrast1)",
     "& .react-json-view": {

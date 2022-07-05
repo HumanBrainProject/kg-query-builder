@@ -73,20 +73,17 @@ const useStyles = createUseStyles({
   content: {
     padding: "10px 35px 10px 10px",
     margin: "1px",
-    backgroundColor1: "var(--bg-color-ui-contrast1)",
     background: "linear-gradient(180deg, rgba(5,20,40,1) 0%, rgba(5,25,40,0.9) 100%)",
     position: "relative",
     zIndex: 2,
     cursor: "pointer",
     "&:hover": {
-      backgroundColor1: "var(--bg-color-ui-contrast4)",
       background: "linear-gradient(90deg, rgba(35,55,70,1) 0%, rgba(30,50,70,0.9) 100%)",
       "& $actions": {
         opacity: 1
       }
     },
     "&.selected": {
-      background1: "var(--bg-color-ui-contrast4)",
       background: "linear-gradient(90deg, rgba(35,55,70,1) 0%, rgba(30,50,70,0.9) 100%)",
       "& $actions": {
         opacity: 1

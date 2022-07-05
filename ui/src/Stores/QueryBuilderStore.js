@@ -196,7 +196,6 @@ export class QueryBuilderStore {
       removeField: action,
       setResponseVocab: action,
       selectField: action,
-      resetField: action,
       queryParametersNames: computed,
       getQueryParameters: action,
       JSONQueryFields: computed,
@@ -477,7 +476,7 @@ export class QueryBuilderStore {
     if (!this.isSaving) {
       const rootField = this.rootField;
       if (rootField) {
-        this.rootField = new Field(rootField.schema);
+        this.rootField = new Field(toJS(rootField.schema));
         this.selectField(this.rootField);
         this.rootField.isInvalidLeaf = true;
       }
@@ -504,7 +503,6 @@ export class QueryBuilderStore {
       this.fromDescription = "";
       this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
       this.space = toJS(this.rootStore.authStore.privateSpace);
-      this.resetField();
       this.resultStart = 0;
       this.resultSize = defaultResultSize;
       this.resultInstanceId = "";
@@ -532,7 +530,8 @@ export class QueryBuilderStore {
       this.fromLabel = "";
       this.fromDescription = "";
       this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
-      this.space = toJS(this.rootStore.authStore.privateSpace);      
+      this.space = toJS(this.rootStore.authStore.privateSpace); 
+      this.selectField(this.rootField);     
     }
   }
 
@@ -700,33 +699,19 @@ export class QueryBuilderStore {
   }
 
   removeField(field) {
-    if (field === this.rootField) {
-      this.rootField = null;
-      this.queryId = null;
-      this.label = "";
-      this.description = "";
-      this.context = null;
-      this.specifications = [];
-      this.saveError = null;
-      this.runError = null;
-      this.saveAsMode = false;
-      this.sourceQuery = null;
-      this.savedQueryHasInconsistencies = false;
-      this.resetField();
-    } else {
-      const currentField = this.currentField;
-      const parentField = field.parent;
-      if (isChildOfField(this.currentField, field, this.rootField)) {
-        this.resetField();
-      }
-      remove(field.parent.structure, childField => field === childField);
-      if (!field.parent.structure.length) {
-        field.parent.isInvalidLeaf = true;
-        field.parent.isFlattened = false;
-      }
-      if (field === currentField) {
-        this.selectField(parentField);
-      }
+    const currentField = this.currentField;
+    const parentField = field.parent;
+    this.childrenFilterValue = "";
+    if (isChildOfField(this.currentField, field, this.rootField)) {
+      this.selectField(parentField);
+    }
+    remove(field.parent.structure, childField => field === childField);
+    if (!field.parent.structure.length) {
+      field.parent.isInvalidLeaf = true;
+      field.parent.isFlattened = false;
+    }
+    if (field === currentField) {
+      this.selectField(parentField);
     }
   }
 
@@ -743,11 +728,6 @@ export class QueryBuilderStore {
     this.currentField = field;
     this.childrenFilterValue = "";
     this.rootStore.typeStore.addTypesToFetch(this.currentField.lookups);
-  }
-
-  resetField() {
-    this.currentField = null;
-    this.childrenFilterValue = "";
   }
 
   getParametersFromField(field) {

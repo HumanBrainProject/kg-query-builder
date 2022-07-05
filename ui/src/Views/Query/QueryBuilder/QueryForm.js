@@ -34,7 +34,6 @@ import { useStores } from "../../../Hooks/UseStores";
 const useStyles = createUseStyles({
   container: {
     position:"relative",
-    background1: "var(--bg-color-ui-contrast2)",
     background: "linear-gradient(135deg, rgba(5,25,35,0.4) 0%, rgba(5,20,35,0.6) 100%)",
     border: "1px solid var(--border-color-ui-contrast1)",
     color: "var(--ft-color-loud)",
