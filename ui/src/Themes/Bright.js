@@ -33,7 +33,7 @@ const theme = {
     position: "50% 50%"
   },
   contrast1: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#6B7D8F",
     borderColor: "#ffffff"
   },
   contrast2: {
