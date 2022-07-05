@@ -1162,10 +1162,9 @@ export class QueryBuilderStore {
             this.specifications.splice(index, 1);
           }
           if (navigate) {
-            this.resetRootSchema();
-            const uuid = _.uuid();
-            this.setAsNewQuery(uuid);
-            navigate(`/queries/${uuid}`);
+            this.clearQueries();
+            this.clearQuery();
+            navigate("/");
           }
         });
       } catch (e) {
