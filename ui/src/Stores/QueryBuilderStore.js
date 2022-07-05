@@ -98,6 +98,7 @@ export class QueryBuilderStore {
   rootField = null;
   fetchQueriesError = null;
   isFetchingQueries = false;
+  isQueriesFetched = false;
   isSaving = false;
   saveError = null;
   isRunning = false;
@@ -121,6 +122,7 @@ export class QueryBuilderStore {
   resultQueryParameters = {};
   result = null;
   tableViewRoot = ["data"];
+  showSavedQueries = false;
 
   currentField = null;
 
@@ -142,6 +144,7 @@ export class QueryBuilderStore {
       rootField: observable,
       fetchQueriesError: observable,
       isFetchingQueries: observable,
+      isQueriesFetched: observable,
       isSaving: observable,
       saveError: observable,
       isRunning: observable,
@@ -170,8 +173,10 @@ export class QueryBuilderStore {
       selectRootSchema: action,
       resetRootSchema: action,
       clearRootSchema: action,
+      clearQuery: action,
       setAsNewQuery: action,
       rootSchema: computed,
+      rootSchemaId: computed,
       hasRootSchema: computed,
       hasSupportedRootSchema: computed,
       isQuerySaved: computed,
@@ -191,7 +196,6 @@ export class QueryBuilderStore {
       removeField: action,
       setResponseVocab: action,
       selectField: action,
-      resetField: action,
       queryParametersNames: computed,
       getQueryParameters: action,
       JSONQueryFields: computed,
@@ -222,6 +226,7 @@ export class QueryBuilderStore {
       deleteQuery: action,
       cancelDeleteQuery: action,
       fetchQueries: action,
+      clearQueries: action,
       setDescription: action,
       fetchQuery: action,
       fromQueryId: observable,
@@ -232,11 +237,16 @@ export class QueryBuilderStore {
       toggleIncludeAdvancedAttributes: action,
       saveLabel: computed,
       resetQuery: action,
-      initializeFromRootField: action
+      showSavedQueries: observable,
+      toggleShowSavedQueries: action,
     });
 
     this.transportLayer = transportLayer;
     this.rootStore = rootStore;
+  }
+
+  toggleShowSavedQueries(show) {
+    this.showSavedQueries = show;
   }
 
   setResultRestrictToSpaces(spaces) {
@@ -437,37 +447,40 @@ export class QueryBuilderStore {
       this.resultInstanceId = "";
       this.resultQueryParameters = {};
       this.resultRestrictToSpaces = null;
+      this.showSavedQueries = false;
     }
   }
 
   resetQuery() {
     this.resetRootSchema();
     this.queryId = null;
-  }
-
-  initializeFromRootField() {
-    const rootField = this.rootField;
-    this.rootField = new Field(rootField.schema);
-    this.selectField(this.rootField);
-    this.rootField.isInvalidLeaf = true;
+    this.showSavedQueries = false;
   }
 
   resetRootSchema() {
     if (!this.isSaving) {
       const queryId = this.queryId;
-      const rootField = this.rootField;
-      this.clearRootSchema();
-      if (queryId && rootField) {
-        this.queryId = queryId;
-        this.rootField = new Field(rootField.schema);
-        this.selectField(this.rootField);
-      }
-      this.rootField.isInvalidLeaf = true;
+      this.clearQuery();
+      this.queryId = queryId;
     }
   }
 
   clearRootSchema() {
     if (!this.isSaving) {
+      this.rootField = null;
+      this.clearQuery();
+    }
+  }
+
+  clearQuery() {
+    if (!this.isSaving) {
+      const rootField = this.rootField;
+      if (rootField) {
+        this.rootField = new Field(toJS(rootField.schema));
+        this.selectField(this.rootField);
+        this.rootField.isInvalidLeaf = true;
+      }
+      this.fetchQueryError = null;
       this.queryId = null;
       this.label = "";
       this.description = "";
@@ -485,18 +498,17 @@ export class QueryBuilderStore {
       this.queriesFilterValue = "";
       this.childrenFilterValue = "";
       this.result = null;
-      this.rootField = null;
       this.fromQueryId = null;
       this.fromLabel = "";
       this.fromDescription = "";
       this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
       this.space = toJS(this.rootStore.authStore.privateSpace);
-      this.resetField();
       this.resultStart = 0;
       this.resultSize = defaultResultSize;
       this.resultInstanceId = "";
       this.resultQueryParameters = {};
       this.resultRestrictToSpaces = null;
+      this.showSavedQueries = false;
     }
   }
 
@@ -518,12 +530,17 @@ export class QueryBuilderStore {
       this.fromLabel = "";
       this.fromDescription = "";
       this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
-      this.space = toJS(this.rootStore.authStore.privateSpace);      
+      this.space = toJS(this.rootStore.authStore.privateSpace); 
+      this.selectField(this.rootField);     
     }
   }
 
   get rootSchema() {
     return this.rootField?.schema;
+  }
+
+  get rootSchemaId() {
+    return this.rootField?.schema?.id;
   }
 
   get hasRootSchema() {
@@ -682,34 +699,19 @@ export class QueryBuilderStore {
   }
 
   removeField(field) {
-    if (field === this.rootField) {
-      this.rootField = null;
-      this.queryId = null;
-      this.label = "";
-      this.description = "";
-      this.sourceQuery = null;
-      this.context = null;
-      this.specifications = [];
-      this.saveError = null;
-      this.runError = null;
-      this.saveAsMode = false;
-      this.sourceQuery = null;
-      this.savedQueryHasInconsistencies = false;
-      this.resetField();
-    } else {
-      const currentField = this.currentField;
-      const parentField = field.parent;
-      if (isChildOfField(this.currentField, field, this.rootField)) {
-        this.resetField();
-      }
-      remove(field.parent.structure, childField => field === childField);
-      if (!field.parent.structure.length) {
-        field.parent.isInvalidLeaf = true;
-        field.parent.isFlattened = false;
-      }
-      if (field === currentField) {
-        this.selectField(parentField);
-      }
+    const currentField = this.currentField;
+    const parentField = field.parent;
+    this.childrenFilterValue = "";
+    if (isChildOfField(this.currentField, field, this.rootField)) {
+      this.selectField(parentField);
+    }
+    remove(field.parent.structure, childField => field === childField);
+    if (!field.parent.structure.length) {
+      field.parent.isInvalidLeaf = true;
+      field.parent.isFlattened = false;
+    }
+    if (field === currentField) {
+      this.selectField(parentField);
     }
   }
 
@@ -725,12 +727,7 @@ export class QueryBuilderStore {
   selectField(field) {
     this.currentField = field;
     this.childrenFilterValue = "";
-    this.rootStore.typeStore.addTypesToTetch(this.currentField.lookups);
-  }
-
-  resetField() {
-    this.currentField = null;
-    this.childrenFilterValue = "";
+    this.rootStore.typeStore.addTypesToFetch(this.currentField.lookups);
   }
 
   getParametersFromField(field) {
@@ -1145,10 +1142,9 @@ export class QueryBuilderStore {
             this.specifications.splice(index, 1);
           }
           if (navigate) {
-            this.resetRootSchema();
-            const uuid = _.uuid();
-            this.setAsNewQuery(uuid);
-            navigate(`/queries/${uuid}`);
+            this.clearQueries();
+            this.clearQuery();
+            navigate("/");
           }
         });
       } catch (e) {
@@ -1171,6 +1167,8 @@ export class QueryBuilderStore {
   async fetchQueries() {
     if (!this.isFetchingQueries) {
       this.specifications = [];
+      this.queriesFilterValue = "";
+      this.isQueriesFetched = false;
       this.fetchQueriesError = null;
       if (this.rootField && this.rootField.schema && this.rootField.schema.id) {
         this.isFetchingQueries = true;
@@ -1190,14 +1188,7 @@ export class QueryBuilderStore {
                 });
               }
             });
-            if (this.sourceQuery) {
-              const query = this.findQuery(this.sourceQuery.id);
-              if (query) {
-                this.sourceQuery = query;
-              } else {
-                this.sourceQuery = null;
-              }
-            }
+            this.isQueriesFetched = true;
             this.isFetchingQueries = false;
           });
         } catch (e) {
@@ -1205,6 +1196,7 @@ export class QueryBuilderStore {
             this.specifications = [];
             const message = e.message ? e.message : e;
             this.fetchQueriesError = `Error while fetching saved queries for "${this.rootField.id}" (${message})`;
+            this.isQueriesFetched = true;
             this.isFetchingQueries = false;
           });
         }
@@ -1212,7 +1204,14 @@ export class QueryBuilderStore {
     }
   }
 
-  async fetchQuery(queryId) {
+  clearQueries() {
+    this.isQueriesFetched = false;
+    this.fetchQueriesError = null;
+    this.specifications = [];
+    this.queriesFilterValue = "";
+  }
+
+  async fetchQuery(queryId) { 
     if (this.findQuery(queryId) || this.isFetchingQuery) {
       return;
     }

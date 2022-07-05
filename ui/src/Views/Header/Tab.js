@@ -33,7 +33,7 @@ const useStyles = createUseStyles({
     height:"50px",
     lineHeight:"50px",
     color:"var(--ft-color-normal)",
-    background:"var(--bg-color-ui-contrast2)",
+    background: "linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(10,30,45,0.5) 100%)",
     padding:"0 20px 0 20px",
     border:"1px solid var(--border-color-ui-contrast2)",
     borderLeft:"none",

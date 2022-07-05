@@ -63,16 +63,16 @@ const theme = {
     }
   },
   quiet: {
-    color: "rgba(0, 0, 0, 0.4)"
+    color: "rgba(255, 255, 255, 0.4)"
   },
   normal: {
-    color: "rgba(0, 0, 0, 0.5)"
+    color: "rgba(255, 255, 255, 0.5)"
   },
   loud: {
-    color: "#444444"
+    color: "white"
   },
   louder: {
-    color: "#222222"
+    color: "#EFEFEF"
   },
   error: {
     color: "#e74c3c",

@@ -24,24 +24,14 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
-import { useLocation, useNavigate, matchPath } from "react-router-dom";
-import _  from "lodash-uuid";
-import ReactPiwik from "react-piwik";
-import {faSearch} from "@fortawesome/free-solid-svg-icons/faSearch";
-import {faFile} from "@fortawesome/free-solid-svg-icons/faFile";
-import {faHome} from "@fortawesome/free-solid-svg-icons/faHome";
-import {faCircleNotch} from "@fortawesome/free-solid-svg-icons/faCircleNotch";
-import {faTag} from "@fortawesome/free-solid-svg-icons/faTag";
 
 import { useStores } from "../Hooks/UseStores";
 
-import Tab from "./Header/Tab";
-import HomeTab from "./Header/HomeTab";
 import UserProfileTab from "./UserProfileTab";
 
 const useStyles = createUseStyles({
   container: {
-    background: "var(--bg-color-ui-contrast1)",
+    background: "rgba(0,0,0,0.4)",
     display: "grid",
     gridTemplateRows: "1fr",
     gridTemplateColumns: "auto 1fr auto"
@@ -73,10 +63,18 @@ const useStyles = createUseStyles({
     width: "50px",
     height: "50px",
     lineHeight: "50px",
-    color: "var(--ft-color-normal)",
-    background: "var(--bg-color-ui-contrast2)",
-    border: "1px solid var(--border-color-ui-contrast2)",
-    borderLeft: "none"
+    border1: "1px solid var(--border-color-ui-contrast2)",
+    borderLeft: "none",
+    border: 0,
+    "& > button": {
+      background: "transparent",
+      color: "rgba(255,255,255,0.6)",
+      transition: "background-color 0.3s ease-in-out",
+      "&:hover" : {
+        background: "rgba(0,0,0,0.2)",
+        color: "white"
+      }
+    }
   },
   unknownType: {
     background: "var(--bg-color-warn-quiet)"
@@ -87,33 +85,7 @@ const Header = observer(() => {
 
   const classes = useStyles();
 
-  const { appStore, authStore, queryBuilderStore } = useStores();
-
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const handleBrowseTypes = () => {
-    ReactPiwik.push(["trackEvent", "Tab", "BrowseTypes"]);
-    queryBuilderStore.clearRootSchema();
-    navigate("/");
-  };
-
-  const handleBrowseStoredQueries = () => {
-    ReactPiwik.push(["trackEvent", "Tab", "BrowseQueries", queryBuilderStore.rootField.id]);
-    queryBuilderStore.resetQuery();
-    navigate("/queries");
-  };
-
-  const handleBuildNewQuery = () => {
-    ReactPiwik.push(["trackEvent", "Tab", "NewQuery", queryBuilderStore.rootField.id]);
-    queryBuilderStore.initializeFromRootField();
-    const uuid = _.uuid();
-    queryBuilderStore.setAsNewQuery(uuid);
-    navigate(`/queries/${uuid}${queryBuilderStore.hasSupportedRootSchema?"":"/edit"}`);
-  };
-
-  const icon = queryBuilderStore.isSaving?faCircleNotch:faTag; 
-  const label = queryBuilderStore.label?queryBuilderStore.label:queryBuilderStore.queryId;
+  const { appStore, authStore } = useStores();
 
   return (
     <div className={classes.container}>
@@ -124,19 +96,6 @@ const Header = observer(() => {
       {!appStore.globalError &&
           <React.Fragment>
             <div className={classes.fixedTabsLeft}>
-              {authStore.isUserAuthorized && authStore.hasSpaces && (
-                queryBuilderStore.hasRootSchema?
-                  <React.Fragment>
-                    <Tab Component={HomeTab} className={queryBuilderStore.hasSupportedRootSchema?null:classes.unknownType} current={matchPath({ path: "/" }, location.pathname)} onClick={handleBrowseTypes} label={"Select another type"} hideLabel disable={queryBuilderStore.isSaving} />
-                    <Tab icon={faSearch} current={matchPath({ path: "/queries" }, location.pathname)} onClick={handleBrowseStoredQueries} hideLabel label={"Browse stored queries"} disable={queryBuilderStore.isSaving} />
-                    <Tab icon={faFile} current={false} onClick={handleBuildNewQuery} hideLabel label={"New query"} disabled={queryBuilderStore.isSaving} />
-                    {queryBuilderStore.queryId && (
-                      <Tab icon={icon} iconSpin={queryBuilderStore.isSaving} current={matchPath({ path: "/queries/:id" }, location.pathname)} onClose={handleBrowseStoredQueries} label={label} />
-                    )}
-                  </React.Fragment>
-                  :
-                  <Tab icon={faHome} current={matchPath({ path: "/" }, location.pathname)} onClick={handleBrowseTypes} label={"Select a type"} hideLabel />
-              )}
             </div>
             <div className={classes.fixedTabsRight}>
               {authStore.isAuthenticated && authStore.isUserAuthorized && (

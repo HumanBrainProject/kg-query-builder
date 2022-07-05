@@ -57,19 +57,20 @@ const useStyles = createUseStyles({
     position: "relative",
     display: "grid",
     gridTemplateRows: "auto 1fr auto",
-    border: "1px solid var(--bg-color-ui-contrast4)",
+    border: "1px solid var(--bg-color-ui-contrast1)",
     height: "100%"
   },
   filter: {
-    border: 0
+    border: 0,
+    background: "linear-gradient(90deg, rgba(20,50,60,0.2) 0%, rgba(20,50,60,0.4) 100%)"
   },
   body: {
     padding: "0 10px 10px 10px",
-    borderTop: "1px solid var(--bg-color-ui-contrast4)"
+    borderTop: "1px solid var(--bg-color-ui-contrast1)"
   },
   advancedPropertiesToggle: {
     padding: "10px",
-    borderTop: "1px solid var(--bg-color-ui-contrast4)"
+    borderTop: "1px solid var(--bg-color-ui-contrast1)"
   }
 });
 

@@ -27,13 +27,13 @@ import { createUseStyles } from "react-jss";
 import { useStores } from "../Hooks/UseStores";
 
 const useStyles = createUseStyles({
-  status: {
-    background: "var(--bg-color-ui-contrast1)",
-    color: "var(--ft-color-loud)",
-    paddingLeft: "10px"
-  },
   footer: {
-    position: "relative"
+    position: "relative",
+    background: "var(--bg-color-ui-contrast1)",
+    color: "var(--ft-color-loud)"
+  },
+  status: {
+    paddingLeft: "10px"
   },
   build: {
     color: "var(--ft-color-loud)",

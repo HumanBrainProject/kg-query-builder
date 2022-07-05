@@ -73,39 +73,43 @@ const useStyles = createUseStyles({
   content: {
     padding: "10px 35px 10px 10px",
     margin: "1px",
-    backgroundColor: "var(--bg-color-ui-contrast1)",
+    background: "linear-gradient(180deg, rgba(5,20,40,1) 0%, rgba(5,25,40,0.9) 100%)",
     position: "relative",
     zIndex: 2,
     cursor: "pointer",
     "&:hover": {
-      backgroundColor: "var(--bg-color-ui-contrast4)",
+      background: "linear-gradient(90deg, rgba(35,55,70,1) 0%, rgba(30,50,70,0.9) 100%)",
       "& $actions": {
         opacity: 1
       }
     },
     "&.selected": {
-      backgroundColor: "var(--bg-color-ui-contrast4)",
+      background: "linear-gradient(90deg, rgba(35,55,70,1) 0%, rgba(30,50,70,0.9) 100%)",
       "& $actions": {
         opacity: 1
       }
     },
     "&.is-unknown": {
-      backgroundColor: "var(--bg-color-warn-quiet)",
+      background: "var(--bg-color-warn-quiet)",
       "&&.selected": {
-        backgroundColor: "var(--bg-color-warn-normal)"
+        background: "var(--bg-color-warn-normal)"
       },
       "&:hover, &.selected:hover": {
-        backgroundColor: "var(--bg-color-warn-loud)"
+        background: "var(--bg-color-warn-loud)"
       }
     },
     "&.is-invalid, &.is-unknown.is-invalid": {
-      backgroundColor: "var(--bg-color-error-quiet)",
+      background: "var(--bg-color-error-quiet)",
       "&&.selected": {
-        backgroundColor: "var(--bg-color-error-normal)"
+        background: "var(--bg-color-error-normal)"
       },
       "&:hover, &.selected:hover": {
-        backgroundColor: "var(--bg-color-error-loud)"
+        background: "var(--bg-color-error-loud)"
       }
+    },
+    "& small": {
+      color: "var(--ft-color-quiet)",
+      fontStyle: "italic"
     }
   },
   children: {

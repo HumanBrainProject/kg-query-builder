@@ -33,7 +33,7 @@ const theme = {
     size: "cover"
   },
   contrast1: {
-    backgroundColor: "#141618",
+    backgroundColor: "rgba(0,0,0,0.9)",
     borderColor: "#111314"
   },
   contrast2: {

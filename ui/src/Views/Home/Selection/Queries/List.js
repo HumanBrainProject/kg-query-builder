@@ -22,43 +22,48 @@
  */
 
 import React from "react";
-import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
+import {observer} from "mobx-react-lite";
 
-import { useStores } from "../../Hooks/UseStores";
-
-import Schema from "./Schema";
+import Query from "./Query";
 
 const useStyles = createUseStyles({
-  container: {
-    position: "relative"
+  container:{
+    color: "var(--ft-color-loud)"
   },
-  activeSchema: {
-    "& > div": {
-      background: "var(--bg-color-ui-contrast4)",
-      "&:focus": {
-        outline: 0
-      }
+  title: {
+    display: "flex",
+    marginBottom: "10px",
+    paddingBottom: "10px",
+    paddingTop: "20px",
+    borderBottom: "1px solid var(--border-color-ui-contrast5)",
+    "& h4": {
+      flex: 1,
+      display: "inline-block",
+      margin: 0,
+      padding: 0,
+      fontSize: "1.2rem"
     }
   }
 });
 
-const Schemas = observer(({cursor, onKeyDown}) =>  {
-
+const List = observer(({title, list, showUser, enableDelete}) => {
   const classes = useStyles();
-
-  const { typeStore } = useStores();
+  if (!list || !list.length) {
+    return null;
+  }
 
   return (
     <div className={classes.container}>
-      {typeStore.filteredTypeList.map((type, index) =>
-        (<div className={cursor === index ? classes.activeSchema: ""} key={type.id}>
-          <Schema key={type.id} type={type} enableFocus={cursor === index} onKeyDown={onKeyDown}/>
-        </div>)
-      )}
+      <div className={classes.title}>
+        <h4>{title}</h4>
+      </div>
+      {list.map(query => (
+        <Query key={query.id} query={query} showUser={showUser} enableDelete={enableDelete} />
+      ))}
     </div>
   );
 });
-Schemas.displayName = "Schemas";
+List.displayName = "List";
 
-export default Schemas;
+export default List;

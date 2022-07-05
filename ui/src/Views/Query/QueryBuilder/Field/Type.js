@@ -54,7 +54,12 @@ const Type = observer(({ field }) => {
       </React.Fragment>
     );
   }
-  return <PropertyTypes types={field.schema.canBe} />;
+  return (
+    <>
+      <PropertyTypes types={field.schema.canBe} />
+      &nbsp;- <small>{field.schema.id}</small>
+    </>
+  );
 });
 Type.displayName = "Type";
 

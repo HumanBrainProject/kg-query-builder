@@ -22,47 +22,43 @@
  */
 
 import React from "react";
+import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
-import {observer} from "mobx-react-lite";
 
-import SavedQuery from "./SavedQuery";
+import { useStores } from "../../../Hooks/UseStores";
+
+import Type from "./Type";
 
 const useStyles = createUseStyles({
-  container:{
-    color: "var(--ft-color-loud)"
+  container: {
+    position: "relative"
   },
-  title: {
-    display: "flex",
-    marginBottom: "10px",
-    paddingBottom: "10px",
-    paddingTop: "20px",
-    borderBottom: "1px solid var(--border-color-ui-contrast5)",
-    "& h4": {
-      flex: 1,
-      display: "inline-block",
-      margin: 0,
-      padding: 0
+  activeSchema: {
+    "& > div": {
+      background: "var(--bg-color-ui-contrast4)",
+      "&:focus": {
+        outline: 0
+      }
     }
   }
 });
 
-const SavedQueries = observer(({title, list, showUser, enableDelete}) => {
+const List = observer(({cursor, onKeyDown}) =>  {
+
   const classes = useStyles();
-  if (!list || !list.length) {
-    return null;
-  }
+
+  const { typeStore } = useStores();
 
   return (
     <div className={classes.container}>
-      <div className={classes.title}>
-        <h4>{title}</h4>
-      </div>
-      {list.map(query => (
-        <SavedQuery key={query.id} query={query} showUser={showUser} enableDelete={enableDelete} />
-      ))}
+      {typeStore.filteredTypeList.map((type, index) =>
+        (<div className={cursor === index ? classes.activeSchema: ""} key={type.id}>
+          <Type key={type.id} type={type} enableFocus={cursor === index} onKeyDown={onKeyDown}/>
+        </div>)
+      )}
     </div>
   );
 });
-SavedQueries.displayName = "SavedQueries";
+List.displayName = "List";
 
-export default SavedQueries;
+export default List;

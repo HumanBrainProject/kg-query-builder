@@ -49,28 +49,14 @@ const useStyles = createUseStyles({
     display: "grid",
     height: "100%",
     gridTemplateRows: "100%",
-    gridTemplateColumns: "50px 1fr"
+    gridTemplateColumns: "50px 1fr",
+    "& .spinnerPanel": {
+      background: "#0a2332"
+    }
   },
   body: {
     position: "relative",
     overflow: "hidden"
-  },
-  loader: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    zIndex: 10000,
-    background: "var(--bg-color-blend-contrast1)",
-    "& .fetchingPanel": {
-      width: "auto",
-      padding: "30px",
-      border: "1px solid var(--border-color-ui-contrast1)",
-      borderRadius: "4px",
-      color: "var(--ft-color-loud)",
-      background: "var(--list-bg-hover)"
-    }
   }
 });
 
@@ -112,6 +98,9 @@ const Query = observer(({ mode }) => {
       }
       if(query) {
         const typeName = query.meta.type;
+        if (localStorage.getItem("type")) {
+          localStorage.setItem("type", typeName);
+        }
         const type = typeStore.types[typeName];
         if(type) {
           queryBuilderStore.selectRootSchema(type);
@@ -140,7 +129,10 @@ const Query = observer(({ mode }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const handleContinue = () => navigate("/");
+  const handleContinue = () => {
+    queryBuilderStore.clearQuery();
+    navigate("/");
+  };
 
   if (queryBuilderStore.isFetchingQuery) {
     return (
@@ -160,7 +152,7 @@ const Query = observer(({ mode }) => {
     );
   }
 
-  if(queryBuilderStore.hasRootSchema) {
+  if(queryBuilderStore.hasRootSchema && queryBuilderStore.queryId) {
     return (
       <div className={classes.container}>
         <Tabs mode={mode} />

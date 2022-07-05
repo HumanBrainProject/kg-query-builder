@@ -21,60 +21,48 @@
  *
  */
 
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import ReactPiwik from "react-piwik";
 
-import { useStores } from "../Hooks/UseStores";
+import { useStores } from "../../Hooks/UseStores";
 
-import Filter from "../Components/Filter";
-import Schemas from "./RootSchema/Schemas";
+import Filter from "../../Components/Filter";
+import List from "./Types/List";
 
 const useStyles = createUseStyles({
-  panel: {
+  container: {
     position: "relative",
     display: "grid",
     gridTemplateRows: "auto 1fr",
-    height: "85vh",
-    width: "90%",
-    margin: "auto",
-    marginTop: "5vh",
-    background: "var(--bg-color-ui-contrast2)",
+    height: "100%",
+    width: "100%",
+    background: "transparent",
     color: "var(--ft-color-normal)",
     border: "1px solid var(--border-color-ui-contrast2)",
-    overflow: "hidden",
-    "@media screen and (min-width:1024px)": {
-      width: "900px"
-    }
+    overflow: "hidden"
   },
   filter: {
-    border: 0
+    border: 0,
+    background: "linear-gradient(90deg, rgba(20,50,60,0.2) 0%, rgba(20,50,60,0.4) 100%)"
   },
   body: {
     borderTop: "1px solid var(--border-color-ui-contrast2)",
     padding: "10px 0",
-    background: "var(--bg-color-ui-contrast2)"
+    background: "linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 100%)"
   },
   content: {
     padding: "0 10px"
   }
 });
 
-const RootSchema = observer(() => {
+const Types = observer(() => {
   const [cursor, setCursor] = useState(undefined);
 
   const classes = useStyles();
 
   const { typeStore } = useStores();
-
-  useEffect(() => {
-    ReactPiwik.push(["setCustomUrl", window.location.href]);
-    ReactPiwik.push(["trackPageView"]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
 
   const handleChange = value => {
     typeStore.setFilterValue(value);
@@ -93,18 +81,18 @@ const RootSchema = observer(() => {
   };
 
   return (
-    <div className={classes.panel}>
+    <div className={classes.container}>
       <Filter className={classes.filter} value={typeStore.filterValue} placeholder="Filter types" onChange={handleChange} onKeyDown={handleKeyDown} />
       <div className={classes.body}>
         <Scrollbars autoHide>
           <div className={classes.content}>
-            <Schemas cursor={cursor} onKeyDown={handleKeyDown} />
+            <List cursor={cursor} onKeyDown={handleKeyDown} />
           </div>
         </Scrollbars>
       </div>
     </div>
   );
 });
-RootSchema.displayName = "RootSchema";
+Types.displayName = "Types";
 
-export default RootSchema;
+export default Types;
