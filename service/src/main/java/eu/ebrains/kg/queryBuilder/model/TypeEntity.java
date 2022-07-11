@@ -25,6 +25,7 @@ public class TypeEntity {
     private String id;
     private String label;
     private String color;
+    private String description;
     private List<Property> properties;
 
     public String getColor() {
@@ -51,6 +52,14 @@ public class TypeEntity {
         this.label = label;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public List<Property> getProperties() {
         return properties;
     }
@@ -59,10 +68,11 @@ public class TypeEntity {
         this.properties = properties;
     }
 
-    public TypeEntity(String id, String label, String color, List<Property> properties) {
+    public TypeEntity(String id, String label, String color, String description, List<Property> properties) {
         this.id = id;
         this.label = label;
         this.color = color;
+        this.description = description;
         this.properties = properties;
     }
 
@@ -70,6 +80,7 @@ public class TypeEntity {
         String id = (String) (d.get(SchemaFieldsConstants.IDENTIFIER));
         String name = (String) (d.get(SchemaFieldsConstants.NAME));
         String color = (String) (d.get(SchemaFieldsConstants.META_COLOR));
+        String description = (String) (d.get(SchemaFieldsConstants.DESCRIPTION));
         List<Property> properties = ((Collection<?>) d.get(SchemaFieldsConstants.META_PROPERTIES)).stream()
                 .filter(p -> p instanceof Map)
                 .map(p -> Property.fromMap((Map<?, ?>) p))
@@ -84,7 +95,7 @@ public class TypeEntity {
                 .map(p -> Property.fromIncomingLinksMap((Map<?, ?>) p, propertyReverseLink))
                 .collect(Collectors.toList());
         properties.addAll(incomingLinksProperties);
-        return new TypeEntity(id, name, color, properties);
+        return new TypeEntity(id, name, color, description, properties);
     }
 
     private String getDistinctPropertyKey(Property p){

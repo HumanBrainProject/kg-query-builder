@@ -88,6 +88,7 @@ export class TypeStore {
             id: type.id,
             label: type.label,
             color: type.color,
+            description: type.description,
             properties: (Array.isArray(type.properties)?type.properties:[])
               .map(p => {
                 if(!p.label) {

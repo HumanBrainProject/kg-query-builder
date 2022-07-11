@@ -25,12 +25,12 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { useNavigate } from "react-router-dom";
-import _  from "lodash-uuid";
+import _ from "lodash-uuid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faChevronRight} from "@fortawesome/free-solid-svg-icons/faChevronRight";
-import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
-import {faFile} from "@fortawesome/free-solid-svg-icons/faFile";
-import {faTag} from "@fortawesome/free-solid-svg-icons/faTag";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons/faChevronRight";
+import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle";
+import { faFile } from "@fortawesome/free-solid-svg-icons/faFile";
+import { faTag } from "@fortawesome/free-solid-svg-icons/faTag";
 
 import { useStores } from "../../Hooks/UseStores";
 
@@ -43,7 +43,8 @@ const useStyles = createUseStyles({
     height: "100%",
     width: "100%",
     padding: "10px",
-    background: "linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 100%)",
+    background:
+      "linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 100%)",
     color: "var(--ft-color-normal)",
     border: "1px solid var(--border-color-ui-contrast2)",
     overflow: "hidden"
@@ -51,7 +52,13 @@ const useStyles = createUseStyles({
   noSelection: {
     marginTop: "50%",
     textAlign: "center",
-    fontSize: "1.4rem"
+    fontSize: "1.4rem",
+    marginLeft: "10px",
+    marginRight: "10px"
+  },
+  noSelectionText: {
+    fontSize: "small",
+    marginTop: "10px"
   },
   choice: {
     display: "flex",
@@ -66,6 +73,11 @@ const useStyles = createUseStyles({
     "& small": {
       color: "var(--ft-color-quiet)",
       fontStyle: "italic"
+    },
+    "& p": {
+      marginTop: "10px",
+      fontSize: "small",
+      color: "var(--ft-color-quiet)"
     }
   },
   action: {
@@ -80,7 +92,8 @@ const useStyles = createUseStyles({
     transition: "background .3s ease-in-out",
     background: "rgba(0,0,0,0.4)",
     "&:hover": {
-      background: "linear-gradient(90deg, rgba(30,60,70,0.9) 0%, rgba(20,50,60,0.9) 100%)",
+      background:
+        "linear-gradient(90deg, rgba(30,60,70,0.9) 0%, rgba(20,50,60,0.9) 100%)",
       color: "var(--ft-color-loud)",
       "& $nextIcon": {
         color: "var(--ft-color-loud)"
@@ -117,11 +130,23 @@ const getTypeLabel = type => {
     return "";
   }
   const parts = type.id.split("/");
-  return parts[parts.length-1];
+  return parts[parts.length - 1];
 };
 
-const Selection = observer(() => {
+const TypeInfo = observer(({ className, type }) => {
+  return (
+    <div className={className}>
+      <Icon icon={faCircle} color={type.color} />
+      {getTypeLabel(type)} - <small>{type.id}</small>
+      {type.description && 
+        (<p>
+          {type.description}
+        </p>)}
+    </div>
+  );
+});
 
+const Selection = observer(() => {
   const classes = useStyles();
 
   const navigate = useNavigate();
@@ -133,41 +158,52 @@ const Selection = observer(() => {
     navigate(`/queries/${uuid}`);
   };
 
-  const handlShowSavedClick = () => queryBuilderStore.toggleShowSavedQueries(!queryBuilderStore.showSavedQueries);
+  const handlShowSavedClick = () =>
+    queryBuilderStore.toggleShowSavedQueries(
+      !queryBuilderStore.showSavedQueries
+    );
 
-  const type = queryBuilderStore.hasRootSchema?typeStore.types[queryBuilderStore.rootSchemaId]:null;
+  const type = queryBuilderStore.hasRootSchema
+    ? typeStore.types[queryBuilderStore.rootSchemaId]
+    : null;
 
   return (
     <div className={classes.container}>
-      {type?
+      {type ? (
         <div className={classes.choice}>
-          <div className={classes.type}>
-            <Icon icon={faCircle} color={type.color}/>
-            {getTypeLabel(type)} - <small>{type.id}</small>
-          </div>
+          <TypeInfo className={classes.type} type={type} />
           <div className={classes.action} onClick={handleNewQueryClick}>
             <FontAwesomeIcon icon={faFile} size="lg" />
             <span className={classes.actionTitle}>Create a new query</span>
-            <div className={classes.nextIcon} >
+            <div className={classes.nextIcon}>
               <FontAwesomeIcon icon={faChevronRight} size="lg" />
             </div>
           </div>
           <div className={classes.action} onClick={handlShowSavedClick}>
             <FontAwesomeIcon icon={faTag} size="lg" />
             <span className={classes.actionTitle}>Select a saved query</span>
-            <div className={classes.nextIcon} >
-              <FontAwesomeIcon icon={faChevronRight} size="lg" className={queryBuilderStore.showSavedQueries?classes.showSavedQueries:""} />
+            <div className={classes.nextIcon}>
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                size="lg"
+                className={
+                  queryBuilderStore.showSavedQueries
+                    ? classes.showSavedQueries
+                    : ""
+                }
+              />
             </div>
           </div>
           {queryBuilderStore.showSavedQueries && (
             <Queries className={classes.savedQueries} />
           )}
         </div>
-        :
-        <div className={classes.noSelection}>
-          Please select a type
-        </div>
-      }
+      ) : (
+        <div className={classes.noSelection}>Please select a type <p className={classes.noSelectionText}>To start querying the EBRAINS Knowledge Graph, please select the type
+        of the data structure of your main interest. You will then have the
+        chance to collect the various attributes of this type as well as
+        connected resources across the graph in your individual query.</p></div>
+      )}
     </div>
   );
 });
