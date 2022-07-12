@@ -41,10 +41,7 @@ const useStyles = createUseStyles({
     padding: "10px",
     background: "transparent",
     color: "var(--ft-color-normal)",
-    overflow: "hidden",
-    "@media screen and (min-width:2048px)": {
-      width: "1800px"
-    }
+    overflow: "hidden"
   }
 });
 

@@ -50,7 +50,7 @@ const useStyles = createUseStyles({
     overflow: "hidden"
   },
   noSelection: {
-    marginTop: "50%",
+    marginTop: "40%",
     textAlign: "center",
     fontSize: "1.4rem",
     marginLeft: "10px",
