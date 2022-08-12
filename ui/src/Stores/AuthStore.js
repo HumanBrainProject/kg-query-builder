@@ -285,7 +285,6 @@ export class AuthStore {
         const keycloakScript = document.createElement("script");
         keycloakScript.src = `${keycloakSettings.url}/js/keycloak.js`;
         keycloakScript.async = true;
-        keycloakSettings.url = "https://kg.ebrains.eu/foobar";
         document.head.appendChild(keycloakScript);
         keycloakScript.onload = () => {
           this.initializeKeycloak(keycloakSettings);
