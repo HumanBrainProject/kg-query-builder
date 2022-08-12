@@ -229,43 +229,40 @@ export class AuthStore {
     }
   }
 
-  initializeKeycloak(keycloakSettings) {
-    try {
-      const keycloak = window.Keycloak(keycloakSettings);
-      runInAction(() => this.keycloak = keycloak);
-      keycloak.onAuthSuccess = () => {
-        runInAction(() => {
-          this.authSuccess = true;
-          this.isInitializing = false;
-        });
-      };
-      keycloak.onAuthError = error => {
-        const message = (error && error.error_description)?error.error_description:"Failed to authenticate";
-        runInAction(() => {
-          this.authError = message;
-        });
-      };
-      keycloak.onTokenExpired = () => {
-        keycloak
-          .updateToken(30)
-          .catch(() => runInAction(() => {
-            this.authSuccess = false;
-            this.isTokenExpired = true;
-          }));
-      };
-      keycloak.init({ onLoad: "login-required", pkceMethod: "S256" });
-    } catch (e) {
-      runInAction(() => {
-        this.isInitializing = false;
-        this.authError = `Failed to load service endpoints configuration (${e && e.message?e.message:e})`;
-      });
-    }
-  }
-
   login() {
     if(!this.isAuthenticated && this.keycloak) {
       this.keycloak.login();
     }
+  }
+  initializeKeycloak(keycloakSettings) {
+    const keycloak = window.Keycloak(keycloakSettings);
+    runInAction(() => this.keycloak = keycloak);
+    keycloak.onAuthSuccess = () => {
+      runInAction(() => {
+        this.authSuccess = true;
+        this.isInitializing = false;
+      });
+    };
+    keycloak.onAuthError = error => {
+      const message = (error && error.error_description)?error.error_description:"Failed to authenticate";
+      runInAction(() => {
+        this.authError = message;
+      });
+    };
+    keycloak.onTokenExpired = () => {
+      keycloak
+        .updateToken(30)
+        .catch(() => runInAction(() => {
+          this.authSuccess = false;
+          this.isTokenExpired = true;
+        }));
+    };
+    keycloak.init({ onLoad: "login-required", pkceMethod: "S256" }).catch(() => {
+      runInAction(() => {
+        this.isInitializing = false;
+        this.authError = "Failed to initialize authentication";
+      });
+    });
   }
 
   async authenticate() {
@@ -288,7 +285,7 @@ export class AuthStore {
         const keycloakScript = document.createElement("script");
         keycloakScript.src = `${keycloakSettings.url}/js/keycloak.js`;
         keycloakScript.async = true;
-
+        keycloakSettings.url = "https://kg.ebrains.eu/foobar";
         document.head.appendChild(keycloakScript);
         keycloakScript.onload = () => {
           this.initializeKeycloak(keycloakSettings);
