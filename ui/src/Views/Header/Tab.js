@@ -25,8 +25,9 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
-import ReactPiwik from "react-piwik";
 import { useNavigate } from "react-router-dom";
+
+import API from "../../Services/API";
 
 const useStyles = createUseStyles({
   container:{
@@ -118,7 +119,7 @@ const Tab = ({label, className, disabled, current, icon, iconColor, iconSpin, Co
   };
 
   const handleClose = e => {
-    ReactPiwik.push(["trackEvent", "Query", "Close"]);
+    API.trackEvent("Query", "Close");
     e.stopPropagation();
     onClose(e);
   };

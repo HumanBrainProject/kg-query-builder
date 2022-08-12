@@ -28,11 +28,12 @@ module.exports = function(app) {
     "/service/api/**",
     createProxyMiddleware({
       target:"http://localhost:8080",
+      //target:"https://query.kg-dev.ebrains.eu",
       secure:false,
       changeOrigin: true,
       pathRewrite: function(path) {
         return path.replace("/service/api/", "/");
-       }
+      }
     })
   );
 };

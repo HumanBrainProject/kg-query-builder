@@ -26,9 +26,9 @@ import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faSave} from "@fortawesome/free-solid-svg-icons/faSave";
-import ReactPiwik from "react-piwik";
 import { useNavigate, matchPath } from "react-router-dom";
 
+import API from "../../../Services/API";
 import { useStores } from "../../../Hooks/UseStores";
 
 const SaveButton = observer(({ disabled }) => {
@@ -38,12 +38,7 @@ const SaveButton = observer(({ disabled }) => {
   const { queryBuilderStore } = useStores();
 
   const onClick = () => {
-    ReactPiwik.push([
-      "trackEvent",
-      "Query",
-      "Save",
-      queryBuilderStore.rootField.id,
-    ]);
+    API.trackEvent("Query", "Save", queryBuilderStore.rootField.id);
     const match = matchPath({path:"/queries/:id/:mode"}, location.pathname);
     queryBuilderStore.saveQuery(navigate, match?.params?.mode);
   };

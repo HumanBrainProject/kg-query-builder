@@ -27,7 +27,6 @@ import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
-import ReactPiwik from "react-piwik";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useStores } from "../Hooks/UseStores";
@@ -43,6 +42,7 @@ import DeleteError from "./Query/DeleteError";
 import DeletingMessage from "./Query/DeletingMessage";
 import SpinnerPanel from "../Components/SpinnerPanel";
 import ErrorPanel from "../Components/ErrorPanel";
+import API from "../Services/API";
 
 const useStyles = createUseStyles({
   container: {
@@ -123,8 +123,8 @@ const Query = observer(({ mode }) => {
   };
 
   useEffect(() => {
-    ReactPiwik.push(["setCustomUrl", window.location.href]);
-    ReactPiwik.push(["trackPageView"]);
+    API.trackCustomUrl(window.location.href);
+    API.trackPageView();
     selectQuery();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);

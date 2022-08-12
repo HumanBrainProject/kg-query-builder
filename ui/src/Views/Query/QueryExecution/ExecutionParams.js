@@ -29,8 +29,8 @@ import Row from "react-bootstrap/Row";
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
-import ReactPiwik from "react-piwik";
 
+import API from "../../../Services/API";
 import { useStores } from "../../../Hooks/UseStores";
 
 import SpaceRestriction from "./SpaceRestriction";
@@ -176,12 +176,7 @@ const ExecutionParams = observer(() => {
     queryBuilderStore.setResultInstanceId(e.target.value);
 
   const handlExecuteQuery = () => {
-    ReactPiwik.push([
-      "trackEvent",
-      "Query",
-      "Execute",
-      queryBuilderStore.rootField.id,
-    ]);
+    API.trackEvent("Query", "Execute", queryBuilderStore.rootField.id);
     queryBuilderStore.executeQuery();
   };
 

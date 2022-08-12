@@ -29,9 +29,10 @@ import {faHome} from "@fortawesome/free-solid-svg-icons/faHome";
 import {faTools} from "@fortawesome/free-solid-svg-icons/faTools";
 import {faCode} from "@fortawesome/free-solid-svg-icons/faCode";
 import {faPlay} from "@fortawesome/free-solid-svg-icons/faPlay";
-import ReactPiwik from "react-piwik";
 import { useStores } from "../../Hooks/UseStores";
 import { useNavigate } from "react-router-dom";
+
+import API from "../../Services/API";
 
 const useStyles = createUseStyles({
   tabs: {
@@ -95,14 +96,14 @@ const Tabs = observer(({ mode }) => {
   const { queryBuilderStore } = useStores();
 
   const goHome = () => {
-    ReactPiwik.push(["trackEvent", "Tab", "Home"]);
+    API.trackEvent("Tab", "Home");
     queryBuilderStore.clearQueries();
     queryBuilderStore.clearQuery();
     navigate("/");
   };
 
   const setMode = selectedMode => {
-    ReactPiwik.push(["trackEvent", "Tab", "ChangeMode", selectedMode]);
+    API.trackEvent("Tab", "ChangeMode", selectedMode);
     const id = (queryBuilderStore.saveAsMode && queryBuilderStore.sourceQuery && queryBuilderStore.queryId !== queryBuilderStore.sourceQuery.id)?queryBuilderStore.sourceQuery.id:queryBuilderStore.queryId;
     const path = (selectedMode === "build")?`/queries/${id}`:`/queries/${id}/${selectedMode}`;
     navigate(path);

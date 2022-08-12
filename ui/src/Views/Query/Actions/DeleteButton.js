@@ -26,9 +26,9 @@ import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons/faTrashAlt";
-import ReactPiwik from "react-piwik";
 import { useNavigate } from "react-router-dom";
 
+import API from "../../../Services/API";
 import { useStores } from "../../../Hooks/UseStores";
 
 import Dialog from "../../../Components/Dialog";
@@ -47,7 +47,7 @@ const DeleteButton = observer(({ disabled }) => {
   };
 
   const handleDelete = () => {
-    ReactPiwik.push(["trackEvent", "Query", "Delete", queryBuilderStore.rootField.id]);
+    API.trackEvent("Query", "Delete", queryBuilderStore.rootField.id);
     setShowDeleteDialog(false);
     queryBuilderStore.deleteQuery(queryBuilderStore.sourceQuery, navigate);
   };

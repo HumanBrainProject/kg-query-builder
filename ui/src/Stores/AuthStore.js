@@ -22,7 +22,7 @@
  */
 
 import { observable, computed, action, runInAction, makeObservable } from "mobx";
-import * as Sentry from "@sentry/browser";
+import API from "../Services/API";
 
 const rootPath = window.rootPath || "";
 
@@ -66,7 +66,6 @@ export class AuthStore {
   initializationError = null;
   isLogout = false;
   keycloak = null;
-  endpoint = null;
   commit = null;
 
   transportLayer = null;
@@ -230,36 +229,37 @@ export class AuthStore {
     }
   }
 
-  initializeKeycloak(resolve, reject) {
-    const keycloak = window.Keycloak({
-      "realm": "hbp",
-      "url":  this.endpoint,
-      "clientId": "kg"
-    });
-    runInAction(() => this.keycloak = keycloak);
-    keycloak.onAuthSuccess = () => {
+  initializeKeycloak(keycloakSettings) {
+    try {
+      const keycloak = window.Keycloak(keycloakSettings);
+      runInAction(() => this.keycloak = keycloak);
+      keycloak.onAuthSuccess = () => {
+        runInAction(() => {
+          this.authSuccess = true;
+          this.isInitializing = false;
+        });
+      };
+      keycloak.onAuthError = error => {
+        const message = (error && error.error_description)?error.error_description:"Failed to authenticate";
+        runInAction(() => {
+          this.authError = message;
+        });
+      };
+      keycloak.onTokenExpired = () => {
+        keycloak
+          .updateToken(30)
+          .catch(() => runInAction(() => {
+            this.authSuccess = false;
+            this.isTokenExpired = true;
+          }));
+      };
+      keycloak.init({ onLoad: "login-required", pkceMethod: "S256" });
+    } catch (e) {
       runInAction(() => {
-        this.authSuccess = true;
         this.isInitializing = false;
+        this.authError = `Failed to load service endpoints configuration (${e && e.message?e.message:e})`;
       });
-      resolve(true);
-    };
-    keycloak.onAuthError = error => {
-      const message = (error && error.error_description)?error.error_description:"Failed to authenticate";
-      runInAction(() => {
-        this.authError = message;
-      });
-      reject(message);
-    };
-    keycloak.onTokenExpired = () => {
-      keycloak
-        .updateToken(30)
-        .catch(() => runInAction(() => {
-          this.authSuccess = false;
-          this.isTokenExpired = true;
-        }));
-    };
-    keycloak.init({ onLoad: "login-required", pkceMethod: "S256" });
+    }
   }
 
   login() {
@@ -276,47 +276,40 @@ export class AuthStore {
     this.isInitializing = true;
     this.authError = null;
     try {
-      const { data } = await this.transportLayer.getAuthEndpoint();
+      const { data } = await this.transportLayer.getSettings();
+      const commit = data?.data.commit;
+      const keycloakSettings =  data?.data?.keycloak;
+      API.setSentry(data?.data?.sentryUrl);
+      API.setMatomo(data?.data?.matomo);
       runInAction(() => {
-        this.endpoint =  data && data.data? data.data.endpoint :null;
-        this.commit = data && data.commit? data.commit:null;
-        const sentryUrl = data?.data?.sentryUrl;
-        if (sentryUrl) {
-          Sentry.init({
-            dsn: sentryUrl,
-            environment: window.location.host
-          });
-        }
+        this.commit = commit;
       });
-      if(this.endpoint) {
-        await new Promise((resolve, reject) => {
-          const keycloakScript = document.createElement("script");
-          keycloakScript.src = this.endpoint + "/js/keycloak.js";
-          keycloakScript.async = true;
+      if(keycloakSettings) {
+        const keycloakScript = document.createElement("script");
+        keycloakScript.src = `${keycloakSettings.url}/js/keycloak.js`;
+        keycloakScript.async = true;
 
-          document.head.appendChild(keycloakScript);
-          keycloakScript.onload = () => {
-            this.initializeKeycloak(resolve, reject);
-          };
-          keycloakScript.onerror = () => {
-            document.head.removeChild(keycloakScript);
-            runInAction(() => {
-              this.isInitializing = false;
-              this.authError = `Failed to load resource! (${keycloakScript.src})`;
-            });
-            reject(this.authError);
-          };
-        });
+        document.head.appendChild(keycloakScript);
+        keycloakScript.onload = () => {
+          this.initializeKeycloak(keycloakSettings);
+        };
+        keycloakScript.onerror = () => {
+          document.head.removeChild(keycloakScript);
+          runInAction(() => {
+            this.isInitializing = false;
+            this.authError = `Failed to load resource! (${keycloakScript.src})`;
+          });
+        };
       } else {
         runInAction(() => {
           this.isInitializing = false;
-          this.authError = "service endpoints configuration is not correctly set";
+          this.authError = "The service is temporary unavailable. Please retry in a moment. (failed to load keycloak settings)";
         });
       }
     } catch (e) {
       runInAction(() => {
         this.isInitializing = false;
-        this.authError = `Failed to load service endpoints configuration (${e && e.message?e.message:e})`;
+        this.authError = `The service is temporary unavailable. Please retry in a moment. (${e.message?e.message:e})`;
       });
     }
   }

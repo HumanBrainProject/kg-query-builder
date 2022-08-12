@@ -27,9 +27,9 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faCopy} from "@fortawesome/free-solid-svg-icons/faCopy";
 import _ from "lodash-uuid";
-import ReactPiwik from "react-piwik";
 import { useNavigate } from "react-router-dom";
 
+import API from "../../../Services/API";
 import { useStores } from "../../../Hooks/UseStores";
 
 const CopyAsNewQueryButton = observer(() => {
@@ -39,12 +39,7 @@ const CopyAsNewQueryButton = observer(() => {
   const { queryBuilderStore } = useStores();
 
   const onClick = () => {
-    ReactPiwik.push([
-      "trackEvent",
-      "Query",
-      "CopyAsNew",
-      queryBuilderStore.rootField.id,
-    ]);
+    API.trackEvent("Query", "CopyAsNew", queryBuilderStore.rootField.id);
     const uuid = _.uuid();
     queryBuilderStore.setAsNewQuery(uuid);
     navigate(`/queries/${uuid}`);

@@ -26,8 +26,8 @@ import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faGlasses} from "@fortawesome/free-solid-svg-icons/faGlasses";
-import ReactPiwik from "react-piwik";
 
+import API from "../../../Services/API";
 import { useStores } from "../../../Hooks/UseStores";
 
 const CompareButton = observer(({ disabled }) => {
@@ -35,12 +35,7 @@ const CompareButton = observer(({ disabled }) => {
   const { queryBuilderStore } = useStores();
 
   const onClick = () => {
-    ReactPiwik.push([
-      "trackEvent",
-      "Query",
-      "Compare",
-      queryBuilderStore.rootField.id,
-    ]);
+    API.trackEvent("Query", "Compare", queryBuilderStore.rootField.id);
     queryBuilderStore.toggleCompareChanges();
   };
 

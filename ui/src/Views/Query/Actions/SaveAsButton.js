@@ -26,8 +26,8 @@ import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faSave} from "@fortawesome/free-solid-svg-icons/faSave";
-import ReactPiwik from "react-piwik";
 
+import API from "../../../Services/API";
 import { useStores } from "../../../Hooks/UseStores";
 
 const SaveAsButton = observer(({ disabled }) => {
@@ -35,12 +35,7 @@ const SaveAsButton = observer(({ disabled }) => {
   const { queryBuilderStore } = useStores();
 
   const onClick = () => {
-    ReactPiwik.push([
-      "trackEvent",
-      "Query",
-      "SaveAs",
-      queryBuilderStore.rootField.id,
-    ]);
+    API.trackEvent("Query", "SaveAs", queryBuilderStore.rootField.id);
     queryBuilderStore.setSaveAsMode(true);
   };
 

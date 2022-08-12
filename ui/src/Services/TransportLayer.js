@@ -49,7 +49,7 @@ export class TransportLayer {
       return Promise.resolve(config);
     });
     this._axios.interceptors.response.use(null, (error) => {
-      if (error.response && error.response.status === 401 && !error.config._isRetry) {
+      if (error.response && error.response.status === 401) {
         this.authStore.logout();
         return this.axios.request(error.config);
       } else {
@@ -58,8 +58,8 @@ export class TransportLayer {
     });
   }
 
-  async getAuthEndpoint() {
-    return this._axios.get(API.endpoints.auth());
+  async getSettings() {
+    return this._axios.get(API.endpoints.settings());
   }
 
   async getUserProfile() {

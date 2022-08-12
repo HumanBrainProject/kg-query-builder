@@ -33,8 +33,9 @@ import {faTag} from "@fortawesome/free-solid-svg-icons/faTag";
 import {faCircleNotch} from "@fortawesome/free-solid-svg-icons/faCircleNotch";
 import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
 import Button from "react-bootstrap/Button";
-import ReactPiwik from "react-piwik";
 import { useNavigate } from "react-router-dom";
+
+import API from "../../../../Services/API";
 
 import { useStores } from "../../../../Hooks/UseStores";
 
@@ -147,7 +148,7 @@ const Query = observer(({query, enableDelete}) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleSelect = e => {
-    ReactPiwik.push(["trackEvent", "Query", "Select", query.id]);
+    API.trackEvent("Query", "Select", query.id);
     e.stopPropagation();
     if (!query.deleteError && !query.isDeleting) {
       navigate(`/queries/${query.id}`);
@@ -160,7 +161,7 @@ const Query = observer(({query, enableDelete}) => {
   };
 
   const handleDelete = e => {
-    ReactPiwik.push(["trackEvent", "Query", "Delete", query.id]);
+    API.trackEvent("Query", "Delete", query.id);
     e && e.stopPropagation();
     setShowDeleteDialog(false);
     queryBuilderStore.deleteQuery(query, null);

@@ -27,8 +27,8 @@ import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faChevronRight} from "@fortawesome/free-solid-svg-icons/faChevronRight";
 import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
-import ReactPiwik from "react-piwik";
 
+import API from "../../../Services/API";
 import Icon from "../../../Components/Icon";
 
 import { useStores } from "../../../Hooks/UseStores";
@@ -95,7 +95,7 @@ const Type = observer(({ type, enableFocus, onKeyDown }) =>  {
 
   const selectType = () => {
     if (type.id !== queryBuilderStore.rootSchemaId) {
-      ReactPiwik.push(["trackEvent", "Type", "Select", type.id]);
+      API.trackEvent("Type", "Select", type.id);
       localStorage.setItem("type", type.id);
       queryBuilderStore.selectRootSchema(type);
     }

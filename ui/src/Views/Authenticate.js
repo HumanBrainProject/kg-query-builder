@@ -27,7 +27,6 @@ import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
-import ReactPiwik from "react-piwik";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -35,6 +34,7 @@ import SpinnerPanel from "../Components/SpinnerPanel";
 import ErrorPanel from "../Components/ErrorPanel";
 import Panel from "../Components/Panel";
 import UserProfile from "./UserProfile";
+import API from "../Services/API";
 
 const Authenticate = observer(() => {
   const { authStore } = useStores();
@@ -51,12 +51,12 @@ const Authenticate = observer(() => {
   const handleRetryToAuthenticate = () => authStore.authenticate();
   
   const handleLogin = () =>  {
-    ReactPiwik.push(["trackEvent", "User", "Login"]);
+    API.trackEvent("User", "Login");
     authStore.login();
   };
 
   const handleReLogin = () =>  {
-    ReactPiwik.push(["trackEvent", "User", "Login"]);
+    API.trackEvent("User", "Login");
     navigate("/");
   };
 

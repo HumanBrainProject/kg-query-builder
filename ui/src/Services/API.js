@@ -21,6 +21,9 @@
  *
  */
 
+import * as Sentry from "@sentry/browser";
+import ReactPiwik from "react-piwik";
+
 const getSize = size => {
   if (size !== undefined && size !== null) {
     return `size=${size}&`;
@@ -56,39 +59,92 @@ const getSpace = space => {
   return "";
 }
 
-const API = {
-  endpoints: {
-    auth: () => "/service/api/auth/endpoint",
-    user: () => "/service/api/user",
-    spaces: () => "/service/api/spaces",
-    types: () => "/service/api/types",
-    structure: () => "/service/api/structure?withLinks=true",
-    performQuery: (stage, from, size, instanceId, restrictToSpaces, params) => {
-      const restrictToSpacesString =
-        Array.isArray(restrictToSpaces) && restrictToSpaces.length
-          ? "&restrictToSpaces=" +
-            restrictToSpaces.map((space) => encodeURIComponent(space)).join(",")
-          : "";
-      const paramsString = Object.entries(params).reduce(
-        (acc, [name, value]) => {
-          acc += `&${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
-          return acc;
-        },
-        ""
-      );
-      return `/service/api/queries?${getSize(size)}${getFrom(
-        from
-      )}${getInstanceId(instanceId)}${getStage(
-        stage
-      )}${paramsString}${restrictToSpacesString}`;
-    },
-    getQuery: (queryId) => `/service/api/queries/${queryId}`,
-    saveQuery: (queryId, space) =>
-      `/service/api/queries/${queryId}/${getSpace(space)}`,
-    deleteQuery: (queryId) => `/service/api/queries/${queryId}`,
-    listQueries: (type) =>
-      `/service/api/queries?type=${encodeURIComponent(type)}`
-  }
+const endpoints = {
+  settings: () => "/service/api/settings",
+  user: () => "/service/api/user",
+  spaces: () => "/service/api/spaces",
+  types: () => "/service/api/types",
+  structure: () => "/service/api/structure?withLinks=true",
+  performQuery: (stage, from, size, instanceId, restrictToSpaces, params) => {
+    const restrictToSpacesString =
+      Array.isArray(restrictToSpaces) && restrictToSpaces.length
+        ? "&restrictToSpaces=" +
+          restrictToSpaces.map((space) => encodeURIComponent(space)).join(",")
+        : "";
+    const paramsString = Object.entries(params).reduce(
+      (acc, [name, value]) => {
+        acc += `&${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
+        return acc;
+      },
+      ""
+    );
+    return `/service/api/queries?${getSize(size)}${getFrom(
+      from
+    )}${getInstanceId(instanceId)}${getStage(
+      stage
+    )}${paramsString}${restrictToSpacesString}`;
+  },
+  getQuery: (queryId) => `/service/api/queries/${queryId}`,
+  saveQuery: (queryId, space) =>
+    `/service/api/queries/${queryId}/${getSpace(space)}`,
+  deleteQuery: (queryId) => `/service/api/queries/${queryId}`,
+  listQueries: (type) =>
+    `/service/api/queries?type=${encodeURIComponent(type)}`
 };
+class API {
+  setSentry(sentry) {
+    if (sentry) {
+      Sentry.init(sentry);
+    }
+  }
 
-export default API;
+  setMatomo(settings) {
+    if (settings?.url && settings?.siteId) {
+      this._matomo = new ReactPiwik({
+        url: settings.url,
+        siteId:settings.siteId,
+        trackErrors: true
+      });
+    }
+  }
+
+  trackCustomUrl(url) {
+    if (this._matomo && url) {
+      ReactPiwik.push(["setCustomUrl", url]);
+    }
+  }
+
+  trackPageView() {
+    if (this._matomo) {
+      ReactPiwik.push(["trackPageView"]);
+    }
+  }
+
+  trackEvent(category, name, value) {
+    if (this._matomo) {
+      ReactPiwik.push(["trackEvent", category, name, value]);
+    }
+  }
+
+  trackLink(category, name) {
+    if (this._matomo) {
+      ReactPiwik.push(["trackLink", category, name]);
+    }
+  }
+
+  login() {
+    this._keycloak && this._keycloak.login();
+  }
+
+  async logout() {
+    if (this._keycloak) {
+      await this._keycloak.logout({redirectUri: `${window.location.protocol}//${window.location.host}/logout`});
+    }
+  }
+
+  get endpoints() {
+    return endpoints;
+  }
+}
+
+export default new API();

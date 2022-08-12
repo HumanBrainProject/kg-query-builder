@@ -23,13 +23,13 @@
 
 import React, {useEffect} from "react";
 import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";;
-import ReactPiwik from "react-piwik";
+import { createUseStyles } from "react-jss";
 
 import { useStores } from "../Hooks/UseStores";
 
 import Types from "./Home/Types";
 import Selection from "./Home/Selection";
+import API from "../Services/API";
 
 const useStyles = createUseStyles({
   container: {
@@ -52,8 +52,8 @@ const Home = observer(() => {
   const { typeStore, queryBuilderStore } = useStores();
 
   useEffect(() => {
-    ReactPiwik.push(["setCustomUrl", window.location.href]);
-    ReactPiwik.push(["trackPageView"]);
+    API.trackCustomUrl(window.location.href);
+    API.trackPageView();
     if (!queryBuilderStore.hasRootSchema) {
       const typeId = localStorage.getItem("type");
       const type = typeId && typeStore.types[typeId];
