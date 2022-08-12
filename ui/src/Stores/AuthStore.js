@@ -276,7 +276,7 @@ export class AuthStore {
       const { data } = await this.transportLayer.getSettings();
       const commit = data?.data.commit;
       const keycloakSettings =  data?.data?.keycloak;
-      API.setSentry(data?.data?.sentryUrl);
+      API.setSentry(data?.data?.sentry);
       API.setMatomo(data?.data?.matomo);
       runInAction(() => {
         this.commit = commit;
