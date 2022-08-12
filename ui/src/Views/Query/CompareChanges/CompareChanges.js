@@ -34,8 +34,8 @@ const CompareChanges = observer(() => {
 
   return (
     <pre>
-      {queryBuilderStore.JSONQueryDiff.map(part => (
-        <ComparePart key={part.value} part={part} />
+      {queryBuilderStore.JSONQueryDiff.map((part, index) => (
+        <ComparePart key={index} part={part} />
       ))}
     </pre>
   );
