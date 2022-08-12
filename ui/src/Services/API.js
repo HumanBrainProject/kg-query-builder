@@ -132,16 +132,6 @@ class API {
     }
   }
 
-  login() {
-    this._keycloak && this._keycloak.login();
-  }
-
-  async logout() {
-    if (this._keycloak) {
-      await this._keycloak.logout({redirectUri: `${window.location.protocol}//${window.location.host}/logout`});
-    }
-  }
-
   get endpoints() {
     return endpoints;
   }
