@@ -929,7 +929,6 @@ export class QueryBuilderStore {
           this.runError = `Error while executing query (${message})`;
           this.isRunning = false;
         });
-        this.transportLayer.captureException(e);
       }
     }
   }
@@ -1115,7 +1114,6 @@ export class QueryBuilderStore {
           this.saveError = `Error while saving query "${queryId}" (${message})`;
           this.isSaving = false;
         });
-        this.transportLayer.captureException(e);
       }
     }
   }
@@ -1153,7 +1151,6 @@ export class QueryBuilderStore {
           query.deleteError = `Error while deleting query "${query.id}" (${message})`;
           query.isDeleting = false;
         });
-        this.transportLayer.captureException(e);
       }
     }
   }

@@ -160,7 +160,6 @@ export class TypeStore {
         this.isFetchingQueue = false;
         this.processQueue();
       });
-      this.transportLayer.captureException(e);
     }
   }
 }
