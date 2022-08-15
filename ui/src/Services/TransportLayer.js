@@ -20,14 +20,11 @@
  * (Human Brain Project SGA1, SGA2 and SGA3).
  *
  */
-
 import axios from "axios";
-import * as Sentry from "@sentry/browser";
 
 import API from "./API";
 
 export class TransportLayer {
-  _axios = null
 
   constructor() {
     this._axios = axios.create({});
@@ -35,7 +32,7 @@ export class TransportLayer {
 
   captureException = e => {
     if (e?.response?.status === 500) {
-      Sentry.captureException(e);
+      API.captureException(e);
     }
   }
 
