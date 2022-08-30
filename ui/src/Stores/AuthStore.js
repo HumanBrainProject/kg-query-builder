@@ -260,7 +260,11 @@ export class AuthStore {
             this.isTokenExpired = true;
           }));
       };
-      keycloak.init({ onLoad: "login-required", pkceMethod: "S256" }).catch(() => {
+      keycloak.init({
+        onLoad: "login-required",
+        pkceMethod: "S256",
+        checkLoginIframe: !window.location.host.startsWith("localhost") // avoid CORS error with UI running on localhost with Firefox
+      }).catch(() => {
         runInAction(() => {
           this.isInitializing = false;
           this.authError = "Failed to initialize authentication";

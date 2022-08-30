@@ -27,6 +27,7 @@ import { createUseStyles } from "react-jss";
 
 import { useStores } from "../Hooks/UseStores";
 
+import HomeTab from "./HomeTab";
 import UserProfileTab from "./UserProfileTab";
 
 const useStyles = createUseStyles({
@@ -75,9 +76,6 @@ const useStyles = createUseStyles({
         color: "white"
       }
     }
-  },
-  unknownType: {
-    background: "var(--bg-color-warn-quiet)"
   }
 });
 
@@ -85,7 +83,7 @@ const Header = observer(() => {
 
   const classes = useStyles();
 
-  const { appStore, authStore } = useStores();
+  const { appStore } = useStores();
 
   return (
     <div className={classes.container}>
@@ -94,15 +92,14 @@ const Header = observer(() => {
         <span>Knowledge Graph Query Builder</span>
       </div>
       {!appStore.globalError &&
-          <React.Fragment>
+          <>
             <div className={classes.fixedTabsLeft}>
+              <HomeTab />
             </div>
             <div className={classes.fixedTabsRight}>
-              {authStore.isAuthenticated && authStore.isUserAuthorized && (
-                <UserProfileTab className={classes.userProfileTab} size={32} />
-              )}
+              <UserProfileTab className={classes.userProfileTab} size={32} />
             </div>
-          </React.Fragment>
+          </>
       }
     </div>
   );

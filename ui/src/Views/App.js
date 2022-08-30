@@ -32,13 +32,22 @@ import Layout from "./Layout";
 
 const App = observer(() => {
 
-  const { appStore } = useStores();
+  const { appStore, queryBuilderStore } = useStores();
 
   const theme = appStore.currentTheme;
 
-  useEffect(() => {
+  useEffect(() => { 
+
+    const onUnload = e => {
+      if (queryBuilderStore.hasChanged) {
+        e.returnValue = true;
+      }
+    };
+
+    window.addEventListener("beforeunload", onUnload);
     document.addEventListener("keydown", handleKeyDown);
     return () => {
+      window.removeEventListener("beforeunload", onUnload);
       document.removeEventListener("keydown", handleKeyDown);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
