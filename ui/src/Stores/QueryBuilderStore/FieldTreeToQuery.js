@@ -22,6 +22,7 @@
  */
 import { toJS } from "mobx";
 import uniqueId from "lodash/uniqueId";
+import _  from "lodash-uuid";
 
 import { optionsToKeepOnFlattenendField, attributeReg, modelReg } from "./QuerySettings";
 
@@ -88,7 +89,7 @@ const getNamespace = field => field.namespace || "query";
 const getPopertyName = field => {
   const namespace = getNamespace(field);
   const alias = field.alias && field.alias.trim();
-  const name = alias || field.schema.simpleAttributeName || field.schema.label || uniqueId("field");
+  const name = alias || field.schema.simpleAttributeName || _.camelCase(field.schema.label) || uniqueId("field");
   return `${namespace}:${name}`;
 };
 

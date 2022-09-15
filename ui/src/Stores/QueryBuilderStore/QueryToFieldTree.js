@@ -224,7 +224,7 @@ const setFieldProperties = (field, jsonField) => {
   if (namespace) {
     field.namespace = namespace;
   }
-  if (propertyName && propertyName !== field.schema.simpleAttributeName && propertyName !== field.schema.label) {
+  if (propertyName && propertyName !== field.schema.simpleAttributeName) {
     field.alias = propertyName;
   }
   Object.entries(jsonField).forEach(([name, value]) => {
