@@ -27,7 +27,15 @@ import { optionsToKeepOnFlattenendField, attributeReg, modelReg } from "./QueryS
 
 const hasTypeFilter = field => field instanceof Object && !!field.typeFilterEnabled && Array.isArray(field.typeFilter) && !!field.typeFilter.length;
 
-const getTypeFilter = field => hasTypeFilter(field)?field.typeFilter.map(t => ({"@id": t})):[];
+const getTypeFilter = field => {
+  if (hasTypeFilter(field)) {
+    if (field.typeFilter.length === 1) {
+      return {"@id": field.typeFilter[0]};
+    }
+    return field.typeFilter.map(t => ({"@id": t}));
+  }
+  return [];
+};
 
 const getAttribute = field => {
   if (!(field instanceof Object) || !(field.schema instanceof Object)) {
