@@ -63,7 +63,7 @@ const getPath = field => {
     return null;
   }
   const hasType = hasTypeFilter(field);
-  if (field.schema.reverse) {
+  if (field.isReverse) {
     const path = {
       "@id": relativePath,
       "reverse": true

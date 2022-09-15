@@ -114,14 +114,14 @@ const getTypeFilter = object => {
   return getTypeFiltertFromObject(object);
 };
 
-const getPropertyFromLookups = (types, lookups, attribute, isLeaf) => {
+const getPropertyFromLookups = (types, lookups, attribute, isReverse, isLeaf) => {
   if (!(types instanceof Object) || !Array.isArray(lookups) || !attribute) {
     return null;
   }
   let property = lookups.reduce((acc, id) => {
     const type = types[id];
     if (type) {
-      const prop = type.properties.find(p => p.attribute === attribute && (isLeaf || p.canBe));
+      const prop = type.properties.find(p => p.attribute === attribute && (isReverse?!!p.reverse:!p.reverse) && (isLeaf || p.canBe));
       if (prop) {
         if (Array.isArray(acc.canBe) && Array.isArray(prop.canBe) && prop.canBe.length) {
           const canBe = new Set(acc.canBe);
@@ -163,7 +163,7 @@ const getProperty = (types, context, lookups, relativePath, isReverse, isLeaf) =
   } else if (relativePath === "@id" || relativePath === "@type") {
     attribute = relativePath;
   }
-  let property = getPropertyFromLookups(types, lookups, attribute, isLeaf);
+  let property = getPropertyFromLookups(types, lookups, attribute, isReverse, isLeaf);
   const isUnknown = !property;
   if (isUnknown) {
     property = {
@@ -186,7 +186,6 @@ const getField = (types, context, parentField, path, isLeaf) => {
     const typeFilter = getTypeFilter(path);
     const property = getProperty(types, context, parentField.lookups, relativePath, isReverse, isLeaf);
     const { isUnknown, ...schema } = property;
-    
     const field = new Field(schema, parentField);
     field.isUnknown = isUnknown;
     field.isFlattened = isFlattened;
