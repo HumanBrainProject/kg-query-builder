@@ -246,7 +246,6 @@ const Filter = observer(({ filter, show, onChange }) => {
               <option value="STARTS_WITH">Starts with</option>
               <option value="ENDS_WITH">Ends with</option>
               <option value="REGEX">Regex</option>
-              <option value="MBB">Minimal bounding box</option>
             </select></div>
             {filter.parameter === undefined && filter.op !== "IS_EMPTY" && (
               <Button variant="secondary"className={classes.addButton} onClick={handleAddParameter}><FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>&nbsp;add parameter</Button>
