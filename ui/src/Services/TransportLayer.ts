@@ -20,72 +20,74 @@
  * (Human Brain Project SGA1, SGA2 and SGA3).
  *
  */
-import axios from "axios";
-
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import AuthStore from "../Stores/AuthStore";
 import API from "./API";
 
 export class TransportLayer {
-
+  _axios: AxiosInstance;
+  authStore?: AuthStore;
+  
   constructor() {
     this._axios = axios.create({});
   }
 
-  setAuthStore = authStore => {
+  setAuthStore = (authStore:AuthStore): void => {
     this.authStore = authStore;
     this._axios = axios.create({});
-    this._axios.interceptors.request.use(config => {
-      if(this.authStore.keycloak) {
-        config.headers.Authorization = "Bearer " + this.authStore.keycloak.token;
+    this._axios.interceptors.request.use((config:AxiosRequestConfig) => {
+      if(this.authStore?.keycloak && config.headers) {
+        config.headers.Authorization = `Bearer ${this.authStore.keycloak.token}`;
       }
       return Promise.resolve(config);
     });
-    this._axios.interceptors.response.use(null, (error) => {
+    this._axios.interceptors.response.use(undefined, (error) => {
       if (error.response && error.response.status === 401) {
-        this.authStore.logout();
-        return this.axios.request(error.config);
+        this.authStore?.logout();
+        return this._axios.request(error.config);
       } else {
         return Promise.reject(error);
       }
     });
   }
 
-  async getSettings() {
+  async getSettings(): Promise<AxiosResponse<any, any>> {
     return this._axios.get(API.endpoints.settings());
   }
 
-  async getUserProfile() {
+  async getUserProfile(): Promise<AxiosResponse<any, any>> {
     return this._axios.get(API.endpoints.user());
   }
 
-  async getSpaces() {
+  async getSpaces(): Promise<AxiosResponse<any, any>> {
     return this._axios.get(API.endpoints.spaces());
   }
 
-  async getTypes() {
+  async getTypes(): Promise<AxiosResponse<any, any>> {
     return this._axios.get(API.endpoints.types());
   }
 
-  async getTypesByName(types) {
+  async getTypesByName(types: string[]): Promise<AxiosResponse<any, any>> {
     return this._axios.post(API.endpoints.types(), types);
   }
 
-  async performQuery(query, stage, from, size, instanceId, restrictToSpaces, params) {
+  async performQuery(query: any, stage: string, from: number, size: number, instanceId: string, restrictToSpaces: string[], params: any): Promise<AxiosResponse<any, any>> {
     return this._axios.post(API.endpoints.performQuery(stage, from, size, instanceId, restrictToSpaces, params), query);
   }
 
-  async listQueries(type) {
+  async listQueries(type: string): Promise<AxiosResponse<any, any>> {
     return this._axios.get(API.endpoints.listQueries(type));
   }
 
-  async getQuery(queryId) {
+  async getQuery(queryId: string): Promise<AxiosResponse<any, any>> {
     return this._axios.get(API.endpoints.getQuery(queryId));
   }
 
-  async saveQuery(queryId, query, space) {
+  async saveQuery(queryId: string, query: any, space: string): Promise<AxiosResponse<any, any>> {
     return this._axios.put(API.endpoints.saveQuery(queryId, space), query);
   }
 
-  async deleteQuery(queryId) {
+  async deleteQuery(queryId: string): Promise<AxiosResponse<any, any>> {
     return this._axios.delete(API.endpoints.deleteQuery(queryId));
   }
 }

@@ -22,31 +22,14 @@
  */
 
 import React from "react";
-import { createRoot } from "react-dom/client";
-import {JssProvider} from "react-jss";
-// import { configure } from "mobx";
-//import reportWebVitals from './reportWebVitals';
 
-import "bootstrap/dist/css/bootstrap.min.css";
+import { storesContext } from "../Contexts/StoresContext";
+import { RootStore } from "../Stores/RootStore";
 
-import App from "./Views/App";
-
-// configure({
-//   enforceActions: "always",
-//   computedRequiresReaction: true,
-//   reactionRequiresObservable: true,
-//   observableRequiresReaction: true,
-//   disableErrorBoundaries: false // help to debug only
-// });
-
-//reportWebVitals();
-
-const container = document.getElementById('root');
-const root = createRoot(container); // createRoot(container!) if you use TypeScript
-root.render(
-  <React.StrictMode>
-    <JssProvider id={{minify: process.env.NODE_ENV === 'production'}}>
-      <App />
-    </JssProvider>
-  </React.StrictMode>
-);
+export const useStores = ():RootStore => {
+  const store = React.useContext<RootStore>(storesContext);
+  if (!store) {
+    throw new Error("useStores must be used within a StoreProvider.");
+  }
+  return store;
+};

@@ -23,22 +23,24 @@
 
 import { observable, computed, action, runInAction, makeObservable } from "mobx";
 import API from "../Services/API";
+import { TransportLayer } from "../Services/TransportLayer";
 
-const rootPath = window.rootPath || "";
+const globalScope: any = window;
+const rootPath =  globalScope.rootPath || "";
 
-const userKeys = {
-  id: "https://schema.hbp.eu/users/nativeId",
-  username: "http://schema.org/alternateName", //NOSONAR it's only a schema
-  email: "http://schema.org/email", //NOSONAR it's only a schema
-  displayName: "http://schema.org/name", //NOSONAR it's only a schema
-  givenName: "http://schema.org/givenName", //NOSONAR it's only a schema
-  familyName: "http://schema.org/familyName", //NOSONAR it's only a schema
-  picture: "https://schema.hbp.eu/users/picture"
-};
+export interface User {
+  id?: string,
+  username?: string,
+  email?: string,
+  displayName?: string,
+  givenName?: string,
+  familyName?: string,
+  picture?: string
+}
 
-const mapUserProfile = data => {
-  const user = {};
-  if (data && data.data) {
+const mapUserProfile = (data):User => {
+  const user: User = {};
+  if (data?.data) {
     Object.entries(userKeys).forEach(([name, fullyQualifiedName]) => {
       if (data.data[fullyQualifiedName]) {
         user[name] = data.data[fullyQualifiedName];
@@ -70,7 +72,7 @@ export class AuthStore {
 
   transportLayer = null;
 
-  constructor(transportLayer) {
+  constructor(transportLayer: TransportLayer) {
     makeObservable(this, {
       isUserAuthorized: observable,
       isUserAuthorizationInitialized: observable,

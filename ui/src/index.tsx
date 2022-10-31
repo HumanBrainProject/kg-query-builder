@@ -22,13 +22,34 @@
  */
 
 import React from "react";
+import { createRoot } from "react-dom/client";
+import {JssProvider} from "react-jss";
+// import { configure } from "mobx";
+//import reportWebVitals from './reportWebVitals';
 
-import { storesContext } from "../Contexts/StoresContext";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-export const useStores = () => {
-  const store = React.useContext(storesContext);
-  if (!store) {
-    throw new Error("useStores must be used within a StoreProvider.");
-  }
-  return store;
-};
+import App from "./Views/App";
+
+// configure({
+//   enforceActions: "always",
+//   computedRequiresReaction: true,
+//   reactionRequiresObservable: true,
+//   observableRequiresReaction: true,
+//   disableErrorBoundaries: false // help to debug only
+// });
+
+//reportWebVitals();
+
+const container = document.getElementById('root');
+if (!container) {
+  throw new Error("Failed to find the root element");
+}
+const root = createRoot(container);
+root.render(
+  <React.StrictMode>
+    <JssProvider id={{minify: process.env.NODE_ENV === 'production'}}>
+      <App />
+    </JssProvider>
+  </React.StrictMode>
+);

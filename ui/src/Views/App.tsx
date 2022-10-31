@@ -38,9 +38,15 @@ const App = observer(() => {
 
   useEffect(() => { 
 
-    const onUnload = e => {
-      if (queryBuilderStore.hasChanged) {
-        e.returnValue = true;
+    const onUnload = (e: Event) => {
+      if (queryBuilderStore?.hasChanged) {
+        e.preventDefault();
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent): void => {
+      if ((e.ctrlKey || e.metaKey) && e.altKey && e.keyCode === 84) {
+        appStore.toggleTheme();
       }
     };
 
@@ -53,11 +59,7 @@ const App = observer(() => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleKeyDown = e => {
-    if ((e.ctrlKey || e.metaKey) && e.altKey && e.keyCode === 84) {
-      appStore.toggleTheme();
-    }
-  };
+  
 
   return (
     <ErrorBoundary>

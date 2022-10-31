@@ -1,4 +1,5 @@
 module.exports = {
+    "parser": "@typescript-eslint/parser",
     "env": {
         "browser": true,
         "es2021": true,
@@ -8,7 +9,8 @@ module.exports = {
         "eslint:recommended",
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
-        "prettier"
+        "prettier",
+        "plugin:@typescript-eslint/recommended"
     ],
     "parserOptions": {
         "ecmaFeatures": {
@@ -18,7 +20,8 @@ module.exports = {
         "sourceType": "module"
     },
     "plugins": [
-        "react"
+        "react",
+        "@typescript-eslint"
     ],
     "rules": {
       "react/prop-types": [
