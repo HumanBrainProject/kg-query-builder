@@ -21,36 +21,33 @@
  *
  */
 
-import { TransportLayer } from "../Services/TransportLayer";
-import { AppStore } from "./AppStore";
-import { AuthStore } from "./AuthStore";
-import { TypeStore } from "./TypeStore";
-import { QueryBuilderStore } from "./QueryBuilderStore";
+export interface KeycloakSettings {
+  clientId: string,
+  realm: string,
+  url: string
+}
 
-export class RootStore {
+export interface KeycloakLogoutOptions {
+  redirectUri: string
+}
 
-  authStore: AuthStore;
-  typeStore: TypeStore;
-  queryBuilderStore= null;
-  appStore: AppStore;
-  transportLayer: TransportLayer;
+export interface KeycloakInitSettings {
+  onLoad: string,
+  pkceMethod: string,
+  checkLoginIframe: boolean
+}
 
-  constructor(transportLayer: TransportLayer) {
+export interface KeycloakError {
+  error_description: string
+}
 
-    if (!transportLayer) {
-      throw new Error("no transport layer provided!");
-    }
-
-    this.transportLayer = transportLayer;
-
-    // Domain stores
-    this.typeStore = new TypeStore(transportLayer, this);
-    this.queryBuilderStore = new QueryBuilderStore(transportLayer, this);
-
-    this.authStore = new AuthStore(transportLayer);
-    transportLayer.setAuthStore(this.authStore);
-
-    // UI stores
-    this.appStore = new AppStore(this);
-  }
+export interface Keycloak {
+  token?: string,
+  login: () => void,
+  logout: (options: KeycloakLogoutOptions) => void,
+  onAuthSuccess: () => void,
+  onAuthError: (error: KeycloakError) => void,
+  onTokenExpired: () => void,
+  init: (settings: KeycloakInitSettings) => Promise<void>,
+  updateToken: (interval: number) => Promise<void>
 }

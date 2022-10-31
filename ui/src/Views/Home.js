@@ -56,7 +56,7 @@ const Home = observer(() => {
     API.trackPageView();
     if (!queryBuilderStore.hasRootSchema) {
       const typeId = localStorage.getItem("type");
-      const type = typeId && typeStore.types[typeId];
+      const type = typeId && typeStore.types.get(typeId);
       if (type) {
           queryBuilderStore.selectRootSchema(type);
       } else {

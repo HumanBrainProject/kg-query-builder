@@ -24,23 +24,42 @@
 import { observable, action, computed, runInAction, makeObservable } from "mobx";
 import debounce from "lodash/debounce";
 
+import { TransportLayer } from "../Services/TransportLayer";
+import { RootStore } from "./RootStore";
+import { AxiosError } from "axios";
+
+interface Type {
+  id: string,
+  label: string,
+  color: string,
+  description: string,
+  properties: Property[]
+}
+
+interface Property {
+  attribute: string,
+  canBe?: string[],
+  label: string,
+  simpleAttributeName: string,
+}
+
 export class TypeStore {
   filterValue = "";
-  types = {};
-  typeList = [];
-  fetchError = null;
+  types: Map<string, Type> = new Map;
+  typeList: Type[] = [];
+  fetchError?: string;
   isFetching = false;
   isFetched = false;
-  typesQueue = new Set();
+  typesQueue = new Set<string>();
   queueThreshold = 5000;
   queueTimeout = 250;
-  fetchingQueueError = null;
+  fetchingQueueError?: string;
   isFetchingQueue = false;
 
-  transportLayer = null;
-  rootStore = null;
+  transportLayer: TransportLayer;
+  rootStore: RootStore;
 
-  constructor(transportLayer, rootStore) {
+  constructor(transportLayer: TransportLayer, rootStore: RootStore) {
     makeObservable(this, {
       filterValue: observable,
       types: observable,
@@ -73,14 +92,14 @@ export class TypeStore {
     );
   }
 
-  setFilterValue(value) {
+  setFilterValue(value: string) {
     this.filterValue = value;
   }
 
   async fetch() {
     if (!this.isFetching) {
       this.isFetching = true;
-      this.fetchError = null;
+      this.fetchError = undefined
       try {
         const response = await this.transportLayer.getTypes();
         runInAction(() => {
@@ -90,21 +109,22 @@ export class TypeStore {
             color: type.color,
             description: type.description,
             properties: (Array.isArray(type.properties)?type.properties:[])
-              .map(p => {
+              .map((p:Property) => {
                 if(!p.label) {
                   p.label = p.simpleAttributeName.charAt(0).toUpperCase() + p.simpleAttributeName.slice(1);
                 }
                 return p;
               })
-              .sort((a, b) => a.label.localeCompare(b.label))
-          }));
+              .sort((a: Property, b: Property) => a.label.localeCompare(b.label))
+          } as Type));
           this.typeList = types.sort((a, b) => a.label.localeCompare(b.label));
-          types.forEach(type => this.types[type.id] = type);
+          types.forEach(type => this.types.set(type.id, type));
           this.isFetching = false;
           this.isFetched = true;
         });
       } catch (e) {
-        const message = e.message ? e.message : e;
+        const axiosError = e as AxiosError;
+        const message = axiosError?.message;
         runInAction(() => {
           this.fetchError = `Error while fetching types (${message})`;
           this.isFetching = false;
@@ -114,9 +134,9 @@ export class TypeStore {
     }
   }
 
-  addTypesToFetch(types) {
+  addTypesToFetch(types: string[]) {
     types
-      .filter(id => !this.types[id])
+      .filter(id => !this.types.has(id))
       .forEach(id => this.typesQueue.add(id));
     this.processQueue();
   }
@@ -146,7 +166,7 @@ export class TypeStore {
         toProcess.forEach(identifier => {
           const type =  response && response.data && response.data && response.data[identifier];
           if(type){
-            this.types[identifier] = type;
+            this.types.set(identifier, type);
           }
           this.typesQueue.delete(identifier);
         });
@@ -154,8 +174,9 @@ export class TypeStore {
         this.processQueue();
       });
     } catch(e){
+      const axiosError = e as AxiosError;
       runInAction(() =>{
-        this.fetchingQueueError = `Error fetching types (${e.message?e.message:e})`;
+        this.fetchingQueueError = `Error fetching types (${axiosError?.message})`;
         toProcess.forEach(identifier => this.typesQueue.delete(identifier));
         this.isFetchingQueue = false;
         this.processQueue();

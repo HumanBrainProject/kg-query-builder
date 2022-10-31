@@ -164,7 +164,7 @@ const Selection = observer(() => {
     );
 
   const type = queryBuilderStore.hasRootSchema
-    ? typeStore.types[queryBuilderStore.rootSchemaId]
+    ? typeStore.types.get(queryBuilderStore.rootSchemaId)
     : null;
 
   return (

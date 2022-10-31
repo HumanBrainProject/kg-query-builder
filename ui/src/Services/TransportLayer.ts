@@ -51,42 +51,52 @@ export class TransportLayer {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getSettings(): Promise<AxiosResponse<any, any>> {
     return this._axios.get(API.endpoints.settings());
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getUserProfile(): Promise<AxiosResponse<any, any>> {
     return this._axios.get(API.endpoints.user());
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getSpaces(): Promise<AxiosResponse<any, any>> {
     return this._axios.get(API.endpoints.spaces());
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getTypes(): Promise<AxiosResponse<any, any>> {
     return this._axios.get(API.endpoints.types());
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getTypesByName(types: string[]): Promise<AxiosResponse<any, any>> {
     return this._axios.post(API.endpoints.types(), types);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async performQuery(query: any, stage: string, from: number, size: number, instanceId: string, restrictToSpaces: string[], params: any): Promise<AxiosResponse<any, any>> {
     return this._axios.post(API.endpoints.performQuery(stage, from, size, instanceId, restrictToSpaces, params), query);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async listQueries(type: string): Promise<AxiosResponse<any, any>> {
     return this._axios.get(API.endpoints.listQueries(type));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getQuery(queryId: string): Promise<AxiosResponse<any, any>> {
     return this._axios.get(API.endpoints.getQuery(queryId));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async saveQuery(queryId: string, query: any, space: string): Promise<AxiosResponse<any, any>> {
     return this._axios.put(API.endpoints.saveQuery(queryId, space), query);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async deleteQuery(queryId: string): Promise<AxiosResponse<any, any>> {
     return this._axios.delete(API.endpoints.deleteQuery(queryId));
   }

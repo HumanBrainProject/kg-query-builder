@@ -57,7 +57,7 @@ export const Type = ({type}) => {
 
   const { typeStore } = useStores();
 
-  const t = typeStore.types[type];
+  const t = typeStore.types.get(type);
   const label = t?t.label:extractLabel(type);
   const color = t?t.color:null;
 

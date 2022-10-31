@@ -23,10 +23,19 @@
 
 import { observable, computed, action, runInAction, makeObservable } from "mobx";
 import API from "../Services/API";
+import { Keycloak, KeycloakSettings, KeycloakError} from "../Services/Keycloak";
 import { TransportLayer } from "../Services/TransportLayer";
+import { AxiosError } from "axios";
 
-const globalScope: any = window;
-const rootPath =  globalScope.rootPath || "";
+
+declare global {
+	interface Window {
+		rootPath?: string,
+    Keycloak: (settings: KeycloakSettings) => Keycloak
+	}
+}
+
+const rootPath =  window.rootPath || "";
 
 export interface User {
   id?: string,
@@ -38,39 +47,39 @@ export interface User {
   picture?: string
 }
 
-const mapUserProfile = (data):User => {
-  const user: User = {};
-  if (data?.data) {
-    Object.entries(userKeys).forEach(([name, fullyQualifiedName]) => {
-      if (data.data[fullyQualifiedName]) {
-        user[name] = data.data[fullyQualifiedName];
-      }
-    });
-  }
-  return user;
-};
+
+export interface Permission {
+  canCreate: boolean,
+  canWrite: boolean,
+  canDelete: boolean
+}
+export interface Space {
+  isPrivate: boolean,
+  name: string,
+  permissions: Permission
+}
 
 export class AuthStore {
   isUserAuthorized = false;
   isUserAuthorizationInitialized = false;
   isSpacesInitialized = false;
   isSpacesFetched = false;
-  user = null;
-  spaces = [];
+  user?:User;
+  spaces:Space[] = [];
   isRetrievingUserProfile = false;
-  userProfileError = null;
+  userProfileError?: string;
   isRetrievingSpaces = false;
-  spacesError = null;
-  authError = null;
+  spacesError?: string;
+  authError?: string;
   authSuccess = false;
   isTokenExpired = false;
   isInitializing = false;
-  initializationError = null;
+  initializationError?: string;
   isLogout = false;
-  keycloak = null;
+  keycloak?: Keycloak;
   commit = null;
 
-  transportLayer = null;
+  transportLayer: TransportLayer;
 
   constructor(transportLayer: TransportLayer) {
     makeObservable(this, {
@@ -111,7 +120,7 @@ export class AuthStore {
   }
 
   get accessToken() {
-    return this.isAuthenticated ? this.keycloak.token: "";
+    return (this.isAuthenticated && this.keycloak?.token) ? this.keycloak.token: "";
   }
 
   get isAuthenticated() {
@@ -126,7 +135,7 @@ export class AuthStore {
     return !!this.spaces.length;
   }
 
-  getSpace(name) {
+  getSpace(name: string) {
     return this.spaces.find(s => s.name === name);
   }
 
@@ -142,7 +151,7 @@ export class AuthStore {
     return this.sharedSpaces.filter(s => s.permissions && s.permissions.canCreate);
   }
 
-  get firstName() {
+  get firstName(): string {
     const firstNameReg = /^([^ ]+) .*$/;
     if (this.user) {
       if (this.user.givenName) {
@@ -150,7 +159,10 @@ export class AuthStore {
       }
       if (this.user.displayName) {
         if (firstNameReg.test(this.user.displayName)) {
-          return this.user.displayName.match(firstNameReg)[1];
+          const match = this.user.displayName.match(firstNameReg);
+          if(match && match.length) {
+            return match[1];
+          }  
         }
         return this.user.displayName;
       }
@@ -165,35 +177,36 @@ export class AuthStore {
     this.authSuccess = false;
     this.isTokenExpired = true;
     this.isUserAuthorized = false;
-    this.user = null;
+    this.user = undefined;
     this.spaces = [];
     this.isUserAuthorizationInitialized = false;
     this.isSpacesInitialized = false;
-    this.keycloak.logout({redirectUri: `${window.location.protocol}//${window.location.host}${rootPath}/logout`});
+    this.keycloak && this.keycloak.logout({redirectUri: `${window.location.protocol}//${window.location.host}${rootPath}/logout`});
     this.isLogout = true;
   }
 
   async retrieveUserProfile() {
     if (this.isAuthenticated && !this.isRetrievingUserProfile && !this.user) {
-      this.userProfileError = null;
+      this.userProfileError = undefined;
       this.isRetrievingUserProfile = true;
       this.isUserAuthorizationInitialized = true;
       try {
         const { data } = await this.transportLayer.getUserProfile();
         runInAction(() => {
           this.isUserAuthorized = true;
-          this.user = mapUserProfile(data);
+          this.user = data?.data;
           this.isRetrievingUserProfile = false;
         });
       } catch (e) {
+        const axiosError = e as AxiosError;
         runInAction(() => {
-          if (e.response && e.response.status === 403) {
+          if (axiosError.response && axiosError.response.status === 403) {
             this.isUserAuthorized = false;
             this.isRetrievingUserProfile = false;
             this.isUserAuthorizationInitialized = false;
           } else {
             this.isUserAuthorized = false;
-            this.userProfileError = e.message ? e.message : e;
+            this.userProfileError = axiosError?.message;
             this.isRetrievingUserProfile = false;
             this.isUserAuthorizationInitialized = false;
           }
@@ -205,7 +218,7 @@ export class AuthStore {
   async retrieveSpaces() {
     if(this.isAuthenticated && this.isUserAuthorized && !this.isSpacesFetched && !this.isRetrievingSpaces) {
       try {
-        this.spacesError = null;
+        this.spacesError = undefined;
         this.isRetrievingSpaces = true;
         this.isSpacesInitialized = true;
         const { data } = await this.transportLayer.getSpaces();
@@ -215,14 +228,15 @@ export class AuthStore {
           this.isRetrievingSpaces = false;
         });
       } catch(e) {
+        const axiosError = e as AxiosError;
         runInAction(() => {
-          if (e.response && e.response.status === 403) {
+          if (axiosError.response && axiosError.response.status === 403) {
             this.spaces = [];
             this.isSpacesFetched = true;
             this.isRetrievingSpaces = false;
             this.isSpacesInitialized = false;
           } else {
-            this.spacesError = e.message ? e.message : e;
+            this.spacesError = axiosError?.message;
             this.isRetrievingSpaces = false;
             this.isSpacesInitialized = false;
           }
@@ -237,10 +251,12 @@ export class AuthStore {
     }
   }
 
-  initializeKeycloak(keycloakSettings, onSuccess) {
+  initializeKeycloak(keycloakSettings: KeycloakSettings, onSuccess: () => void) {
     try {
       const keycloak = window.Keycloak(keycloakSettings);
-      runInAction(() => this.keycloak = keycloak);
+      runInAction(() => {
+        this.keycloak = keycloak;
+      });
       keycloak.onAuthSuccess = () => {
         runInAction(() => {
           this.authSuccess = true;
@@ -248,7 +264,7 @@ export class AuthStore {
         });
         onSuccess();
       };
-      keycloak.onAuthError = error => {
+      keycloak.onAuthError = (error: KeycloakError) => {
         const message = (error && error.error_description)?error.error_description:"Failed to authenticate";
         runInAction(() => {
           this.authError = message;
@@ -286,7 +302,7 @@ export class AuthStore {
     }
     this.isLogout = false;
     this.isInitializing = true;
-    this.authError = null;
+    this.authError = undefined;
     try {
       const { data } = await this.transportLayer.getSettings();
       const commit = data?.data.commit;
@@ -321,9 +337,10 @@ export class AuthStore {
         });
       }
     } catch (e) {
+      const axiosError = e as AxiosError;
       runInAction(() => {
         this.isInitializing = false;
-        this.authError = `The service is temporary unavailable. Please retry in a moment. (${e.message?e.message:e})`;
+        this.authError = `The service is temporary unavailable. Please retry in a moment. (${axiosError.message?axiosError.message:e})`;
       });
     }
   }

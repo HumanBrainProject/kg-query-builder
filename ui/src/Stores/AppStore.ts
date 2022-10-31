@@ -23,20 +23,32 @@
 
 import { observable, action, computed, makeObservable } from "mobx";
 
+import { RootStore } from "./RootStore";
+
+import { Theme } from "../Themes/Theme";
 import DefaultTheme from "../Themes/Default";
 import BrightTheme from "../Themes/Bright";
 
-const themes = {};
+interface GlobalError {
+  error: string, 
+  info: string
+}
+
+interface Themes {
+  [index:string]: Theme
+}
+
+const themes: Themes = {};
 themes[DefaultTheme.name] = DefaultTheme;
 themes[BrightTheme.name] = BrightTheme;
 
 export class AppStore{
-  globalError = null;
-  _currentThemeName = DefaultTheme.name;
+  globalError?: GlobalError;
+  _currentThemeName: string = DefaultTheme.name;
 
-  rootStore = null;
+  rootStore:RootStore;
 
-  constructor(rootStore) {
+  constructor(rootStore: RootStore) {
     makeObservable(this, {
       globalError: observable,
       _currentThemeName: observable,
@@ -48,22 +60,24 @@ export class AppStore{
     });
 
     this.rootStore = rootStore;
-    this.setTheme(localStorage.getItem("theme"));
+    this.setTheme(localStorage.getItem("theme") ?? DefaultTheme.name);
   }
 
-  setGlobalError(error, info) {
-    this.globalError = {error, info};
+  setGlobalError(error: string, info: string) {
+    this.globalError = {
+      error:error, 
+      info:info};
   }
 
   dismissGlobalError() {
-    this.globalError = null;
+    this.globalError = undefined;
   }
 
   get currentTheme() {
     return themes[this._currentThemeName];
   }
 
-  setTheme(name){
+  setTheme(name: string){
     this._currentThemeName = themes[name]? name: DefaultTheme.name;
     localStorage.setItem("theme", this._currentThemeName);
   }

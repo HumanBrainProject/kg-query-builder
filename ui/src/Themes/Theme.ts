@@ -21,36 +21,8 @@
  *
  */
 
-import { TransportLayer } from "../Services/TransportLayer";
-import { AppStore } from "./AppStore";
-import { AuthStore } from "./AuthStore";
-import { TypeStore } from "./TypeStore";
-import { QueryBuilderStore } from "./QueryBuilderStore";
-
-export class RootStore {
-
-  authStore: AuthStore;
-  typeStore: TypeStore;
-  queryBuilderStore= null;
-  appStore: AppStore;
-  transportLayer: TransportLayer;
-
-  constructor(transportLayer: TransportLayer) {
-
-    if (!transportLayer) {
-      throw new Error("no transport layer provided!");
-    }
-
-    this.transportLayer = transportLayer;
-
-    // Domain stores
-    this.typeStore = new TypeStore(transportLayer, this);
-    this.queryBuilderStore = new QueryBuilderStore(transportLayer, this);
-
-    this.authStore = new AuthStore(transportLayer);
-    transportLayer.setAuthStore(this.authStore);
-
-    // UI stores
-    this.appStore = new AppStore(this);
-  }
+export interface Theme extends Object {
+  name: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [index:string]: any
 }

@@ -284,7 +284,7 @@ export class QueryBuilderStore {
 
     return lookups.reduce((acc, id) => {
       const reg = /^https?:\/\/.+\/(.+)$/; //NOSONAR
-      const type = this.rootStore.typeStore.types[id];
+      const type = this.rootStore.typeStore.types.get(id);
       if (type) {
         const properties = type.properties.filter(prop => (this.includeAdvancedAttributes  || !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))
                                                             && (!filter 
@@ -552,7 +552,7 @@ export class QueryBuilderStore {
       return false;
     }
     const typeName = this.rootSchema.id;
-    const type = this.rootStore.typeStore.types[typeName];
+    const type = this.rootStore.typeStore.types.get(typeName);
     return !!type;
   }
 
@@ -883,7 +883,7 @@ export class QueryBuilderStore {
       this.responseVocab = this.context.query;
     }
     const typeName = query?.meta?.type;
-    const type = this.rootStore.typeStore.types[typeName];
+    const type = this.rootStore.typeStore.types.get(typeName);
     if(type) {
       const schema = {
         id: type.id,

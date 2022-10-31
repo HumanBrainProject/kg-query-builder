@@ -101,7 +101,7 @@ const Query = observer(({ mode }) => {
         if (localStorage.getItem("type")) {
           localStorage.setItem("type", typeName);
         }
-        const type = typeStore.types[typeName];
+        const type = typeStore.types.get(typeName);
         if(type) {
           queryBuilderStore.selectRootSchema(type);
           queryBuilderStore.selectQuery(query);
