@@ -109,7 +109,7 @@ const SpaceForm = observer(({ className }) => {
     queryBuilderStore.space && !queryBuilderStore.space.isPrivate;
 
   const isReadMode =
-    !queryBuilderStore.saveAsMode || !authStore.sharedSpaces.length;
+    !queryBuilderStore.saveAsMode || !authStore.allowedSharedSpacesToCreateQueries.length;
 
   const sharedSpaces = isReadMode
     ? authStore.sharedSpaces
