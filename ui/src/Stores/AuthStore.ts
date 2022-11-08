@@ -46,13 +46,12 @@ export interface User {
   familyName?: string,
   picture?: string
 }
-
-
 export interface Permission {
   canCreate: boolean,
   canWrite: boolean,
   canDelete: boolean
 }
+
 export interface Space {
   isPrivate: boolean,
   name: string,

@@ -95,7 +95,7 @@ const QueryExecution = observer(() => {
 
   const handlExecuteQuery = () => queryBuilderStore.executeQuery();
 
-  const handlClearError = () => queryBuilderStore.setRunError(null);
+  const handlClearError = () => queryBuilderStore.setRunError(undefined);
 
   return (
     <div className={classes.container}>
