@@ -23,35 +23,45 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
-import Button from "react-bootstrap/Button";
-
-import Modal from "./Modal";
 
 const useStyles = createUseStyles({
   container: {
-    "& h5": {
-      margin: "0",
-      paddingBottom: "20px"
-    },
-    "& button + button, & a + button, & a + a": {
-      marginLeft: "20px"
+    position: "fixed",
+    top: "0",
+    left: "0",
+    width: "100%",
+    height: "100%",
+    background: "var(--bg-color-blend-contrast1)",
+    zIndex: "1200",
+    "& > div": {
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      minWidth: "220px",
+      transform: "translate(-50%, -50%)",
+      padding: "30px",
+      border: "1px solid var(--border-color-ui-contrast1)",
+      borderRadius: "4px",
+      fontSize: "1.2em",
+      fontWeight: "lighter",
+      textAlign:"center",
+      color: "var(--ft-color-loud)",
+      background: "#0a2332"
     }
   }
 });
 
-const Dialog = ({message, onCancel, onConfirm}) => {
+const Modal = ({className, children}) => {
 
   const classes = useStyles();
 
   return (
-    <Modal className={classes.container}>
-        <h5>{message}</h5>
-        <div>
-          <Button variant="secondary" onClick={onCancel}>Cancel</Button>
-          <Button variant="primary" onClick={onConfirm}>Confirm</Button>
-        </div>
-    </Modal>
+    <div className={`${classes.container} ${className?className:""}`}>
+      <div>
+       {children}
+      </div>
+    </div>
   );
 };
 
-export default Dialog;
+export default Modal;

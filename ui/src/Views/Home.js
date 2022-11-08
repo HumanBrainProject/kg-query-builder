@@ -21,7 +21,7 @@
  *
  */
 
-import React, {useEffect} from "react";
+import React, {useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
@@ -30,6 +30,7 @@ import { useStores } from "../Hooks/UseStores";
 import Types from "./Home/Types";
 import Selection from "./Home/Selection";
 import API from "../Services/API";
+import WelcomeTip from "./WelcomeTip";
 
 const useStyles = createUseStyles({
   container: {
@@ -41,13 +42,22 @@ const useStyles = createUseStyles({
     padding: "10px",
     background: "transparent",
     color: "var(--ft-color-normal)",
-    overflow: "hidden"
+    overflow: "hidden",
+    "&.showWelcomeTip": {
+      gridTemplateRows: "auto 1fr",
+      rowGap: "10px",
+    }
+  },
+  welcomeTip: {
+    gridColumnEnd: "span 2"
   }
 });
 
 const Home = observer(() => {
 
   const classes = useStyles();
+
+  const [ showWelcomeTip, setShowWelcomeTip ] = useState(!localStorage.getItem("hideWelcomeTip"));
 
   const { typeStore, queryBuilderStore } = useStores();
 
@@ -66,8 +76,14 @@ const Home = observer(() => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleHideWelcomeTip = () => {
+    localStorage.setItem("hideWelcomeTip", true);
+    setShowWelcomeTip(false);
+  };
+
   return (
-    <div className={classes.container}>
+    <div className={`${classes.container} ${showWelcomeTip?"showWelcomeTip":""}`}>
+      <WelcomeTip className={classes.welcomeTip} show={showWelcomeTip} onClose={handleHideWelcomeTip} />
       <Types />
       <Selection />
     </div>
