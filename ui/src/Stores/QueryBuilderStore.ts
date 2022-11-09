@@ -108,9 +108,9 @@ export interface JSONQuerySpecification {
 }
 
 export interface QueryUser {
-  id: string,
-  name: string,
-  picture: string
+  id?: string,
+  name?: string,
+  picture?: string
 }
 
 export interface QuerySpecification {
@@ -187,12 +187,12 @@ const getProperties = query => {
     }, {});
 };
 
-const normalizeUser = user => {
+const normalizeUser = (user): QueryUser => {
   if (!user || !user["@id"]) {
     return {
-      id: null,
-      name: null,
-      picture: null
+      id: undefined,
+      name: undefined,
+      picture: undefined
     };
   }
   return {
