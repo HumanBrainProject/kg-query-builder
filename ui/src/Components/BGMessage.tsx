@@ -23,35 +23,48 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
-import Button from "react-bootstrap/Button";
-
-import Modal from "./Modal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconDefinition, IconName } from "@fortawesome/fontawesome-common-types";
 
 const useStyles = createUseStyles({
   container: {
-    "& h5": {
-      margin: "0",
-      paddingBottom: "20px"
-    },
-    "& button + button, & a + button, & a + a": {
-      marginLeft: "20px"
+    position: "absolute !important",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%,-200px)",
+    textAlign: "center"
+  },
+  icon: {
+    fontSize: "10em",
+    "& path": {
+      fill: "var(--bg-color-blend-contrast1)",
+      stroke: "rgba(200,200,200,.1)",
+      strokeWidth: "3px"
     }
+  },
+  text: {
+    fontWeight: "300",
+    fontSize: "1.2em"
   }
 });
 
-const Dialog = ({message, onCancel, onConfirm}) => {
+interface BGMessageProps {
+  children: JSX.Element;
+  icon: IconDefinition;
+  transform?: string;
+}
 
+const BGMessage = ({ children, icon, transform }: BGMessageProps) => {
   const classes = useStyles();
 
   return (
-    <Modal className={classes.container}>
-        <h5>{message}</h5>
-        <div>
-          <Button variant="secondary" onClick={onCancel}>Cancel</Button>
-          <Button variant="primary" onClick={onConfirm}>Confirm</Button>
-        </div>
-    </Modal>
+    <div className={classes.container}>
+      <div className={classes.icon}>
+        <FontAwesomeIcon icon={icon} transform={transform} />
+      </div>
+      <div className={classes.text}>{children}</div>
+    </div>
   );
 };
 
-export default Dialog;
+export default BGMessage;

@@ -21,14 +21,14 @@
  *
  */
 
-import React, { useRef, useEffect} from "react";
+import React, { useRef, useEffect, ChangeEvent, KeyboardEvent, RefObject } from "react";
 import { createUseStyles } from "react-jss";
 import Form from "react-bootstrap/Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faSearch} from "@fortawesome/free-solid-svg-icons/faSearch";
+import { faSearch } from "@fortawesome/free-solid-svg-icons/faSearch";
+import { IconDefinition } from "@fortawesome/fontawesome-common-types";
 
 const useStyles = createUseStyles({
-
   container: {
     position: "relative",
     color: "var(--ft-color-loud)",
@@ -43,7 +43,7 @@ const useStyles = createUseStyles({
     paddingLeft: "30px",
     borderRadius: "2px",
     backgroundColor: "var(--bg-color-blend-contrast1)",
-    "&:focus":{
+    "&:focus": {
       color: "var(--ft-color-loud)",
       borderColor: "rgba(64, 169, 243, 0.5)",
       backgroundColor: "transparent"
@@ -58,11 +58,26 @@ const useStyles = createUseStyles({
   }
 });
 
-const Filter = ({ value, className, placeholder="filter...", icon=faSearch, onChange, onKeyDown }) => {
+interface FilterProps {
+  value: string;
+  className: string;
+  placeholder: string;
+  icon: IconDefinition;
+  onChange: (value: string) => void;
+  onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
+}
 
+const Filter = ({
+  value,
+  className,
+  placeholder = "filter...",
+  icon = faSearch,
+  onChange,
+  onKeyDown
+}: FilterProps) => {
   const classes = useStyles();
 
-  const ref = useRef();
+  const ref = useRef<HTMLInputElement>();
 
   useEffect(() => {
     if (ref.current) {
@@ -71,23 +86,26 @@ const Filter = ({ value, className, placeholder="filter...", icon=faSearch, onCh
     return () => {
       onChange("");
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleChange = e => onChange(e.target.value);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
+    onChange(e.target.value);
 
-  const handleKeyDown = e => onKeyDown && onKeyDown(e);
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) =>
+    onKeyDown && onKeyDown(e);
 
   return (
-    <div className={`${classes.container} ${className?className:""}`}>
+    <div className={`${classes.container} ${className ? className : ""}`}>
       <Form.Control
-        ref={ref}
+        ref={ref as RefObject<any>}
         className={classes.input}
         type="text"
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         value={value}
-        placeholder={placeholder} />
+        placeholder={placeholder}
+      />
       <FontAwesomeIcon icon={icon} className={classes.icon} />
     </div>
   );

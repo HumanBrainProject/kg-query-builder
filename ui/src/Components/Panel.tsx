@@ -21,27 +21,39 @@
  *
  */
 
+import { IconDefinition } from "@fortawesome/fontawesome-common-types";
 import React from "react";
 import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import BGMessage from "./BGMessage";
 
 const useStyles = createUseStyles({
   container: {
-    display: "inline-block",
-    opacity: "0.5",
-    paddingRight: "4px"
+    height: "100%"
+  },
+  panel: {
+    color: "var(--ft-color-loud)",
+    "& button + button": {
+      marginLeft: "60px"
+    }
   }
 });
 
-const Icon = ({ className, color, icon }) => {
+interface PanelProps {
+  icon: IconDefinition;
+  children: JSX.Element;
+}
 
+const Panel = ({ icon, children }: PanelProps) => {
   const classes = useStyles();
 
   return (
-    <div className={`${classes.container} ${className?className:""}`} style={color ? { color: color } : {}} >
-      <FontAwesomeIcon fixedWidth icon={icon} />
+    <div className={classes.container}>
+      <div className={classes.panel}>
+        <BGMessage icon={icon}>{children}</BGMessage>
+      </div>
     </div>
   );
 };
 
-export default Icon;
+export default Panel;

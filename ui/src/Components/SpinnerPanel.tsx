@@ -22,42 +22,47 @@
  */
 
 import React from "react";
-import {observer} from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faUser} from "@fortawesome/free-solid-svg-icons/faUser";
+
+import Spinner from "./Spinner";
 
 const useStyles = createUseStyles({
-  avatar: {
-    verticalAlign: "middle",
-    "&.picture": {
-      border: 0,
-      borderRadius: "50%"
-    },
-    "&.default": {
-      transform: "scale(1.35)"
+  container: {
+    height: "100%"
+  },
+  panel: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    zIndex: 10000,
+    background: "var(--bg-color-blend-contrast1)",
+    "& .spinnerPanel": {
+      width: "auto",
+      padding: "30px",
+      border: "1px solid var(--border-color-ui-contrast1)",
+      borderRadius: "4px",
+      color: "var(--ft-color-loud)",
+      background: "rgba(0,0,0,0.4)"
     }
   }
 });
 
-const Avatar = observer(({ user, size=20 }) => {
+interface SpinnerPanelProps {
+  text: string;
+}
 
+const SpinnerPanel = ({ text }: SpinnerPanelProps) => {
   const classes = useStyles();
 
-  if (!user) {
-    return null;
-  }
-
-  if (user.picture) {
-    return (
-      <img alt={user.name?user.name:user.id} width={size} height={size} src={user.picture} title={user.name?user.name:user.id} className={`${classes.avatar} avatar picture`} />
-    );
-  }
-
   return (
-    <FontAwesomeIcon icon={faUser} title={user.name?user.name:user.id} className={`${classes.avatar} avatar default`} />
+    <div className={classes.container}>
+      <div className={classes.panel}>
+        <Spinner>{text}</Spinner>
+      </div>
+    </div>
   );
-});
-Avatar.displayName = "Avatar";
+};
 
-export default Avatar;
+export default SpinnerPanel;

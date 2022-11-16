@@ -23,33 +23,32 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
-
-import MultiToggleItem from "./MultiToggleItem";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconDefinition } from "@fortawesome/fontawesome-common-types";
 
 const useStyles = createUseStyles({
-  container:{
-    display:"inline-grid",
-    background:"var(--bg-color-ui-contrast4)",
-    borderRadius:"20px",
-    height:"24px"
+  container: {
+    display: "inline-block",
+    opacity: "0.5",
+    paddingRight: "4px"
   }
 });
 
-const MultiToggle = ({ children, selectedValue, onChange }) => {
+interface IconProps {
+  className: string;
+  color: string;
+  icon: IconDefinition
+}
+
+const Icon = ({ className, color, icon }: IconProps) => {
 
   const classes = useStyles();
 
-  const isReadOnly = typeof onChange !== "function";
-
-  const childrenWithProps = React.Children.map(children, child => child && React.cloneElement(child, { selectedValue: selectedValue, onSelect: isReadOnly?null:onChange }));
-
-  return(
-    <div className={classes.container} style={{gridTemplateColumns:`repeat(${childrenWithProps.length}, 24px)`}}>
-      {childrenWithProps}
+  return (
+    <div className={`${classes.container} ${className?className:""}`} style={color ? { color: color } : {}} >
+      <FontAwesomeIcon fixedWidth icon={icon} />
     </div>
   );
 };
 
-MultiToggle.Toggle = MultiToggleItem;
-
-export default MultiToggle;
+export default Icon;

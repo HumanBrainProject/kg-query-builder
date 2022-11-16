@@ -23,34 +23,37 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
-
-import BGMessage from "./BGMessage";
+import Avatar from "./Avatar";
+import { User } from "../Stores/AuthStore";
 
 const useStyles = createUseStyles({
-  container: {
-    height: "100%"
-  },
-  panel: {
-    color: "var(--ft-color-loud)",
-    "& button + button": {
-      marginLeft: "60px"
+  user: {
+    "& .avatar.default": {
+      margin: "0 5px"
+    },
+    "& .avatar.picture": {
+      margin: "0 2px 0 5px"
     }
-  },
+  }
 });
 
-const Panel = ({icon, children}) => {
+interface UserProps {
+  user: User;
+}
 
+const User = ({ user }: UserProps) => {
   const classes = useStyles();
+  if (!user) {
+    return null;
+  }
 
+  const userName = user.displayName ? user.displayName : user.id;
   return (
-    <div className={classes.container}>
-      <div className={classes.panel}>
-        <BGMessage icon={icon}>
-          {children}
-        </BGMessage>
-      </div>
-    </div>
+    <span className={`${classes.user} user`}>
+      <Avatar user={user} />
+      <span className="name">{userName}</span>
+    </span>
   );
 };
 
-export default Panel;
+export default User;

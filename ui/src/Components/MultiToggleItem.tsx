@@ -24,52 +24,74 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faDotCircle} from "@fortawesome/free-solid-svg-icons/faDotCircle";
+import { faDotCircle } from "@fortawesome/free-solid-svg-icons/faDotCircle";
+import { IconDefinition } from "@fortawesome/fontawesome-common-types";
 
 const useStyles = createUseStyles({
-  container:{
-    textAlign:"center",
-    height:"24px",
-    lineHeight:"24px",
-    fontSize:"0.66em",
-    transition:"all .2s ease",
-    background:"none",
+  container: {
+    textAlign: "center",
+    height: "24px",
+    lineHeight: "24px",
+    fontSize: "0.66em",
+    transition: "all .2s ease",
+    background: "none",
     "&:not(.readOnly)": {
-      cursor:"pointer"
+      cursor: "pointer"
     },
-    "&.selected":{
-      background:"var(--bg-color-ui-contrast1)",
-      borderRadius:"50%",
-      transform:"scale(1.12)",
-      fontSize:"0.8em",
+    "&.selected": {
+      background: "var(--bg-color-ui-contrast1)",
+      borderRadius: "50%",
+      transform: "scale(1.12)",
+      fontSize: "0.8em",
       /*backgroundColor:"currentColor",
       "& svg":{
         color:"white"
       },*/
-      "&.noscale":{
-        transform:"scale(1)"
+      "&.noscale": {
+        transform: "scale(1)"
       }
     }
   }
 });
 
-const MultiToggleItem = ({ selectedValue, value, color, icon, noscale, onSelect }) => {
+interface MultiToggleItemProps {
+  selectedValue?: any;
+  value: any;
+  color?: string;
+  icon?: IconDefinition;
+  noscale?: boolean;
+  onSelect?: (value: any) => void;
+}
 
+const MultiToggleItem = ({
+  selectedValue,
+  value,
+  color,
+  icon,
+  noscale,
+  onSelect
+}: MultiToggleItemProps) => {
   const classes = useStyles();
 
   const isReadOnly = typeof onSelect !== "function";
 
   const handleClick = () => {
-    if(typeof onSelect === "function") {
+    if (typeof onSelect === "function") {
       onSelect(value);
     }
   };
 
-  const className = `${classes.container}${selectedValue === value?" selected":""}${noscale !== undefined?" noscale":""} ${isReadOnly?"readOnly":""}`;
+  const className = `${classes.container}${
+    selectedValue === value ? " selected" : ""
+  }${noscale !== undefined ? " noscale" : ""} ${isReadOnly ? "readOnly" : ""}`;
 
-  return(
-    <div onClick={isReadOnly?null:handleClick} className={className} style={{color: color}}>
-      <FontAwesomeIcon icon={icon || faDotCircle}/>
+  return (
+    <div
+      onClick={isReadOnly ? null : handleClick}
+      className={className}
+      style={{ color: color }}
+    >
+      <FontAwesomeIcon icon={icon || faDotCircle} />
     </div>
   );
 };

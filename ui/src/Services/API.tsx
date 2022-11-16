@@ -20,42 +20,61 @@
  * (Human Brain Project SGA1, SGA2 and SGA3).
  *
  */
-import { init as SentryInit, captureException as SentryCaptureException, showReportDialog as SentryShowReportDialog } from "@sentry/browser";
+import { init as SentryInit, captureException as SentryCaptureException, showReportDialog as SentryShowReportDialog, BrowserOptions } from "@sentry/browser";
 import ReactPiwik from "react-piwik";
 
-const getSize = size => {
+const getSize = (size?: number|null) => {
   if (size !== undefined && size !== null) {
     return `size=${size}&`;
   }
   return "";
 };
 
-const getFrom = from => {
+const getFrom = (from?: number|null) => {
   if (from !== undefined && from !== null) {
     return `from=${from}&`;
   }
   return "";
 };
 
-const getInstanceId = instanceId => {
+const getInstanceId = (instanceId?: string|null) => {
   if (instanceId !== undefined && instanceId !== null) {
     return `instanceId=${instanceId}&`;
   }
   return "";
 };
 
-const getStage = stage => {
+const getStage = (stage?: string) => {
   if (stage) {
     return `stage=${stage}`;
   }
   return "";
 };
 
-const getSpace = space => {
+const getSpace = (space?: string) => {
   if(space) {
     return `?space=${space}`;
   }
   return "";
+}
+
+interface CustomReportSettingsUser {
+  email: string;
+  name: string;
+}
+
+interface CustomReportSettings {
+  title: string;
+  subtitle2: string;
+  labelEmail: string;
+  labelName: string;
+  user: CustomReportSettingsUser, 
+  labelComments: string;
+}
+
+interface MatomoSettings {
+  siteId: string;
+  url: string;
 }
 
 const endpoints = {
@@ -64,7 +83,7 @@ const endpoints = {
   spaces: () => "/service/api/spaces",
   types: () => "/service/api/types",
   structure: () => "/service/api/structure?withLinks=true",
-  performQuery: (stage, from, size, instanceId, restrictToSpaces, params) => {
+  performQuery: (stage?:string, from?:number, size?:number, instanceId?:string, restrictToSpaces?:string[], params?: any) => {
     const restrictToSpacesString =
       Array.isArray(restrictToSpaces) && restrictToSpaces.length
         ? "&restrictToSpaces=" +
@@ -83,21 +102,22 @@ const endpoints = {
       stage
     )}${paramsString}${restrictToSpacesString}`;
   },
-  getQuery: (queryId) => `/service/api/queries/${queryId}`,
-  saveQuery: (queryId, space) =>
+  getQuery: (queryId:string) => `/service/api/queries/${queryId}`,
+  saveQuery: (queryId:string, space:string) =>
     `/service/api/queries/${queryId}/${getSpace(space)}`,
-  deleteQuery: (queryId) => `/service/api/queries/${queryId}`,
-  listQueries: (type) =>
+  deleteQuery: (queryId:string) => `/service/api/queries/${queryId}`,
+  listQueries: (type:string) =>
     `/service/api/queries?type=${encodeURIComponent(type)}`
 };
 class API {
-
+  _is_sentry_initilized: boolean;
+  _matomo: ReactPiwik|null;
   constructor() {
     this._is_sentry_initilized = false;
     this._matomo = null;
   }
 
-  setSentry(settings) {
+  setSentry(settings: BrowserOptions) {
     if (settings && !this._is_sentry_initilized) {
       this._is_sentry_initilized = true;
       SentryInit({
@@ -113,7 +133,8 @@ class API {
     }
   }
 
-  showReportDialog(customSettings) {
+
+  showReportDialog(customSettings: CustomReportSettings) {
     if (this._is_sentry_initilized) {
       const defaultSettings = {
         title: "An unexpected error has occured.",
@@ -131,17 +152,16 @@ class API {
     }
   }
 
-  setMatomo(settings) {
+  setMatomo(settings: MatomoSettings) {
     if (settings?.url && settings?.siteId) {
       this._matomo = new ReactPiwik({
         url: settings.url,
-        siteId:settings.siteId,
-        trackErrors: true
+        siteId: parseInt(settings.siteId)
       });
     }
   }
 
-  trackCustomUrl(url) {
+  trackCustomUrl(url: string) {
     if (this._matomo && url) {
       ReactPiwik.push(["setCustomUrl", url]);
     }
@@ -153,13 +173,13 @@ class API {
     }
   }
 
-  trackEvent(category, name, value) {
+  trackEvent(category: string, name: string, value: string) {
     if (this._matomo) {
       ReactPiwik.push(["trackEvent", category, name, value]);
     }
   }
 
-  trackLink(category, name) {
+  trackLink(category: string, name: string) {
     if (this._matomo) {
       ReactPiwik.push(["trackLink", category, name]);
     }

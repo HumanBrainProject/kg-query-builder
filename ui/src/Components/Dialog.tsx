@@ -25,56 +25,42 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 import Button from "react-bootstrap/Button";
 
+import Modal from "./Modal";
+
 const useStyles = createUseStyles({
   container: {
-    position: "fixed",
-    top: "0",
-    left: "0",
-    width: "100%",
-    height: "100%",
-    background: "var(--bg-color-blend-contrast1)",
-    zIndex: "1200",
-    "& > div": {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      minWidth: "220px",
-      padding: "30px",
-      transform: "translate(-50%, -50%)",
-      border: "1px solid var(--border-color-ui-contrast1)",
-      borderRadius: "4px",
-      fontSize: "1.2em",
-      fontWeight: "lighter",
-      textAlign:"center",
-      color: "var(--ft-color-loud)",
-      background: "#0a2332",
-      "& h5": {
-        margin: "0",
-        paddingBottom: "20px",
-        color: "red"
-      },
-      "& button + button, & a + button, & a + a": {
-        marginLeft: "20px"
-      }
+    "& h5": {
+      margin: "0",
+      paddingBottom: "20px"
+    },
+    "& button + button, & a + button, & a + a": {
+      marginLeft: "20px"
     }
   }
 });
 
-const ActionError = ({error, onCancel, onRetry}) => {
+interface DialogProps {
+  message: string;
+  onCancel: () => void;
+  onConfirm: () => void;
+}
 
+const Dialog = ({ message, onCancel, onConfirm }: DialogProps) => {
   const classes = useStyles();
 
   return (
-    <div className={classes.container}>
+    <Modal className={classes.container}>
+      <h5>{message}</h5>
       <div>
-        <h5>{error}</h5>
-        <div>
-          <Button variant="secondary" onClick={onCancel}>Cancel</Button>
-          <Button variant="primary" onClick={onRetry}>Retry</Button>
-        </div>
+        <Button variant="secondary" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={onConfirm}>
+          Confirm
+        </Button>
       </div>
-    </div>
+    </Modal>
   );
 };
 
-export default ActionError;
+export default Dialog;

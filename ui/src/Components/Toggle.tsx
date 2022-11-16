@@ -23,8 +23,8 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
-import {faCheck} from "@fortawesome/free-solid-svg-icons/faCheck";
-import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
+import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
+import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 
 import MultiToggle from "./MultiToggle";
 
@@ -50,33 +50,62 @@ const useStyles = createUseStyles({
   }
 });
 
+interface Option {
+  name: string;
+  value: string;
+}
 
-const Toggle = ({ className, option, label, comment, show, onChange }) => {
+interface ToggleProps {
+  className: string;
+  option: Option;
+  label: string;
+  comment: string;
+  show: boolean;
+  onChange: (name: string, newValue: string) => void;
+}
 
+const Toggle = ({
+  className,
+  option,
+  label,
+  comment,
+  show,
+  onChange
+}: ToggleProps) => {
   const classes = useStyles();
 
   const { name, value } = option;
 
   const isReadOnly = typeof onChange !== "function";
 
-  const handleChange = newValue => onChange(name, newValue);
+  const handleChange = (newValue: any) => !isReadOnly && onChange(name, newValue);
 
   if (!show) {
     return null;
   }
 
   return (
-    <div className={`${classes.option} ${className?className:""}`}>
+    <div className={`${classes.option} ${className ? className : ""}`}>
       <div className={classes.toggle}>
-        <MultiToggle selectedValue={value} onChange={isReadOnly?null:handleChange}>
-          <MultiToggle.Toggle color={value?"#40a9f3":"var(--ft-color-normal)"} icon={faCheck} value={true} />
-          <MultiToggle.Toggle color={value?"var(--ft-color-normal)":"var(--ft-color-loud)"} icon={faTimes} value={undefined} />
+        <MultiToggle
+          selectedValue={value}
+          onChange={handleChange}
+        >
+          <MultiToggle.Toggle
+            color={value ? "#40a9f3" : "var(--ft-color-normal)"}
+            icon={faCheck}
+            value={true}
+          />
+          <MultiToggle.Toggle
+            color={value ? "var(--ft-color-normal)" : "var(--ft-color-loud)"}
+            icon={faTimes}
+            value={undefined}
+          />
         </MultiToggle>
       </div>
       <div className={classes.optionLabel}>
-        {label}{comment && (
-          <small>({comment})</small>
-        )}
+        {label}
+        {comment && <small>({comment})</small>}
       </div>
     </div>
   );

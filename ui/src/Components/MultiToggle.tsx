@@ -24,42 +24,54 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 
-import Spinner from "./Spinner";
+import MultiToggleItem from "./MultiToggleItem";
 
 const useStyles = createUseStyles({
   container: {
-    height: "100%"
-  },
-  panel: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    zIndex: 10000,
-    background: "var(--bg-color-blend-contrast1)",
-    "& .spinnerPanel": {
-      width: "auto",
-      padding: "30px",
-      border: "1px solid var(--border-color-ui-contrast1)",
-      borderRadius: "4px",
-      color: "var(--ft-color-loud)",
-      background: "rgba(0,0,0,0.4)"
-    }
+    display: "inline-grid",
+    background: "var(--bg-color-ui-contrast4)",
+    borderRadius: "20px",
+    height: "24px"
   }
 });
 
-const SpinnerPanel = ({text}) => {
+interface MultiToggleProps {
+  children: JSX.Element | JSX.Element[];
+  selectedValue: any;
+  onChange: (value: any) => void;
+}
 
+const MultiToggle = ({
+  children,
+  selectedValue,
+  onChange
+}: MultiToggleProps) => {
   const classes = useStyles();
 
+  const isReadOnly = typeof onChange !== "function";
+
+  const childrenWithProps = React.Children.map(
+    children,
+    child =>
+      child &&
+      React.cloneElement(child, {
+        selectedValue: selectedValue,
+        onSelect: isReadOnly ? null : onChange
+      })
+  );
+
   return (
-    <div className={classes.container}>
-      <div className={classes.panel}>
-        <Spinner>{text}</Spinner>
-      </div>
+    <div
+      className={classes.container}
+      style={{
+        gridTemplateColumns: `repeat(${childrenWithProps.length}, 24px)`
+      }}
+    >
+      {childrenWithProps}
     </div>
   );
 };
 
-export default SpinnerPanel;
+MultiToggle.Toggle = MultiToggleItem;
+
+export default MultiToggle;

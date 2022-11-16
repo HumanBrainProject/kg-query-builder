@@ -22,46 +22,60 @@
  */
 
 import React from "react";
+import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons/faUser";
+import { User } from "../Stores/AuthStore";
 
 const useStyles = createUseStyles({
-  container: {
-    position: "fixed",
-    top: "0",
-    left: "0",
-    width: "100%",
-    height: "100%",
-    background: "var(--bg-color-blend-contrast1)",
-    zIndex: "1200",
-    "& > div": {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      minWidth: "220px",
-      transform: "translate(-50%, -50%)",
-      padding: "30px",
-      border: "1px solid var(--border-color-ui-contrast1)",
-      borderRadius: "4px",
-      fontSize: "1.2em",
-      fontWeight: "lighter",
-      textAlign:"center",
-      color: "var(--ft-color-loud)",
-      background: "#0a2332"
+  avatar: {
+    verticalAlign: "middle",
+    "&.picture": {
+      border: 0,
+      borderRadius: "50%"
+    },
+    "&.default": {
+      transform: "scale(1.35)"
     }
   }
 });
 
-const Modal = ({className, children}) => {
+interface AvatarProps {
+  user: User;
+  size?: number
+}
 
+const Avatar = observer(({ user, size = 20 }: AvatarProps) => {
   const classes = useStyles();
 
-  return (
-    <div className={`${classes.container} ${className?className:""}`}>
-      <div>
-       {children}
-      </div>
-    </div>
-  );
-};
+  if (!user) {
+    return null;
+  }
 
-export default Modal;
+  const userName = user.displayName ? user.displayName : user.id;
+
+  if (user.picture) {
+    return (
+      <img
+        alt={userName}
+        width={size}
+        height={size}
+        src={user.picture}
+        title={userName}
+        className={`${classes.avatar} avatar picture`}
+      />
+    );
+  }
+
+  return (
+    <FontAwesomeIcon
+      icon={faUser}
+      title={userName}
+      className={`${classes.avatar} avatar default`}
+    />
+  );
+});
+Avatar.displayName = "Avatar";
+
+export default Avatar;

@@ -22,37 +22,16 @@
  */
 
 import React from "react";
-import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faCircleNotch} from "@fortawesome/free-solid-svg-icons/faCircleNotch";
+import { faBan } from "@fortawesome/free-solid-svg-icons/faBan";
 
-const useStyles = createUseStyles({
-  spinnerPanel: {
-    position: "absolute !important",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    fontSize: "1.2em",
-    fontWeight: "lighter",
-    width:"100%",
-    textAlign:"center"
-  },
-  spinnerLabel: {
-    paddingLeft: "6px",
-    display:"inline-block"
-  }
-});
+import Panel from "./Panel";
 
-const Spinner = ({children}) => {
-  const classes = useStyles();
-  return (
-    <div className={`${classes.spinnerPanel} spinnerPanel`}>
-      <FontAwesomeIcon icon={faCircleNotch} spin/>
-      <span className={`${classes.spinnerLabel} spinnerLabel`}>
-        {children}
-      </span>
-    </div>
-  );
-};
+interface ErrorPanelProps {
+  children: JSX.Element;
+}
 
-export default Spinner;
+const ErrorPanel = ({ children }: ErrorPanelProps) => (
+  <Panel icon={faBan}>{children}</Panel>
+);
+
+export default ErrorPanel;
