@@ -27,7 +27,7 @@ import { faBan } from "@fortawesome/free-solid-svg-icons/faBan";
 import Panel from "./Panel";
 
 interface ErrorPanelProps {
-  children: JSX.Element;
+  children: React.ReactNode;
 }
 
 const ErrorPanel = ({ children }: ErrorPanelProps) => (

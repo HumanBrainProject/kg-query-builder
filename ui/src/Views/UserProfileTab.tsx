@@ -21,7 +21,7 @@
  *
  */
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, MouseEvent } from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import Overlay from "react-bootstrap/Overlay";
@@ -187,15 +187,20 @@ const windowHeight = () => {
   return w.innerHeight || e.clientHeight || g.clientHeight;
 };
 
-const UserProfileTab = observer(({ className, size=30 }) => {
+interface  UserProfileTabProps {
+  className: string;
+  size: number;
+}
+
+const UserProfileTab = observer(({ className, size=30 }: UserProfileTabProps) => {
 
   const classes = useStyles();
 
   const buttonRef = useRef();
   const imageFileRef = useRef();
 
-  const [showPopOver, setShowPopOver] = useState(false);
-  const [popOverPosition, setPopOverPosition] = useState("bottom");
+  const [showPopOver, setShowPopOver] = useState<boolean>(false);
+  const [popOverPosition, setPopOverPosition] = useState<string>("bottom");
   const [tokenCopied, setTokenCopied] = useState(null);
 
   const { authStore } = useStores();
@@ -206,7 +211,7 @@ const UserProfileTab = observer(({ className, size=30 }) => {
     }
     return () => {
       if (showPopOver) {
-        handlePopOverClose();
+        setShowPopOver(false);
       }
     };
   }, [showPopOver]);
@@ -220,12 +225,12 @@ const UserProfileTab = observer(({ className, size=30 }) => {
     }
   };
 
-  const handleButtonClick = e => {
+  const handleButtonClick = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation();
     setShowPopOver(!showPopOver);
   };
 
-  const handlePopOverClose = e => {
+  const handlePopOverClose = (e: MouseEvent<HTMLElement>) => {
     e && e.stopPropagation();
     setShowPopOver(false);
   };

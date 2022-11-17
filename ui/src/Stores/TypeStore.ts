@@ -28,7 +28,7 @@ import { TransportLayer } from "../Services/TransportLayer";
 import { RootStore } from "./RootStore";
 import { AxiosError } from "axios";
 
-interface Type {
+export interface Type {
   id: string,
   label: string,
   color: string,
@@ -36,7 +36,7 @@ interface Type {
   properties: Property[]
 }
 
-interface Property {
+export interface Property {
   attribute: string,
   canBe?: string[],
   label: string,

@@ -100,7 +100,23 @@ const PopOverContent = ({onSizeChange, children}) => {
   );
 };
 
-const PopOverButton = observer(({className, buttonClassName, buttonTitle, iconComponent, iconProps, okComponent, okProps, cancelComponent, cancelProps, children, onClose, onCancel, onOk}) => {
+interface PopOverButtonProps {
+  className: string;
+  buttonClassName: string;
+  buttonTitle: string;
+  iconComponent: JSX.Element;
+  iconProps: any;
+  okComponent: JSX.Element;
+  okProps: any;
+  cancelComponent: JSX.Element;
+  cancelProps: any;
+  children: JSX.Element;
+  onClose: () => void;
+  onCancel: () => void;
+  onOk: () => void;
+}
+
+const PopOverButton = observer(({className, buttonClassName, buttonTitle, iconComponent, iconProps, okComponent, okProps, cancelComponent, cancelProps, children, onClose, onCancel, onOk}:PopOverButtonProps) => {
   const classes = useStyles();
   const buttonRef = useRef();
   const [showPopOver, setShowPopOver] = useState(false);

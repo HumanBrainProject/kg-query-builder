@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2018 - 2021 Swiss Federal Institute of Technology Lausanne (EPFL)
  *
@@ -24,7 +23,7 @@
 
 import React from "react";
 import { createUseStyles } from "react-jss";
-import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
+import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -42,7 +41,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const extractLabel = type => {
+const extractLabel = (type: string): string => {
   if (typeof type !== "string") {
     return "<unknown filter>";
   }
@@ -53,25 +52,30 @@ const extractLabel = type => {
   return type;
 };
 
-export const Type = ({type}) => {
+interface TypeProps {
+  type: string;
+}
 
+export const Type = ({ type }: TypeProps) => {
   const { typeStore } = useStores();
 
   const t = typeStore.types.get(type);
-  const label = t?t.label:extractLabel(type);
-  const color = t?t.color:null;
-
-  
+  const label = t ? t.label : extractLabel(type);
+  const color = t?.color;
 
   return (
-    <span title={typeof type === "string"?type:JSON.stringify(type)}>
-      <Icon icon={faCircle} color={color} />{label}
+    <span title={typeof type === "string" ? type : JSON.stringify(type)}>
+      <Icon icon={faCircle} color={color} />
+      {label}
     </span>
   );
 };
 
-const PropertyTypes = ({types}) => {
+interface PropertyTypesProps {
+  types: string[];
+}
 
+const PropertyTypes = ({ types }: PropertyTypesProps) => {
   const classes = useStyles();
 
   if (!Array.isArray(types) || !types.length) {
@@ -81,12 +85,10 @@ const PropertyTypes = ({types}) => {
   return (
     <span className={classes.types}>
       {types.map((type, index) => (
-        <Type type={type} key={type?type:index} />
+        <Type type={type} key={type ? type : index} />
       ))}
     </span>
   );
 };
 
 export default PropertyTypes;
-
-

@@ -173,7 +173,7 @@ class API {
     }
   }
 
-  trackEvent(category: string, name: string, value: string) {
+  trackEvent(category: string, name: string, value?: string) {
     if (this._matomo) {
       ReactPiwik.push(["trackEvent", category, name, value]);
     }

@@ -86,7 +86,11 @@ const Tab = ({ className, disabled, active, icon, mode, title, onClick }) => {
   );
 };
 
-const Tabs = observer(({ mode }) => {
+interface TabsProps {
+  mode: string;
+}
+
+const Tabs = observer(({ mode }: TabsProps) => {
 
   const classes = useStyles();
 

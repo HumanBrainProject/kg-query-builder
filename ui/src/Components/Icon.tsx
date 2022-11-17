@@ -35,8 +35,8 @@ const useStyles = createUseStyles({
 });
 
 interface IconProps {
-  className: string;
-  color: string;
+  className?: string;
+  color?: string;
   icon: IconDefinition
 }
 

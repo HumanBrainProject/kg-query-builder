@@ -60,7 +60,11 @@ const useStyles = createUseStyles({
   }
 });
 
-const View = ({mode}) => {
+interface ModeProps {
+  mode: string;
+}
+
+const View = ({mode}:ModeProps) => {
   switch (mode) {
   case "edit":
     return(
@@ -78,7 +82,7 @@ const View = ({mode}) => {
   }
 };
 
-const Query = observer(({ mode }) => {
+const Query = observer(({ mode }:ModeProps) => {
 
   const classes = useStyles();
   
@@ -90,7 +94,7 @@ const Query = observer(({ mode }) => {
   const { queryBuilderStore, typeStore } = useStores();
 
   const selectQuery = async () => {
-    if (id != queryBuilderStore.queryId) {
+    if (queryBuilderStore && id != queryBuilderStore.queryId) {
       let query = queryBuilderStore.findQuery(id);
       if(!query) {
         await queryBuilderStore.fetchQuery(id);

@@ -41,7 +41,7 @@ const useStyles = createUseStyles({
 
 interface PanelProps {
   icon: IconDefinition;
-  children: JSX.Element;
+  children: React.ReactNode;
 }
 
 const Panel = ({ icon, children }: PanelProps) => {

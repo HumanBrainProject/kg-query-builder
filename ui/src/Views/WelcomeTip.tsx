@@ -57,7 +57,13 @@ const useStyles = createUseStyles({
   }
 });
 
-const WelcomeTip = observer(({ className, show, onClose}) => {
+interface WelcomeTipProps {
+  className: string;
+  show: boolean;
+  onClose: () => void;
+}
+
+const WelcomeTip = observer(({ className, show, onClose}: WelcomeTipProps) => {
 
   const classes = useStyles();
 
