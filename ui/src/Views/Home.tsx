@@ -77,7 +77,7 @@ const Home = observer(() => {
   }, []);
 
   const handleHideWelcomeTip = () => {
-    localStorage.setItem("hideWelcomeTip", true);
+    localStorage.setItem("hideWelcomeTip", "true");
     setShowWelcomeTip(false);
   };
 

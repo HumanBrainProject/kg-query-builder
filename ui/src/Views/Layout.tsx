@@ -23,7 +23,7 @@
 
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { createUseStyles, useTheme } from "react-jss";
+import { createUseStyles, DefaultTheme, useTheme } from "react-jss";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -172,7 +172,7 @@ const useStyles = createUseStyles(theme => ({
 
 const Layout = observer(() => {
 
-  const theme = useTheme();
+  const theme = useTheme<DefaultTheme>();
   const useGlobalStyles = getGlobalUseStyles();
   useGlobalStyles({ theme });
 

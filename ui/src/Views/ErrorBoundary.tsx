@@ -21,17 +21,23 @@
  *
  */
 
-import React from "react";
+import React, { ErrorInfo } from "react";
 
 import { useStores } from "../Hooks/UseStores";
+import { RootStore } from "../Stores/RootStore";
 
-class ErrorBoundaryComponent extends React.Component {
+interface ErrorBoundaryComponentProps {
+  children: React.ReactNode;
+  stores: RootStore
+}
+
+class ErrorBoundaryComponent extends React.Component<ErrorBoundaryComponentProps> {
 
   static getDerivedStateFromError() {
     return null;
   }
 
-  componentDidCatch(error, info) {
+  componentDidCatch(error:Error, info:ErrorInfo) {
     const { stores:{ appStore } } = this.props;
     appStore.setGlobalError(error, info);
   }
@@ -42,7 +48,11 @@ class ErrorBoundaryComponent extends React.Component {
   }
 }
 
-const ErrorBoundary = ({ children }) => {
+interface ErrorBoundaryProps {
+  children: React.ReactNode
+}
+
+const ErrorBoundary = ({ children }: ErrorBoundaryProps) => {
 
   const stores = useStores();
 

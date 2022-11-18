@@ -940,7 +940,7 @@ export class QueryBuilderStore {
     return jsdiff.diffJson(this.JSONSourceQuery, this.JSONQuery);
   }
 
-  selectQuery(query) {
+  selectQuery(query: JSONQuerySpecification) {
     if (!this.isSaving
       && this.rootField && this.rootField.schema && this.rootField.schema.id
       && query && !query.isDeleting) {

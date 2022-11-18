@@ -28,10 +28,11 @@ import { RootStore } from "./RootStore";
 import { Theme } from "../Themes/Theme";
 import DefaultTheme from "../Themes/Default";
 import BrightTheme from "../Themes/Bright";
+import { ErrorInfo } from "react";
 
 interface GlobalError {
-  error: string, 
-  info: string
+  error: Error, 
+  info: ErrorInfo
 }
 
 interface Themes {
@@ -63,10 +64,11 @@ export class AppStore{
     this.setTheme(localStorage.getItem("theme") ?? DefaultTheme.name);
   }
 
-  setGlobalError(error: string, info: string) {
+  setGlobalError(error: Error, info: ErrorInfo) {
     this.globalError = {
       error:error, 
-      info:info};
+      info:info
+    };
   }
 
   dismissGlobalError() {

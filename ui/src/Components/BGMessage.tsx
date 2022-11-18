@@ -24,7 +24,10 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconDefinition, IconName } from "@fortawesome/fontawesome-common-types";
+import {
+  IconDefinition,
+  IconName
+} from "@fortawesome/fontawesome-common-types";
 
 const useStyles = createUseStyles({
   container: {
@@ -50,7 +53,7 @@ const useStyles = createUseStyles({
 
 interface BGMessageProps {
   children: React.ReactNode;
-  icon: IconDefinition;
+  icon?: IconDefinition;
   transform?: string;
 }
 
@@ -59,9 +62,11 @@ const BGMessage = ({ children, icon, transform }: BGMessageProps) => {
 
   return (
     <div className={classes.container}>
-      <div className={classes.icon}>
-        <FontAwesomeIcon icon={icon} transform={transform} />
-      </div>
+      {icon && (
+        <div className={classes.icon}>
+          <FontAwesomeIcon icon={icon} transform={transform} />
+        </div>
+      )}
       <div className={classes.text}>{children}</div>
     </div>
   );

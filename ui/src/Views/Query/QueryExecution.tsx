@@ -33,8 +33,8 @@ import { useStores } from "../../Hooks/UseStores";
 
 import BGMessage from "../../Components/BGMessage";
 import SpinnerPanel from "../../Components/SpinnerPanel";
-import Result from "../Query/QueryExecution/Result";
-import ExecutionParams from "../Query/QueryExecution/ExecutionParams";
+import Result from "./QueryExecution/Result";
+import ExecutionParams from "./QueryExecution/ExecutionParams";
 
 const useStyles = createUseStyles({
   container:{

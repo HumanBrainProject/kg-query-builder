@@ -34,6 +34,7 @@ import { useStores } from "../../Hooks/UseStores";
 
 import ThemeRJV from "../../Themes/ThemeRJV";
 import Actions from "./Actions";
+import { JSONQuerySpecification } from "../../Stores/QueryBuilderStore";
 
 const useStyles = createUseStyles({
   container: {
@@ -80,6 +81,13 @@ const useStyles = createUseStyles({
   }
 });
 
+interface HandleMethodProps {
+  existing_src?: JSONQuerySpecification;
+  updated_src?: JSONQuerySpecification;
+  namespace?: string[];
+  name?: string;
+}
+
 const QueryEditor = observer(() => {
 
   const classes = useStyles();
@@ -88,18 +96,18 @@ const QueryEditor = observer(() => {
 
   const scrollRef = useRef();
 
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string>();
 
   if (!queryBuilderStore.rootField) {
     return null;
   }
 
-  const handleOnEdit = ({updated_src}) => {
+  const handleOnEdit = ({updated_src}:HandleMethodProps) => {
     queryBuilderStore.updateQuery(updated_src);
     return true;
   };
 
-  const handleOnAdd = ({existing_src, updated_src, namespace}) => {
+  const handleOnAdd = ({existing_src, updated_src, namespace}:HandleMethodProps) => {
     const path = namespace.join("/");
     if (path === ""){
       setError("Adding properties to the root path is forbidden.");
@@ -110,8 +118,8 @@ const QueryEditor = observer(() => {
     return true;
   };
 
-  const handleOnDelete = ({existing_src, updated_src, namespace, name}) => {
-    const path = namespace.join("/");
+  const handleOnDelete = ({existing_src, updated_src, namespace, name}:HandleMethodProps) => {
+    const path = namespace && namespace.join("/");
     if ((path === "") ||
         (name === "type" && path === "meta") ||
         (name === "@vocab" && path === "@context") ||
@@ -129,7 +137,7 @@ const QueryEditor = observer(() => {
     return true;
   };
 
-  const handleOnErrorClose = () => setError(null);
+  const handleOnErrorClose = () => setError(undefined);
 
   return (
     <div className={classes.container}>
