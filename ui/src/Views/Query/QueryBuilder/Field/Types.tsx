@@ -25,9 +25,10 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faFilter} from "@fortawesome/free-solid-svg-icons/faFilter";
+import { faFilter } from "@fortawesome/free-solid-svg-icons/faFilter";
 
 import PropertyTypes from "../../../PropertyTypes";
+import { FieldProps } from "../Field";
 
 const useStyles = createUseStyles({
   typeFilter: {
@@ -36,14 +37,18 @@ const useStyles = createUseStyles({
   }
 });
 
-const Types = observer(({ field }) => {
+const Types = observer(({ field }: FieldProps) => {
   const classes = useStyles();
 
   if (field.typeFilterEnabled && field.typeFilter && field.typeFilter.length) {
     return (
       <React.Fragment>
         &nbsp;(&nbsp;
-        <FontAwesomeIcon icon={faFilter} className={classes.typeFilter} title="filtered types"  />
+        <FontAwesomeIcon
+          icon={faFilter}
+          className={classes.typeFilter}
+          title="filtered types"
+        />
         &nbsp;
         <PropertyTypes types={field.typeFilter} />
         &nbsp;)
@@ -51,7 +56,7 @@ const Types = observer(({ field }) => {
     );
   }
 
-  if (field.schema.canBe && !!field.schema.canBe.length) {
+  if (field.schema?.canBe && field.schema?.canBe.length > 0) {
     return (
       <React.Fragment>
         &nbsp;(&nbsp;

@@ -22,37 +22,47 @@
  */
 
 import React from "react";
-import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-import { Scrollbars } from "react-custom-scrollbars-2";
 
-import { useStores } from "../../../Hooks/UseStores";
+import PropertyTypes from "../../../PropertyTypes";
+import Types from "./Types";
+import { FieldProps } from "../Field";
 
-import Field from "./Field";
-
-const useStyles = createUseStyles({
-  container: {
-    position:"relative",
-    background: "linear-gradient(135deg, rgba(15,35,45,0.2) 0%, rgba(5,20,35,0.6) 100%)",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    color:"var(--ft-color-normal)"
+const Type = observer(({ field }: FieldProps) => {
+  if (field.isUnknown && field.parent) {
+    if (field.schema?.simpleAttributeName) {
+      return (
+        <React.Fragment>
+          {field.schema.simpleAttributeName}&nbsp;
+          <span title={field.schema?.attribute}>
+            ({" "}
+            {field.schema.attributeNamespace
+              ? field.schema.attributeNamespace
+              : field.schema.attribute}{" "}
+            )
+          </span>
+        </React.Fragment>
+      );
+    }
+    return field.schema?.attribute;
   }
-});
 
-const Representation = observer(({ className }) => {
-
-  const classes = useStyles();
-
-  const { queryBuilderStore } = useStores();
-
+  if (field.parent) {
+    return (
+      <React.Fragment>
+        {field.schema?.label}
+        <Types field={field} />
+      </React.Fragment>
+    );
+  }
   return (
-    <div className={`${classes.container} ${className}`}>
-      <Scrollbars autoHide>
-        <Field field={queryBuilderStore.rootField} />
-      </Scrollbars>
-    </div>
+    <>
+      <PropertyTypes types={field.schema?.canBe} />
+      &nbsp;- <small>{field.schema?.id}</small>
+    </>
   );
 });
-Representation.displayName = "Representation";
+Type.displayName = "Type";
 
-export default Representation;
+
+export default Type;

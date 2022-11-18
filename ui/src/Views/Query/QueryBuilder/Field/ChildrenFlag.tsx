@@ -26,6 +26,7 @@ import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faLevelDownAlt} from "@fortawesome/free-solid-svg-icons/faLevelDownAlt";
+import { FieldProps } from "../Field";
 
 const useStyles = createUseStyles({
   container: {
@@ -33,7 +34,7 @@ const useStyles = createUseStyles({
   },
 });
 
-const ChildrenFlag = observer(({ field }) => {
+const ChildrenFlag = observer(({ field }: FieldProps) => {
   
   const classes = useStyles();
 

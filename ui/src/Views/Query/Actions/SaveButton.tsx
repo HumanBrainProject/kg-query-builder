@@ -22,32 +22,37 @@
  */
 
 import React from "react";
-import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
+import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faAsterisk} from "@fortawesome/free-solid-svg-icons/faAsterisk";
+import {faSave} from "@fortawesome/free-solid-svg-icons/faSave";
+import { useNavigate, matchPath } from "react-router-dom";
 
-const useStyles = createUseStyles({
-  container: {
-    color: "var(--ft-color-louder)"
-  },
-});
+import API from "../../../Services/API";
+import { useStores } from "../../../Hooks/UseStores";
 
-const RequiredFlag = observer(({ field }) => {
-  
-  const classes = useStyles();
+interface SaveButtonProps {
+  disabled: boolean;
+}
 
-  if (!field.getOption("required") || field.parent.isFlattened) {
-    return null;
-  }
+const SaveButton = observer(({ disabled }: SaveButtonProps) => {
+
+  const navigate = useNavigate();
+
+  const { queryBuilderStore } = useStores();
+
+  const onClick = () => {
+    API.trackEvent("Query", "Save", queryBuilderStore.rootField.id);
+    const match = matchPath({path:"/queries/:id/:mode"}, location.pathname);
+    queryBuilderStore.saveQuery(navigate, match?.params?.mode);
+  };
 
   return (
-    <span className={classes.container}>
-      <FontAwesomeIcon transform="shrink-8" icon={faAsterisk} />
-      &nbsp;&nbsp;
-    </span>
+      <Button variant="primary" disabled={disabled} onClick={onClick}>
+        <FontAwesomeIcon icon={faSave} />&nbsp;Save
+      </Button>
   );
 });
-RequiredFlag.displayName = "RequiredFlag";
+SaveButton.displayName = "SaveButton";
 
-export default RequiredFlag;
+export default SaveButton;

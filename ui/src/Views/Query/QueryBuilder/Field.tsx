@@ -33,6 +33,7 @@ import Type from "./Field/Type";
 import TargetName from "./Field/TargetName";
 import Actions from "./Field/Actions";
 import Children from "./Field/Children";
+import Field from "../../../Stores/Field";
 
 const useStyles = createUseStyles({
   container: {
@@ -73,18 +74,21 @@ const useStyles = createUseStyles({
   content: {
     padding: "10px 35px 10px 10px",
     margin: "1px",
-    background: "linear-gradient(180deg, rgba(5,20,40,1) 0%, rgba(5,25,40,0.9) 100%)",
+    background:
+      "linear-gradient(180deg, rgba(5,20,40,1) 0%, rgba(5,25,40,0.9) 100%)",
     position: "relative",
     zIndex: 2,
     cursor: "pointer",
     "&:hover": {
-      background: "linear-gradient(90deg, rgba(35,55,70,1) 0%, rgba(30,50,70,0.9) 100%)",
+      background:
+        "linear-gradient(90deg, rgba(35,55,70,1) 0%, rgba(30,50,70,0.9) 100%)",
       "& $actions": {
         opacity: 1
       }
     },
     "&.selected": {
-      background: "linear-gradient(90deg, rgba(35,55,70,1) 0%, rgba(30,50,70,0.9) 100%)",
+      background:
+        "linear-gradient(90deg, rgba(35,55,70,1) 0%, rgba(30,50,70,0.9) 100%)",
       "& $actions": {
         opacity: 1
       }
@@ -120,7 +124,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const getTitle = field => {
+const getTitle = (field: Field) => {
   if (field.isInvalid) {
     return "this is not a recognized property for this type";
   }
@@ -128,15 +132,19 @@ const getTitle = field => {
   if (field.aliasError) {
     return "alias should not be empty";
   }
- 
+
   if (field.isInvalidLeaf) {
     return "Links field must have at least one child field";
   }
 
-  return null;
+  return undefined;
 };
 
-const Field = observer(({ field }) => {
+export interface FieldProps {
+  field: Field;
+}
+
+const Field = observer(({ field }: FieldProps) => {
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
@@ -152,15 +160,23 @@ const Field = observer(({ field }) => {
 
   const title = getTitle(field);
 
-  const containerClassName = `${classes.container} ${isFlattened?"flattened":""} ${hasFlattenedParent?"has-flattened-parent":""}`;
-  const contentClassName = `${classes.content} ${field.isUnknown ? "is-unknown" : ""} ${isInvalid? "is-invalid" : ""} ${isSelected ? "selected" : ""}`;
+  const containerClassName = `${classes.container} ${
+    isFlattened ? "flattened" : ""
+  } ${hasFlattenedParent ? "has-flattened-parent" : ""}`;
+  const contentClassName = `${classes.content} ${
+    field.isUnknown ? "is-unknown" : ""
+  } ${isInvalid ? "is-invalid" : ""} ${isSelected ? "selected" : ""}`;
 
   return (
-    <div className={containerClassName} >
+    <div className={containerClassName}>
       {hasFlattenedParent && (
         <div className={classes.verticalLineExtraPath}></div>
       )}
-      <div className={contentClassName} title={title} onClick={handleSelectField} >
+      <div
+        className={contentClassName}
+        title={title}
+        onClick={handleSelectField}
+      >
         <ChildrenFlag field={field} />
         <RequiredFlag field={field} />
         <Type field={field} />

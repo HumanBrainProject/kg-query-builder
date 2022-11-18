@@ -65,13 +65,21 @@ const useStyles = createUseStyles({
   }
 });
 
-const Space = ({ space: {name, selected}, onClick }) => {
+interface SpaceProps {
+  space: {
+    name: string;
+    selected: boolean
+  };
+  onClick: (name: string, selected: boolean) => void
+}
+
+const Space = ({ space: {name, selected}, onClick }: SpaceProps) => {
 
   const classes = useStyles();
 
   const handleOnClick = () => typeof onClick === "function" && onClick(name, !selected);
 
-  const handleToggleClick = (_, value) => typeof onClick === "function" && onClick(name, !!value);
+  const handleToggleClick = (_:string, value:boolean|undefined) => typeof onClick === "function" && onClick(name, !!value);
 
   return(
     <div className={`${classes.space}  ${selected?"selected":""}`} onClick={handleOnClick} >
@@ -108,7 +116,7 @@ const SpaceRestriction = observer(() => {
 
   const handleToggleSpaceRestriction = (_, value) => queryBuilderStore.setResultRestrictToSpaces(value?[]:null);
 
-  const toggleSpace = (name, selected) => {
+  const toggleSpace = (name: string, selected: boolean) => {
     if (selected) {
       if (!queryBuilderStore.resultRestrictToSpaces.includes(name)) {
         queryBuilderStore.setResultRestrictToSpaces([...queryBuilderStore.resultRestrictToSpaces, name]);

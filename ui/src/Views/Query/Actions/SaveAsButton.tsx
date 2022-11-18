@@ -26,29 +26,29 @@ import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faSave} from "@fortawesome/free-solid-svg-icons/faSave";
-import { useNavigate, matchPath } from "react-router-dom";
 
 import API from "../../../Services/API";
 import { useStores } from "../../../Hooks/UseStores";
 
-const SaveButton = observer(({ disabled }) => {
+interface SaveAsButtonProps {
+  disabled: boolean;
+}
 
-  const navigate = useNavigate();
+const SaveAsButton = observer(({ disabled }:SaveAsButtonProps) => {
 
   const { queryBuilderStore } = useStores();
 
   const onClick = () => {
-    API.trackEvent("Query", "Save", queryBuilderStore.rootField.id);
-    const match = matchPath({path:"/queries/:id/:mode"}, location.pathname);
-    queryBuilderStore.saveQuery(navigate, match?.params?.mode);
+    API.trackEvent("Query", "SaveAs", queryBuilderStore.rootField.id);
+    queryBuilderStore.setSaveAsMode(true);
   };
 
   return (
-      <Button variant="primary" disabled={disabled} onClick={onClick}>
-        <FontAwesomeIcon icon={faSave} />&nbsp;Save
+      <Button variant="secondary" disabled={disabled} onClick={onClick}>
+        <FontAwesomeIcon icon={faSave} />&nbsp;Save As
       </Button>
   );
 });
-SaveButton.displayName = "SaveButton";
+SaveAsButton.displayName = "SaveAsButton";
 
-export default SaveButton;
+export default SaveAsButton;

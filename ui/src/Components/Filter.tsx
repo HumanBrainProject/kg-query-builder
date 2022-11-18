@@ -62,9 +62,9 @@ interface FilterProps {
   value: string;
   className: string;
   placeholder: string;
-  icon: IconDefinition;
+  icon?: IconDefinition;
   onChange: (value: string) => void;
-  onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const Filter = ({

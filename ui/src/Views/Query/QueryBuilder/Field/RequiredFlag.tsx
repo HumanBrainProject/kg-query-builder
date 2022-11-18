@@ -22,33 +22,33 @@
  */
 
 import React from "react";
+import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faGlasses} from "@fortawesome/free-solid-svg-icons/faGlasses";
+import {faAsterisk} from "@fortawesome/free-solid-svg-icons/faAsterisk";
+import { FieldProps } from "../Field";
 
-import API from "../../../Services/API";
-import { useStores } from "../../../Hooks/UseStores";
+const useStyles = createUseStyles({
+  container: {
+    color: "var(--ft-color-louder)"
+  },
+});
 
-const CompareButton = observer(({ disabled }) => {
+const RequiredFlag = observer(({ field }: FieldProps) => {
+  
+  const classes = useStyles();
 
-  const { queryBuilderStore } = useStores();
-
-  const onClick = () => {
-    API.trackEvent("Query", "Compare", queryBuilderStore.rootField.id);
-    queryBuilderStore.toggleCompareChanges();
-  };
-
-  if (!queryBuilderStore.hasChanged) {
+  if (!field.getOption("required") || field.parent.isFlattened) {
     return null;
   }
 
   return (
-      <Button disabled={disabled} onClick={onClick}>
-        <FontAwesomeIcon icon={faGlasses} />&nbsp;Compare
-      </Button>
+    <span className={classes.container}>
+      <FontAwesomeIcon transform="shrink-8" icon={faAsterisk} />
+      &nbsp;&nbsp;
+    </span>
   );
 });
-CompareButton.displayName = "CompareButton";
+RequiredFlag.displayName = "RequiredFlag";
 
-export default CompareButton;
+export default RequiredFlag;

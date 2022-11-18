@@ -21,7 +21,7 @@
  *
  */
 
-import React from "react";
+import React, { MouseEvent } from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -32,6 +32,7 @@ import {faArrowDown} from "@fortawesome/free-solid-svg-icons/faArrowDown";
 import Button from "react-bootstrap/Button";
 
 import { useStores } from "../../../../Hooks/UseStores";
+import { FieldProps } from "../Field";
 
 const useStyles = createUseStyles({
   container: {
@@ -54,7 +55,11 @@ const useStyles = createUseStyles({
   }
 });
 
-const Actions = observer(({ field, className }) => {
+interface ActionsProps extends FieldProps {
+  className: string;
+}
+
+const Actions = observer(({ field, className }: ActionsProps) => {
   
   const classes = useStyles();
 
@@ -65,12 +70,12 @@ const Actions = observer(({ field, className }) => {
     queryBuilderStore.removeField(field);
   };
 
-  const handleMoveUpField = (e) => {
+  const handleMoveUpField = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     queryBuilderStore.moveUpField(field);
   };
 
-  const handleMoveDownField = (e) => {
+  const handleMoveDownField = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     queryBuilderStore.moveDownField(field);
   };

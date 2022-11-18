@@ -44,7 +44,7 @@ const useStyles = createUseStyles({
 });
 
 interface SpinnerProps {
-  children: JSX.Element | string;
+  children: React.ReactNode;
 }
 
 const Spinner = ({ children }: SpinnerProps) => {

@@ -22,20 +22,30 @@
  */
 
 import React from "react";
-import {observer} from "mobx-react-lite";
-import uniqueId from "lodash/uniqueId";
 
-import Field from "../Field";
+import Toggle from "../../../Components/Toggle";
 
-const Children = observer(({ field, className }) => (
-  <div className={className} >
-    {field.structure && !!field.structure.length && field.structure.map(structureField => {
-      return(
-        <Field field={structureField} key={uniqueId("field_")} />
-      );
-    })}
-  </div>
-));
-Children.displayName = "Children";
+interface VocabProps{
+  defaultValue: string;
+  value?: boolean; 
+  onChange: (value?: string) => void
+}
 
-export default Children;
+const Vocab = ({ defaultValue, value, onChange}: VocabProps) => {
+
+  const handleOnChange = (_:string, newValue?:boolean) => onChange(newValue?defaultValue:undefined);
+
+  return (
+    <Toggle
+      option={{
+        value: value?true:undefined
+      }}
+      label="Strip vocab"
+      comment={defaultValue}
+      show={true}
+      onChange={handleOnChange}
+    />
+  );
+};
+
+export default Vocab;

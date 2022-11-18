@@ -46,21 +46,31 @@ const defaultOptions = [
   }
 ];
 
-class Field {
-  schema = null;
-  structure = [];
-  alias = null;
-  isFlattened = false;
-  isReverse = false;
-  optionsMap = new Map();
-  isUnknown = null;
-  isInvalid = false;
-  isInvalidLeaf = false;
-  aliasError = null;
-  typeFilter = [];
-  typeFilterEnabled = false;
+interface Schema {
+  id?: string;
+  label?: string;
+  canBe?: string[];
+  simpleAttributeName?: string;
+  attribute?: string;
+  attributeNamespace?: string;
+}
 
-  constructor(schema, parent) {
+class Field {
+  schema?: Schema;
+  structure: Field [] = [];
+  alias?: string;
+  aliasError?: boolean;
+  isFlattened: boolean = false;
+  isReverse: boolean = false;
+  optionsMap: Map<string, boolean | undefined> = new Map();
+  isUnknown = null;
+  isInvalid: boolean = false;
+  isInvalidLeaf: boolean = false;
+  typeFilter: string[] = [];
+  typeFilterEnabled: boolean = false;
+  parent: Field;
+
+  constructor(schema: Schema, parent: Field) {
     makeObservable(this, {
       schema: observable,
       structure: observable,
@@ -87,10 +97,12 @@ class Field {
 
     this.schema = schema;
     this.parent = parent;
-    defaultOptions.forEach(option => this.optionsMap.set(option.name, option.value));
+    defaultOptions.forEach(option =>
+      this.optionsMap.set(option.name, option.value)
+    );
   }
 
-  filterType(type, selected) {
+  filterType(type: string, selected: boolean) {
     if (selected) {
       if (!this.typeFilter.includes(type)) {
         this.typeFilter.push(type);
@@ -101,27 +113,46 @@ class Field {
   }
 
   get types() {
-    if (!this.schema || !Array.isArray(this.schema.canBe)  || !this.schema.canBe.length) {
+    if (
+      !this.schema ||
+      !Array.isArray(this.schema.canBe) ||
+      !this.schema.canBe.length
+    ) {
       if (Array.isArray(this.typeFilter) && this.typeFilter.length) {
-        return this.typeFilter.map(t => ({id: t, selected: true, isUnknown: true}));
+        return this.typeFilter.map(t => ({
+          id: t,
+          selected: true,
+          isUnknown: true
+        }));
       }
       return [];
     }
-    const knownTypes = this.schema.canBe.map(t => ({id: t, selected: this.typeFilter.includes(t), isUnknown: false}));
-    const unknownTypes = this.typeFilter.filter(t => !this.schema.canBe.includes(t)).map(t => ({id: t, selected: true, isUnknown: true}));
+    const knownTypes = this.schema.canBe.map(t => ({
+      id: t,
+      selected: this.typeFilter.includes(t),
+      isUnknown: false
+    }));
+    const unknownTypes = this.typeFilter
+      .filter(t => this?.schema?.canBe && !this.schema.canBe.includes(t))
+      .map(t => ({ id: t, selected: true, isUnknown: true }));
     return [...knownTypes, ...unknownTypes];
   }
 
   toggleTypeFilter() {
     this.typeFilterEnabled = !this.typeFilterEnabled;
     if (this.typeFilterEnabled) {
-      this.typeFilter = (!this.schema || !Array.isArray(this.schema.canBe)  || !this.schema.canBe.length)?[]:[...this.schema.canBe];
+      this.typeFilter =
+        !this.schema ||
+        !Array.isArray(this.schema.canBe) ||
+        !this.schema.canBe.length
+          ? []
+          : [...this.schema.canBe];
     } else {
       this.typeFilter = [];
     }
   }
 
-  setAlias(value) {
+  setAlias(value: string) {
     this.alias = value;
     this.aliasError = false;
   }
@@ -133,11 +164,11 @@ class Field {
     }));
   }
 
-  getOption(name) {
+  getOption(name: string) {
     return this.optionsMap.has(name) ? this.optionsMap.get(name) : undefined;
   }
 
-  setOption(name, value, preventRecursivity) {
+  setOption(name: string, value?: boolean, preventRecursivity?: boolean) {
     this.optionsMap.set(name, value);
     if (name === "sort" && value && !preventRecursivity) {
       this.parent.structure.forEach(field => {
@@ -148,23 +179,31 @@ class Field {
     }
   }
 
-  setCurrentFieldFlattened(value) {
+  setCurrentFieldFlattened(value: boolean) {
     this.isFlattened = !!value;
   }
 
   get lookups() {
-    return (this.schema && this.schema.canBe && !!this.schema.canBe.length) ? this.schema.canBe : [];
+    return this.schema && this.schema.canBe && !!this.schema.canBe.length
+      ? this.schema.canBe
+      : [];
   }
 
   get defaultAlias() {
     let currentField = this;
-    while (currentField.isFlattened && currentField.structure[0] && currentField.structure[0].schema && currentField.structure[0].schema.canBe) {
+    while (
+      currentField.isFlattened &&
+      currentField.structure &&
+      currentField.structure[0]?.schema?.canBe
+    ) {
       currentField = currentField.structure[0];
     }
     if (!currentField.schema) {
       return "";
     }
-    return currentField.schema.simpleAttributeName || currentField.schema.label || "";
+    return (
+      currentField.schema.simpleAttributeName || currentField.schema.label || ""
+    );
   }
 }
 

@@ -22,24 +22,37 @@
  */
 
 import React from "react";
+import { observer } from "mobx-react-lite";
+import Button from "react-bootstrap/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faGlasses} from "@fortawesome/free-solid-svg-icons/faGlasses";
 
-import Toggle from "../../../Components/Toggle";
+import API from "../../../Services/API";
+import { useStores } from "../../../Hooks/UseStores";
 
-const Vocab = ({ defaultValue, value, onChange}) => {
+interface CompareButtonProps {
+  disabled: boolean;
+}
 
-  const handleOnChange = (_, newValue) => onChange(newValue?defaultValue:null);
+const CompareButton = observer(({ disabled }: CompareButtonProps) => {
+
+  const { queryBuilderStore } = useStores();
+
+  const onClick = () => {
+    API.trackEvent("Query", "Compare", queryBuilderStore.rootField.id);
+    queryBuilderStore.toggleCompareChanges();
+  };
+
+  if (!queryBuilderStore.hasChanged) {
+    return null;
+  }
 
   return (
-    <Toggle
-      option={{
-        value: value?true:undefined
-      }}
-      label="Strip vocab"
-      comment={defaultValue}
-      show={true}
-      onChange={handleOnChange}
-    />
+      <Button disabled={disabled} onClick={onClick}>
+        <FontAwesomeIcon icon={faGlasses} />&nbsp;Compare
+      </Button>
   );
-};
+});
+CompareButton.displayName = "CompareButton";
 
-export default Vocab;
+export default CompareButton;

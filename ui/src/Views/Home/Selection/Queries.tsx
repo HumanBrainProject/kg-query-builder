@@ -21,12 +21,12 @@
  *
  */
 
-import React, { useEffect } from "react";
+import React, { ChangeEvent, useEffect } from "react";
 import { createUseStyles } from "react-jss";
-import {observer} from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
+import { faRedoAlt } from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 import { Scrollbars } from "react-custom-scrollbars-2";
 
 import { useStores } from "../../../Hooks/UseStores";
@@ -47,7 +47,8 @@ const useStyles = createUseStyles({
   },
   filter: {
     border: 0,
-    background: "linear-gradient(90deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 100%)"
+    background:
+      "linear-gradient(90deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 100%)"
   },
   body: {
     borderTop: "1px solid var(--border-color-ui-contrast2)",
@@ -55,17 +56,14 @@ const useStyles = createUseStyles({
   },
   content: {
     paddingRight: "15px"
-  },
-  spinner: {
-    position: "relative !important",
-    top: "15px",
-    left: "5px",
-    transform: "none"
   }
 });
 
-const Queries = observer(({className}) => {
+interface QueriesProps {
+  className: string;
+}
 
+const Queries = observer(({ className }: QueriesProps) => {
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
@@ -74,12 +72,12 @@ const Queries = observer(({className}) => {
     if (queryBuilderStore.hasRootSchema) {
       queryBuilderStore.fetchQueries();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryBuilderStore.hasRootSchema]);
 
   const handleFetchSavedQueries = () => queryBuilderStore.fetchQueries();
 
-  const handleChange = value => queryBuilderStore.setQueriesFilterValue(value);
+  const handleChange = (value: ChangeEvent<HTMLInputElement>) => queryBuilderStore.setQueriesFilterValue(value);
 
   if (!queryBuilderStore.hasRootSchema) {
     return null;
@@ -88,7 +86,9 @@ const Queries = observer(({className}) => {
   if (queryBuilderStore.fetchQueriesError) {
     return (
       <ErrorPanel>
-        {queryBuilderStore.fetchQueriesError}<br /><br />
+        {queryBuilderStore.fetchQueriesError}
+        <br />
+        <br />
         <Button variant="primary" onClick={handleFetchSavedQueries}>
           <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Refresh
         </Button>
@@ -98,7 +98,7 @@ const Queries = observer(({className}) => {
 
   if (queryBuilderStore.isFetchingQueries) {
     return (
-      <Spinner className={classes.spinner}>
+      <Spinner>
         Fetching queries for {queryBuilderStore.rootSchema.label}...
       </Spinner>
     );
@@ -111,7 +111,10 @@ const Queries = observer(({className}) => {
   if (!queryBuilderStore.hasQueries) {
     return (
       <ErrorPanel>
-        No saved queries available yet for {queryBuilderStore.rootSchema.label}<small> - {queryBuilderStore.rootSchema.id}</small><br /><br />
+        No saved queries available yet for {queryBuilderStore.rootSchema.label}
+        <small> - {queryBuilderStore.rootSchema.id}</small>
+        <br />
+        <br />
         <Button variant="primary" onClick={handleFetchSavedQueries}>
           <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
         </Button>
@@ -120,8 +123,13 @@ const Queries = observer(({className}) => {
   }
 
   return (
-    <div className={`${classes.panel} ${className?className:""}`} >
-      <Filter className={classes.filter} value={queryBuilderStore.queriesFilterValue} placeholder="Filter queries" onChange={handleChange} />
+    <div className={`${classes.panel} ${className ? className : ""}`}>
+      <Filter
+        className={classes.filter}
+        value={queryBuilderStore.queriesFilterValue}
+        placeholder="Filter queries"
+        onChange={handleChange}
+      />
       <div className={classes.body}>
         <Scrollbars autoHide>
           <div className={classes.content}>
@@ -131,7 +139,8 @@ const Queries = observer(({className}) => {
                 title={group.label}
                 list={group.queries}
                 showUser={group.showUser}
-                enableDelete={group.permissions.canDelete} />
+                enableDelete={group.permissions.canDelete}
+              />
             ))}
           </div>
         </Scrollbars>

@@ -72,8 +72,6 @@ const Result = observer(() => {
 
   const { queryBuilderStore } = useStores();
 
-  const scrollRef = useRef();
-
   const handeDownload = () => download(JSON.stringify(queryBuilderStore.result));
 
   if (!queryBuilderStore.result) {
@@ -90,7 +88,7 @@ const Result = observer(() => {
         </Button>
       </div>
       <div className={classes.result}>
-        <Scrollbars autoHide ref={scrollRef}>
+        <Scrollbars autoHide>
           <ReactJson
             collapsed={1}
             name={false}

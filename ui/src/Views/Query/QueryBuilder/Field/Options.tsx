@@ -65,10 +65,10 @@ const Options = observer(() => {
 
   const rootField = queryBuilderStore.rootField;
 
-  const handleChangeFlatten = value => field.setCurrentFieldFlattened(value);
+  const handleChangeFlatten = (value: boolean) => field.setCurrentFieldFlattened(value);
 
-  const handleChangeOption = (name, value) => field.setOption(name, value);
-
+  const handleChangeOption = (name:string, value:boolean) => field.setOption(name, value);
+  const showFlatten = field !== rootField && field.lookups.length > 0 && field.structure.length === 1;
   return (
     <div className={classes.container}>
       <div className={classes.fieldOptions}>
@@ -78,10 +78,7 @@ const Options = observer(() => {
         ))}
         <Flatten
           field={field}
-          show={field !== rootField
-                && !!field.lookups.length
-                && field.structure.length === 1
-          }
+          show={showFlatten}
           onChange={handleChangeFlatten}
         />
       </div>

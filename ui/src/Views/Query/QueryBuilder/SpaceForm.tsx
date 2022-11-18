@@ -21,7 +21,7 @@
  *
  */
 
-import React from "react";
+import React, { ChangeEvent } from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 
@@ -87,29 +87,21 @@ const useStyles = createUseStyles({
   }
 });
 
-const SpaceForm = observer(({ className }) => {
+interface SpaceFormProps {
+  className: string;
+}
+
+const SpaceForm = observer(({ className }: SpaceFormProps) => {
   const classes = useStyles();
 
   const { queryBuilderStore, authStore } = useStores();
-
-  const handleChangeSpace = (e) => {
-    const space = authStore.getSpace(e.target.value);
-    queryBuilderStore.setSpace(space ? space : authStore.privateSpace);
-  };
-
-  const handleChangePrivate = (_, isSpaceShared) => {
-    if (isSpaceShared && authStore.sharedSpaces.length) {
-      queryBuilderStore.setSpace(authStore.sharedSpaces[0]);
-    } else {
-      queryBuilderStore.setSpace(authStore.privateSpace);
-    }
-  };
 
   const isShared =
     queryBuilderStore.space && !queryBuilderStore.space.isPrivate;
 
   const isReadMode =
-    !queryBuilderStore.saveAsMode || !authStore.allowedSharedSpacesToCreateQueries.length;
+    !queryBuilderStore.saveAsMode ||
+    !authStore.allowedSharedSpacesToCreateQueries.length;
 
   const sharedSpaces = isReadMode
     ? authStore.sharedSpaces
@@ -119,7 +111,22 @@ const SpaceForm = observer(({ className }) => {
     isReadMode ? "disabled" : ""
   }`;
 
-  const onChange = isReadMode ? null : handleChangeSpace;
+  const handleChangeSpace = (e: ChangeEvent<HTMLSelectElement>) => {
+    if(!isReadMode) {
+      const space = authStore.getSpace(e.target.value);
+      queryBuilderStore.setSpace(space ? space : authStore.privateSpace);
+    }
+  };
+
+  const handleChangePrivate = (_:string, isSpaceShared?: boolean) => {
+    if (!isReadMode) {
+      if (isSpaceShared && authStore.sharedSpaces.length) {
+        queryBuilderStore.setSpace(authStore.sharedSpaces[0]);
+      } else {
+        queryBuilderStore.setSpace(authStore.privateSpace);
+      }
+    }
+  };
 
   return (
     <div className={`${classes.container} ${className ? className : ""}`}>
@@ -128,7 +135,7 @@ const SpaceForm = observer(({ className }) => {
         option={{ value: isShared ? true : undefined }}
         label="Shared"
         show={true}
-        onChange={isReadMode ? null : handleChangePrivate}
+        onChange={handleChangePrivate}
       />
       {isShared ? (
         <>
@@ -137,10 +144,10 @@ const SpaceForm = observer(({ className }) => {
             <select
               className={classes.select}
               value={queryBuilderStore.space.name}
-              onChange={onChange}
+              onChange={handleChangeSpace}
               disabled={isReadMode}
             >
-              {sharedSpaces.map((space) => (
+              {sharedSpaces.map(space => (
                 <option key={space.name} value={space.name}>
                   {space.name}
                 </option>

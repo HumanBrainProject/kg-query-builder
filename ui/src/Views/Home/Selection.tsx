@@ -36,6 +36,7 @@ import { useStores } from "../../Hooks/UseStores";
 
 import Queries from "./Selection/Queries";
 import Icon from "../../Components/Icon";
+import { Type } from "../../Stores/TypeStore";
 
 const useStyles = createUseStyles({
   container: {
@@ -119,7 +120,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const getTypeLabel = type => {
+const getTypeLabel = (type: Type) => {
   if (!type) {
     return "";
   }
@@ -133,7 +134,12 @@ const getTypeLabel = type => {
   return parts[parts.length - 1];
 };
 
-const TypeInfo = observer(({ className, type }) => {
+interface TypeInfoProps {
+  className: string;
+  type: Type;
+}
+
+const TypeInfo = observer(({ className, type }: TypeInfoProps) => {
   return (
     <div className={className}>
       <Icon icon={faCircle} color={type.color} />

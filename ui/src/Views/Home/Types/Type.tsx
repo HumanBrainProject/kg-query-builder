@@ -21,7 +21,7 @@
  *
  */
 
-import React, {useEffect, useRef} from "react";
+import React, {KeyboardEvent, RefObject, useEffect, useRef} from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -32,6 +32,7 @@ import API from "../../../Services/API";
 import Icon from "../../../Components/Icon";
 
 import { useStores } from "../../../Hooks/UseStores";
+import { Type as TypeSpec } from "../../../Stores/TypeStore";
 
 const useStyles = createUseStyles({
   container: {
@@ -78,11 +79,17 @@ const getTypeLabel = type => {
   return parts[parts.length-1];
 };
 
-const Type = observer(({ type, enableFocus, onKeyDown }) =>  {
+interface TypeProps {
+  type: TypeSpec;
+  enableFocus: boolean; 
+  onKeyDown: (e: KeyboardEvent<HTMLDivElement>) => void
+}
+
+const Type = observer(({ type, enableFocus, onKeyDown }: TypeProps) =>  {
 
   const classes = useStyles();
 
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement>();
 
   useEffect(() => {
     if (enableFocus && ref.current) {
@@ -103,7 +110,7 @@ const Type = observer(({ type, enableFocus, onKeyDown }) =>  {
 
   const handleClick = () => selectType();
 
-  const handleKeyDown= e => {
+  const handleKeyDown= (e: KeyboardEvent<HTMLDivElement>) => {
     if(e.keyCode === 13) {
       selectType();
     }
@@ -113,7 +120,7 @@ const Type = observer(({ type, enableFocus, onKeyDown }) =>  {
   const label = getTypeLabel(type);
 
   return (
-    <div tabIndex={-1} ref={ref} className={`${classes.container} ${type.id === queryBuilderStore.rootSchemaId?classes.selected:""}`} onClick={handleClick} onKeyDown={handleKeyDown}>
+    <div tabIndex={-1} ref={ref as RefObject<any>} className={`${classes.container} ${type.id === queryBuilderStore.rootSchemaId?classes.selected:""}`} onClick={handleClick} onKeyDown={handleKeyDown}>
       <Icon icon={faCircle} color={type.color}/>
       {label} - <small>{type.id}</small>
       <div className={classes.nextIcon} >

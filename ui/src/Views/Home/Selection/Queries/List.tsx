@@ -22,40 +22,58 @@
  */
 
 import React from "react";
-import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
+import { observer } from "mobx-react-lite";
 
-import { useStores } from "../../../Hooks/UseStores";
-
-import Type from "./Type";
+import Query from "./Query";
+import { QuerySpecification } from "../../../../Stores/QueryBuilderStore";
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative"
+    color: "var(--ft-color-loud)"
   },
-  activeSchema: {
-    "& > div": {
-      background: "var(--bg-color-ui-contrast4)",
-      "&:focus": {
-        outline: 0
-      }
+  title: {
+    display: "flex",
+    marginBottom: "10px",
+    paddingBottom: "10px",
+    paddingTop: "20px",
+    borderBottom: "1px solid var(--border-color-ui-contrast5)",
+    "& h4": {
+      flex: 1,
+      display: "inline-block",
+      margin: 0,
+      padding: 0,
+      fontSize: "1.2rem"
     }
   }
 });
 
-const List = observer(({cursor, onKeyDown}) =>  {
+interface ListProps {
+  title: string;
+  list: QuerySpecification[];
+  showUser: boolean;
+  enableDelete: boolean;
+}
 
+const List = observer(({ title, list, showUser, enableDelete }: ListProps) => {
   const classes = useStyles();
-
-  const { typeStore } = useStores();
+  if (!list || !list.length) {
+    return null;
+  }
 
   return (
     <div className={classes.container}>
-      {typeStore.filteredTypeList.map((type, index) =>
-        (<div className={cursor === index ? classes.activeSchema: ""} key={type.id}>
-          <Type key={type.id} type={type} enableFocus={cursor === index} onKeyDown={onKeyDown}/>
-        </div>)
-      )}
+      <div className={classes.title}>
+        <h4>{title}</h4>
+      </div>
+      {list.map(query => (
+        <Query
+          key={query.id}
+          query={query}
+          showUser={showUser}
+          enableDelete={enableDelete}
+        />
+      ))}
     </div>
   );
 });

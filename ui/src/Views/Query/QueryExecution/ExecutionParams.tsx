@@ -21,7 +21,7 @@
  *
  */
 
-import React from "react";
+import React, { ChangeEvent } from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import Button from "react-bootstrap/Button";
@@ -82,12 +82,19 @@ const useStyles = createUseStyles({
   }
 });
 
-const QueryParameter = observer(({ parameter }) => {
+interface QueryParameterProps {
+  parameter: {
+    name: string;
+    value: string;
+  }
+}
+
+const QueryParameter = observer(({ parameter }:QueryParameterProps) => {
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
 
-  const handleChangeParameter = (e) =>
+  const handleChangeParameter = (e: ChangeEvent<HTMLInputElement>) =>
     queryBuilderStore.setResultQueryParameter(parameter.name, e.target.value);
 
   return (
@@ -164,15 +171,15 @@ const ExecutionParams = observer(() => {
     queryBuilderStore.resultRestrictToSpaces
   );
 
-  const handleChangeSize = (e) =>
+  const handleChangeSize = (e:ChangeEvent<HTMLInputElement>) =>
     queryBuilderStore.setResultSize(e.target.value);
 
-  const handleChangeStart = (e) =>
+  const handleChangeStart = (e: ChangeEvent<HTMLInputElement>) =>
     queryBuilderStore.setResultStart(e.target.value);
 
-  const handleChangeStage = (e) => queryBuilderStore.setStage(e.target.value);
+  const handleChangeStage = (e:ChangeEvent<HTMLInputElement>) => queryBuilderStore.setStage(e.target.value);
 
-  const handleChangeInstanceId = (e) =>
+  const handleChangeInstanceId = (e:ChangeEvent<HTMLInputElement> ) =>
     queryBuilderStore.setResultInstanceId(e.target.value);
 
   const handlExecuteQuery = () => {

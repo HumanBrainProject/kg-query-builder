@@ -21,7 +21,7 @@
  *
  */
 
-import React, {useState} from "react";
+import React, {ChangeEvent, KeyboardEvent, useState} from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { Scrollbars } from "react-custom-scrollbars-2";
@@ -58,25 +58,25 @@ const useStyles = createUseStyles({
 });
 
 const Types = observer(() => {
-  const [cursor, setCursor] = useState(undefined);
+  const [cursor, setCursor] = useState<number>();
 
   const classes = useStyles();
 
   const { typeStore } = useStores();
 
-  const handleChange = value => {
+  const handleChange = (value: string) => {
     typeStore.setFilterValue(value);
     setCursor(undefined);
   };
 
-  const handleKeyDown = e => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLElement>) => {
     if(cursor === undefined && (e.keyCode === 38 || e.keyCode === 40)) {
       setCursor(0);
     }
-    if (e.keyCode === 38 && cursor > 0) {
-      setCursor(prevCursor => prevCursor - 1);
-    } else if (e.keyCode === 40 && cursor < typeStore.filteredTypeList.length - 1) {
-      setCursor(prevCursor => prevCursor + 1);
+    if (e.keyCode === 38 && cursor !== undefined && cursor > 0) {
+      setCursor(prevCursor => prevCursor !== undefined ? prevCursor - 1: prevCursor);
+    } else if (e.keyCode === 40 && cursor !== undefined && cursor < typeStore.filteredTypeList.length - 1) {
+      setCursor(prevCursor => prevCursor !== undefined ? prevCursor + 1: prevCursor);
     }
   };
 

@@ -21,7 +21,7 @@
  *
  */
 
-import React, { useRef }  from "react";
+import React, { ChangeEvent, MouseEvent, useRef }  from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { Scrollbars } from "react-custom-scrollbars-2";
@@ -80,8 +80,6 @@ const Properties = observer(() => {
 
   const { queryBuilderStore } = useStores();
 
-  const scrollRef = useRef();
-
   const field = queryBuilderStore.currentField;
 
   if (!field || !queryBuilderStore.currentFieldLookups.length) {
@@ -93,12 +91,12 @@ const Properties = observer(() => {
   const lookupsCommonsLinks = queryBuilderStore.currentFieldLookupsCommonLinks;
   const lookupsLinks = queryBuilderStore.currentFieldLookupsLinks;
 
-  const handleAddField = (e, schema) => {
+  const handleAddField = (e: MouseEvent<HTMLElement>, schema) => {
     //Don't got to newly chosen field options if ctrl is pressed (or cmd)
     queryBuilderStore.addField(schema, field, !e.ctrlKey && !e.metaKey);
   };
 
-  const handleChildrenFilterChange = value => queryBuilderStore.setChildrenFilterValue(value);
+  const handleChildrenFilterChange = (value: ChangeEvent<HTMLInputElement>) => queryBuilderStore.setChildrenFilterValue(value);
 
   const handleToggleAdvancedProperties = () => queryBuilderStore.toggleIncludeAdvancedAttributes();
 
@@ -107,7 +105,7 @@ const Properties = observer(() => {
       <div className={classes.panel}>
         <Filter className={classes.filter} value={queryBuilderStore.childrenFilterValue} placeholder="Filter properties" onChange={handleChildrenFilterChange} />
         <div className={classes.body}>
-          <Scrollbars autoHide ref={scrollRef}>
+          <Scrollbars autoHide>
             <List
               properties={lookupsCommonsAttributes}
               label="Attributes"

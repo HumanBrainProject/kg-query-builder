@@ -40,6 +40,7 @@ import API from "../../../../Services/API";
 import { useStores } from "../../../../Hooks/UseStores";
 
 import PopOverButton from "../../../../Components/PopOverButton";
+import { QuerySpecification } from "../../../../Stores/QueryBuilderStore";
 
 const useStyles = createUseStyles({
   container:{
@@ -136,8 +137,13 @@ const useStyles = createUseStyles({
   }
 });
 
+interface QueryProps {
+  query: QuerySpecification;
+  enableDelete: boolean;
+}
 
-const Query = observer(({query, enableDelete}) => {
+
+const Query = observer(({query, enableDelete}: QueryProps) => {
 // const SavedQuery = observer(({query, showUser, enableDelete}) => {
   const classes = useStyles();
 

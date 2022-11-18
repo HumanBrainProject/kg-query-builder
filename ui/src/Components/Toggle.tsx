@@ -51,17 +51,17 @@ const useStyles = createUseStyles({
 });
 
 interface Option {
-  name: string;
-  value: string;
+  name?: string;
+  value?: boolean;
 }
 
 interface ToggleProps {
-  className: string;
+  className?: string;
   option: Option;
-  label: string;
-  comment: string;
+  label?: string;
+  comment?: string;
   show: boolean;
-  onChange: (name: string, newValue: string) => void;
+  onChange: (name: string, newValue?: boolean) => void;
 }
 
 const Toggle = ({

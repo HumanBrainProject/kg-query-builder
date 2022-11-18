@@ -33,8 +33,11 @@ import { useStores } from "../../../Hooks/UseStores";
 
 import Dialog from "../../../Components/Dialog";
 
+interface DeleteButtonProps {
+  disabled: boolean;
+}
 
-const DeleteButton = observer(({ disabled }) => {
+const DeleteButton = observer(({ disabled }: DeleteButtonProps) => {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 

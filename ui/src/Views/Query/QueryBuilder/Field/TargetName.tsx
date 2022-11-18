@@ -27,6 +27,7 @@ import { observer } from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faLongArrowAltLeft} from "@fortawesome/free-solid-svg-icons/faLongArrowAltLeft";
 import {faLongArrowAltRight} from "@fortawesome/free-solid-svg-icons/faLongArrowAltRight";
+import { FieldProps } from "../Field";
 
 const useStyles = createUseStyles({
   alias: {
@@ -46,7 +47,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const TargetName = observer(({ field }) => {
+const TargetName = observer(({ field }: FieldProps) => {
 
     const classes = useStyles();
 
@@ -56,7 +57,7 @@ const TargetName = observer(({ field }) => {
     const className = field.alias ? classes.alias : classes.default;
     const iconClassName = field.isReverse ? classes.reverseLink : classes.link;
     const icon = field.isReverse ? faLongArrowAltLeft : faLongArrowAltRight;
-    const title = field.isReverse ? "is an incoming link" : null;
+    const title = field.isReverse ? "is an incoming link" : undefined;
     const name = field.alias ? field.alias : field.defaultAlias;
     return (
       <span className={className}>

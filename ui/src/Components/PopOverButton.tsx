@@ -106,11 +106,11 @@ interface PopOverButtonProps {
   buttonTitle: string;
   iconComponent: JSX.Element;
   iconProps: any;
-  okComponent: JSX.Element;
+  okComponent: () => JSX.Element
   okProps: any;
-  cancelComponent: JSX.Element;
+  cancelComponent: () => JSX.Element
   cancelProps: any;
-  children: JSX.Element;
+  children: () => JSX.Element
   onClose: () => void;
   onCancel: () => void;
   onOk: () => void;

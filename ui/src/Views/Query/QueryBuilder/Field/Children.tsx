@@ -23,28 +23,23 @@
 
 import React from "react";
 import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faSave} from "@fortawesome/free-solid-svg-icons/faSave";
+import uniqueId from "lodash/uniqueId";
 
-import API from "../../../Services/API";
-import { useStores } from "../../../Hooks/UseStores";
+import Field, { FieldProps } from "../Field";
 
-const SaveAsButton = observer(({ disabled }) => {
+interface ChildrenProps extends FieldProps {
+  className: string;
+}
 
-  const { queryBuilderStore } = useStores();
+const Children = observer(({ field, className }: ChildrenProps) => (
+  <div className={className}>
+    {field.structure &&
+      field.structure.length > 0 &&
+      field.structure.map(structureField => {
+        return <Field field={structureField} key={uniqueId("field_")} />;
+      })}
+  </div>
+));
+Children.displayName = "Children";
 
-  const onClick = () => {
-    API.trackEvent("Query", "SaveAs", queryBuilderStore.rootField.id);
-    queryBuilderStore.setSaveAsMode(true);
-  };
-
-  return (
-      <Button variant="secondary" disabled={disabled} onClick={onClick}>
-        <FontAwesomeIcon icon={faSave} />&nbsp;Save As
-      </Button>
-  );
-});
-SaveAsButton.displayName = "SaveAsButton";
-
-export default SaveAsButton;
+export default Children;
