@@ -76,7 +76,7 @@ const MultiToggleItem = ({
   const isReadOnly = typeof onSelect !== "function";
 
   const handleClick = () => {
-    if (typeof onSelect === "function") {
+    if (typeof onSelect === "function" && !isReadOnly) {
       onSelect(value);
     }
   };
@@ -87,7 +87,7 @@ const MultiToggleItem = ({
 
   return (
     <div
-      onClick={isReadOnly ? null : handleClick}
+      onClick={handleClick}
       className={className}
       style={{ color: color }}
     >
