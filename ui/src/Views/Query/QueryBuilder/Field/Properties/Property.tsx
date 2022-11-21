@@ -21,13 +21,14 @@
  *
  */
 
-import React from "react";
+import React, { MouseEvent } from "react";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faLongArrowAltLeft} from "@fortawesome/free-solid-svg-icons/faLongArrowAltLeft";
 import { observer } from "mobx-react-lite";
 
 import PropertyTypes from "../../../../PropertyTypes";
+import { Property } from "../../../../../Stores/TypeStore";
 
 const useStyles = createUseStyles({
   property: {
@@ -51,13 +52,18 @@ const useStyles = createUseStyles({
   }
 });
 
-const Property = observer(({ property, onClick }) => {
+interface PropertyProps {
+  property: Property;
+  onClick: (e: MouseEvent<HTMLElement>, property: Property) => void;
+}
+
+const Property = observer(({ property, onClick }: PropertyProps) => {
 
   const classes = useStyles();
 
   const { attribute, label, canBe } = property;
 
-  const handleClick = e => onClick(e, property);
+  const handleClick = (e: MouseEvent<HTMLDivElement>) => onClick(e, property);
 
   return (
     <div className={classes.property} onClick={handleClick}>

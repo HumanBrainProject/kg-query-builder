@@ -21,15 +21,15 @@
  *
  */
 
-import React from "react";
+import React, { ChangeEvent } from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
-import {faPlus} from "@fortawesome/free-solid-svg-icons/faPlus";
-import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
+import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
+import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
 
 const useStyles = createUseStyles({
   container: {
@@ -45,7 +45,7 @@ const useStyles = createUseStyles({
     padding: "10px",
     border: "1px solid rgb(108, 117, 125)",
     "&:after": {
-      content: "\"Filter\"",
+      content: '"Filter"',
       position: "absolute",
       top: "-11px",
       left: "5px",
@@ -72,7 +72,7 @@ const useStyles = createUseStyles({
   selectBox: {
     position: "relative",
     "&:after": {
-      content: "\"\"",
+      content: '""',
       position: "absolute",
       top: "50%",
       right: "10px",
@@ -102,7 +102,7 @@ const useStyles = createUseStyles({
     borderRadius: "2px",
     backgroundColor: "var(--bg-color-blend-contrast1)",
     marginRight: "4px",
-    "&:focus":{
+    "&:focus": {
       color: "var(--ft-color-loud)",
       borderColor: "rgba(64, 169, 243, 0.5)",
       backgroundColor: "transparent"
@@ -138,9 +138,19 @@ const useStyles = createUseStyles({
   }
 });
 
+interface FilterItem {
+  op?: string;
+  parameter?: string;
+  value?: string;
+}
 
-const Filter = observer(({ filter, show, onChange }) => {
+interface FilterProps {
+  filter: FilterItem|string|boolean;
+  show: boolean;
+  onChange: (op: string, value?: FilterItem) => void;
+}
 
+const Filter = observer(({ filter, show, onChange }: FilterProps) => {
   const classes = useStyles();
 
   const handleAddFilter = () => {
@@ -151,24 +161,24 @@ const Filter = observer(({ filter, show, onChange }) => {
     onChange("filter", value);
   };
 
-  const handleChangeOp = e => {
+  const handleChangeOp = (e: ChangeEvent<HTMLSelectElement>) => {
     switch (e.target.value) {
       case "NONE": {
         onChange("filter", undefined);
         break;
       }
       case "IS_EMPTY": {
-          const value = {
-            op: e.target.value
-          };
-          onChange("filter", value);
-          break;
+        const value = {
+          op: e.target.value
+        };
+        onChange("filter", value);
+        break;
       }
       default: {
         const value = {
           op: e.target.value,
           parameter: filter.parameter,
-          value: filter.op === "IS_EMPTY"?"":filter.value
+          value: filter.op === "IS_EMPTY" ? "" : filter.value
         };
         onChange("filter", value);
       }
@@ -184,7 +194,7 @@ const Filter = observer(({ filter, show, onChange }) => {
     onChange("filter", value);
   };
 
-  const handleChangeValue = e => {
+  const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
     const value = {
       op: filter.op,
       parameter: filter.parameter,
@@ -194,10 +204,13 @@ const Filter = observer(({ filter, show, onChange }) => {
   };
 
   const handleDeleteValue = () => {
-    const value = filter.parameter !== undefined?{
-      op: filter.op,
-      parameter: filter.parameter
-    }:undefined;
+    const value =
+      filter.parameter !== undefined
+        ? {
+            op: filter.op,
+            parameter: filter.parameter
+          }
+        : undefined;
     onChange("filter", value);
   };
 
@@ -210,7 +223,7 @@ const Filter = observer(({ filter, show, onChange }) => {
     onChange("filter", value);
   };
 
-  const handleChangeParameter = e => {
+  const handleChangeParameter = (e: ChangeEvent<HTMLInputElement>) => {
     const value = {
       op: filter.op,
       parameter: e.target.value,
@@ -220,10 +233,13 @@ const Filter = observer(({ filter, show, onChange }) => {
   };
 
   const handleDeleteParameter = () => {
-    const value = filter.value !== undefined?{
-      op: filter.op,
-      value: filter.value
-    }:undefined;
+    const value =
+      filter.value !== undefined
+        ? {
+            op: filter.op,
+            value: filter.value
+          }
+        : undefined;
     onChange("filter", value);
   };
 
@@ -232,39 +248,82 @@ const Filter = observer(({ filter, show, onChange }) => {
   }
 
   return (
-    <div className={classes.container} >
-      {(!filter || filter.op === "NONE")?(
-        <Button variant="secondary" className={classes.addFilterButton} onClick={handleAddFilter}><FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>&nbsp;add filter</Button>
-      ):(
-        <div className={classes.panel} >
+    <div className={classes.container}>
+      {!filter || filter.op === "NONE" ? (
+        <Button
+          variant="secondary"
+          className={classes.addFilterButton}
+          onClick={handleAddFilter}
+        >
+          <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>&nbsp;add filter
+        </Button>
+      ) : (
+        <div className={classes.panel}>
           <div className={classes.inputRow}>
-            <div className={classes.selectBox}><select className={classes.select} value={filter.op} onChange={handleChangeOp}>
-              <option value="NONE">None</option>
-              <option value="IS_EMPTY">Is empty</option>
-              <option value="CONTAINS">Contains</option>
-              <option value="EQUALS">Equals</option>
-              <option value="STARTS_WITH">Starts with</option>
-              <option value="ENDS_WITH">Ends with</option>
-              <option value="REGEX">Regex</option>
-            </select></div>
+            <div className={classes.selectBox}>
+              <select
+                className={classes.select}
+                value={filter.op}
+                onChange={handleChangeOp}
+              >
+                <option value="NONE">None</option>
+                <option value="IS_EMPTY">Is empty</option>
+                <option value="CONTAINS">Contains</option>
+                <option value="EQUALS">Equals</option>
+                <option value="STARTS_WITH">Starts with</option>
+                <option value="ENDS_WITH">Ends with</option>
+                <option value="REGEX">Regex</option>
+              </select>
+            </div>
             {filter.parameter === undefined && filter.op !== "IS_EMPTY" && (
-              <Button variant="secondary"className={classes.addButton} onClick={handleAddParameter}><FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>&nbsp;add parameter</Button>
+              <Button
+                variant="secondary"
+                className={classes.addButton}
+                onClick={handleAddParameter}
+              >
+                <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>&nbsp;add
+                parameter
+              </Button>
             )}
             {filter.value === undefined && filter.op !== "IS_EMPTY" && (
-              <Button variant="secondary" className={classes.addButton} onClick={handleAddValue}><FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>&nbsp;add value</Button>
+              <Button
+                variant="secondary"
+                className={classes.addButton}
+                onClick={handleAddValue}
+              >
+                <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>&nbsp;add value
+              </Button>
             )}
           </div>
           {filter.parameter !== undefined && (
             <>
               <div className={classes.inputRow}>
                 <span className={classes.label}>Parameter:&nbsp;</span>
-                <Form.Control className={classes.input} type="text" value={filter.parameter } placeholder="" onChange={handleChangeParameter} />
-                <button className={classes.deleteButton} onClick={handleDeleteParameter} title="delete parameter"><FontAwesomeIcon icon={faTimes}></FontAwesomeIcon></button>
+                <Form.Control
+                  className={classes.input}
+                  type="text"
+                  value={filter.parameter}
+                  placeholder=""
+                  onChange={handleChangeParameter}
+                />
+                <button
+                  className={classes.deleteButton}
+                  onClick={handleDeleteParameter}
+                  title="delete parameter"
+                >
+                  <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
+                </button>
               </div>
-              {["scope", "size", "start", "instanceId"].includes(filter.parameter) && (
+              {["scope", "size", "start", "instanceId"].includes(
+                filter.parameter
+              ) && (
                 <div className={classes.inputRow}>
                   <span className={classes.label}></span>
-                  <span className={classes.warning}><FontAwesomeIcon icon={faExclamationTriangle} />&nbsp;&quot;{filter.parameter}&quot; is a reserved parameter name and should not be used!</span>
+                  <span className={classes.warning}>
+                    <FontAwesomeIcon icon={faExclamationTriangle} />
+                    &nbsp;&quot;{filter.parameter}&quot; is a reserved parameter
+                    name and should not be used!
+                  </span>
                 </div>
               )}
             </>
@@ -272,13 +331,24 @@ const Filter = observer(({ filter, show, onChange }) => {
           {filter.value !== undefined && (
             <div className={classes.inputRow}>
               <span className={classes.label}>Value:&nbsp;</span>
-              <Form.Control className={classes.input} type="text" value={filter.value } placeholder="" onChange={handleChangeValue} />
-              <button className={classes.deleteButton} onClick={handleDeleteValue} title="delete value"><FontAwesomeIcon icon={faTimes}></FontAwesomeIcon></button>
+              <Form.Control
+                className={classes.input}
+                type="text"
+                value={filter.value}
+                placeholder=""
+                onChange={handleChangeValue}
+              />
+              <button
+                className={classes.deleteButton}
+                onClick={handleDeleteValue}
+                title="delete value"
+              >
+                <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
+              </button>
             </div>
           )}
         </div>
-      )
-      }
+      )}
     </div>
   );
 });

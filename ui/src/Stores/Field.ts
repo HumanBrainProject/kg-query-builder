@@ -46,13 +46,19 @@ const defaultOptions = [
   }
 ];
 
-interface Schema {
+export interface Schema {
   id?: string;
   label?: string;
   canBe?: string[];
   simpleAttributeName?: string;
   attribute?: string;
   attributeNamespace?: string;
+}
+
+export interface TypeFilter {
+  id: string;
+  selected: boolean;
+  isUnknown: boolean;
 }
 
 class Field {

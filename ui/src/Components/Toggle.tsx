@@ -52,7 +52,7 @@ const useStyles = createUseStyles({
 
 interface Option {
   name?: string;
-  value?: boolean;
+  value?: boolean | string;
 }
 
 interface ToggleProps {

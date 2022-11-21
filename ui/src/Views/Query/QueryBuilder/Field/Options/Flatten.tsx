@@ -22,45 +22,36 @@
  */
 
 import React from "react";
-import Icon from "../../../../../Components/Icon";
-import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
 
-import Property from "./Property";
+import Toggle from "../../../../../Components/Toggle";
+import Field from "../../../../../Stores/Field";
 
-const useStyles = createUseStyles({
-  container: {
-    color: "var(--ft-color-loud)",
-    "& h5": {
-      margin: "18px 0 6px 5px",
-      "& small": {
-        color: "var(--ft-color-quiet)",
-        fontStyle: "italic"
-      }
-    }
-  }
-});
+interface FlattenProps {
+  field: Field;
+  show: boolean;
+  onChange: (value: boolean) => void;
+}
 
-const GroupProperties = observer(({group, prefix, onClick }) => {
+const Flatten = observer(({ field, show, onChange }: FlattenProps) => {
+  const handleOnChange = (_:string, value?: boolean) => onChange(!!value);
 
-  const classes = useStyles();
-
-  const { id, label, color, properties } = group;
-
-  if (!Array.isArray(properties) || !properties.length) {
+  if (!show) {
     return null;
   }
 
   return (
-    <div className={classes.container}>
-      <h5>{prefix} <Icon icon={faCircle} color={color}/> {label} <small> - {id}</small></h5>
-      {properties.map(property => (
-        <Property key={`${property.attribute}${property.reverse?"reverse":""}`} property={property} onClick={onClick} />
-      ))}
-    </div>
+    <Toggle
+      option={{
+        value: field.isFlattened ? true : undefined
+      }}
+      label="Flatten"
+      comment="only applicable if this field has only one child field"
+      show={true}
+      onChange={handleOnChange}
+    />
   );
 });
-GroupProperties.displayName = "GroupProperties";
+Flatten.displayName = "Flatten";
 
-export default GroupProperties;
+export default Flatten;

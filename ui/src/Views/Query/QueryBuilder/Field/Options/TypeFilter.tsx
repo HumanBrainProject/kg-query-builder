@@ -26,8 +26,9 @@ import {observer} from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
 import { useStores } from "../../../../../Hooks/UseStores";
-import { Type } from "../../../../PropertyTypes";
+import { Type as PropertyType } from "../../../../PropertyTypes";
 import Toggle from "../../../../../Components/Toggle";
+import { TypeFilter } from "../../../../../Stores/Field";
 
 const useStyles = createUseStyles({
   container: {
@@ -76,17 +77,22 @@ const useStyles = createUseStyles({
   }
 });
 
-const TypeFilterItem = ({ type, onClick }) => {
+interface TypeFilterItemProps {
+  type: TypeFilter;
+  onClick: (id: string, selected: boolean) => void;
+}
+
+const TypeFilterItem = ({ type, onClick }: TypeFilterItemProps) => {
 
   const classes = useStyles();
 
   const handleOnClick = () => typeof onClick === "function" && onClick(type.id, !type.selected);
 
-  const handleToggleClick = (name, value) => typeof onClick === "function" && onClick(name, !!value);
+  const handleToggleClick = (name: string, value?:boolean) => typeof onClick === "function" && onClick(name, !!value);
 
   return(
     <div className={`${classes.typeFilter} ${type.isUnknown?"isUnknown":""} ${type.selected?"selected":""}`} onClick={handleOnClick} >
-      <Type type={type.id} />
+      <PropertyType type={type.id} />
       <div className={classes.toggle}>
         <Toggle
           option={{
@@ -108,7 +114,7 @@ const TypeFilter = observer(() => {
 
   const handleToggleTypeFilter = () => queryBuilderStore.currentField.toggleTypeFilter();
 
-  const toggleTypeFilter = (type, selected) => queryBuilderStore.currentField.filterType(type, selected);
+  const toggleTypeFilter = (type: string, selected: boolean) => queryBuilderStore.currentField.filterType(type, selected);
 
   if (!queryBuilderStore.currentField || !queryBuilderStore.currentField.types.length || queryBuilderStore.currentField === queryBuilderStore.rootField) {
     return null;

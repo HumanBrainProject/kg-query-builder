@@ -21,7 +21,7 @@
  *
  */
 
-import React from "react";
+import React, { ChangeEvent } from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
@@ -53,7 +53,7 @@ const useStyles = createUseStyles({
   selectBox: {
     position: "relative",
     "&:after": {
-      content: "\"\"",
+      content: '""',
       position: "absolute",
       top: "50%",
       right: "10px",
@@ -72,33 +72,45 @@ const useStyles = createUseStyles({
   }
 });
 
+interface SingleItemStrategyProps {
+  strategy: string;
+  show: boolean;
+  onChange: (name: string, value?: string) => void;
+}
 
-const SingleItemStrategy = observer(({ strategy, show, onChange }) => {
+const SingleItemStrategy = observer(
+  ({ strategy, show, onChange }: SingleItemStrategyProps) => {
+    const classes = useStyles();
 
-  const classes = useStyles();
+    const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+      const value = e.target.value === "NONE" ? undefined : e.target.value;
+      onChange("singleValue", value);
+    };
 
-  const handleChange = e => {
-    const value = e.target.value === "NONE"?undefined:e.target.value;
-    onChange("singleValue", value);
-  };
+    if (!show) {
+      return null;
+    }
 
-  if (!show) {
-    return null;
+    const selectedValue = strategy === undefined ? "NONE" : strategy;
+
+    return (
+      <div className={classes.container}>
+        <span className={classes.label}>Single item strategy:&nbsp;</span>
+        <div className={classes.selectBox}>
+          <select
+            className={classes.select}
+            value={selectedValue}
+            onChange={handleChange}
+          >
+            <option value="NONE">None</option>
+            <option value="FIRST">First</option>
+            <option value="CONCAT">Concat</option>
+          </select>
+        </div>
+      </div>
+    );
   }
-
-  const selectedValue = strategy === undefined?"NONE":strategy;
-
-  return (
-    <div className={classes.container} >
-      <span className={classes.label}>Single item strategy:&nbsp;</span>
-      <div className={classes.selectBox}><select className={classes.select} value={selectedValue} onChange={handleChange}>
-        <option value="NONE">None</option>
-        <option value="FIRST">First</option>
-        <option value="CONCAT">Concat</option>
-      </select></div>
-    </div>
-  );
-});
+);
 SingleItemStrategy.displayName = "SingleItemStrategy";
 
 export default SingleItemStrategy;

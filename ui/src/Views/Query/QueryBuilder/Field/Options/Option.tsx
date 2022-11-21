@@ -23,11 +23,22 @@
 
 import React from "react";
 import Toggle from "../../../../../Components/Toggle";
+import Field from "../../../../../Stores/Field";
 import Filter from "./Filter";
 import SingleItemStrategy from "./SingleItemStrategy";
 import UnsupportedOption from "./UnsupportedOption";
 
-const Option = ({ field, rootField, option, onChange }) => {
+interface OptionProps {
+  field: Field;
+  rootField: Field;
+  option: {
+    name: string;
+    value: boolean | string;
+  }
+  onChange: (name: string, newValue?: boolean) => void;
+}
+
+const Option = ({ field, rootField, option, onChange }: OptionProps) => {
 
   const { name, value } = option;
 

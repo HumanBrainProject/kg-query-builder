@@ -21,11 +21,14 @@
  *
  */
 
-import React from "react";
+import React, { MouseEvent } from "react";
+import Icon from "../../../../../Components/Icon";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
+import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
 
-import Property from "./Property";
+import { PropertyGroup, Property } from "../../../../../Stores/TypeStore";
+import PropertyComponent from "./Property";
 
 const useStyles = createUseStyles({
   container: {
@@ -40,8 +43,17 @@ const useStyles = createUseStyles({
   }
 });
 
-const List = observer(({ properties, label, onClick }) => {
+interface GroupPropertiesProps {
+  group: PropertyGroup;
+  prefix: string;
+  onClick: (e: MouseEvent<HTMLDivElement>, property: Property) => void;
+}
+
+const GroupProperties = observer(({group, prefix, onClick }: GroupPropertiesProps) => {
+
   const classes = useStyles();
+
+  const { id, label, color, properties } = group;
 
   if (!Array.isArray(properties) || !properties.length) {
     return null;
@@ -49,13 +61,13 @@ const List = observer(({ properties, label, onClick }) => {
 
   return (
     <div className={classes.container}>
-      <h5>{label}</h5>
+      <h5>{prefix} <Icon icon={faCircle} color={color}/> {label} <small> - {id}</small></h5>
       {properties.map(property => (
-        <Property key={`${property.attribute}${property.reverse?"reverse":""}`} property={property} onClick={onClick} />
+        <PropertyComponent key={`${property.attribute}${property.reverse?"reverse":""}`} property={property} onClick={onClick} />
       ))}
     </div>
   );
 });
-List.displayName = "List";
+GroupProperties.displayName = "GroupProperties";
 
-export default List;
+export default GroupProperties;

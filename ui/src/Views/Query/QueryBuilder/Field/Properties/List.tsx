@@ -21,23 +21,48 @@
  *
  */
 
-import React from "react";
+import React, { MouseEvent } from "react";
+import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 
-import GroupProperties from "./GroupProperties";
+import { Property } from "../../../../../Stores/TypeStore";
+import PropertyComponent from "./Property";
 
-const Groups = observer(({ groups, prefix, onClick }) => {
+const useStyles = createUseStyles({
+  container: {
+    color: "var(--ft-color-loud)",
+    "& h5": {
+      margin: "18px 0 6px 5px",
+      "& small": {
+        color: "var(--ft-color-quiet)",
+        fontStyle: "italic"
+      }
+    }
+  }
+});
 
-  if (!Array.isArray(groups) || !groups.length) {
+interface ListProps {
+  properties?: Property[];
+  label: string;
+  onClick: (e: MouseEvent<HTMLElement>, property: Property) => void;
+}
+
+const List = observer(({ properties, label, onClick }: ListProps) => {
+  const classes = useStyles();
+
+  if (!Array.isArray(properties) || !properties.length) {
     return null;
   }
 
   return (
-    groups.map(group => (
-      <GroupProperties key={group.id} group={group} prefix={prefix} onClick={onClick} />
-    ))
+    <div className={classes.container}>
+      <h5>{label}</h5>
+      {properties.map(property => (
+        <PropertyComponent key={`${property.attribute}${property.reverse?"reverse":""}`} property={property} onClick={onClick} />
+      ))}
+    </div>
   );
 });
-Groups.displayName = "Groups";
+List.displayName = "List";
 
-export default Groups;
+export default List;

@@ -72,7 +72,7 @@ export const Type = ({ type }: TypeProps) => {
 };
 
 interface PropertyTypesProps {
-  types: string[];
+  types?: string[];
 }
 
 const PropertyTypes = ({ types }: PropertyTypesProps) => {

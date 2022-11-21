@@ -29,18 +29,26 @@ import { RootStore } from "./RootStore";
 import { AxiosError } from "axios";
 
 export interface Type {
-  id: string,
-  label: string,
-  color: string,
-  description: string,
-  properties: Property[]
+  id: string;
+  label: string;
+  color: string;
+  description: string;
+  properties: Property[];
 }
 
 export interface Property {
-  attribute: string,
-  canBe?: string[],
-  label: string,
-  simpleAttributeName: string,
+  attribute: string;
+  canBe?: string[];
+  label: string;
+  simpleAttributeName: string;
+  reverse?: boolean
+}
+
+export interface PropertyGroup {
+  id: string;
+  label: string;
+  color: string;
+  properties: Property[];
 }
 
 export class TypeStore {

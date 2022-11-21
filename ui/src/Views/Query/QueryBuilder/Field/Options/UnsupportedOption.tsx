@@ -26,7 +26,7 @@ import { createUseStyles } from "react-jss";
 import ReactJson from "react-json-view";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
+import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import { observer } from "mobx-react-lite";
 
 import ThemeRJV from "../../../../../Themes/ThemeRJV";
@@ -103,7 +103,12 @@ const useStyles = createUseStyles({
   }
 });
 
-const Type = observer(({ classes, value }) => {
+interface TypeProps {
+  value: string;
+}
+
+const Type = observer(({ value }: TypeProps) => {
+  const classes = useStyles();
   if (typeof value === "string") {
     return (
       <div className={classes.stringValue}>
@@ -147,7 +152,17 @@ const Type = observer(({ classes, value }) => {
 });
 Type.displayName = "Type";
 
-const UnsupportedOption = ({ name, value, onChange }) => {
+interface UnsupportedOptionProps {
+  name: string;
+  value: string;
+  onChange: (name: string, value?: boolean) => void;
+}
+
+const UnsupportedOption = ({
+  name,
+  value,
+  onChange
+}: UnsupportedOptionProps) => {
   const classes = useStyles();
 
   const handleDelete = () => {
@@ -166,7 +181,7 @@ const UnsupportedOption = ({ name, value, onChange }) => {
       </Button>
       <div className={classes.optionLabel}>{name}:&nbsp;</div>
       <strong>
-        <Type classes={classes} value={value} />
+        <Type value={value} />
       </strong>
     </div>
   );

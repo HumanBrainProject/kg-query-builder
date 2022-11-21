@@ -21,12 +21,13 @@
  *
  */
 
-import React from "react";
+import React, { ChangeEvent } from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import Form from "react-bootstrap/Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
+import Field from "../../../../../Stores/Field";
 
 const useStyles = createUseStyles({
   option: {
@@ -53,7 +54,7 @@ const useStyles = createUseStyles({
     border: "1px solid transparent",
     borderRadius: "2px",
     backgroundColor: "var(--bg-color-blend-contrast1)",
-    "&:focus":{
+    "&:focus": {
       color: "var(--ft-color-loud)",
       borderColor: "rgba(64, 169, 243, 0.5)",
       backgroundColor: "transparent"
@@ -61,27 +62,38 @@ const useStyles = createUseStyles({
   }
 });
 
+interface NameProps {
+  field: Field;
+  rootField: Field;
+}
 
-const Name = observer(({ field, rootField }) => {
-
+const Name = observer(({ field, rootField }: NameProps) => {
   const classes = useStyles();
 
-  const handleChangeName = e => field.setAlias(e.target.value);
+  const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => field.setAlias(e.target.value);
 
   if (field === rootField || field.parent.isFlattened) {
     return null;
   }
 
   return (
-    <div className={classes.option} >
+    <div className={classes.option}>
       <div className={classes.optionLabel}>
-          Target name <small>(only applicable if parent field is not flattened)</small>
+        Target name{" "}
+        <small>(only applicable if parent field is not flattened)</small>
       </div>
       <div>
-        <Form.Control className={classes.targetInput} type="text" value={field.alias || ""} placeholder={field.defaultAlias} onChange={handleChangeName} />
+        <Form.Control
+          className={classes.targetInput}
+          type="text"
+          value={field.alias || ""}
+          placeholder={field.defaultAlias}
+          onChange={handleChangeName}
+        />
         {field.aliasError && (
           <div className={classes.aliasError}>
-            <FontAwesomeIcon icon={faExclamationTriangle} />&nbsp;Empty value is not accepted
+            <FontAwesomeIcon icon={faExclamationTriangle} />
+            &nbsp;Empty value is not accepted
           </div>
         )}
       </div>

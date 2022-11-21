@@ -22,30 +22,53 @@
  */
 
 import React from "react";
-import { observer } from "mobx-react-lite";
+import { createUseStyles } from "react-jss";
 
-import Toggle from "../../../../../Components/Toggle";
+const useStyles = createUseStyles({
+  removed: {
+    background: "#FADBD7",
+    textDecoration: "line-through",
+    "& + $added": {
+      marginLeft: "3px"
+    }
+  },
+  added: {
+    background: "#A5EBC3",
+    "& + $removed": {
+      marginLeft: "3px"
+    }
+  },
+  unchanged: {}
+});
 
-const Flatten = observer(({ field, show, onChange}) => {
+interface ComparePartProps {
+  part: {
+    value: string;
+    added: boolean;
+    removed: boolean;
+  };
+}
 
-  const handleOnChange = (_, value) => onChange(!!value);
+const ComparePart = ({ part }: ComparePartProps) => {
+  const classes = useStyles();
 
-  if (!show) {
+  if (!part.value) {
     return null;
   }
 
-  return (
-    <Toggle
-      option={{
-        value: field.isFlattened?true:undefined
-      }}
-      label="Flatten"
-      comment="only applicable if this field has only one child field"
-      show={true}
-      onChange={handleOnChange}
-    />
-  );
-});
-Flatten.displayName = "Flatten";
+  const getClassname = () => {
+    if (part.added) {
+      return classes.added;
+    }
+    if (part.removed) {
+      return classes.removed;
+    }
+    return classes.unchanged;
+  };
 
-export default Flatten;
+  const className = getClassname();
+
+  return <span className={className}>{part.value}</span>;
+};
+
+export default ComparePart;

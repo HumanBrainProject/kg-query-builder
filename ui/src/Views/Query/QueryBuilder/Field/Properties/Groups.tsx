@@ -21,51 +21,30 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
+import React, { MouseEvent } from "react";
+import { observer } from "mobx-react-lite";
 
-const useStyles = createUseStyles({
-  removed:{
-    background: "#FADBD7",
-    textDecoration: "line-through",
-    "& + $added": {
-      marginLeft: "3px"
-    }
-  },
-  added:{
-    background: "#A5EBC3",
-    "& + $removed": {
-      marginLeft: "3px"
-    }
-  },
-  unchanged: {
+import { PropertyGroup, Property } from "../../../../../Stores/TypeStore";
+import GroupProperties from "./GroupProperties";
 
-  }
-});
+interface GroupsProps {
+  groups?: PropertyGroup[];
+  prefix: string;
+  onClick: (e: MouseEvent<HTMLDivElement>, property: Property) => void;
+}
 
-const ComparePart = ({ part }) => {
+const Groups = observer(({ groups, prefix, onClick }: GroupsProps) => {
 
-  const classes = useStyles();
-
-  if (!part.value) {
+  if (!Array.isArray(groups) || !groups.length) {
     return null;
   }
 
-  const getClassname = () => {
-    if(part.added) {
-      return classes.added;
-    }
-    if(part.removed) {
-      return classes.removed; 
-    }
-    return classes.unchanged;
-  }
-
-  const className = getClassname();
-
   return (
-    <span className={className}>{part.value}</span>
+    groups.map(group => (
+      <GroupProperties key={group.id} group={group} prefix={prefix} onClick={onClick} />
+    ))
   );
-};
+});
+Groups.displayName = "Groups";
 
-export default ComparePart;
+export default Groups;
