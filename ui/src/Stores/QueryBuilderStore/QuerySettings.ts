@@ -21,20 +21,22 @@
  *
  */
 
-export const defaultContext = {
+import { QuerySpecification } from "./QuerySpecification";
+
+export const defaultContext: QuerySpecification.Context = {
   "@vocab": "https://core.kg.ebrains.eu/vocab/query/",
-  "query": "https://schema.hbp.eu/myQuery/",
-  "propertyName": {
+  query: "https://schema.hbp.eu/myQuery/",
+  propertyName: {
     "@id": "propertyName",
     "@type": "@id"
   },
-  "path": {
+  path: {
     "@id": "path",
     "@type": "@id"
   }
 };
 
-export const rootFieldReservedProperties = [
+export const rootFieldReservedProperties: string[] = [
   "root_schema",
   "schema:root_schema",
   "http://schema.org/root_schema", //NOSONAR it's a schema
@@ -61,9 +63,9 @@ export const rootFieldReservedProperties = [
   "https://core.kg.ebrains.eu/vocab/meta/alternative"
 ];
 
-export const optionsToKeepOnFlattenendField = ["ensureOrder", "required", "singleValue"];
+export const optionsToKeepOnFlattenendField: string[] = ["ensureOrder", "required", "singleValue"];
 
-export const fieldReservedProperties = ["propertyName", "path", "merge", "structure"];
+export const fieldReservedProperties: string[]  = ["propertyName", "path", "merge", "structure"];
 
 export const namespaceReg = /^(.+):(.+)$/;//NOSONAR
 export const attributeReg = /^https?:\/\/.+\/(.+)$/;//NOSONAR

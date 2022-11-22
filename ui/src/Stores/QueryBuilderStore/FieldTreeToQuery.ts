@@ -29,7 +29,7 @@ import {
   modelReg
 } from "./QuerySettings";
 import Field, { Option } from "../Field";
-import { Query } from "./Query";
+import { Query } from "./QuerySpecification";
 
 const hasTypeFilter = (field: Field): boolean =>
   field instanceof Object &&
@@ -37,7 +37,7 @@ const hasTypeFilter = (field: Field): boolean =>
   Array.isArray(field.typeFilter) &&
   !!field.typeFilter.length;
 
-const getTypeFilter = (field: Field): Query.TypeFilter | Query.TypeFilter[] => {
+const getTypeFilter = (field: Field): QuerySpecification.TypeFilter | QuerySpecification.TypeFilter[] => {
   if (hasTypeFilter(field)) {
     if (field.typeFilter.length === 1) {
       return { "@id": field.typeFilter[0] };
@@ -81,7 +81,7 @@ const getPath = (field: Field) => {
   }
   const hasType = hasTypeFilter(field);
   if (field.isReverse) {
-    const path: Query.Path = {
+    const path: QuerySpecification.Path = {
       "@id": relativePath,
       reverse: true
     };
@@ -113,34 +113,47 @@ const getPopertyName = (field: Field) => {
   return `${namespace}:${name}`;
 };
 
-const addOptions = (queryField: Query.Field, options: Option[]) => {
+const addOptions = (queryField: QuerySpecification.Field, options: Option[]) => {
   if (Array.isArray(options)) {
     options.forEach(({ name, value }) => {
-      if(name === "sort" && value) {
-        queryField.sort = true;
-      }
-      if(name === "required" && value) {
-        queryField.required = true;
-      }
-      if(name === "ensureOrder" && value) {
-        queryField.ensureOrder = true;
-      }
-      if(name === "filter" && value) {
-        const v: Query.FilterItem = {};
-        const valueAsFilterItem = value as Query.FilterItem;
-        if(valueAsFilterItem.op) {
-          v.op = valueAsFilterItem.op;
+      switch (name) {
+        case "sort": {
+          if (value) {
+            queryField.sort = true;
+          }
+          break;
         }
-        if(valueAsFilterItem.parameter) {
-          v.parameter = valueAsFilterItem.parameter;
+        case "ensureOrder": {
+          if (value) {
+            queryField.ensureOrder = true;
+          }
+          break;
         }
-        if(valueAsFilterItem.value) {
-          v.value = valueAsFilterItem.value;
+        case "filter": {
+          if (value) {
+            const v: QuerySpecification.FilterItem = {};
+            const valueAsFilterItem = value as QuerySpecification.FilterItem;
+            if(valueAsFilterItem.op) {
+              v.op = valueAsFilterItem.op;
+            }
+            if(valueAsFilterItem.parameter) {
+              v.parameter = valueAsFilterItem.parameter;
+            }
+            if(valueAsFilterItem.value) {
+              v.value = valueAsFilterItem.value;
+            }
+            queryField.filter = v;
+          }
+          break;
         }
-        queryField.filter = v;
-      }
-      if(name === "singleValue" && value) {
-        queryField.singleValue = true;
+        case "singleValue": {
+          if (value) {
+            queryField.singleValue = true;
+          }
+          break;
+        }
+        default:
+          queryField[name] = value;
       }
     });
   }
@@ -148,7 +161,7 @@ const addOptions = (queryField: Query.Field, options: Option[]) => {
 
 
 const addLastChildOptionsOfFlattenedField = (
-  queryField: Query.Field,
+  queryField: QuerySpecification.Field,
   options: Option[]
 ) => {
   if (Array.isArray(options)) {
@@ -160,10 +173,10 @@ const addLastChildOptionsOfFlattenedField = (
 };
 
 const getFlattenedField = (field: Field) => {
-  const queryField = {} as Query.Field;
+  const queryField = {} as QuerySpecification.Field;
   queryField.propertyName = getPopertyName(field);
   addOptions(queryField, field.options);
-  const paths: (Query.Path | string)[] = [];
+  const paths: (QuerySpecification.Path | string)[] = [];
   let targetField: "" | Field | null = field;
   while (targetField && targetField.isFlattened) {
     const path = getPath(targetField);
@@ -196,7 +209,7 @@ const getFlattenedField = (field: Field) => {
   return queryField;
 };
 
-const getqueryField = (field: Field): null | Query.Field => {
+const getqueryField = (field: Field): null | QuerySpecification.Field => {
   if (field.isFlattened) {
     return getFlattenedField(field);
   }
@@ -204,7 +217,7 @@ const getqueryField = (field: Field): null | Query.Field => {
   if (!path) {
     return null;
   }
-  const queryField: Query.Field = {
+  const queryField: QuerySpecification.Field = {
     propertyName: getPopertyName(field),
     path: path
   };
@@ -218,14 +231,14 @@ const getqueryField = (field: Field): null | Query.Field => {
 
 const getStructure = (
   fields: Field[] | undefined | Field
-): null | Query.Field | Query.Field[] => {
+): null | QuerySpecification.Field | QuerySpecification.Field[] => {
   if (!Array.isArray(fields) || !fields.length) {
     return null;
   }
 
   const structure = (fields
     .map(f => getqueryField(f))
-    .filter(f => !!f)) as Query.Field[];
+    .filter(f => !!f)) as QuerySpecification.Field[];
 
   if (structure.length > 1) {
     return structure;

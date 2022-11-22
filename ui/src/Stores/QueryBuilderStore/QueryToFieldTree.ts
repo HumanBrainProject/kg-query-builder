@@ -22,10 +22,19 @@
  */
 import { toJS } from "mobx";
 
-import { optionsToKeepOnFlattenendField, fieldReservedProperties, namespaceReg, attributeReg, modelReg } from "./QuerySettings";
+import {
+  optionsToKeepOnFlattenendField,
+  fieldReservedProperties,
+  namespaceReg,
+  attributeReg,
+  modelReg
+} from "./QuerySettings";
 import Field from "../Field";
+import { Type } from "../TypeStore";
+import { Query } from "../Query";
+import { QuerySpecification } from "./QuerySpecification";
 
-const getRelativePathFromObject = path => {
+const getRelativePathFromObject = (path?: any) => {
   if (!path) {
     return null;
   }
@@ -38,53 +47,51 @@ const getRelativePathFromObject = path => {
   return null;
 };
 
-const getRelativePathFromArray = paths => {
+const getRelativePathFromArray = (paths: any) => {
   if (!Array.isArray(paths) || paths.length === 0) {
     return null;
   }
   return getRelativePathFromObject(paths[0]);
 };
 
-const getRelativePath = path => {
-  if(Array.isArray(path)) {
+const getRelativePath = (path: any) => {
+  if (Array.isArray(path)) {
     return getRelativePathFromArray(path);
   }
   return getRelativePathFromObject(path);
 };
 
-const isReverseFromObject = object => {
+const isReverseFromObject = (object: any): boolean => {
   if (object instanceof Object) {
     return !!object.reverse;
   }
   return false;
 };
 
-const isReverseFromArray = list => {
+const isReverseFromArray = (list: any) => {
   if (!Array.isArray(list) || list.length === 0) {
     return false;
   }
   return isReverseFromObject(list[0]);
 };
 
-const getIsReverse = object => {
-  if(Array.isArray(object)) {
-   return isReverseFromArray(object)
+const getIsReverse = (object: any) => {
+  if (Array.isArray(object)) {
+    return isReverseFromArray(object);
   }
   return isReverseFromObject(object);
 };
 
-const getTypeFromObject = object => {
+const getTypeFromObject = (object: any) => {
   if (object instanceof Object) {
     return object["@id"];
   }
   return undefined;
 };
 
-const getTypes = object => {
-  if(Array.isArray(object)) {
-    return object
-      .map(t => getTypeFromObject(t))
-      .filter(t => !!t);
+const getTypes = (object: any) => {
+  if (Array.isArray(object)) {
+    return object.map(t => getTypeFromObject(t)).filter(t => !!t);
   }
   const type = getTypeFromObject(object);
   if (type) {
@@ -93,37 +100,52 @@ const getTypes = object => {
   return [];
 };
 
-const getTypeFiltertFromObject = object => {
+const getTypeFiltertFromObject = (object: any) => {
   if (object instanceof Object) {
     return getTypes(object.typeFilter);
   }
   return [];
 };
 
-const getTypeFiltertFromArray = list => {
+const getTypeFiltertFromArray = (list: any) => {
   if (!Array.isArray(list) || list.length === 0) {
     return [];
   }
   return getTypeFiltertFromObject(list[0]);
 };
 
-const getTypeFilter = object => {
-  if(Array.isArray(object)) {
+const getTypeFilter = (object: any) => {
+  if (Array.isArray(object)) {
     return getTypeFiltertFromArray(object);
   }
   return getTypeFiltertFromObject(object);
 };
 
-const getPropertyFromLookups = (types, lookups, attribute, isReverse, isLeaf) => {
+const getPropertyFromLookups = (
+  types: Map<string, Type>,
+  lookups,
+  attribute,
+  isReverse: boolean,
+  isLeaf: boolean
+) => {
   if (!(types instanceof Object) || !Array.isArray(lookups) || !attribute) {
     return null;
   }
   let property = lookups.reduce((acc, id) => {
-    const type = types[id];
+    const type = types.get(id);
     if (type) {
-      const prop = type.properties.find(p => p.attribute === attribute && (isReverse?!!p.reverse:!p.reverse) && (isLeaf || p.canBe));
+      const prop = type.properties.find(
+        p =>
+          p.attribute === attribute &&
+          (isReverse ? !!p.reverse : !p.reverse) &&
+          (isLeaf || p.canBe)
+      );
       if (prop) {
-        if (Array.isArray(acc.canBe) && Array.isArray(prop.canBe) && prop.canBe.length) {
+        if (
+          Array.isArray(acc.canBe) &&
+          Array.isArray(prop.canBe) &&
+          prop.canBe.length
+        ) {
           const canBe = new Set(acc.canBe);
           prop.canBe.forEach(p => canBe.add(p));
           acc = {
@@ -138,7 +160,7 @@ const getPropertyFromLookups = (types, lookups, attribute, isReverse, isLeaf) =>
           };
         }
       }
-    } 
+    }
     return acc;
   }, {});
   if (Object.keys(property).length) {
@@ -147,23 +169,39 @@ const getPropertyFromLookups = (types, lookups, attribute, isReverse, isLeaf) =>
   return null;
 };
 
-const getProperty = (types, context, lookups, relativePath, isReverse, isLeaf) => {
+const getProperty = (
+  types: Map<string, Type>,
+  context: QuerySpecification.Context,
+  lookups,
+  relativePath,
+  isReverse: boolean,
+  isLeaf: boolean
+) => {
   let attribute = null;
   let attributeNamespace = null;
   let simpleAttributeName = null;
   if (attributeReg.test(relativePath)) {
     attribute = relativePath;
     [, simpleAttributeName] = relativePath.match(attributeReg);
-
   } else if (namespaceReg.test(relativePath)) {
-    [, attributeNamespace, simpleAttributeName] = relativePath.match(namespaceReg);
-    attribute = context && context[attributeNamespace] ? context[attributeNamespace] + simpleAttributeName : null;
+    [, attributeNamespace, simpleAttributeName] =
+      relativePath.match(namespaceReg);
+    attribute =
+      context && context[attributeNamespace]
+        ? context[attributeNamespace] + simpleAttributeName
+        : null;
   } else if (modelReg.test(relativePath)) {
     attribute = relativePath.match(modelReg)[1];
   } else if (relativePath === "@id" || relativePath === "@type") {
     attribute = relativePath;
   }
-  let property = getPropertyFromLookups(types, lookups, attribute, isReverse, isLeaf);
+  let property = getPropertyFromLookups(
+    types,
+    lookups,
+    attribute,
+    isReverse,
+    isLeaf
+  );
   const isUnknown = !property;
   if (isUnknown) {
     property = {
@@ -178,13 +216,20 @@ const getProperty = (types, context, lookups, relativePath, isReverse, isLeaf) =
   return property;
 };
 
-const getField = (types, context, parentField, path, isLeaf) => {
+const getField = (types: Map<string, Type>, context: QuerySpecification.Context, parentField: Query.Field, path, isLeaf) => {
   if (path) {
     const isFlattened = getIsFlattened(path);
     const relativePath = getRelativePath(path);
     const isReverse = getIsReverse(path);
     const typeFilter = getTypeFilter(path);
-    const property = getProperty(types, context, parentField.lookups, relativePath, isReverse, isLeaf);
+    const property = getProperty(
+      types,
+      context,
+      parentField.lookups,
+      relativePath,
+      isReverse,
+      isLeaf
+    );
     const { isUnknown, ...schema } = property;
     const field = new Field(schema, parentField);
     field.isUnknown = isUnknown;
@@ -200,27 +245,32 @@ const getField = (types, context, parentField, path, isLeaf) => {
     return field;
   }
 
-  const field = new Field({}, parentField);
+  const field = new Field(undefined, parentField);
   field.isInvalidLeaf = true;
   field.isInvalid = true;
   field.isUnknown = true;
   return field;
 };
 
-const getIsFlattened = object => Array.isArray(object) && object.length > 1;
+const getIsFlattened = (object: any) => Array.isArray(object) && object.length > 1;
 
-const addFieldToParent = (parentField, field) => {
-  if (!Array.isArray(parentField["structure"])) {
-    parentField["structure"] = [];
+const addFieldToParent = (parentField: Query.Field, field: Query.Field) => {
+  if (!Array.isArray(parentField.structure)) {
+    parentField.structure = [];
   }
-  parentField["structure"].push(field);
+  parentField.structure.push(field);
   parentField.isInvalidLeaf = false;
 };
 
-const getFlattenRelativePath = path => path.length > 2 ? path.slice(1) : path[1];
+const getFlattenRelativePath = (path:(QuerySpecification.Path|string)[]) => {
+  return path.length > 2 ? path.slice(1) : path[1];
+}
+  
 
-const setFieldProperties = (field, jsonField) => {
-  const [, namespace, propertyName] = namespaceReg.test(jsonField.propertyName) ? jsonField.propertyName.match(namespaceReg) : [null, null, null];
+const setFieldProperties = (field: Query.Field, jsonField) => {
+  const [, namespace, propertyName] = namespaceReg.test(jsonField.propertyName)
+    ? jsonField.propertyName.match(namespaceReg)
+    : [null, null, null];
   if (namespace) {
     field.namespace = namespace;
   }
@@ -228,23 +278,35 @@ const setFieldProperties = (field, jsonField) => {
     field.alias = propertyName;
   }
   Object.entries(jsonField).forEach(([name, value]) => {
-    if (!fieldReservedProperties.includes(name) && (!field.isFlattened || optionsToKeepOnFlattenendField.includes(name))) {
+    if (
+      !fieldReservedProperties.includes(name) &&
+      (!field.isFlattened || optionsToKeepOnFlattenendField.includes(name))
+    ) {
       field.setOption(name, value);
     }
   });
 };
 
-const addPropertiesToField = (field, properties) => {
+const addPropertiesToField = (field: QuerySpecification.Field, properties) => {
   Object.entries(properties).forEach(([name, value]) => {
-    if (!fieldReservedProperties.includes(name) && !optionsToKeepOnFlattenendField.includes(name)) {
+    if (
+      !fieldReservedProperties.includes(name) &&
+      !optionsToKeepOnFlattenendField.includes(name)
+    ) {
       field[name] = value;
     }
   });
 };
 
-const addChildrenOfFlattenedField = (types, context, field, jsonField) => {
-  const flattenRelativePath = getFlattenRelativePath(jsonField.path);
-  const childrenJsonFields = [
+
+const addChildrenOfFlattenedField = (
+  types: Map<string, Type>,
+  context: QuerySpecification.Context,
+  field: Query.Field,
+  jsonField: QuerySpecification.Field
+) => {
+  const flattenRelativePath = getFlattenRelativePath(jsonField.path as (QuerySpecification.Path | string)[]);
+  const childrenJsonFields: QuerySpecification.Field[] = [
     {
       path: flattenRelativePath,
       structure: jsonField.structure
@@ -252,12 +314,21 @@ const addChildrenOfFlattenedField = (types, context, field, jsonField) => {
   ];
   addPropertiesToField(childrenJsonFields[0], jsonField);
   addJsonFieldsToField(types, context, field, childrenJsonFields);
-  if (flattenRelativePath.length || (field.structure && field.structure.length === 1)) {
-    field.isflattened = true;
+  if (
+    Array.isArray(flattenRelativePath) &&
+    flattenRelativePath.length ||
+    (field.structure && field.structure.length === 1)
+  ) {
+    field.isFlattened = true;
   }
 };
 
-const addChildrenOfField = (types, context, field, jsonField) => {
+const addChildrenOfField = (
+  types: Map<string, Type>,
+  context: QuerySpecification.Context,
+  field: Query.Field,
+  jsonField: QuerySpecification.Field
+) => {
   if (field.isFlattened) {
     addChildrenOfFlattenedField(types, context, field, jsonField);
   } else if (jsonField.structure) {
@@ -265,7 +336,12 @@ const addChildrenOfField = (types, context, field, jsonField) => {
   }
 };
 
-const addJsonFieldToField = (types, context, parentField, jsonField) => {
+const addJsonFieldToField = (
+  types: Map<string, Type>,
+  context: QuerySpecification.Context,
+  parentField: Query.Field,
+  jsonField: QuerySpecification.Field
+) => {
   const hasPath = !!jsonField.path;
   const isLeaf = !jsonField.structure;
   const field = getField(types, context, parentField, jsonField.path, isLeaf);
@@ -279,17 +355,29 @@ const addJsonFieldToField = (types, context, parentField, jsonField) => {
   addChildrenOfField(types, context, field, jsonField);
 };
 
-const addJsonFieldsToField = (types, context, parentField, jsonFields) => {
+const addJsonFieldsToField = (
+  types: Map<string, Type>,
+  context: QuerySpecification.Context,
+  parentField: Query.Field,
+  jsonFields?: QuerySpecification.Field|QuerySpecification.Field[]
+) => {
   if (!parentField || !jsonFields) {
     return;
   }
   if (!Array.isArray(jsonFields)) {
     jsonFields = [jsonFields];
   }
-  jsonFields.forEach(jsonField => addJsonFieldToField(types, context, parentField, jsonField));
+  jsonFields.forEach(jsonField =>
+    addJsonFieldToField(types, context, parentField, jsonField)
+  );
 };
 
-export const buildFieldTreeFromQuery = (types, context, schema, query) => {
+export const buildFieldTreeFromQuery = (
+  types: Map<string, Type>,
+  context: QuerySpecification.Context,
+  schema: QuerySpecification.Schema,
+  query: QuerySpecification.Field
+) => {
   if (!schema) {
     return null;
   }
@@ -300,6 +388,9 @@ export const buildFieldTreeFromQuery = (types, context, schema, query) => {
     canBe: [schema.id]
   });
   addJsonFieldsToField(types, context, rootField, structure);
-  properties && Object.entries(properties).forEach(([name, value]) => rootField.setOption(name, value));
+  properties &&
+    Object.entries(properties).forEach(([name, value]) =>
+      rootField.setOption(name, value)
+    );
   return rootField;
 };

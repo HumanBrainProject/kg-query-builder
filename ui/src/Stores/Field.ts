@@ -22,6 +22,9 @@
  */
 
 import { observable, action, computed, toJS, makeObservable } from "mobx";
+import { Permission } from "./AuthStore";
+import { Query } from "./Query";
+import { QuerySpecification } from "./QueryBuilderStore/QuerySpecification";
 
 const defaultOptions = [
   {
@@ -46,43 +49,23 @@ const defaultOptions = [
   }
 ];
 
-export interface Schema {
-  id?: string;
-  label?: string;
-  canBe?: string[];
-  simpleAttributeName?: string;
-  attribute?: string;
-  attributeNamespace?: string;
-}
+class Field implements Query.Field{
+  namespace = undefined;
+  schema = undefined;
+  structure = [];
+  alias = undefined;
+  aliasError = undefined
+  isFlattened = false;
+  isReverse = false;
+  optionsMap = new Map();
+  isUnknown = false;
+  isInvalid = false;
+  isInvalidLeaf = false;
+  typeFilter = [];
+  typeFilterEnabled = false;
+  parent = undefined;
 
-export interface TypeFilter {
-  id: string;
-  selected: boolean;
-  isUnknown: boolean;
-}
-
-export interface Option {
-  name: string;
-  value?: boolean | string;
-}
-
-class Field {
-  namespace?: string;
-  schema?: Schema;
-  structure: Field [] = [];
-  alias?: string;
-  aliasError?: boolean;
-  isFlattened: boolean = false;
-  isReverse: boolean = false;
-  optionsMap: Map<string, boolean | undefined> = new Map();
-  isUnknown = null;
-  isInvalid: boolean = false;
-  isInvalidLeaf: boolean = false;
-  typeFilter: string[] = [];
-  typeFilterEnabled: boolean = false;
-  parent?: Field;
-
-  constructor(schema: Schema, parent: Field) {
+  constructor(schema?: QuerySpecification.Schema, parent?: Query.Field) {
     makeObservable(this, {
       namespace: observable,
       schema: observable,

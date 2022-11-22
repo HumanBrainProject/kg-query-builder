@@ -36,109 +36,6 @@ import { Space, Permission } from "./AuthStore";
 import { TransportLayer } from "../Services/TransportLayer";
 import { RootStore } from "./RootStore";
 import Field from "./Field";
-import { User } from "@sentry/browser";
-
-export interface QueryMeta {
-  name?: string
-  description?: string
-  type: string
-  responseVoca?: string
-}
-
-export interface JsonLd {
-  "@id": string
-}
-
-export interface JsonLdWithType extends JsonLd  {
-  "@type": string
-}
-
-export interface QueryPath extends JsonLd {
-  reverse?: boolean,
-  typeFilter?: JsonLd[]
-}
-
-export enum QueryFilterOperation {
-  IS_EMPTY = "IS_EMPTY",
-  STARTS_WITH = "STARTS_WITH",
-  ENDS_WITH = "ENDS_WITH",
-  CONTAINS = "CONTAINS",
-  EQUALS = "EQUALS",
-  REGEX = "REGEX"
-}
-
-export interface QueryValueFilter {
-  op: QueryFilterOperation,
-  parameter?: string,
-  value?: string
-}
-
-export enum QuerySingleItemStrategy {
-  FIRST = "FIRST",
-  CONCAT = "CONCAT"
-}
-
-export interface QueryStructureItem {
-  path: (QueryPath|string)[]|QueryPath|string,
-  propertyName: string,
-  structure?: QueryStructureItem[],
-  required?: boolean,
-  sort?: boolean,
-  filter?: QueryValueFilter,
-  singleValue?: QuerySingleItemStrategy,
-}
-
-export interface QueryContext {
-  "@vocab": string,
-  "query": string,
-  "propertyName": JsonLdWithType,
-  "path": JsonLdWithType
-}
-
-export interface QueryProperties {
-  [name: string]: any
-}
-
-export interface JSONQuerySpecification {
-  "@id"?: string,
-  "@context": QueryContext,
-  meta: QueryMeta,
-  structure?: QueryStructureItem[],
-  [name: string]: any
-}
-
-export interface QueryUser {
-  id?: string,
-  name?: string,
-  picture?: string
-}
-
-export interface QuerySpecification {
-  id: string,
-  user: QueryUser,
-  label: string,
-  description: string,
-  space: string,
-  meta: QueryMeta,
-  structure: QueryStructureItem[],
-  deleteError?: string,
-  isDeleting: boolean,
-  context: QueryContext,
-  properties: QueryProperties
-}
-
-export interface SpaceQueries {
-  name: string,
-  label: string,
-  showUser: boolean,
-  isPrivate: boolean,
-  permissions: Permission,
-  queries: QuerySpecification[]
-}
-
-export interface GroupedBySpaceQueries {
-  [name: string]: SpaceQueries
-}
 
 const querySpecificationCompare = (a: QuerySpecification, b: QuerySpecification): number => {
   if (a.label && b.label) {
@@ -214,7 +111,7 @@ export class QueryBuilderStore {
   description = "";
   stage = "RELEASED";
   sourceQuery?: QuerySpecification;
-  context = null;
+  context?:QueryContext;
   rootField = null;
   fetchQueriesError?: string;
   isFetchingQueries = false;
