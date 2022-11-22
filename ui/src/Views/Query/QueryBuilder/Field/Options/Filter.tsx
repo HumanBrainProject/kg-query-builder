@@ -30,6 +30,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
+import { Query } from "../../../../../Stores/QueryBuilderStore/Query";
 
 const useStyles = createUseStyles({
   container: {
@@ -138,16 +139,10 @@ const useStyles = createUseStyles({
   }
 });
 
-interface FilterItem {
-  op?: string;
-  parameter?: string;
-  value?: string;
-}
-
 interface FilterProps {
-  filter: FilterItem|string|boolean;
+  filter: Query.FilterItem|string|boolean;
   show: boolean;
-  onChange: (op: string, value?: FilterItem) => void;
+  onChange: (op: string, value?: Query.FilterItem) => void;
 }
 
 const Filter = observer(({ filter, show, onChange }: FilterProps) => {

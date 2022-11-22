@@ -61,7 +61,13 @@ export interface TypeFilter {
   isUnknown: boolean;
 }
 
+export interface Option {
+  name: string;
+  value?: boolean | string;
+}
+
 class Field {
+  namespace?: string;
   schema?: Schema;
   structure: Field [] = [];
   alias?: string;
@@ -74,10 +80,11 @@ class Field {
   isInvalidLeaf: boolean = false;
   typeFilter: string[] = [];
   typeFilterEnabled: boolean = false;
-  parent: Field;
+  parent?: Field;
 
   constructor(schema: Schema, parent: Field) {
     makeObservable(this, {
+      namespace: observable,
       schema: observable,
       structure: observable,
       alias: observable,

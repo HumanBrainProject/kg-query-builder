@@ -53,7 +53,7 @@ const useStyles = createUseStyles({
 
 interface ModalProps {
   className: string;
-  children: JSX.Element;
+  children: React.ReactNode;
 }
 
 const Modal = ({ className, children }: ModalProps) => {

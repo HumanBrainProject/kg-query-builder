@@ -205,19 +205,7 @@ const Query = observer(({query, enableDelete}: QueryProps) => {
             className={classes.error}
             buttonClassName={classes.errorButton}
             buttonTitle={query.deleteError}
-            iconComponent={FontAwesomeIcon}
-            iconProps={{icon: faExclamationTriangle}}
-            okComponent={() => (
-              <React.Fragment>
-                <FontAwesomeIcon icon={faRedoAlt}/>&nbsp;Retry
-              </React.Fragment>
-            )}
             onOk={handleDelete}
-            cancelComponent={() => (
-              <React.Fragment>
-                <FontAwesomeIcon icon={faUndoAlt}/>&nbsp;Cancel
-              </React.Fragment>
-            )}
             onCancel={handleCancelDelete}
           >
             <h5 className={classes.textError}>{query.deleteError}</h5>
