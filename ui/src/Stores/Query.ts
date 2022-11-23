@@ -27,12 +27,6 @@ import { QuerySpecification } from "./QueryBuilderStore/QuerySpecification";
 
 export namespace Query {
 
-    export interface User {
-        id?: string;
-        name?: string;
-        picture?: string;
-      }
-      
       export interface TypeFilter {
         id: string;
         selected: boolean;
@@ -51,7 +45,6 @@ export namespace Query {
       
       export interface Query {
         id: string;
-        user: User;
         label: string;
         description: string;
         space: string;

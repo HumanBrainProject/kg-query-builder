@@ -32,12 +32,16 @@ import jsdiff from "diff";
 import { defaultContext, rootFieldReservedProperties } from "./QueryBuilderStore/QuerySettings";
 import { buildFieldTreeFromQuery } from "./QueryBuilderStore/QueryToFieldTree";
 import { buildQueryStructureFromFieldTree } from "./QueryBuilderStore/FieldTreeToQuery";
-import { Space, Permission } from "./AuthStore";
+import { Space } from "./AuthStore";
 import { TransportLayer } from "../Services/TransportLayer";
 import { RootStore } from "./RootStore";
 import Field from "./Field";
+import { QuerySpecification } from "./QueryBuilderStore/QuerySpecification";
+import { Query } from "./Query";
+import { Type } from "./TypeStore";
 
-const querySpecificationCompare = (a: QuerySpecification, b: QuerySpecification): number => {
+
+const querySpecificationCompare = (a: Query.Query, b: Query.Query): number => {
   if (a.label && b.label) {
     return a.label.localeCompare(b.label);
   }
@@ -50,12 +54,12 @@ const querySpecificationCompare = (a: QuerySpecification, b: QuerySpecification)
   return a.id.localeCompare(b.id);
 };
 
-const querySpecificationContains = (query: QuerySpecification, filter: string): boolean => 
+const querySpecificationContains = (query: Query.Query, filter: string): boolean => 
     (!!query.label && query.label.toLowerCase().includes(filter)) ||
     (!!query.description && query.description.toLowerCase().includes(filter)) ||
     (!!query.id && query.id.toLowerCase().includes(filter));
 
-const spaceQueriesCompare = (a: SpaceQueries, b: SpaceQueries): number => {
+const spaceQueriesCompare = (a: Query.SpaceQueries, b: Query.SpaceQueries): number => {
   if (a.isPrivate) {
     return -1;
   }
@@ -65,14 +69,15 @@ const spaceQueriesCompare = (a: SpaceQueries, b: SpaceQueries): number => {
   return a.name.localeCompare(b.name);
 };
 
-const isChildOfField = (node, parent, root): boolean => {
-  while (node && node !== parent && node !== root) {
-    node = node.parent;
+const isChildOfField = (node: Field, parent: Field | undefined, root: Field): boolean => {
+  let field: any = node;
+  while (field && field !== parent && field !== root) {
+    field = field.parent;
   }
-  return node === parent;
+  return field === parent;
 };
 
-const getProperties = query => {
+const getProperties = (query: Query.Query): Query.Properties => {
   if (!query) {
     return {};
   }
@@ -81,22 +86,7 @@ const getProperties = query => {
     .reduce((result, [name, value]) => {
       result[name] = value;
       return result;
-    }, {});
-};
-
-const normalizeUser = (user): QueryUser => {
-  if (!user || !user["@id"]) {
-    return {
-      id: undefined,
-      name: undefined,
-      picture: undefined
-    };
-  }
-  return {
-    id: user["@id"],
-    name: user["http://schema.org/name"], //NOSONAR it's a schema
-    picture: user["https://schema.hbp.eu/users/picture"]
-  };
+    }, {} as Query.Properties);
 };
 
 const defaultResultSize = 20;
@@ -110,14 +100,14 @@ export class QueryBuilderStore {
   space?: Space;
   description = "";
   stage = "RELEASED";
-  sourceQuery?: QuerySpecification;
-  context?:QueryContext;
-  rootField = null;
+  sourceQuery?: QuerySpecification.JSONQuerySpecification;
+  context?:QuerySpecification.Context;
+  rootField?: Field;
   fetchQueriesError?: string;
   isFetchingQueries = false;
   isQueriesFetched = false;
   isSaving = false;
-  saveError = null;
+  saveError?:string;
   savedQueryHasInconsistencies = false;
   isRunning = false;
   runError?: string;
@@ -128,10 +118,10 @@ export class QueryBuilderStore {
   fromQueryId?: string;
   fromLabel = "";
   fromDescription = "";
-  fromSpace = null;
+  fromSpace?:Space;
   isFetchingQuery = false;
   fetchQueryError?: string;
-  specifications: QuerySpecification[] = [];
+  specifications: QuerySpecification.JSONQuerySpecification[] = [];
   includeAdvancedAttributes = false;
   resultSize = defaultResultSize;
   resultStart = 0;
@@ -141,7 +131,7 @@ export class QueryBuilderStore {
   result = null;
   showSavedQueries = false;
 
-  currentField = null;
+  currentField?: Field;
 
   transportLayer: TransportLayer;
   rootStore: RootStore;
@@ -282,13 +272,13 @@ export class QueryBuilderStore {
     return [];
   }
 
-  setChildrenFilterValue(value) {
+  setChildrenFilterValue(value: string) {
     this.childrenFilterValue = value;
   }
 
-  get currentFieldFilteredPropertiesGroups() {
+  get currentFieldFilteredPropertiesGroups(): Type[] {
     const field = this.currentField;
-    const lookups = field.typeFilterEnabled?this.currentFieldLookups.filter(type => field.typeFilter.includes(type)):this.currentFieldLookups;
+    const lookups = field && field.typeFilterEnabled?this.currentFieldLookups.filter(type => field.typeFilter.includes(type)):this.currentFieldLookups;
 
     if (!lookups.length) {
       return [];
@@ -318,11 +308,11 @@ export class QueryBuilderStore {
             label: type.label,
             color: type.color,
             properties: properties
-          });
+          } as Type);
         }
       }
       return acc;
-    }, []);
+    }, [] as Type[]);
   }
 
   get currentFieldFilteredCommonProperties() {
@@ -437,7 +427,7 @@ export class QueryBuilderStore {
       this.sourceQuery = null;
       this.savedQueryHasInconsistencies = false;
       this.rootField = new Field({
-        id: schema.id,
+        id: schema.id,  
         label: schema.label,
         canBe: [schema.id]
       });
@@ -481,7 +471,7 @@ export class QueryBuilderStore {
 
   clearRootSchema() {
     if (!this.isSaving) {
-      this.rootField = null;
+      this.rootField = undefined;
       this.clearQuery();
     }
   }
@@ -505,7 +495,7 @@ export class QueryBuilderStore {
       this.sourceQuery = undefined;
       this.savedQueryHasInconsistencies = false;
       this.isSaving = false;
-      this.saveError = null;
+      this.saveError = undefined;
       this.isRunning = false;
       this.runError = undefined;
       this.saveAsMode = false;
@@ -534,7 +524,7 @@ export class QueryBuilderStore {
       this.sourceQuery = undefined;
       this.savedQueryHasInconsistencies = false;
       this.isSaving = false;
-      this.saveError = null;
+      this.saveError = undefined;
       this.isRunning = false;
       this.runError = undefined;
       this.saveAsMode = false;
@@ -545,7 +535,9 @@ export class QueryBuilderStore {
       this.fromDescription = "";
       this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
       this.space = toJS(this.rootStore.authStore.privateSpace); 
-      this.selectField(this.rootField);     
+      if(this.rootField) {
+        this.selectField(this.rootField);     
+      }
     }
   }
 
@@ -565,8 +557,8 @@ export class QueryBuilderStore {
     if (!this.hasRootSchema) {
       return false;
     }
-    const typeName = this.rootSchema.id;
-    const type = this.rootStore.typeStore.types.get(typeName);
+    const typeName = this.rootSchema?.id;
+    const type = typeName && this.rootStore.typeStore.types.get(typeName);
     return !!type;
   }
 
@@ -599,8 +591,8 @@ export class QueryBuilderStore {
     return this.specifications.length > 0;
   }
 
-  get groupedQueries(): SpaceQueries[] {
-    const groups: GroupedBySpaceQueries = {};
+  get groupedQueries(): Query.SpaceQueries[] {
+    const groups: Query.GroupedBySpaceQueries = {};
     const authStore = this.rootStore.authStore;
     this.specifications.forEach(spec => {
       if (spec.space) {
@@ -625,12 +617,12 @@ export class QueryBuilderStore {
       .sort(spaceQueriesCompare);
   }
 
-  get groupedFilteredQueries(): SpaceQueries[] {
+  get groupedFilteredQueries(): Query.SpaceQueries[] {
     const filter = this.queriesFilterValue.toLowerCase();
     if (!filter) {
       return this.groupedQueries;
     }
-    return this.groupedQueries.reduce((acc: SpaceQueries[], group) => {
+    return this.groupedQueries.reduce((acc: Query.SpaceQueries[], group) => {
       const queries = group.queries.filter(query => querySpecificationContains(query, filter));
       if (queries.length) {
         acc.push({
@@ -639,7 +631,7 @@ export class QueryBuilderStore {
           showUser: group.showUser,
           permissions: {...group.permissions},
           queries: queries
-        } as SpaceQueries);
+        } as Query.SpaceQueries);
       }
       return acc;
     }, []);
@@ -650,21 +642,22 @@ export class QueryBuilderStore {
   }
 
   addField(schema, parent, gotoField = true) {
-    if (!this.context["@vocab"]) {
-      this.context["@vocab"] = toJS(defaultContext["@vocab"]);
-    }
-    if (!this.context.query) {
-      this.context.query = this.responseVocab;
-    }
-    if (!this.context.propertyName) {
-      this.context.propertyName = toJS(defaultContext.propertyName);
-    }
-    if (!this.context.path) {
-      this.context.path = toJS(defaultContext.path);
+    if(this.context) {
+      if (!this.context["@vocab"]) {
+        this.context["@vocab"] = toJS(defaultContext["@vocab"]);
+      }
+      if (!this.context.query) {
+        this.context.query = this.responseVocab;
+      }
+      if (!this.context.propertyName) {
+        this.context.propertyName = toJS(defaultContext.propertyName);
+      }
+      if (!this.context.path) {
+        this.context.path = toJS(defaultContext.path);
+      }
     }
     if (parent === undefined) {
-      parent = this.showModalFieldChoice || this.rootField;
-      this.showModalFieldChoice = null;
+      parent = this.rootField;
     }
     if (!parent.isFlattened || parent.structure.length < 1) {
       const newField = new Field(schema, parent);
@@ -685,56 +678,65 @@ export class QueryBuilderStore {
     }
   }
 
-  moveUpField(field) {
+  moveUpField(field: Field) {
     const fieldIndex = field.parent?field.parent.structure.findIndex(f => f === field):-1;
     if (fieldIndex >= 1) {
-      field.parent.structure.splice(fieldIndex, 1);
-      field.parent.structure.splice(fieldIndex-1, 0, field);
+      if(field.parent) {
+        field.parent.structure.splice(fieldIndex, 1);
+        field.parent.structure.splice(fieldIndex-1, 0, field);
+      }
     }
   }
 
-  moveDownField(field) {
+  moveDownField(field: Field) {
     const fieldIndex = field.parent?field.parent.structure.findIndex(f => f === field):-1;
-    if (fieldIndex === -1?false:fieldIndex < (field.parent.structure.length -1)) {
-      
-      field.parent.structure.splice(fieldIndex, 1);
-      field.parent.structure.splice(fieldIndex+1, 0, field);
+    if(field.parent) {
+      if (fieldIndex === -1?false:fieldIndex < (field.parent.structure.length -1)) {
+        field.parent.structure.splice(fieldIndex, 1);
+        field.parent.structure.splice(fieldIndex+1, 0, field);
+      }
     }
   }
 
-  removeField(field) {
+  removeField(field: Field) {
     const currentField = this.currentField;
     const parentField = field.parent;
     this.childrenFilterValue = "";
-    if (isChildOfField(this.currentField, field, this.rootField)) {
-      this.selectField(parentField);
+    if(this.currentField && parentField && this.rootField) {
+      if (isChildOfField(this.currentField, field, this.rootField)) {
+        this.selectField(parentField);
+      }
     }
-    remove(field.parent.structure, childField => field === childField);
-    if (!field.parent.structure.length) {
-      field.parent.isInvalidLeaf = true;
-      field.parent.isFlattened = false;
+    if(field.parent) {
+      remove(field.parent.structure, (childField:Field) => field === childField);
+      if (!field.parent.structure.length) {
+        field.parent.isInvalidLeaf = true;
+        field.parent.isFlattened = false;
+      }
     }
-    if (field === currentField) {
+    if (field === currentField && parentField) {
       this.selectField(parentField);
     }
   }
 
   setResponseVocab(vocab: string) {
     this.responseVocab = vocab;
-    if (vocab) {
-      this.context.query = vocab;
-    } else {
-      this.context.query = this.defaultResponseVocab;
+    if(this.context) {
+      if (vocab) {
+        this.context.query = vocab;
+      } else {
+        this.context.query = this.defaultResponseVocab;
+      }
     }
   }
 
-  selectField(field) {
+  selectField(field: Field) {
     this.currentField = field;
     this.childrenFilterValue = "";
     this.rootStore.typeStore.addTypesToFetch(this.currentField.lookups);
   }
 
-  getParametersFromField(field) {
+  getParametersFromField(field: Field) {
     const parameters = [];
     if (field.optionsMap && field.optionsMap.has("filter")) {
       const filter = field.optionsMap.get("filter");
@@ -755,7 +757,10 @@ export class QueryBuilderStore {
   }
 
   get queryParametersNames() {
-    return Array.from(new Set(this.getParametersFromField(this.rootField).filter(p => !["scope", "size", "start", "instanceId"].includes(p)).sort()));
+    if(this.rootField) {
+      return Array.from(new Set(this.getParametersFromField(this.rootField).filter(p => !["scope", "size", "start", "instanceId"].includes(p)).sort())); 
+    }
+    return [];
   }
 
   getQueryParameters() {
@@ -777,7 +782,7 @@ export class QueryBuilderStore {
 
   get JSONQueryProperties() {
     const json = {};
-    this.rootField.options.forEach(({ name, value }) => {
+    this.rootField && this.rootField.options.forEach(({ name, value }) => {
       const cleanValue = toJS(value);
       if (cleanValue !== undefined) {
         json[name] = cleanValue;
@@ -807,8 +812,8 @@ export class QueryBuilderStore {
     return meta;
   }
 
-  get JSONQuery(): JSONQuerySpecification {
-    let query: JSONQuerySpecification = {
+  get JSONQuery(): QuerySpecification.JSONQuerySpecification {
+    let query: QuerySpecification.JSONQuerySpecification = {
       "@context": toJS(this.context),
       meta: this.JSONMetaProperties
     };
@@ -837,7 +842,7 @@ export class QueryBuilderStore {
     return jsdiff.diffJson(this.JSONSourceQuery, this.JSONQuery);
   }
 
-  selectQuery(query: JSONQuerySpecification) {
+  selectQuery(query: QuerySpecification.JSONQuerySpecification) {
     if (!this.isSaving
       && this.rootField && this.rootField.schema && this.rootField.schema.id
       && query && !query.isDeleting) {
@@ -846,7 +851,7 @@ export class QueryBuilderStore {
       this.sourceQuery = query;
       this.updateQuery(query);
       this.isSaving = false;
-      this.saveError = null;
+      this.saveError = undefined;
       this.isRunning = false;
       this.runError = undefined;
       this.saveAsMode = false;
@@ -960,7 +965,7 @@ export class QueryBuilderStore {
     }
   }
 
-  setStage(scope) {
+  setStage(scope: string) {
     this.stage = scope;
   }
   
@@ -972,8 +977,10 @@ export class QueryBuilderStore {
       this.fromDescription = this.description;
       this.fromSpace = toJS(this.space);
     } else if (!this.isSaving) {
-      this.rootField.structure = [];
-      this.fromQueryId = null;
+      if(this.rootField) {
+        this.rootField.structure = [];
+      }
+      this.fromQueryId = undefined;
       this.fromLabel = "";
       this.fromDescription = "";
       this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
@@ -1033,7 +1040,7 @@ export class QueryBuilderStore {
     this.description = description;
   }
 
-  async saveQuery(navigate: React., mode) {
+  async saveQuery(navigate, mode: string) {
     if (!this.isQueryEmpty && !this.isSaving && !(this.sourceQuery && this.sourceQuery.isDeleting)) {
       this.isSaving = true;
       this.saveError = null;
@@ -1100,7 +1107,8 @@ export class QueryBuilderStore {
           }
         });
       } catch (e) {
-        const message = e.message ? e.message : e;
+        const axiosError = e as AxiosError;
+        const message = axiosError?.message;
         runInAction(() => {
           this.saveError = `Error while saving query "${queryId}" (${message})`;
           this.isSaving = false;
@@ -1111,7 +1119,7 @@ export class QueryBuilderStore {
 
   cancelSaveQuery() {
     if (!this.isSaving) {
-      this.saveError = null;
+      this.saveError = undefined;
     }
   }
 
@@ -1149,7 +1157,7 @@ export class QueryBuilderStore {
 
   cancelDeleteQuery(query) {
     if (query && !query.isDeleting) {
-      query.deleteError = null;
+      query.deleteError = undefined;
     }
   }
 
@@ -1185,7 +1193,7 @@ export class QueryBuilderStore {
           runInAction(() => {
             this.specifications = [];
             const message = error?.message;
-            this.fetchQueriesError = `Error while fetching saved queries for "${this.rootField.id}" (${message})`;
+            this.fetchQueriesError = this.rootField ? `Error while fetching saved queries for "${this.rootField.id}" (${message})`:`Error while fetching saved queries (${message})`;
             this.isQueriesFetched = true;
             this.isFetchingQueries = false;
           });
@@ -1248,14 +1256,13 @@ export class QueryBuilderStore {
     }
   }
 
-  async normalizeQuery(jsonSpec: JSONQuerySpecification): QuerySpecification {
+  async normalizeQuery(jsonSpec: QuerySpecification.JSONQuerySpecification): Promise<Query.Query> {
     let queryId = jsonSpec["@id"];
     jsonSpec["@context"] = toJS(defaultContext);
     const expanded = await jsonld.expand(jsonSpec);
     const compacted = await jsonld.compact(expanded, jsonSpec["@context"]);
     return {
       id: queryId,
-      user: normalizeUser(jsonSpec["https://core.kg.ebrains.eu/vocab/meta/user"]),
       context: compacted["@context"],
       structure: compacted.structure,
       properties: getProperties(compacted),
@@ -1264,7 +1271,7 @@ export class QueryBuilderStore {
       description: compacted.meta && compacted.meta.description?compacted.meta.description:"",
       space: jsonSpec["https://core.kg.ebrains.eu/vocab/meta/space"],
       isDeleting: false,
-      deleteError: null
+      deleteError: undefined
     };
   }
 

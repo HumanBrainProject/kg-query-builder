@@ -55,7 +55,7 @@ class Field {
   aliasError?: boolean;
   isFlattened: boolean = false;
   isReverse: boolean = false;
-  optionsMap: Map<string, boolean | undefined> = new Map();
+  optionsMap: Map<string, any> = new Map();
   isUnknown: boolean = false;
   isInvalid: boolean = false;
   isInvalidLeaf: boolean = false;
