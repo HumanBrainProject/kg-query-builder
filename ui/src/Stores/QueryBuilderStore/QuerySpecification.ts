@@ -45,16 +45,6 @@ export namespace QuerySpecification {
     value?: string;
   }
 
-  export interface TypeFilter {
-    "@id": string;
-  }
-
-  export interface Path {
-    "@id": string;
-    reverse?: boolean;
-    typeFilter?: TypeFilter | TypeFilter[];
-  }
-
   export interface Field {
     propertyName?: string;
     structure?: Field | Field[];
@@ -84,8 +74,10 @@ export namespace QuerySpecification {
 
   export interface Path extends JsonLd {
     reverse?: boolean;
-    typeFilter?: JsonLd[];
+    typeFilter?: TypeFilter | TypeFilter[];
   }
+
+  export interface TypeFilter extends JsonLd {} 
 
   export enum FilterOperation {
     IS_EMPTY = "IS_EMPTY",
