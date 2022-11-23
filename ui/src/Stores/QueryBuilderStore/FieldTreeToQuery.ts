@@ -28,8 +28,9 @@ import {
   attributeReg,
   modelReg
 } from "./QuerySettings";
-import Field, { Option } from "../Field";
-import { Query } from "./QuerySpecification";
+import { Query } from "../Query";
+import { QuerySpecification } from "./QuerySpecification";
+import Field from "../Field";
 
 const hasTypeFilter = (field: Field): boolean =>
   field instanceof Object &&
@@ -48,7 +49,7 @@ const getTypeFilter = (field: Field): QuerySpecification.TypeFilter | QuerySpeci
 };
 
 const getAttribute = (field: Field) => {
-  if (!(field instanceof Object) || !(field.schema instanceof Object)) {
+  if (!(field instanceof Object) || !field.schema) {
     return null;
   }
   if (
@@ -113,7 +114,7 @@ const getPopertyName = (field: Field) => {
   return `${namespace}:${name}`;
 };
 
-const addOptions = (queryField: QuerySpecification.Field, options: Option[]) => {
+const addOptions = (queryField: QuerySpecification.Field, options: Query.Option[]) => {
   if (Array.isArray(options)) {
     options.forEach(({ name, value }) => {
       switch (name) {
@@ -162,7 +163,7 @@ const addOptions = (queryField: QuerySpecification.Field, options: Option[]) => 
 
 const addLastChildOptionsOfFlattenedField = (
   queryField: QuerySpecification.Field,
-  options: Option[]
+  options: Query.Option[]
 ) => {
   if (Array.isArray(options)) {
     const filteredOptions = options.filter(

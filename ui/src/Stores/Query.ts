@@ -22,6 +22,7 @@
  */
 
 import { Permission } from "./AuthStore";
+import Field from "./Field";
 import { QuerySpecification } from "./QueryBuilderStore/QuerySpecification";
 
 export namespace Query {
@@ -47,22 +48,6 @@ export namespace Query {
         [name: string]: any;
       }
       
-      export interface Field {
-        namespace?: string;
-        schema?: QuerySpecification.Schema;
-        structure: Field[];
-        alias?: string;
-        aliasError?: boolean;
-        isFlattened: boolean;
-        isReverse: boolean;
-        optionsMap: Map<string, boolean | undefined>;
-        isUnknown: boolean;
-        isInvalid: boolean;
-        isInvalidLeaf: boolean;
-        typeFilter: string[];
-        typeFilterEnabled: boolean;
-        parent?: Field;
-      }
       
       export interface Query {
         id: string;

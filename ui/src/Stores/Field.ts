@@ -22,8 +22,6 @@
  */
 
 import { observable, action, computed, toJS, makeObservable } from "mobx";
-import { Permission } from "./AuthStore";
-import { Query } from "./Query";
 import { QuerySpecification } from "./QueryBuilderStore/QuerySpecification";
 
 const defaultOptions = [
@@ -49,23 +47,23 @@ const defaultOptions = [
   }
 ];
 
-class Field implements Query.Field{
-  namespace = undefined;
-  schema = undefined;
-  structure = [];
-  alias = undefined;
-  aliasError = undefined
-  isFlattened = false;
-  isReverse = false;
-  optionsMap = new Map();
-  isUnknown = false;
-  isInvalid = false;
-  isInvalidLeaf = false;
-  typeFilter = [];
-  typeFilterEnabled = false;
-  parent = undefined;
+class Field {
+  namespace?: string;
+  schema?: QuerySpecification.Schema;
+  structure: Field[] = [];
+  alias?: string;
+  aliasError?: boolean;
+  isFlattened: boolean = false;
+  isReverse: boolean = false;
+  optionsMap: Map<string, boolean | undefined> = new Map();
+  isUnknown: boolean = false;
+  isInvalid: boolean = false;
+  isInvalidLeaf: boolean = false;
+  typeFilter: string[] = [];
+  typeFilterEnabled: boolean = false;
+  parent?: Field;
 
-  constructor(schema?: QuerySpecification.Schema, parent?: Query.Field) {
+  constructor(schema?: QuerySpecification.Schema | QuerySpecification.CombinedSchema, parent?: Field) {
     makeObservable(this, {
       namespace: observable,
       schema: observable,
@@ -164,7 +162,7 @@ class Field implements Query.Field{
     return this.optionsMap.has(name) ? this.optionsMap.get(name) : undefined;
   }
 
-  setOption(name: string, value?: boolean, preventRecursivity?: boolean) {
+  setOption(name: string, value: any, preventRecursivity?: boolean) {
     this.optionsMap.set(name, value);
     if (name === "sort" && value && !preventRecursivity) {
       this.parent.structure.forEach(field => {

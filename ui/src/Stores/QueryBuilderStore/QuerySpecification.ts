@@ -22,15 +22,23 @@
  */
 
 export namespace QuerySpecification {
-  export interface Schema {
-    id: string;
+  export interface AbstractSchema {
     label?: string;
     canBe?: string[];
     simpleAttributeName?: string;
     attribute?: string;
     attributeNamespace?: string;
+    reverse?: boolean;
   }
-  
+
+  export interface Schema extends AbstractSchema {
+    id: string;
+  }
+
+  export interface CombinedSchema extends AbstractSchema {
+    isUnknown: boolean;
+  }
+
   export interface FilterItem {
     op?: string;
     parameter?: string;
@@ -104,15 +112,14 @@ export namespace QuerySpecification {
     query: string;
     propertyName: JsonLdWithType;
     path: JsonLdWithType;
+    [index: string]: any;
   }
 
   export interface JSONQuerySpecification {
     "@id"?: string;
     "@context": Context;
     meta: Meta;
-    structure?: StructureItem[];
+    structure?: Field[];
     [name: string]: any;
   }
-
-
 }
