@@ -21,15 +21,25 @@
  *
  */
 
-import { observable, action, computed, runInAction, toJS, makeObservable } from "mobx";
+import {
+  observable,
+  action,
+  computed,
+  runInAction,
+  toJS,
+  makeObservable
+} from "mobx";
 import { AxiosError } from "axios";
 import isEqual from "lodash/isEqual";
 import remove from "lodash/remove";
-import _  from "lodash-uuid";
+import _ from "lodash-uuid";
 import jsonld from "jsonld";
 import jsdiff from "diff";
 
-import { defaultContext, rootFieldReservedProperties } from "./QueryBuilderStore/QuerySettings";
+import {
+  defaultContext,
+  rootFieldReservedProperties
+} from "./QueryBuilderStore/QuerySettings";
 import { buildFieldTreeFromQuery } from "./QueryBuilderStore/QueryToFieldTree";
 import { buildQueryStructureFromFieldTree } from "./QueryBuilderStore/FieldTreeToQuery";
 import { Space } from "./AuthStore";
@@ -38,10 +48,20 @@ import { RootStore } from "./RootStore";
 import Field from "./Field";
 import { QuerySpecification } from "./QueryBuilderStore/QuerySpecification";
 import { Query } from "./Query";
-import { Type } from "./TypeStore";
+import { Type } from "./Type";
+import { NavigateFunction } from "react-router-dom";
 
+interface Counter {
+  [index: string]: {
+    property: Type.Property;
+    count: number;
+  };
+}
 
-const querySpecificationCompare = (a: Query.Query, b: Query.Query): number => {
+const querySpecificationCompare = (
+  a: Query.Query,
+  b: Query.Query
+): number => {
   if (a.label && b.label) {
     return a.label.localeCompare(b.label);
   }
@@ -54,12 +74,18 @@ const querySpecificationCompare = (a: Query.Query, b: Query.Query): number => {
   return a.id.localeCompare(b.id);
 };
 
-const querySpecificationContains = (query: Query.Query, filter: string): boolean => 
-    (!!query.label && query.label.toLowerCase().includes(filter)) ||
-    (!!query.description && query.description.toLowerCase().includes(filter)) ||
-    (!!query.id && query.id.toLowerCase().includes(filter));
+const querySpecificationContains = (
+  query: Query.Query,
+  filter: string
+): boolean =>
+  (!!query.label && query.label.toLowerCase().includes(filter)) ||
+  (!!query.description && query.description.toLowerCase().includes(filter)) ||
+  (!!query.id && query.id.toLowerCase().includes(filter));
 
-const spaceQueriesCompare = (a: Query.SpaceQueries, b: Query.SpaceQueries): number => {
+const spaceQueriesCompare = (
+  a: Query.SpaceQueries,
+  b: Query.SpaceQueries
+): number => {
   if (a.isPrivate) {
     return -1;
   }
@@ -69,7 +95,11 @@ const spaceQueriesCompare = (a: Query.SpaceQueries, b: Query.SpaceQueries): numb
   return a.name.localeCompare(b.name);
 };
 
-const isChildOfField = (node: Field, parent: Field | undefined, root: Field): boolean => {
+const isChildOfField = (
+  node: Field,
+  parent: Field | undefined,
+  root: Field
+): boolean => {
   let field: any = node;
   while (field && field !== parent && field !== root) {
     field = field.parent;
@@ -77,12 +107,14 @@ const isChildOfField = (node: Field, parent: Field | undefined, root: Field): bo
   return field === parent;
 };
 
-const getProperties = (query: Query.Query): Query.Properties => {
+const getProperties = (
+  query: QuerySpecification.JSONQuerySpecification
+): Query.Properties => {
   if (!query) {
     return {};
   }
   return Object.entries(query)
-    .filter(([name,]) => !rootFieldReservedProperties.includes(name))
+    .filter(([name]) => !rootFieldReservedProperties.includes(name))
     .reduce((result, [name, value]) => {
       result[name] = value;
       return result;
@@ -92,22 +124,22 @@ const getProperties = (query: Query.Query): Query.Properties => {
 const defaultResultSize = 20;
 
 export class QueryBuilderStore {
-  meta = null;
+  meta?: QuerySpecification.Meta;
   defaultResponseVocab = defaultContext.query;
-  responseVocab = defaultContext.query;
+  responseVocab: string = defaultContext.query;
   queryId?: string;
   label = "";
   space?: Space;
   description = "";
   stage = "RELEASED";
-  sourceQuery?: QuerySpecification.JSONQuerySpecification;
-  context?:QuerySpecification.Context;
+  sourceQuery?: Query.Query;
+  context?: QuerySpecification.Context;
   rootField?: Field;
   fetchQueriesError?: string;
   isFetchingQueries = false;
   isQueriesFetched = false;
   isSaving = false;
-  saveError?:string;
+  saveError?: string;
   savedQueryHasInconsistencies = false;
   isRunning = false;
   runError?: string;
@@ -118,16 +150,16 @@ export class QueryBuilderStore {
   fromQueryId?: string;
   fromLabel = "";
   fromDescription = "";
-  fromSpace?:Space;
+  fromSpace?: Space;
   isFetchingQuery = false;
   fetchQueryError?: string;
-  specifications: QuerySpecification.JSONQuerySpecification[] = [];
+  specifications: Query.Query[] = [];
   includeAdvancedAttributes = false;
   resultSize = defaultResultSize;
   resultStart = 0;
   resultInstanceId = "";
   resultRestrictToSpaces?: string[];
-  resultQueryParameters = {};
+  resultQueryParameters: Query.ResultQueryParameters = {};
   result = null;
   showSavedQueries = false;
 
@@ -206,7 +238,6 @@ export class QueryBuilderStore {
       queryParametersNames: computed,
       getQueryParameters: action,
       JSONQueryFields: computed,
-      JSONQueryProperties: computed,
       JSONMetaProperties: computed,
       JSONQuery: computed,
       JSONSourceQuery: computed,
@@ -242,7 +273,7 @@ export class QueryBuilderStore {
       saveLabel: computed,
       resetQuery: action,
       showSavedQueries: observable,
-      toggleShowSavedQueries: action,
+      toggleShowSavedQueries: action
     });
 
     this.transportLayer = transportLayer;
@@ -276,53 +307,63 @@ export class QueryBuilderStore {
     this.childrenFilterValue = value;
   }
 
-  get currentFieldFilteredPropertiesGroups(): Type[] {
+  get currentFieldFilteredPropertiesGroups(): Type.Type[] {
     const field = this.currentField;
-    const lookups = field && field.typeFilterEnabled?this.currentFieldLookups.filter(type => field.typeFilter.includes(type)):this.currentFieldLookups;
+    const lookups =
+      field && field.typeFilterEnabled
+        ? this.currentFieldLookups.filter(type =>
+            field.typeFilter.includes(type)
+          )
+        : this.currentFieldLookups;
 
     if (!lookups.length) {
       return [];
     }
 
-    const filter = this.childrenFilterValue && this.childrenFilterValue.toLowerCase();
+    const filter =
+      this.childrenFilterValue && this.childrenFilterValue.toLowerCase();
 
     return lookups.reduce((acc, id) => {
       const reg = /^https?:\/\/.+\/(.+)$/; //NOSONAR
       const type = this.rootStore.typeStore.types.get(id);
       if (type) {
-        const properties = type.properties.filter(prop => (this.includeAdvancedAttributes  || !prop.attribute.startsWith("https://core.kg.ebrains.eu/vocab/meta"))
-                                                            && (!filter 
-                                                                || (prop.label && prop.label.toLowerCase().includes(filter))
-                                                                || (Array.isArray(prop.canBe) && prop.canBe.some(t => {
-                                                                      const m = t.match(reg);
-                                                                      if (!m) {
-                                                                        return false;
-                                                                      }
-                                                                      return m[1].toLowerCase().includes(filter);
-                                                                  }))
-                                                            )
-                                                  );
+        const properties = type.properties.filter(
+          prop =>
+            (this.includeAdvancedAttributes ||
+              !prop.attribute.startsWith(
+                "https://core.kg.ebrains.eu/vocab/meta"
+              )) &&
+            (!filter ||
+              (prop.label && prop.label.toLowerCase().includes(filter)) ||
+              (Array.isArray(prop.canBe) &&
+                prop.canBe.some(t => {
+                  const m = t.match(reg);
+                  if (!m) {
+                    return false;
+                  }
+                  return m[1].toLowerCase().includes(filter);
+                })))
+        );
         if (properties.length) {
           acc.push({
             id: type.id,
             label: type.label,
             color: type.color,
             properties: properties
-          } as Type);
+          } as Type.Type);
         }
       }
       return acc;
-    }, [] as Type[]);
+    }, [] as Type.Type[]);
   }
 
   get currentFieldFilteredCommonProperties() {
+    const counters = {} as Counter;
 
-    const counters = {};
-
-    const addPropToNewCounter = (key: string, prop) => {
+    const addPropToNewCounter = (key: string, prop: Type.Property) => {
       if (Array.isArray(prop.canBe)) {
         counters[key] = {
-          property: {...prop, canBe:  [...prop.canBe].sort()},
+          property: { ...prop, canBe: [...prop.canBe].sort() },
           count: 1
         };
       } else {
@@ -333,11 +374,11 @@ export class QueryBuilderStore {
       }
     };
 
-    const addPropToCounter = (key: string, prop) => {
+    const addPropToCounter = (key: string, prop: Type.Property) => {
       const property = counters[key].property;
       if (Array.isArray(prop.canBe)) {
         if (Array.isArray(property.canBe)) {
-          const toAdd = prop.canBe.filter(p => !property.canBe.includes(p));
+          const toAdd = prop.canBe.filter(p => !property.canBe?.includes(p));
           property.canBe = [...property.canBe, ...toAdd].sort();
         } else {
           property.canBe = [...prop.canBe].sort();
@@ -346,8 +387,8 @@ export class QueryBuilderStore {
       counters[key].count += 1;
     };
 
-    const addPropToCounters = prop => {
-      const key = `${prop.attribute}${prop.reverse?":is-reverse":""}`;
+    const addPropToCounters = (prop: Type.Property) => {
+      const key = `${prop.attribute}${prop.reverse ? ":is-reverse" : ""}`;
       if (!counters[key]) {
         addPropToNewCounter(key, prop);
       } else {
@@ -364,13 +405,17 @@ export class QueryBuilderStore {
       group.properties.forEach(prop => addPropToCounters(prop));
     });
     return Object.values(counters)
-      .filter(({count}) => count > 1 || groups.length === 1)
-      .map(({property}) => property)
+      .filter(({ count }) => count > 1 || groups.length === 1)
+      .map(({ property }) => property)
       .sort((a, b) => a.label.localeCompare(b.label));
   }
 
-  isACurrentFieldFilteredCommonProperty(property) {
-    return this.currentFieldFilteredCommonProperties.some(prop => prop.simpleAttributeName === property.simpleAttributeName && prop.reverse === property.reverse);
+  isACurrentFieldFilteredCommonProperty(property: Type.Property) {
+    return this.currentFieldFilteredCommonProperties.some(
+      prop =>
+        prop.simpleAttributeName === property.simpleAttributeName &&
+        prop.reverse === property.reverse
+    );
   }
 
   get currentFieldLookupsAttributes() {
@@ -381,59 +426,72 @@ export class QueryBuilderStore {
     }
 
     return groups.reduce((acc, group) => {
-      const properties = group.properties.filter(prop => (!prop.canBe || !prop.canBe.length) &&
-                                                         !this.isACurrentFieldFilteredCommonProperty(prop));
+      const properties = group.properties.filter(
+        prop =>
+          (!prop.canBe || !prop.canBe.length) &&
+          !this.isACurrentFieldFilteredCommonProperty(prop)
+      );
       if (properties.length) {
-        acc.push({...group, properties: properties});
+        acc.push({ ...group, properties: properties });
       }
       return acc;
-    }, []);
+    }, [] as Type.PropertyGroup[]);
   }
 
   get currentFieldLookupsLinks() {
-    const groups = this.currentFieldFilteredPropertiesGroups;
+    const groups: Type.Type[] = this.currentFieldFilteredPropertiesGroups;
 
     if (!groups.length) {
       return [];
     }
 
     return groups.reduce((acc, group) => {
-      const properties = group.properties.filter(prop => prop.canBe && !!prop.canBe.length &&
-                                                          !this.isACurrentFieldFilteredCommonProperty(prop));
+      const properties = group.properties.filter(
+        prop =>
+          prop.canBe &&
+          !!prop.canBe.length &&
+          !this.isACurrentFieldFilteredCommonProperty(prop)
+      );
       if (properties.length) {
-        acc.push({...group, properties: properties});
+        acc.push({ ...group, properties: properties });
       }
       return acc;
-    }, []);
+    }, [] as Type.PropertyGroup[]);
   }
 
   get currentFieldLookupsCommonAttributes() {
-    return this.currentFieldFilteredCommonProperties.filter(prop => !prop.canBe || !prop.canBe.length);
+    return this.currentFieldFilteredCommonProperties.filter(
+      prop => !prop.canBe || !prop.canBe.length
+    );
   }
 
   get currentFieldLookupsCommonLinks() {
-    return this.currentFieldFilteredCommonProperties.filter(prop => prop.canBe && !!prop.canBe.length);
+    return this.currentFieldFilteredCommonProperties.filter(
+      prop => prop.canBe && !!prop.canBe.length
+    );
   }
 
-  selectRootSchema(schema) {
+  selectRootSchema(schema: Type.Type) {
     if (!this.isSaving) {
       this.queryId = undefined;
       this.label = "";
       this.description = "";
       this.context = toJS(defaultContext);
-      this.meta = null;
+      this.meta = undefined;
       this.defaultResponseVocab = this.context.query;
-      this.responseVocab = this.context.meta?this.context.meta.responseVocab:this.context.query;
-      this.sourceQuery = null;
+      this.responseVocab = this.context.meta
+        ? this.context.meta.responseVocab
+        : this.context.query;
+      this.sourceQuery = undefined;
       this.savedQueryHasInconsistencies = false;
       this.rootField = new Field({
-        id: schema.id,  
+        id: schema.id,
         label: schema.label,
         canBe: [schema.id]
       });
       this.rootField.isInvalidLeaf = true;
       this.isSaving = false;
-      this.saveError = null;
+      this.saveError = undefined;
       this.isRunning = false;
       this.runError = undefined;
       this.saveAsMode = false;
@@ -489,7 +547,7 @@ export class QueryBuilderStore {
       this.label = "";
       this.description = "";
       this.context = toJS(defaultContext);
-      this.meta = null;
+      this.meta = undefined;
       this.defaultResponseVocab = this.context.query;
       this.responseVocab = this.defaultResponseVocab;
       this.sourceQuery = undefined;
@@ -534,9 +592,9 @@ export class QueryBuilderStore {
       this.fromLabel = "";
       this.fromDescription = "";
       this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
-      this.space = toJS(this.rootStore.authStore.privateSpace); 
-      if(this.rootField) {
-        this.selectField(this.rootField);     
+      this.space = toJS(this.rootStore.authStore.privateSpace);
+      if (this.rootField) {
+        this.selectField(this.rootField);
       }
     }
   }
@@ -553,7 +611,7 @@ export class QueryBuilderStore {
     return !!this.rootSchema;
   }
 
-  get hasSupportedRootSchema(): boolean  {
+  get hasSupportedRootSchema(): boolean {
     if (!this.hasRootSchema) {
       return false;
     }
@@ -563,7 +621,7 @@ export class QueryBuilderStore {
   }
 
   get isQuerySaved(): boolean {
-    return this.sourceQuery !== null;
+    return this.sourceQuery !== undefined;
   }
 
   get canSaveQuery(): boolean {
@@ -575,7 +633,11 @@ export class QueryBuilderStore {
   }
 
   get isQueryEmpty(): boolean {
-    return !this.rootField || !this.rootField.structure || !this.rootField.structure.length;
+    return (
+      !this.rootField ||
+      !this.rootField.structure ||
+      !this.rootField.structure.length
+    );
   }
 
   get hasQueryChanged(): boolean {
@@ -583,8 +645,13 @@ export class QueryBuilderStore {
   }
 
   get hasChanged(): boolean {
-    return (!this.isQueryEmpty && (this.sourceQuery === null || (this.saveAsMode && this.queryId !== this.sourceQuery.id) || this.hasQueryChanged))
-      || (this.isQueryEmpty && !!this.sourceQuery);
+    return (
+      (!this.isQueryEmpty &&
+        (this.sourceQuery === undefined ||
+          (this.saveAsMode && this.queryId !== this.sourceQuery.id) ||
+          this.hasQueryChanged)) ||
+      (this.isQueryEmpty && !!this.sourceQuery)
+    );
   }
 
   get hasQueries(): boolean {
@@ -596,19 +663,24 @@ export class QueryBuilderStore {
     const authStore = this.rootStore.authStore;
     this.specifications.forEach(spec => {
       if (spec.space) {
-        const space = authStore.getSpace(spec.space);
+        const space: Space | undefined = authStore.getSpace(spec.space);
         if (space) {
           if (!groups[spec.space]) {
             groups[spec.space] = {
               name: space.name,
-              label: space.isPrivate?"My private queries":`Shared queries in space ${space.name}`,
+              label: space.isPrivate
+                ? "My private queries"
+                : `Shared queries in space ${space.name}`,
               showUser: true,
               isPrivate: space.isPrivate,
-              permissions: {...space.permissions},
+              permissions: { ...space.permissions },
               queries: []
             };
           }
-          groups[spec.space].queries = [...groups[spec.space].queries, spec].sort(querySpecificationCompare);
+          groups[spec.space].queries = [
+            ...groups[spec.space].queries,
+            spec
+          ].sort(querySpecificationCompare);
         }
       }
     });
@@ -623,13 +695,15 @@ export class QueryBuilderStore {
       return this.groupedQueries;
     }
     return this.groupedQueries.reduce((acc: Query.SpaceQueries[], group) => {
-      const queries = group.queries.filter(query => querySpecificationContains(query, filter));
+      const queries = group.queries.filter(query =>
+        querySpecificationContains(query, filter)
+      );
       if (queries.length) {
         acc.push({
           name: group.name,
           label: group.label,
           showUser: group.showUser,
-          permissions: {...group.permissions},
+          permissions: { ...group.permissions },
           queries: queries
         } as Query.SpaceQueries);
       }
@@ -641,8 +715,12 @@ export class QueryBuilderStore {
     this.queriesFilterValue = value;
   }
 
-  addField(schema, parent, gotoField = true) {
-    if(this.context) {
+  addField(
+    schema: QuerySpecification.Schema | QuerySpecification.CombinedSchema,
+    parent: Field,
+    gotoField = true
+  ) {
+    if (this.context) {
       if (!this.context["@vocab"]) {
         this.context["@vocab"] = toJS(defaultContext["@vocab"]);
       }
@@ -655,9 +733,6 @@ export class QueryBuilderStore {
       if (!this.context.path) {
         this.context.path = toJS(defaultContext.path);
       }
-    }
-    if (parent === undefined) {
-      parent = this.rootField;
     }
     if (!parent.isFlattened || parent.structure.length < 1) {
       const newField = new Field(schema, parent);
@@ -679,21 +754,29 @@ export class QueryBuilderStore {
   }
 
   moveUpField(field: Field) {
-    const fieldIndex = field.parent?field.parent.structure.findIndex(f => f === field):-1;
+    const fieldIndex = field.parent
+      ? field.parent.structure.findIndex(f => f === field)
+      : -1;
     if (fieldIndex >= 1) {
-      if(field.parent) {
+      if (field.parent) {
         field.parent.structure.splice(fieldIndex, 1);
-        field.parent.structure.splice(fieldIndex-1, 0, field);
+        field.parent.structure.splice(fieldIndex - 1, 0, field);
       }
     }
   }
 
   moveDownField(field: Field) {
-    const fieldIndex = field.parent?field.parent.structure.findIndex(f => f === field):-1;
-    if(field.parent) {
-      if (fieldIndex === -1?false:fieldIndex < (field.parent.structure.length -1)) {
+    const fieldIndex = field.parent
+      ? field.parent.structure.findIndex(f => f === field)
+      : -1;
+    if (field.parent) {
+      if (
+        fieldIndex === -1
+          ? false
+          : fieldIndex < field.parent.structure.length - 1
+      ) {
         field.parent.structure.splice(fieldIndex, 1);
-        field.parent.structure.splice(fieldIndex+1, 0, field);
+        field.parent.structure.splice(fieldIndex + 1, 0, field);
       }
     }
   }
@@ -702,13 +785,16 @@ export class QueryBuilderStore {
     const currentField = this.currentField;
     const parentField = field.parent;
     this.childrenFilterValue = "";
-    if(this.currentField && parentField && this.rootField) {
+    if (this.currentField && parentField && this.rootField) {
       if (isChildOfField(this.currentField, field, this.rootField)) {
         this.selectField(parentField);
       }
     }
-    if(field.parent) {
-      remove(field.parent.structure, (childField:Field) => field === childField);
+    if (field.parent) {
+      remove(
+        field.parent.structure,
+        (childField: Field) => field === childField
+      );
       if (!field.parent.structure.length) {
         field.parent.isInvalidLeaf = true;
         field.parent.isFlattened = false;
@@ -721,7 +807,7 @@ export class QueryBuilderStore {
 
   setResponseVocab(vocab: string) {
     this.responseVocab = vocab;
-    if(this.context) {
+    if (this.context) {
       if (vocab) {
         this.context.query = vocab;
       } else {
@@ -757,8 +843,14 @@ export class QueryBuilderStore {
   }
 
   get queryParametersNames() {
-    if(this.rootField) {
-      return Array.from(new Set(this.getParametersFromField(this.rootField).filter(p => !["scope", "size", "start", "instanceId"].includes(p)).sort())); 
+    if (this.rootField) {
+      return Array.from(
+        new Set(
+          this.getParametersFromField(this.rootField)
+            .filter(p => !["scope", "size", "start", "instanceId"].includes(p))
+            .sort()
+        )
+      );
     }
     return [];
   }
@@ -769,33 +861,30 @@ export class QueryBuilderStore {
         this.resultQueryParameters[name] = {
           name: name,
           value: ""
-
         };
       }
     });
-    return Object.values(this.resultQueryParameters).filter(p => this.queryParametersNames.includes(p.name));
+    return Object.values(this.resultQueryParameters).filter(p =>
+      this.queryParametersNames.includes(p.name)
+    );
   }
 
   get JSONQueryFields() {
-    return buildQueryStructureFromFieldTree(this.rootField);
-  }
-
-  get JSONQueryProperties() {
-    const json = {};
-    this.rootField && this.rootField.options.forEach(({ name, value }) => {
-      const cleanValue = toJS(value);
-      if (cleanValue !== undefined) {
-        json[name] = cleanValue;
-      }
-    });
-    return json;
+    if (this.rootField) {
+      return buildQueryStructureFromFieldTree(this.rootField);
+    }
+    return undefined;
   }
 
   get JSONMetaProperties() {
-    let meta = {
-      ...this.meta,
-      type: this.rootField.schema.id
-    };
+    //TODO: trootField and schema should always be available after we split QueryBuilderStore
+    const meta: QuerySpecification.Meta =
+      this.rootField && this.rootField.schema
+        ? {
+            ...this.meta,
+            type: this.rootField.schema.id
+          }
+        : { ...this.meta };
     const name = this.label ? this.label.trim() : "";
     const description = this.description ? this.description.trim() : "";
     if (name) {
@@ -813,11 +902,11 @@ export class QueryBuilderStore {
   }
 
   get JSONQuery(): QuerySpecification.JSONQuerySpecification {
-    let query: QuerySpecification.JSONQuerySpecification = {
+    const query: QuerySpecification.JSONQuerySpecification = {
       "@context": toJS(this.context),
       meta: this.JSONMetaProperties
     };
-    if (this.JSONQueryProperties && this.JSONQueryFields) {
+    if (this.JSONQueryFields) {
       query.structure = this.JSONQueryFields;
     }
     return query;
@@ -842,12 +931,19 @@ export class QueryBuilderStore {
     return jsdiff.diffJson(this.JSONSourceQuery, this.JSONQuery);
   }
 
-  selectQuery(query: QuerySpecification.JSONQuerySpecification) {
-    if (!this.isSaving
-      && this.rootField && this.rootField.schema && this.rootField.schema.id
-      && query && !query.isDeleting) {
+  selectQuery(query: Query.Query) {
+    if (
+      !this.isSaving &&
+      this.rootField &&
+      this.rootField.schema &&
+      this.rootField.schema.id &&
+      query &&
+      !query.isDeleting
+    ) {
       this.queryId = query.id;
-      this.space = toJS(this.rootStore.authStore.getSpace(query.space));
+      this.space = query.space
+        ? toJS(this.rootStore.authStore.getSpace(query.space))
+        : undefined;
       this.sourceQuery = query;
       this.updateQuery(query);
       this.isSaving = false;
@@ -864,12 +960,14 @@ export class QueryBuilderStore {
       this.fromQueryId = undefined;
       this.fromLabel = "";
       this.fromDescription = "";
-      this.fromSpace = toJS(this.rootStore.authStore.getSpace(query.space));
+      this.fromSpace = query.space
+        ? toJS(this.rootStore.authStore.getSpace(query.space))
+        : undefined;
       this.savedQueryHasInconsistencies = this.hasQueryChanged;
     }
   }
 
-  updateQuery(query) {
+  updateQuery(query: QuerySpecification.JSONQuerySpecification | Query.Query) {
     this.context = toJS(query.context);
     if (!this.context) {
       this.context = toJS(defaultContext);
@@ -877,40 +975,56 @@ export class QueryBuilderStore {
     if (!this.context.query) {
       this.context.query = defaultContext.query;
     }
-    this.meta = toJS(query.meta);
+    this.meta = toJS(query.meta) as QuerySpecification.Meta;
     if (this.meta) {
-      this.label = this.meta.name?this.meta.name:"";
-      this.description = this.meta.description?this.meta.description:"";
+      this.label = this.meta.name ? this.meta.name : "";
+      this.description = this.meta.description ? this.meta.description : "";
       if (this.meta.responseVocab) {
         this.defaultResponseVocab = this.meta.responseVocab;
       } else {
         this.defaultResponseVocab = this.context.query;
       }
-      this.responseVocab = this.meta.responseVocab;
+      if (this.meta.responseVocab) {
+        this.responseVocab = this.meta.responseVocab;
+      }
     } else {
       this.defaultResponseVocab = this.context.query;
       this.responseVocab = this.context.query;
     }
     const typeName = query?.meta?.type;
-    const type = this.rootStore.typeStore.types.get(typeName);
-    if(type) {
+    const type = typeName && this.rootStore.typeStore.types.get(typeName);
+    if (type) {
       const schema = {
         id: type.id,
         label: type.label,
         canBe: [type.id]
       };
-      this.rootField = buildFieldTreeFromQuery(this.rootStore.typeStore.types, this.context, schema, toJS(query));
+      this.rootField = buildFieldTreeFromQuery(
+        this.rootStore.typeStore.types,
+        this.context,
+        schema,
+        toJS(query)
+      );
     } else {
-      const unknownType = typeName?typeName:"<undefined>";
+      const unknownType = typeName ? typeName : "<undefined>";
       const unknownSchema = {
         id: unknownType,
         label: unknownType,
-        canBe: typeName?[typeName]:[]
+        canBe: typeName ? [typeName] : []
       };
-      this.rootField = buildFieldTreeFromQuery(this.rootStore.typeStore.types, this.context, unknownSchema, toJS(query));
-      this.rootField.isUnknown = true;
+      this.rootField = buildFieldTreeFromQuery(
+        this.rootStore.typeStore.types,
+        this.context,
+        unknownSchema,
+        toJS(query)
+      );
+      if (this.rootField) {
+        this.rootField.isUnknown = true;
+      }
     }
-    this.selectField(this.rootField);
+    if (this.rootField) {
+      this.selectField(this.rootField);
+    }
   }
 
   async executeQuery() {
@@ -920,12 +1034,23 @@ export class QueryBuilderStore {
       this.result = null;
       try {
         const query = this.JSONQuery;
-        const instanceId = typeof this.resultInstanceId === "string"?this.resultInstanceId.trim():null;
+        const instanceId =
+          typeof this.resultInstanceId === "string"
+            ? this.resultInstanceId.trim()
+            : null;
         const params = this.getQueryParameters().reduce((acc, p) => {
-          acc[p.name] = typeof p.value === "string"?p.value:"";
+          acc[p.name] = typeof p.value === "string" ? p.value : "";
           return acc;
-        }, {})
-        const response = await this.transportLayer.performQuery(query, this.stage, this.resultStart, this.resultSize, instanceId?instanceId:null, this.resultRestrictToSpaces, params);
+        }, {} as any);
+        const response = await this.transportLayer.performQuery(
+          query,
+          this.stage,
+          this.resultStart,
+          this.resultSize,
+          instanceId ? instanceId : undefined,
+          this.resultRestrictToSpaces,
+          params
+        );
         runInAction(() => {
           this.result = response.data;
           this.isRunning = false;
@@ -968,7 +1093,7 @@ export class QueryBuilderStore {
   setStage(scope: string) {
     this.stage = scope;
   }
-  
+
   cancelChanges() {
     if (this.sourceQuery) {
       this.selectQuery(this.sourceQuery);
@@ -977,7 +1102,7 @@ export class QueryBuilderStore {
       this.fromDescription = this.description;
       this.fromSpace = toJS(this.space);
     } else if (!this.isSaving) {
-      if(this.rootField) {
+      if (this.rootField) {
         this.rootField.structure = [];
       }
       this.fromQueryId = undefined;
@@ -987,7 +1112,7 @@ export class QueryBuilderStore {
     }
   }
 
-  setRunError(error?:string) {
+  setRunError(error?: string) {
     this.runError = error;
   }
 
@@ -995,7 +1120,7 @@ export class QueryBuilderStore {
     if (!this.label) {
       return this.label;
     }
-    if(this.label && this.label.endsWith("-Copy")) {
+    if (this.label && this.label.endsWith("-Copy")) {
       return this.label;
     }
     return this.label + "-Copy";
@@ -1005,12 +1130,15 @@ export class QueryBuilderStore {
     this.saveAsMode = mode;
     if (mode) {
       this.fromQueryId = this.queryId;
-      this.fromLabel = this.label;
+      this.fromLabel = this.label
       this.fromDescription = this.description;
       this.fromSpace = toJS(this.space);
       this.queryId = _.uuid();
       this.label = this.saveLabel;
-      this.space = (this.space && this.space.permissions && this.space.permissions.canCreate)?toJS(this.space):toJS(this.rootStore.authStore.privateSpace);
+      this.space =
+        this.space && this.space.permissions && this.space.permissions.canCreate
+          ? toJS(this.space)
+          : toJS(this.rootStore.authStore.privateSpace);
     } else {
       this.queryId = this.fromQueryId;
       this.label = this.fromLabel;
@@ -1021,7 +1149,6 @@ export class QueryBuilderStore {
       this.fromDescription = "";
       this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
     }
-
   }
 
   toggleCompareChanges() {
@@ -1040,40 +1167,43 @@ export class QueryBuilderStore {
     this.description = description;
   }
 
-  async saveQuery(navigate, mode: string) {
-    if (!this.isQueryEmpty && !this.isSaving && !(this.sourceQuery && this.sourceQuery.isDeleting)) {
+  async saveQuery(navigate: NavigateFunction, mode: string) {
+    if (
+      !this.isQueryEmpty &&
+      !this.isSaving &&
+      !(this.sourceQuery && this.sourceQuery.isDeleting)
+    ) {
       this.isSaving = true;
-      this.saveError = null;
+      this.saveError = undefined;
       if (this.sourceQuery && this.sourceQuery.deleteError) {
-        this.sourceQuery.deleteError = null;
+        this.sourceQuery.deleteError = undefined;
       }
-      const queryId = this.saveAsMode ? this.queryId : this.sourceQuery.id;
+      //TODO: fix queryId undefined check after QueryBuilderStore refactoring/splitting
+      const queryId = this.saveAsMode ? (this.queryId?this.queryId: "") : (this.sourceQuery?this.sourceQuery.id:"");
       const query = this.JSONQuery;
       if (!this.space) {
         this.space = toJS(this.rootStore.authStore.privateSpace);
       }
-      const spaceName = this.space?this.space.name:"myspace";
+      const spaceName = this.space ? this.space.name : "myspace";
       try {
         await this.transportLayer.saveQuery(queryId, query, spaceName);
         runInAction(() => {
           if (this.saveAsMode) {
             this.sourceQuery = {
               id: queryId,
-              user: {
-                id: this.rootStore.authStore.user.id,
-                name: this.rootStore.authStore.user.displayName,
-                picture: this.rootStore.authStore.user.picture
-              },
               context: query["@context"],
               structure: query.structure,
               properties: getProperties(query),
               meta: query.meta,
-              label: query.meta && query.meta.name?query.meta.name:"",
-              description: query.meta && query.meta.description?query.meta.description:"",
+              label: query.meta && query.meta.name ? query.meta.name : "",
+              description:
+                query.meta && query.meta.description
+                  ? query.meta.description
+                  : "",
               space: spaceName,
               isDeleting: false,
-              deleteError: null
-            };
+              deleteError: undefined
+            } as Query.Query;
             this.specifications.push(this.sourceQuery);
             this.saveAsMode = false;
             this.isSaving = false;
@@ -1081,22 +1211,37 @@ export class QueryBuilderStore {
             this.fromLabel = "";
             this.fromDescription = "";
             this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
-            const path = mode?`/queries/${queryId}/${mode}`:`/queries/${queryId}`;
+            const path = mode
+              ? `/queries/${queryId}/${mode}`
+              : `/queries/${queryId}`;
             navigate(path);
           } else {
             if (this.sourceQuery) {
-              this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
-              this.sourceQuery.description = query.meta && query.meta.description?query.meta.description:"";
-              this.sourceQuery.context = query["@context"];
-              this.sourceQuery.structure = query.structure;
+              this.sourceQuery.label =
+                query.meta && query.meta.name ? query.meta.name : "";
+              this.sourceQuery.description =
+                query.meta && query.meta.description
+                  ? query.meta.description
+                  : "";
+              if(query["@context"]) {
+                this.sourceQuery.context = query["@context"];
+              }
+              if(query.structure) {
+                this.sourceQuery.structure = query.structure;
+              }
               this.sourceQuery.meta = query.meta;
               this.sourceQuery.properties = getProperties(query);
             } else {
               this.sourceQuery = this.findQuery(queryId);
-              this.sourceQuery.label = query.meta && query.meta.name?query.meta.name:"";
-              this.sourceQuery.description = query.meta && query.meta.description?query.meta.description:"";
-              this.sourceQuery.specification = query;
-              this.sourceQuery.meta = query.meta;
+              if (this.sourceQuery) {
+                this.sourceQuery.label =
+                  query.meta && query.meta.name ? query.meta.name : "";
+                this.sourceQuery.description =
+                  query.meta && query.meta.description
+                    ? query.meta.description
+                    : "";
+                this.sourceQuery.meta = query.meta;
+              }
             }
             this.saveAsMode = false;
             this.isSaving = false;
@@ -1123,18 +1268,27 @@ export class QueryBuilderStore {
     }
   }
 
-  async deleteQuery(query, navigate) {
-    if (query && !query.isDeleting && !(query === this.sourceQuery && this.isSaving)) {
+  async deleteQuery(
+    query: Query.Query,
+    navigate: NavigateFunction
+  ) {
+    if (
+      query &&
+      !query.isDeleting &&
+      !(query === this.sourceQuery && this.isSaving)
+    ) {
       query.isDeleting = true;
-      query.deleteError = null;
+      query.deleteError = undefined;
       try {
         await this.transportLayer.deleteQuery(query.id);
         runInAction(() => {
           query.isDeleting = false;
           if (query === this.sourceQuery) {
-            this.sourceQuery = null;
+            this.sourceQuery = undefined;
           }
-          const index = this.specifications.findIndex(spec => spec.id === query.id);
+          const index = this.specifications.findIndex(
+            spec => spec.id === query.id
+          );
           if (index !== -1) {
             this.specifications.splice(index, 1);
           }
@@ -1155,7 +1309,7 @@ export class QueryBuilderStore {
     }
   }
 
-  cancelDeleteQuery(query) {
+  cancelDeleteQuery(query: Query.Query) {
     if (query && !query.isDeleting) {
       query.deleteError = undefined;
     }
@@ -1170,12 +1324,20 @@ export class QueryBuilderStore {
       if (this.rootField && this.rootField.schema && this.rootField.schema.id) {
         this.isFetchingQueries = true;
         try {
-          const response = await this.transportLayer.listQueries(this.rootField.schema.id);
+          const response = await this.transportLayer.listQueries(
+            this.rootField.schema.id
+          );
           runInAction(() => {
             this.specifications = [];
             this.queriesFilterValue = "";
-            const jsonSpecifications = response && response.data && response.data.data && response.data.data.length ? response.data.data : [];
-            jsonSpecifications.forEach(async jsonSpec => {
+            const jsonSpecifications =
+              response &&
+              response.data &&
+              response.data.data &&
+              response.data.data.length
+                ? response.data.data
+                : [];
+            jsonSpecifications.forEach(async (jsonSpec: QuerySpecification.JSONQuerySpecification)  => {
               try {
                 const query = await this.normalizeQuery(jsonSpec);
                 runInAction(() => this.specifications.push(query));
@@ -1193,7 +1355,7 @@ export class QueryBuilderStore {
           runInAction(() => {
             this.specifications = [];
             const message = error?.message;
-            this.fetchQueriesError = this.rootField ? `Error while fetching saved queries for "${this.rootField.id}" (${message})`:`Error while fetching saved queries (${message})`;
+            this.fetchQueriesError = `Error while fetching saved queries (${message})`;
             this.isQueriesFetched = true;
             this.isFetchingQueries = false;
           });
@@ -1209,7 +1371,7 @@ export class QueryBuilderStore {
     this.queriesFilterValue = "";
   }
 
-  async fetchQuery(queryId: string) { 
+  async fetchQuery(queryId: string) {
     if (this.findQuery(queryId) || this.isFetchingQuery) {
       return;
     }
@@ -1217,14 +1379,18 @@ export class QueryBuilderStore {
     this.fetchQueryError = undefined;
     try {
       const response = await this.transportLayer.getQuery(queryId);
-      const jsonSpecification = response && response.data ? response.data : null;
-      try{
+      const jsonSpecification =
+        response && response.data ? response.data : null;
+      try {
         const query = await this.normalizeQuery(jsonSpecification);
         runInAction(() => this.specifications.push(query));
       } catch (e) {
-        runInAction(() => this.fetchQueryError = `Error while trying to expand/compact JSON-LD (${e})`);
+        runInAction(
+          () =>
+            (this.fetchQueryError = `Error while trying to expand/compact JSON-LD (${e})`)
+        );
       }
-      runInAction(() => this.isFetchingQuery = false);
+      runInAction(() => (this.isFetchingQuery = false));
     } catch (e) {
       const error = e as AxiosError;
       runInAction(() => {
@@ -1233,30 +1399,32 @@ export class QueryBuilderStore {
         const message = error?.message;
         this.isFetchingQuery = false;
         switch (status) {
-        case 401: // Unauthorized
-        case 403: // Forbidden
-        {
-          this.fetchQueryError = `You do not have permission to access the query with id "${queryId}"`;
-          break;
-        }
-        case 404:
-        {
-          if (this.hasRootSchema) { // it's a new query created from ui
-            this.setAsNewQuery(queryId);
-          } else {
-            this.fetchQueryError = `Query id "${queryId}" does not exist`;
+          case 401: // Unauthorized
+          case 403: {
+            // Forbidden
+            this.fetchQueryError = `You do not have permission to access the query with id "${queryId}"`;
+            break;
           }
-          break;
-        }
-        default: {
-          this.fetchQueryError = `Error while fetching query with id "${queryId}" (${message})`;
-        }
+          case 404: {
+            if (this.hasRootSchema) {
+              // it's a new query created from ui
+              this.setAsNewQuery(queryId);
+            } else {
+              this.fetchQueryError = `Query id "${queryId}" does not exist`;
+            }
+            break;
+          }
+          default: {
+            this.fetchQueryError = `Error while fetching query with id "${queryId}" (${message})`;
+          }
         }
       });
     }
   }
 
-  async normalizeQuery(jsonSpec: QuerySpecification.JSONQuerySpecification): Promise<Query.Query> {
+  async normalizeQuery(
+    jsonSpec: QuerySpecification.JSONQuerySpecification
+  ): Promise<Query.Query> {
     let queryId = jsonSpec["@id"];
     jsonSpec["@context"] = toJS(defaultContext);
     const expanded = await jsonld.expand(jsonSpec);
@@ -1267,12 +1435,15 @@ export class QueryBuilderStore {
       structure: compacted.structure,
       properties: getProperties(compacted),
       meta: compacted.meta,
-      label: compacted.meta && compacted.meta.name?compacted.meta.name:"",
-      description: compacted.meta && compacted.meta.description?compacted.meta.description:"",
+      label: compacted.meta && compacted.meta.name ? compacted.meta.name : "",
+      description:
+        compacted.meta && compacted.meta.description
+          ? compacted.meta.description
+          : "",
       space: jsonSpec["https://core.kg.ebrains.eu/vocab/meta/space"],
       isDeleting: false,
       deleteError: undefined
-    };
+    } as Query.Query;
   }
 
   findQuery(id: string) {

@@ -34,7 +34,7 @@ import { useStores } from "../../Hooks/UseStores";
 
 import ThemeRJV from "../../Themes/ThemeRJV";
 import Actions from "./Actions";
-import { JSONQuerySpecification } from "../../Stores/QueryBuilderStore";
+import { QuerySpecification } from "../../Stores/QueryBuilderStore/QuerySpecification";
 
 const useStyles = createUseStyles({
   container: {
@@ -82,8 +82,8 @@ const useStyles = createUseStyles({
 });
 
 interface HandleMethodProps {
-  existing_src?: JSONQuerySpecification;
-  updated_src?: JSONQuerySpecification;
+  existing_src?: QuerySpecification.JSONQuerySpecification;
+  updated_src?: QuerySpecification.JSONQuerySpecification;
   namespace?: string[];
   name?: string;
 }

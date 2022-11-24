@@ -60,7 +60,7 @@ export namespace QuerySpecification {
   export interface Meta {
     name?: string;
     description?: string;
-    type: string;
+    type?: string; //TODO: this shouldn't happen after we split QueryBuilderStore
     responseVocab?: string;
   }
 
@@ -108,9 +108,10 @@ export namespace QuerySpecification {
   }
 
   export interface JSONQuerySpecification {
-    "@id"?: string;
+    "@id": string;
     "@context"?: Context;
     meta: Meta;
+    space?: string;
     structure?: Field[];
     [name: string]: any;
   }

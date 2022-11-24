@@ -27,21 +27,21 @@ import API from "./API";
 export class TransportLayer {
   _axios: AxiosInstance;
   authStore?: AuthStore;
-  
+
   constructor() {
     this._axios = axios.create({});
   }
 
-  setAuthStore = (authStore:AuthStore): void => {
+  setAuthStore = (authStore: AuthStore): void => {
     this.authStore = authStore;
     this._axios = axios.create({});
-    this._axios.interceptors.request.use((config:AxiosRequestConfig) => {
-      if(this.authStore?.keycloak && config.headers) {
+    this._axios.interceptors.request.use((config: AxiosRequestConfig) => {
+      if (this.authStore?.keycloak && config.headers) {
         config.headers.Authorization = `Bearer ${this.authStore.keycloak.token}`;
       }
       return Promise.resolve(config);
     });
-    this._axios.interceptors.response.use(undefined, (error) => {
+    this._axios.interceptors.response.use(undefined, error => {
       if (error.response && error.response.status === 401) {
         this.authStore?.logout();
         return this._axios.request(error.config);
@@ -49,7 +49,7 @@ export class TransportLayer {
         return Promise.reject(error);
       }
     });
-  }
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getSettings(): Promise<AxiosResponse<any, any>> {
@@ -77,8 +77,26 @@ export class TransportLayer {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async performQuery(query: any, stage: string, from: number, size: number, instanceId: string, restrictToSpaces: string[], params: any): Promise<AxiosResponse<any, any>> {
-    return this._axios.post(API.endpoints.performQuery(stage, from, size, instanceId, restrictToSpaces, params), query);
+  async performQuery(
+    query: any,
+    stage: string,
+    from: number,
+    size: number,
+    instanceId: string | undefined,
+    restrictToSpaces: string[]| undefined,
+    params: any
+  ): Promise<AxiosResponse<any, any>> {
+    return this._axios.post(
+      API.endpoints.performQuery(
+        stage,
+        from,
+        size,
+        instanceId,
+        restrictToSpaces,
+        params
+      ),
+      query
+    );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -92,7 +110,11 @@ export class TransportLayer {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async saveQuery(queryId: string, query: any, space: string): Promise<AxiosResponse<any, any>> {
+  async saveQuery(
+    queryId: string,
+    query: any,
+    space: string
+  ): Promise<AxiosResponse<any, any>> {
     return this._axios.put(API.endpoints.saveQuery(queryId, space), query);
   }
 

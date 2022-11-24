@@ -21,56 +21,27 @@
  *
  */
 
-import { Permission } from "./AuthStore";
-import Field from "./Field";
-import { QuerySpecification } from "./QueryBuilderStore/QuerySpecification";
-
-export namespace Query {
-  export interface TypeFilter {
-    id: string;
-    selected: boolean;
-    isUnknown: boolean;
-  }
-
-  export interface Option {
-    name: string;
-    value?: boolean | string;
-  }
-
-  export interface Properties {
-    [name: string]: any;
-  }
-
-  export interface Query {
+export namespace Type {
+  export interface Type {
     id: string;
     label: string;
+    color: string;
     description: string;
-    space: string;
-    meta: QuerySpecification.Meta;
-    structure: QuerySpecification.Field[];
-    deleteError?: string;
-    isDeleting: boolean;
-    context: QuerySpecification.Context;
-    properties: Properties;
+    properties: Property[];
   }
 
-  export interface SpaceQueries {
-    name: string;
+  export interface Property {
+    attribute: string;
+    canBe?: string[];
     label: string;
-    showUser: boolean;
-    isPrivate: boolean;
-    permissions: Permission;
-    queries: Query[];
-  }
+    simpleAttributeName: string;
+    reverse?: boolean;
+  }  
 
-  export interface GroupedBySpaceQueries {
-    [name: string]: SpaceQueries;
-  }
-
-  export interface ResultQueryParameters {
-    [name: string]: {
-      name: string;
-      value: string;
-    };
+  export interface PropertyGroup {
+    id: string;
+    label: string;
+    color: string;
+    properties: Property[];
   }
 }

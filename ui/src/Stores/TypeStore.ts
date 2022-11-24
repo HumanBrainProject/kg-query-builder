@@ -27,34 +27,13 @@ import debounce from "lodash/debounce";
 import { TransportLayer } from "../Services/TransportLayer";
 import { RootStore } from "./RootStore";
 import { AxiosError } from "axios";
+import { Type } from "./Type";
 
-export interface Type {
-  id: string;
-  label: string;
-  color: string;
-  description: string;
-  properties: Property[];
-}
-
-export interface Property {
-  attribute: string;
-  canBe?: string[];
-  label: string;
-  simpleAttributeName: string;
-  reverse?: boolean
-}
-
-export interface PropertyGroup {
-  id: string;
-  label: string;
-  color: string;
-  properties: Property[];
-}
 
 export class TypeStore {
   filterValue = "";
-  types: Map<string, Type> = new Map;
-  typeList: Type[] = [];
+  types: Map<string, Type.Type> = new Map;
+  typeList: Type.Type[] = [];
   fetchError?: string;
   isFetching = false;
   isFetched = false;
@@ -117,14 +96,14 @@ export class TypeStore {
             color: type.color,
             description: type.description,
             properties: (Array.isArray(type.properties)?type.properties:[])
-              .map((p:Property) => {
+              .map((p:Type.Property) => {
                 if(!p.label) {
                   p.label = p.simpleAttributeName.charAt(0).toUpperCase() + p.simpleAttributeName.slice(1);
                 }
                 return p;
               })
-              .sort((a: Property, b: Property) => a.label.localeCompare(b.label))
-          } as Type));
+              .sort((a: Type.Property, b: Type.Property) => a.label.localeCompare(b.label))
+          } as Type.Type));
           this.typeList = types.sort((a, b) => a.label.localeCompare(b.label));
           types.forEach(type => this.types.set(type.id, type));
           this.isFetching = false;

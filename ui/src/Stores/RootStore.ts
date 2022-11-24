@@ -31,7 +31,7 @@ export class RootStore {
 
   authStore: AuthStore;
   typeStore: TypeStore;
-  queryBuilderStore= null;
+  queryBuilderStore: QueryBuilderStore;
   appStore: AppStore;
   transportLayer: TransportLayer;
 
