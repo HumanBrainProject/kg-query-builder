@@ -119,7 +119,7 @@ const QueryForm = observer(({ className }: QueryFormProps) => {
   const handleChangeDescription = (e: ChangeEvent<HTMLTextAreaElement>) =>
     queryBuilderStore.setDescription(e.target.value);
 
-  const handleChangeVocab = (value?:string) => queryBuilderStore.setResponseVocab(value);
+  const handleChangeVocab = (value?:string) => value && queryBuilderStore.setResponseVocab(value);
 
   return (
     <div className={`${classes.container} ${className ? className : ""}`}>
@@ -160,7 +160,7 @@ const QueryForm = observer(({ className }: QueryFormProps) => {
       <div className={classes.vocab}>
         <Vocab
           defaultValue={queryBuilderStore.defaultResponseVocab}
-          value={queryBuilderStore.responseVocab}
+          value={!!queryBuilderStore.responseVocab}
           onChange={handleChangeVocab}
         />
       </div>

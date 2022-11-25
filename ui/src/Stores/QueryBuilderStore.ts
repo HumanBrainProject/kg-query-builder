@@ -32,7 +32,7 @@ import {
 import { AxiosError } from "axios";
 import isEqual from "lodash/isEqual";
 import remove from "lodash/remove";
-import _ from "lodash-uuid";
+import { v4 as uuidv4 } from "uuid";
 import jsonld from "jsonld";
 import jsdiff from "diff";
 
@@ -58,10 +58,7 @@ interface Counter {
   };
 }
 
-const querySpecificationCompare = (
-  a: Query.Query,
-  b: Query.Query
-): number => {
+const querySpecificationCompare = (a: Query.Query, b: Query.Query): number => {
   if (a.label && b.label) {
     return a.label.localeCompare(b.label);
   }
@@ -126,7 +123,7 @@ const defaultResultSize = 20;
 export class QueryBuilderStore {
   meta?: QuerySpecification.Meta;
   defaultResponseVocab = defaultContext.query;
-  responseVocab: string = defaultContext.query;
+  responseVocab?: string = defaultContext.query;
   queryId?: string;
   label = "";
   space?: Space;
@@ -155,12 +152,12 @@ export class QueryBuilderStore {
   fetchQueryError?: string;
   specifications: Query.Query[] = [];
   includeAdvancedAttributes = false;
-  resultSize = defaultResultSize;
-  resultStart = 0;
+  resultSize = `${defaultResultSize}`;
+  resultStart = "0";
   resultInstanceId = "";
   resultRestrictToSpaces?: string[];
   resultQueryParameters: Query.ResultQueryParameters = {};
-  result = null;
+  result:any = null;
   showSavedQueries = false;
 
   currentField?: Field;
@@ -284,7 +281,7 @@ export class QueryBuilderStore {
     this.showSavedQueries = show;
   }
 
-  setResultRestrictToSpaces(spaces: string[]) {
+  setResultRestrictToSpaces(spaces: string[]|undefined) {
     this.resultRestrictToSpaces = spaces;
   }
 
@@ -805,7 +802,7 @@ export class QueryBuilderStore {
     }
   }
 
-  setResponseVocab(vocab: string) {
+  setResponseVocab(vocab: string | undefined) {
     this.responseVocab = vocab;
     if (this.context) {
       if (vocab) {
@@ -967,7 +964,22 @@ export class QueryBuilderStore {
     }
   }
 
-  updateQuery(query: QuerySpecification.JSONQuerySpecification | Query.Query) {
+  async updateQueryFromJSONQuerySpecification(
+    jsonSpec: QuerySpecification.JSONQuerySpecification | undefined
+  ) {
+    if (jsonSpec) {
+      try {
+        const query = await this.normalizeQuery(jsonSpec);
+        this.updateQuery(query);
+      } catch (e) {
+        runInAction(() => {
+          this.fetchQueriesError = `Error while trying to expand/compact JSON-LD (${e})`;
+        });
+      }
+    }
+  }
+
+  updateQuery(query: Query.Query) {
     this.context = toJS(query.context);
     if (!this.context) {
       this.context = toJS(defaultContext);
@@ -1067,11 +1079,11 @@ export class QueryBuilderStore {
     }
   }
 
-  setResultSize(size: number) {
+  setResultSize(size: string) {
     this.resultSize = size;
   }
 
-  setResultStart(start: number) {
+  setResultStart(start: string) {
     this.resultStart = start;
   }
 
@@ -1130,10 +1142,10 @@ export class QueryBuilderStore {
     this.saveAsMode = mode;
     if (mode) {
       this.fromQueryId = this.queryId;
-      this.fromLabel = this.label
+      this.fromLabel = this.label;
       this.fromDescription = this.description;
       this.fromSpace = toJS(this.space);
-      this.queryId = _.uuid();
+      this.queryId = uuidv4();
       this.label = this.saveLabel;
       this.space =
         this.space && this.space.permissions && this.space.permissions.canCreate
@@ -1167,7 +1179,7 @@ export class QueryBuilderStore {
     this.description = description;
   }
 
-  async saveQuery(navigate: NavigateFunction, mode: string) {
+  async saveQuery(navigate: NavigateFunction, mode?: string) {
     if (
       !this.isQueryEmpty &&
       !this.isSaving &&
@@ -1179,7 +1191,13 @@ export class QueryBuilderStore {
         this.sourceQuery.deleteError = undefined;
       }
       //TODO: fix queryId undefined check after QueryBuilderStore refactoring/splitting
-      const queryId = this.saveAsMode ? (this.queryId?this.queryId: "") : (this.sourceQuery?this.sourceQuery.id:"");
+      const queryId = this.saveAsMode
+        ? this.queryId
+          ? this.queryId
+          : ""
+        : this.sourceQuery
+        ? this.sourceQuery.id
+        : "";
       const query = this.JSONQuery;
       if (!this.space) {
         this.space = toJS(this.rootStore.authStore.privateSpace);
@@ -1223,10 +1241,10 @@ export class QueryBuilderStore {
                 query.meta && query.meta.description
                   ? query.meta.description
                   : "";
-              if(query["@context"]) {
+              if (query["@context"]) {
                 this.sourceQuery.context = query["@context"];
               }
-              if(query.structure) {
+              if (query.structure) {
                 this.sourceQuery.structure = query.structure;
               }
               this.sourceQuery.meta = query.meta;
@@ -1268,10 +1286,7 @@ export class QueryBuilderStore {
     }
   }
 
-  async deleteQuery(
-    query: Query.Query,
-    navigate: NavigateFunction
-  ) {
+  async deleteQuery(query: Query.Query, navigate: NavigateFunction) {
     if (
       query &&
       !query.isDeleting &&
@@ -1337,16 +1352,18 @@ export class QueryBuilderStore {
               response.data.data.length
                 ? response.data.data
                 : [];
-            jsonSpecifications.forEach(async (jsonSpec: QuerySpecification.JSONQuerySpecification)  => {
-              try {
-                const query = await this.normalizeQuery(jsonSpec);
-                runInAction(() => this.specifications.push(query));
-              } catch (e) {
-                runInAction(() => {
-                  this.fetchQueriesError = `Error while trying to expand/compact JSON-LD (${e})`;
-                });
+            jsonSpecifications.forEach(
+              async (jsonSpec: QuerySpecification.JSONQuerySpecification) => {
+                try {
+                  const query = await this.normalizeQuery(jsonSpec);
+                  runInAction(() => this.specifications.push(query));
+                } catch (e) {
+                  runInAction(() => {
+                    this.fetchQueriesError = `Error while trying to expand/compact JSON-LD (${e})`;
+                  });
+                }
               }
-            });
+            );
             this.isQueriesFetched = true;
             this.isFetchingQueries = false;
           });

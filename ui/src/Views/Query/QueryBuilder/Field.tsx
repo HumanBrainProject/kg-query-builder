@@ -33,7 +33,7 @@ import Type from "./Field/Type";
 import TargetName from "./Field/TargetName";
 import Actions from "./Field/Actions";
 import Children from "./Field/Children";
-import Field from "../../../Stores/Field";
+import FieldClass from "../../../Stores/Field";
 
 const useStyles = createUseStyles({
   container: {
@@ -124,7 +124,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const getTitle = (field: Field) => {
+const getTitle = (field: FieldClass) => {
   if (field.isInvalid) {
     return "this is not a recognized property for this type";
   }
@@ -141,7 +141,7 @@ const getTitle = (field: Field) => {
 };
 
 export interface FieldProps {
-  field: Field;
+  field: FieldClass;
 }
 
 const Field = observer(({ field }: FieldProps) => {

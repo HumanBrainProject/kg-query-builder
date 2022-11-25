@@ -112,6 +112,17 @@ const QueryParameter = observer(({ parameter }:QueryParameterProps) => {
 });
 QueryParameter.displayName = "QueryParameter";
 
+interface Parameter {
+  name: string;
+  value: string;
+}
+
+interface Row {
+  col1: Parameter;
+  col2?: Parameter;
+  col3?: Parameter;
+}
+
 const QueryParameters = observer(() => {
   const { queryBuilderStore } = useStores();
 
@@ -124,15 +135,15 @@ const QueryParameters = observer(() => {
   const rows = parameters.reduce((acc, p) => {
     if (acc.length && !acc[acc.length - 1].col3) {
       if (!acc[acc.length - 1].col2) {
-        acc[acc.length - 1]["col2"] = p;
+        acc[acc.length - 1].col2 = p;
       } else {
-        acc[acc.length - 1]["col3"] = p;
+        acc[acc.length - 1].col3 = p;
       }
     } else {
-      acc.push({ col1: p });
+      acc.push({ col1: p } as Row);
     }
     return acc;
-  }, []);
+  }, [] as Row[]);
 
   return (
     <>
@@ -171,7 +182,7 @@ const ExecutionParams = observer(() => {
     queryBuilderStore.resultRestrictToSpaces
   );
 
-  const handleChangeSize = (e:ChangeEvent<HTMLInputElement>) =>
+  const handleChangeSize = (e: React.ChangeEvent<HTMLInputElement>) =>
     queryBuilderStore.setResultSize(e.target.value);
 
   const handleChangeStart = (e: ChangeEvent<HTMLInputElement>) =>
@@ -183,7 +194,7 @@ const ExecutionParams = observer(() => {
     queryBuilderStore.setResultInstanceId(e.target.value);
 
   const handlExecuteQuery = () => {
-    API.trackEvent("Query", "Execute", queryBuilderStore.rootField.id);
+    API.trackEvent("Query", "Execute", queryBuilderStore.isQuerySaved?queryBuilderStore.queryId:"unsaved query");
     queryBuilderStore.executeQuery();
   };
 

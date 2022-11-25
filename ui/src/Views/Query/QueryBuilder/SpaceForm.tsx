@@ -113,8 +113,10 @@ const SpaceForm = observer(({ className }: SpaceFormProps) => {
 
   const handleChangeSpace = (e: ChangeEvent<HTMLSelectElement>) => {
     if(!isReadMode) {
-      const space = authStore.getSpace(e.target.value);
-      queryBuilderStore.setSpace(space ? space : authStore.privateSpace);
+      const space = authStore.getSpace(e.target.value) || authStore.privateSpace;;
+      if(space) {
+        queryBuilderStore.setSpace(space);
+      }
     }
   };
 
@@ -123,7 +125,9 @@ const SpaceForm = observer(({ className }: SpaceFormProps) => {
       if (isSpaceShared && authStore.sharedSpaces.length) {
         queryBuilderStore.setSpace(authStore.sharedSpaces[0]);
       } else {
-        queryBuilderStore.setSpace(authStore.privateSpace);
+        if(authStore.privateSpace) {
+          queryBuilderStore.setSpace(authStore.privateSpace);
+        }
       }
     }
   };
@@ -143,7 +147,7 @@ const SpaceForm = observer(({ className }: SpaceFormProps) => {
           <div className={sharedSpaceClass}>
             <select
               className={classes.select}
-              value={queryBuilderStore.space.name}
+              value={queryBuilderStore.space?.name}
               onChange={handleChangeSpace}
               disabled={isReadMode}
             >

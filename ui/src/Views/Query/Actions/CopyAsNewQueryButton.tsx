@@ -26,7 +26,7 @@ import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faCopy} from "@fortawesome/free-solid-svg-icons/faCopy";
-import _ from "lodash-uuid";
+import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 
 import API from "../../../Services/API";
@@ -40,7 +40,7 @@ const CopyAsNewQueryButton = observer(() => {
 
   const onClick = () => {
     API.trackEvent("Query", "CopyAsNew", queryBuilderStore.rootField.id);
-    const uuid = _.uuid();
+    const uuid = uuidv4();
     queryBuilderStore.setAsNewQuery(uuid);
     navigate(`/queries/${uuid}`);
   };

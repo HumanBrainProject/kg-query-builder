@@ -32,6 +32,7 @@ import { useStores } from "../../Hooks/UseStores";
 import { useNavigate } from "react-router-dom";
 
 import API from "../../Services/API";
+import { IconDefinition } from "@fortawesome/fontawesome-common-types";
 
 const useStyles = createUseStyles({
   tabs: {
@@ -68,7 +69,17 @@ const useStyles = createUseStyles({
   }
 });
 
-const Tab = ({ className, disabled, active, icon, mode, title, onClick }) => {
+interface TabProps {
+  className: string;
+  disabled: boolean;
+  active: boolean;
+  icon: IconDefinition;
+  mode: string;
+  title: string;
+  onClick: (mode:string) => void;
+}
+
+const Tab = ({ className, disabled, active, icon, mode, title, onClick }: TabProps) => {
 
   const props = (disabled || active) ?
     {
@@ -98,7 +109,7 @@ const Tabs = observer(({ mode }: TabsProps) => {
 
   const { queryBuilderStore } = useStores();
 
-  const setMode = selectedMode => {
+  const setMode = (selectedMode: string) => {
     API.trackEvent("Tab", "ChangeMode", selectedMode);
     const id = (queryBuilderStore.saveAsMode && queryBuilderStore.sourceQuery && queryBuilderStore.queryId !== queryBuilderStore.sourceQuery.id)?queryBuilderStore.sourceQuery.id:queryBuilderStore.queryId;
     const path = (selectedMode === "build")?`/queries/${id}`:`/queries/${id}/${selectedMode}`;

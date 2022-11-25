@@ -408,7 +408,7 @@ export const buildFieldTreeFromQuery = (
   types: Map<string, Type.Type>,
   context: QuerySpecification.Context,
   schema: QuerySpecification.Schema,
-  query: QuerySpecification.JSONQuerySpecification | Query.Query
+  query: Query.Query
 ): Field | undefined=> {
   if (!schema) {
     return undefined;

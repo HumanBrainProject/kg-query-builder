@@ -21,8 +21,8 @@
  *
  */
 
-import React, { useRef, useState } from "react";
-import ReactJson from "react-json-view";
+import React, { useState } from "react";
+import ReactJson, { InteractionProps } from "react-json-view";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import { Scrollbars } from "react-custom-scrollbars-2";
@@ -81,20 +81,11 @@ const useStyles = createUseStyles({
   }
 });
 
-interface HandleMethodProps {
-  existing_src?: QuerySpecification.JSONQuerySpecification;
-  updated_src?: QuerySpecification.JSONQuerySpecification;
-  namespace?: string[];
-  name?: string;
-}
-
 const QueryEditor = observer(() => {
 
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
-
-  const scrollRef = useRef();
 
   const [error, setError] = useState<string>();
 
@@ -102,24 +93,22 @@ const QueryEditor = observer(() => {
     return null;
   }
 
-  const handleOnEdit = ({updated_src}:HandleMethodProps) => {
-    queryBuilderStore.updateQuery(updated_src);
-    return true;
+  const handleOnEdit = ({updated_src}:InteractionProps) => {
+    queryBuilderStore.updateQueryFromJSONQuerySpecification(updated_src as QuerySpecification.JSONQuerySpecification);
   };
 
-  const handleOnAdd = ({existing_src, updated_src, namespace}:HandleMethodProps) => {
-    const path = namespace.join("/");
+  const handleOnAdd = ({existing_src, updated_src, namespace}:InteractionProps) => {
+    const path = namespace ? namespace.join("/"): "";
     if (path === ""){
       setError("Adding properties to the root path is forbidden.");
-      queryBuilderStore.updateQuery(existing_src);
+      queryBuilderStore.updateQueryFromJSONQuerySpecification(existing_src as QuerySpecification.JSONQuerySpecification);
     } else {
-      queryBuilderStore.updateQuery(updated_src);
+      queryBuilderStore.updateQueryFromJSONQuerySpecification(updated_src as QuerySpecification.JSONQuerySpecification);
     }
-    return true;
   };
 
-  const handleOnDelete = ({existing_src, updated_src, namespace, name}:HandleMethodProps) => {
-    const path = namespace && namespace.join("/");
+  const handleOnDelete = ({existing_src, updated_src, namespace, name}:InteractionProps) => {
+    const path = namespace?namespace.join("/"):"";
     if ((path === "") ||
         (name === "type" && path === "meta") ||
         (name === "@vocab" && path === "@context") ||
@@ -130,11 +119,10 @@ const QueryEditor = observer(() => {
         (name === "@type" && path === "@context/path") ||
         (name === "@id" && path === "@context/path") ) {
       setError(`Deleting ${name} of ${path} is forbidden.`);
-      queryBuilderStore.updateQuery(existing_src);
+      queryBuilderStore.updateQueryFromJSONQuerySpecification(existing_src as QuerySpecification.JSONQuerySpecification);
     } else {
-      queryBuilderStore.updateQuery(updated_src);
+      queryBuilderStore.updateQueryFromJSONQuerySpecification(updated_src as QuerySpecification.JSONQuerySpecification);
     }
-    return true;
   };
 
   const handleOnErrorClose = () => setError(undefined);
@@ -149,7 +137,7 @@ const QueryEditor = observer(() => {
         )}
       </div>
       <div className={classes.body}>
-        <Scrollbars autoHide ref={scrollRef}>
+        <Scrollbars autoHide>
           <ReactJson collapsed={false} name={false} theme={ThemeRJV} src={queryBuilderStore.JSONQuery} onEdit={handleOnEdit} onAdd={handleOnAdd} onDelete={handleOnDelete}  />
         </Scrollbars>
       </div>

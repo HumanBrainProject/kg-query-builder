@@ -25,7 +25,7 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { useNavigate } from "react-router-dom";
-import _ from "lodash-uuid";
+import { v4 as uuidv4 } from "uuid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons/faChevronRight";
 import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle";
@@ -144,10 +144,7 @@ const TypeInfo = observer(({ className, type }: TypeInfoProps) => {
     <div className={className}>
       <Icon icon={faCircle} color={type.color} />
       {getTypeLabel(type)} - <small>{type.id}</small>
-      {type.description && 
-        (<p>
-          {type.description}
-        </p>)}
+      {type.description && <p>{type.description}</p>}
     </div>
   );
 });
@@ -160,7 +157,7 @@ const Selection = observer(() => {
   const { queryBuilderStore, typeStore } = useStores();
 
   const handleNewQueryClick = () => {
-    const uuid = _.uuid();
+    const uuid = uuidv4();
     navigate(`/queries/${uuid}`);
   };
 
@@ -205,10 +202,15 @@ const Selection = observer(() => {
           )}
         </div>
       ) : (
-        <div className={classes.noSelection}>Please select a type <p className={classes.noSelectionText}>To start querying the EBRAINS Knowledge Graph, please select the type
-        of the data structure of your main interest. You will then have the
-        chance to collect the various attributes of this type as well as
-        connected resources across the graph in your individual query.</p></div>
+        <div className={classes.noSelection}>
+          Please select a type{" "}
+          <p className={classes.noSelectionText}>
+            To start querying the EBRAINS Knowledge Graph, please select the
+            type of the data structure of your main interest. You will then have
+            the chance to collect the various attributes of this type as well as
+            connected resources across the graph in your individual query.
+          </p>
+        </div>
       )}
     </div>
   );

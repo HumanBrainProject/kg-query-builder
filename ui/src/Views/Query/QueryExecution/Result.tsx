@@ -21,7 +21,7 @@
  *
  */
 
-import React, { useRef } from "react";
+import React from "react";
 import ReactJson from "react-json-view";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
@@ -59,7 +59,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const download = content => {
+const download = (content: BlobPart) => {
   const a = document.createElement("a");
   const file = new Blob([content], { type: "text/plain" });
   a.href = URL.createObjectURL(file);

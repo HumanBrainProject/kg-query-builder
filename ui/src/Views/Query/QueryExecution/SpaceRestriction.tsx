@@ -111,18 +111,18 @@ const SpaceRestriction = observer(() => {
 
   const spaces = isRestricted?authStore.spaces.map(space => ({
     name: space.name,
-    selected: queryBuilderStore.resultRestrictToSpaces.includes(space.name)
+    selected: queryBuilderStore.resultRestrictToSpaces?queryBuilderStore.resultRestrictToSpaces.includes(space.name):false
   })):[];
 
-  const handleToggleSpaceRestriction = (_, value) => queryBuilderStore.setResultRestrictToSpaces(value?[]:null);
+  const handleToggleSpaceRestriction = (_: string, value?: boolean) => queryBuilderStore.setResultRestrictToSpaces(value?[]:undefined);
 
   const toggleSpace = (name: string, selected: boolean) => {
     if (selected) {
-      if (!queryBuilderStore.resultRestrictToSpaces.includes(name)) {
+      if (queryBuilderStore.resultRestrictToSpaces && !queryBuilderStore.resultRestrictToSpaces.includes(name)) {
         queryBuilderStore.setResultRestrictToSpaces([...queryBuilderStore.resultRestrictToSpaces, name]);
       }
     } else {
-      if (queryBuilderStore.resultRestrictToSpaces.includes(name)) {
+      if (queryBuilderStore.resultRestrictToSpaces && queryBuilderStore.resultRestrictToSpaces.includes(name)) {
         queryBuilderStore.setResultRestrictToSpaces(queryBuilderStore.resultRestrictToSpaces.filter(space => space !== name));
       }
     }

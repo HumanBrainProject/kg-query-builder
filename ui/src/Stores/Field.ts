@@ -49,7 +49,7 @@ const defaultOptions = [
 
 class Field {
   namespace?: string;
-  schema?: QuerySpecification.Schema;
+  schema?: QuerySpecification.Schema | QuerySpecification.CombinedSchema;
   structure: Field[] = [];
   alias?: string;
   aliasError?: boolean;
@@ -165,7 +165,7 @@ class Field {
   setOption(name: string, value: any, preventRecursivity?: boolean) {
     this.optionsMap.set(name, value);
     if (name === "sort" && value && !preventRecursivity) {
-      this.parent.structure.forEach(field => {
+      this.parent && this.parent.structure.forEach(field => {
         if (field !== this) {
           field.setOption("sort", undefined, true);
         }
@@ -184,7 +184,7 @@ class Field {
   }
 
   get defaultAlias() {
-    let currentField = this;
+    let currentField = this as Field;
     while (
       currentField.isFlattened &&
       currentField.structure &&

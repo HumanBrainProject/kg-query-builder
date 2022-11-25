@@ -26,9 +26,14 @@ import { observer } from "mobx-react-lite";
 
 import PropertyTypes from "../../../PropertyTypes";
 import Types from "./Types";
-import { FieldProps } from "../Field";
+import { QuerySpecification } from "../../../../Stores/QueryBuilderStore/QuerySpecification";
+import Field from "../../../../Stores/Field";
 
-const Type = observer(({ field }: FieldProps) => {
+interface TypeProps {
+  field: Field
+}
+
+const Type = observer(({ field }: TypeProps) => {
   if (field.isUnknown && field.parent) {
     if (field.schema?.simpleAttributeName) {
       return (
@@ -55,10 +60,13 @@ const Type = observer(({ field }: FieldProps) => {
       </React.Fragment>
     );
   }
+
+  const rootSchema = field.schema as QuerySpecification.Schema;
+
   return (
     <>
-      <PropertyTypes types={field.schema?.canBe} />
-      &nbsp;- <small>{field.schema?.id}</small>
+      <PropertyTypes types={rootSchema?.canBe} />
+      &nbsp;- <small>{rootSchema.id}</small>
     </>
   );
 });

@@ -29,31 +29,12 @@ import Popover from "react-bootstrap/Popover";
 import Button from "react-bootstrap/Button";
 import uniqueId from "lodash/uniqueId";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faCheck} from "@fortawesome/free-solid-svg-icons/faCheck";
-import {faCamera} from "@fortawesome/free-solid-svg-icons/faCamera";
-import {faPlus} from "@fortawesome/free-solid-svg-icons/faPlus";
+import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import API from "../Services/API";
 import { useStores } from "../Hooks/UseStores";
-
 import Avatar from "../Components/Avatar";
-
-const PopOverContent = ({onSizeChange, children}) => {
-  const ref = useRef();
-
-  useEffect(() => {
-    if (ref.current) {
-      typeof onSizeChange === "function" && onSizeChange(ref.current.getBoundingClientRect());
-    }
-  });
-
-  return (
-    <div ref={ref}>
-      {children}
-    </div>
-  );
-};
 
 const useStyles = createUseStyles({
   container: {
@@ -69,7 +50,7 @@ const useStyles = createUseStyles({
     backgroundColor: "transparent",
     textAlign: "center",
     outline: 0,
-    cursor:"pointer"
+    cursor: "pointer"
   },
   popOver: {
     maxWidth: "unset !important",
@@ -92,7 +73,7 @@ const useStyles = createUseStyles({
     gridTemplateColumns: "auto 1fr",
     gridGap: "20px",
     margin: "15px",
-    color:"var(--ft-color-normal)"
+    color: "var(--ft-color-normal)"
   },
   popOverFooterBar: {
     display: "grid",
@@ -116,11 +97,9 @@ const useStyles = createUseStyles({
     }
   },
   name: {
-    color:"var(--ft-color-loud)"
+    color: "var(--ft-color-loud)"
   },
-  email: {
-
-  },
+  email: {},
   accountBtn: {
     borderRadius: "2px",
     marginTop: "25px"
@@ -151,154 +130,142 @@ const useStyles = createUseStyles({
     overflow: "hidden",
     border: 0,
     background: "none",
-    "&:hover $profilePictureCamera": {
-      color: "rgba(0, 0, 0, 0.45)"
-    },
-    "&:hover $profilePicturePlus": {
-      color: "rgba(0, 0, 0, 0.65)"
-    },
     "& .avatar.default.fa-user": {
       width: "100px",
       transform: "scale(8)",
       color: "#1b1b1b"
     }
-  },
-  profilePictureCamera: {
-    position: "absolute",
-    top: "30px",
-    left: "35px",
-    color: "rgba(0, 0, 0, 0.25)",
-    transition: "color 0.25 ease-in-out"
-  },
-  profilePicturePlus: {
-    position: "absolute",
-    top: "50px",
-    left: "55px",
-    color: "rgba(0, 0, 0, 0.45)",
-    transition: "color 0.25 ease-in-out"
   }
 });
 
-const windowHeight = () => {
-  const w = window,
-    d = document,
-    e = d.documentElement,
-    g = d.getElementsByTagName("body")[0];
-  return w.innerHeight || e.clientHeight || g.clientHeight;
-};
-
-interface  UserProfileTabProps {
+interface UserProfileTabProps {
   className: string;
   size: number;
 }
 
-const UserProfileTab = observer(({ className, size=30 }: UserProfileTabProps) => {
+const UserProfileTab = observer(
+  ({ className, size = 30 }: UserProfileTabProps) => {
+    const classes = useStyles();
 
-  const classes = useStyles();
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const buttonRef = useRef();
-  const imageFileRef = useRef();
+    const [showPopOver, setShowPopOver] = useState<boolean>(false);
+    const [tokenCopied, setTokenCopied] = useState<NodeJS.Timeout>();
 
-  const [showPopOver, setShowPopOver] = useState<boolean>(false);
-  const [popOverPosition, setPopOverPosition] = useState<string>("bottom");
-  const [tokenCopied, setTokenCopied] = useState(null);
+    const { authStore } = useStores();
 
-  const { authStore } = useStores();
-
-  useEffect(() => {
-    if(showPopOver) {
-      API.trackEvent("Tab", "UserProfile", "Open");
-    }
-    return () => {
+    useEffect(() => {
       if (showPopOver) {
-        setShowPopOver(false);
+        API.trackEvent("Tab", "UserProfile", "Open");
       }
+      return () => {
+        if (showPopOver) {
+          setShowPopOver(false);
+        }
+      };
+    }, [showPopOver]);
+
+    const handleButtonClick = (e: MouseEvent<HTMLElement>) => {
+      e.stopPropagation();
+      setShowPopOver(!showPopOver);
     };
-  }, [showPopOver]);
 
-  const handlePopOverPosition = popOverRect => {
-    if (!popOverRect) { return null; }
-    const buttonRect = buttonRef.current.getBoundingClientRect();
-    const position = (buttonRect.bottom + popOverRect.height + 5) >= windowHeight()?"top":"bottom";
-    if (popOverPosition !== position) {
-      setPopOverPosition(position);
+    const handlePopOverClose = (e: Event) => {
+      e && e.stopPropagation();
+      setShowPopOver(false);
+    };
+
+    const handleCopyToken = () => {
+      API.trackEvent("Token", "Copy");
+      clearTimeout(tokenCopied);
+      const timer = setTimeout(() => setTokenCopied(undefined), 2000);
+      setTokenCopied(timer);
+    };
+
+    const handleLogout = () => {
+      API.trackEvent("User", "Logout");
+      authStore.logout();
+    };
+
+    if (
+      !authStore.isAuthenticated ||
+      !authStore.isUserAuthorized ||
+      !authStore.user
+    ) {
+      return null;
     }
-  };
 
-  const handleButtonClick = (e: MouseEvent<HTMLElement>) => {
-    e.stopPropagation();
-    setShowPopOver(!showPopOver);
-  };
-
-  const handlePopOverClose = (e: MouseEvent<HTMLElement>) => {
-    e && e.stopPropagation();
-    setShowPopOver(false);
-  };
-
-  const handleCopyToken = () => {
-    API.trackEvent("Token", "Copy");
-    clearTimeout(tokenCopied);
-    const timer = setTimeout(() => setTokenCopied(null), 2000);
-    setTokenCopied(timer);
-  };
-
-  const handleLogout = () => {
-    API.trackEvent("User", "Logout");
-    authStore.logout();
+    return (
+      <div className={`${classes.container} ${className ? className : ""}`}>
+        <button
+          className={classes.button}
+          onClick={handleButtonClick}
+          title="Account"
+          ref={buttonRef}
+        >
+          <Avatar user={authStore.user} size={size} />
+        </button>
+        <Overlay
+          show={showPopOver}
+          target={buttonRef.current}
+          placement="bottom"
+          container={document.body}
+          rootClose={true}
+          onHide={handlePopOverClose}
+        >
+          <Popover id={uniqueId("popover")} className={classes.popOver}>
+            <div>
+              <div className={classes.popOverContent}>
+                <button className={classes.profilePictureButton}>
+                  <Avatar user={authStore.user} size={100} />
+                </button>
+                <div>
+                  <div className={classes.name}>
+                    {authStore.user.displayName}
+                  </div>
+                  <div className={classes.email}>{authStore.user.email}</div>
+                  <Button
+                    variant="primary"
+                    className={classes.accountBtn}
+                    href="https://iam.ebrains.eu/auth/realms/hbp/account/"
+                    title="https://iam.ebrains.eu/auth/realms/hbp/account/"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    Account
+                  </Button>
+                </div>
+              </div>
+              <div className={classes.popOverFooterBar}>
+                <div>
+                  <CopyToClipboard
+                    text={authStore.accessToken}
+                    onCopy={handleCopyToken}
+                  >
+                    <Button>Copy token to clipboard</Button>
+                  </CopyToClipboard>
+                </div>
+                <div>
+                  <Button onClick={handleLogout}>Logout</Button>
+                </div>
+              </div>
+              <div
+                className={`${classes.tokenCopiedBar} ${
+                  tokenCopied ? "show" : ""
+                }`}
+              >
+                <div className={classes.tokenCopied}>
+                  <FontAwesomeIcon icon={faCheck} />
+                  &nbsp;Token copied to clipboard!
+                </div>
+              </div>
+            </div>
+          </Popover>
+        </Overlay>
+      </div>
+    );
   }
-
-  if (!authStore.isAuthenticated || !authStore.isUserAuthorized || !authStore.user) {
-    return null;
-  }
-
-  return (
-    <div className={`${classes.container} ${className?className:""}`}>
-      <button className={classes.button} onClick={handleButtonClick} title="Account" ref={buttonRef}>
-        <Avatar user={authStore.user} size={size} />
-      </button>
-      <Overlay
-        show={showPopOver}
-        target={buttonRef.current}
-        placement={popOverPosition}
-        outOfBoundaries={false}
-        container={document.body}
-        rootClose={true}
-        onHide={handlePopOverClose}
-      >
-        <Popover id={uniqueId("popover")} className={classes.popOver}>
-          <PopOverContent onSizeChange={handlePopOverPosition}>
-            <div className={classes.popOverContent}>
-              <button className={classes.profilePictureButton} >
-                <Avatar user={authStore.user} size={100} />
-                <FontAwesomeIcon icon={faCamera} size="5x" className={classes.profilePictureCamera} />
-                <FontAwesomeIcon icon={faPlus} size="2x" className={classes.profilePicturePlus} />
-              </button>
-              <input type="file" accept="image/*" ref={imageFileRef} style={{display: "none"}} />
-              <div>
-                <div className={classes.name}>{authStore.user.displayName}</div>
-                <div className={classes.email}>{authStore.user.email}</div>
-                <Button variant="primary" className={classes.accountBtn} href="https://iam.ebrains.eu/auth/realms/hbp/account/" title="https://iam.ebrains.eu/auth/realms/hbp/account/" rel="noopener noreferrer" target="_blank">Account</Button>
-              </div>
-            </div>
-            <div className={classes.popOverFooterBar}>
-              <div>
-                <CopyToClipboard text={authStore.accessToken} onCopy={handleCopyToken}>
-                  <Button>Copy token to clipboard</Button>
-                </CopyToClipboard>
-              </div>
-              <div>
-                <Button onClick={handleLogout}>Logout</Button>
-              </div>
-            </div>
-            <div className={`${classes.tokenCopiedBar} ${tokenCopied?"show":""}`}>
-              <div className={classes.tokenCopied}><FontAwesomeIcon icon={faCheck} />&nbsp;Token copied to clipboard!</div>
-            </div>
-          </PopOverContent>
-        </Popover>
-      </Overlay>
-    </div>
-  );
-});
+);
 UserProfileTab.displayName = "UserProfileTab";
 
 export default UserProfileTab;

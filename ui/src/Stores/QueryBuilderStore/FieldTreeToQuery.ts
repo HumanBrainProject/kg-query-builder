@@ -21,7 +21,7 @@
  *
  */
 import uniqueId from "lodash/uniqueId";
-import _ from "lodash-uuid";
+import camelCase from "lodash/camelCase";
 
 import {
   optionsToKeepOnFlattenendField,
@@ -109,7 +109,7 @@ const getPopertyName = (field: Field) => {
   const name =
     alias ||
     (field.schema &&
-      (field.schema.simpleAttributeName || _.camelCase(field.schema.label))) ||
+      (field.schema.simpleAttributeName || camelCase(field.schema.label))) ||
     uniqueId("field");
   return `${namespace}:${name}`;
 };

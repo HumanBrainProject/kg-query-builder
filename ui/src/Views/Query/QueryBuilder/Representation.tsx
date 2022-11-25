@@ -49,6 +49,10 @@ const Representation = observer(({ className }:RepresentationProps) => {
 
   const { queryBuilderStore } = useStores();
 
+
+  if (!queryBuilderStore.rootField) {
+    return null;
+  }
   return (
     <div className={`${classes.container} ${className}`}>
       <Scrollbars autoHide>

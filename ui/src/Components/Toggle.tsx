@@ -27,7 +27,7 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 
 import MultiToggle from "./MultiToggle";
-import { Option } from "../Stores/Field";
+import { Query } from "../Stores/Query";
 
 const useStyles = createUseStyles({
   option: {
@@ -53,7 +53,7 @@ const useStyles = createUseStyles({
 
 interface ToggleProps {
   className?: string;
-  option: Option;
+  option: Query.Option;
   label?: string;
   comment?: string;
   show: boolean;

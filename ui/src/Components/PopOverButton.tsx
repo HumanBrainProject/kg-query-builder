@@ -21,7 +21,7 @@
  *
  */
 
-import React, { useRef, useEffect, useState, MouseEvent } from "react";
+import React, { useRef, useEffect, useState, MouseEvent, RefObject } from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -33,7 +33,6 @@ import Popover from "react-bootstrap/Popover";
 import uniqueId from "lodash/uniqueId";
 import { faRedoAlt } from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 import { faUndoAlt } from "@fortawesome/free-solid-svg-icons/faUndoAlt";
-import { Placement } from "react-bootstrap/esm/types";
 
 const useStyles = createUseStyles({
   container: {
@@ -80,27 +79,6 @@ const useStyles = createUseStyles({
   }
 });
 
-const windowHeight = () => {
-  const w = window,
-    d = document,
-    e = d.documentElement,
-    g = d.getElementsByTagName("body")[0];
-  return w.innerHeight || e.clientHeight || g.clientHeight;
-};
-
-const PopOverContent = ({ onSizeChange, children }) => {
-  const ref = useRef();
-
-  useEffect(() => {
-    if (ref.current) {
-      typeof onSizeChange === "function" &&
-        onSizeChange(ref.current.getBoundingClientRect());
-    }
-  });
-
-  return <div ref={ref}>{children}</div>;
-};
-
 interface PopOverButtonProps {
   className: string;
   buttonClassName: string;
@@ -120,9 +98,8 @@ const PopOverButton = observer(
     onOk
   }: PopOverButtonProps) => {
     const classes = useStyles();
-    const buttonRef = useRef();
+    const buttonRef = useRef<HTMLButtonElement>(null);
     const [showPopOver, setShowPopOver] = useState(false);
-    const [popOverPosition, setPopOverPosition] = useState("bottom");
 
     useEffect(() => {
       return () => {
@@ -132,20 +109,6 @@ const PopOverButton = observer(
       };
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showPopOver]);
-
-    const handlePopOverPosition = popOverRect => {
-      if (!popOverRect) {
-        return null;
-      }
-      const buttonRect = buttonRef.current.getBoundingClientRect();
-      const position =
-        buttonRect.bottom + popOverRect.height + 5 >= windowHeight()
-          ? "top"
-          : "bottom";
-      if (popOverPosition !== position) {
-        setPopOverPosition(position);
-      }
-    };
 
     const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
@@ -184,13 +147,13 @@ const PopOverButton = observer(
         <Overlay
           show={showPopOver}
           target={buttonRef.current}
-          placement={popOverPosition as Placement}
+          placement="bottom"
           container={document.body}
           rootClose={true}
           onHide={handlePopOverClose}
         >
           <Popover id={uniqueId("popover")} className={classes.popOver}>
-            <PopOverContent onSizeChange={handlePopOverPosition}>
+            <div>
               <div className={classes.popOverContent}>{children}</div>
               <div className={classes.popOverFooterBar}>
                 <Button size="sm" onClick={handleCancelClick}>
@@ -209,7 +172,7 @@ const PopOverButton = observer(
               >
                 <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
               </button>
-            </PopOverContent>
+            </div>
           </Popover>
         </Overlay>
       </div>

@@ -91,7 +91,7 @@ const endpoints = {
         : "";
     const paramsString = Object.entries(params).reduce(
       (acc, [name, value]) => {
-        acc += `&${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
+        acc += `&${encodeURIComponent(name)}=${encodeURIComponent(value as string)}`;
         return acc;
       },
       ""
@@ -127,7 +127,7 @@ class API {
     }
   }
 
-  captureException(e) {
+  captureException(e:any) {
     if (this._is_sentry_initilized) {
       SentryCaptureException(e);
     }
