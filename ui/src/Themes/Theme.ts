@@ -21,8 +21,82 @@
  *
  */
 
-export interface Theme extends Object {
-  name: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [index:string]: any
+class Style {
+  [index:string]: String;
+}
+
+interface Background {
+  gradient: Style;
+  image: string;
+  position?: string;
+  size?: string;
+}
+
+interface List {
+  hover: Style;
+  selected: Style;
+}
+
+interface Error {
+  color: string,
+  quiet: Style;
+  normal: Style;
+  loud: Style;
+}
+
+interface Warning {
+  quiet: Style;
+  normal: Style;
+  loud: Style;
+}
+
+interface Info {
+  color: string,
+  normal: Style;
+}
+
+interface Pane {
+  boxShadow: Style;
+}
+
+interface ReleaseStatus {
+  boxShadow: Style;
+  released: Style;
+  notReleased: Style;
+  hasChanged: Style;
+}
+
+interface Release {
+  status: ReleaseStatus;
+  highlight: Style;
+}
+
+interface BookmarkState {
+  color: string;
+  highlight: Style;
+}
+
+interface Bookmark {
+  on: BookmarkState;
+}
+export interface Theme {
+  name: string;
+  background: Background;
+  contrast1: Style;
+  contrast2: Style;
+  contrast3: Style;
+  contrast4: Style;
+  contrast5: Style;
+  blendContrast1: Style;
+  list: List;
+  quiet: Style;
+  normal: Style;
+  loud: Style;
+  louder: Style;
+  error: Error;
+  warn: Warning;
+  info: Info;
+  pane: Pane;
+  release: Release;
+  bookmark: Bookmark;
 }

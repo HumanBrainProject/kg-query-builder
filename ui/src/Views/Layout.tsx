@@ -23,7 +23,7 @@
 
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { createUseStyles, DefaultTheme, useTheme } from "react-jss";
+import { createUseStyles, DefaultTheme, useTheme, Styles, jss } from "react-jss";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -31,63 +31,65 @@ import GlobalError from "./GlobalError";
 import Header from "./Header";
 import Footer from "./Footer";
 import Authenticate from "./Authenticate";
+import { Theme as AppTheme } from "../Themes/Theme";
 
 const getGlobalUseStyles = () => createUseStyles(theme => {
+  const appTheme = theme as AppTheme;
   const styles = {
     "@global": {
       ":root": {
-        "--bg-gradient-start": theme.background.gradient.colorStart,
-        "--bg-gradient-end": theme.background.gradient.colorEnd,
-        "--bg-gradient-angle": theme.background.gradient.angle,
+        "--bg-gradient-start":appTheme.background.gradient.colorStart,
+        "--bg-gradient-end":appTheme.background.gradient.colorEnd,
+        "--bg-gradient-angle":appTheme.background.gradient.angle,
 
-        "--bg-color-ui-contrast1": theme.contrast1.backgroundColor,
-        "--bg-color-ui-contrast2": theme.contrast2.backgroundColor,
-        "--bg-color-ui-contrast3": theme.contrast3.backgroundColor,
-        "--bg-color-ui-contrast4": theme.contrast4.backgroundColor,
+        "--bg-color-ui-contrast1":appTheme.contrast1.backgroundColor,
+        "--bg-color-ui-contrast2":appTheme.contrast2.backgroundColor,
+        "--bg-color-ui-contrast3":appTheme.contrast3.backgroundColor,
+        "--bg-color-ui-contrast4":appTheme.contrast4.backgroundColor,
 
-        "--border-color-ui-contrast1": theme.contrast1.borderColor,
-        "--border-color-ui-contrast2": theme.contrast2.borderColor,
-        "--border-color-ui-contrast5": theme.contrast5.borderColor,
+        "--border-color-ui-contrast1":appTheme.contrast1.borderColor,
+        "--border-color-ui-contrast2":appTheme.contrast2.borderColor,
+        "--border-color-ui-contrast5":appTheme.contrast5.borderColor,
 
-        "--bg-color-blend-contrast1": theme.blendContrast1.backgroundColor,
+        "--bg-color-blend-contrast1":appTheme.blendContrast1.backgroundColor,
 
-        "--list-bg-hover": theme.list.hover.backgroundColor,
-        "--list-border-hover": theme.list.hover.borderColor,
-        "--list-bg-selected": theme.list.selected.backgroundColor,
-        "--list-border-selected": theme.list.selected.borderColor,
+        "--list-bg-hover":appTheme.list.hover.backgroundColor,
+        "--list-border-hover":appTheme.list.hover.borderColor,
+        "--list-bg-selected":appTheme.list.selected.backgroundColor,
+        "--list-border-selected":appTheme.list.selected.borderColor,
 
-        "--ft-color-quiet": theme.quiet.color,
-        "--ft-color-normal": theme.normal.color,
-        "--ft-color-loud": theme.loud.color,
-        "--ft-color-louder": theme.louder.color,
+        "--ft-color-quiet":appTheme.quiet.color,
+        "--ft-color-normal":appTheme.normal.color,
+        "--ft-color-loud":appTheme.loud.color,
+        "--ft-color-louder":appTheme.louder.color,
 
-        "--ft-color-error": theme.error.color,
-        "--bg-color-error-quiet": theme.error.quiet.color,
-        "--bg-color-error-normal": theme.error.normal.color,
-        "--bg-color-error-loud": theme.error.loud.color,
+        "--ft-color-error":appTheme.error.color,
+        "--bg-color-error-quiet":appTheme.error.quiet.color,
+        "--bg-color-error-normal":appTheme.error.normal.color,
+        "--bg-color-error-loud":appTheme.error.loud.color,
 
-        "--bg-color-warn-quiet": theme.warn.quiet.color,
-        "--bg-color-warn-normal": theme.warn.normal.color,
-        "--bg-color-warn-loud": theme.warn.loud.color,
+        "--bg-color-warn-quiet":appTheme.warn.quiet.color,
+        "--bg-color-warn-normal":appTheme.warn.normal.color,
+        "--bg-color-warn-loud":appTheme.warn.loud.color,
 
-        "--ft-color-info": theme.info.color,
-        "--bg-color-info-normal": theme.info.normal.color,
+        "--ft-color-info":appTheme.info.color,
+        "--bg-color-info-normal":appTheme.info.normal.color,
 
-        "--pane-box-shadow": theme.pane.boxShadow.color,
+        "--pane-box-shadow":appTheme.pane.boxShadow.color,
 
-        "--release-status-box-shadow": theme.release.status.boxShadow,
-        "--release-color-released": theme.release.status.released.color,
-        "--release-bg-released": theme.release.status.released.backgroundColor,
-        "--release-color-not-released": theme.release.status.notReleased.color,
-        "--release-bg-not-released": theme.release.status.notReleased.backgroundColor,
-        "--release-color-has-changed": theme.release.status.hasChanged.color,
-        "--release-bg-has-changed": theme.release.status.hasChanged.backgroundColor,
+        "--release-status-box-shadow":appTheme.release.status.boxShadow,
+        "--release-color-released":appTheme.release.status.released.color,
+        "--release-bg-released":appTheme.release.status.released.backgroundColor,
+        "--release-color-not-released":appTheme.release.status.notReleased.color,
+        "--release-bg-not-released":appTheme.release.status.notReleased.backgroundColor,
+        "--release-color-has-changed":appTheme.release.status.hasChanged.color,
+        "--release-bg-has-changed":appTheme.release.status.hasChanged.backgroundColor,
 
-        "--release-color-highlight": theme.release.highlight.color,
-        "--release-bg-highlight": theme.release.highlight.backgroundColor,
+        "--release-color-highlight":appTheme.release.highlight.color,
+        "--release-bg-highlight":appTheme.release.highlight.backgroundColor,
 
-        "--bookmark-on-color": theme.bookmark.on.color,
-        "--bookmark-on-color-highlight": theme.bookmark.on.highlight.color,
+        "--bookmark-on-color":appTheme.bookmark.on.color,
+        "--bookmark-on-color-highlight":appTheme.bookmark.on.highlight.color,
         "--bookmark-off-color":"var(--ft-color-normal)",
         "--bookmark-off-color-highlight":"var(--bookmark-on-color-highlight)"
       }
@@ -110,7 +112,7 @@ const getGlobalUseStyles = () => createUseStyles(theme => {
     }
   };
 
-  if (theme.name === "cupcake") {
+  if (appTheme.name === "cupcake") {
     return {
       ...styles,
       ".layout-status": {
@@ -138,10 +140,10 @@ const getGlobalUseStyles = () => createUseStyles(theme => {
     };
   }
 
-  return styles;
+  return styles as Styles;
 });
 
-const getBackgroundSize = theme => {
+const getBackgroundSize = (theme: AppTheme) => {
   if(theme.background.size) {
     return theme.background.size;
   }
@@ -151,24 +153,27 @@ const getBackgroundSize = theme => {
   return "200%";
 }
 
-const useStyles = createUseStyles(theme => ({
-  container: {
-    height: "100vh",
-    display: "grid",
-    overflow: "hidden",
-    gridTemplateColumns: "1fr",
-    gridTemplateRows: "auto 1fr 20px",
-    background: "linear-gradient(var(--bg-gradient-angle), var(--bg-gradient-start), var(--bg-gradient-end))",
-    backgroundSize: getBackgroundSize(theme),
-    backgroundImage: theme.background.image?`url('${theme.background.image}')`:"unset",
-    backgroundPosition: theme.background.position?theme.background.position:"unset",
-    color: "var(--ft-color-normal)"
-  },
-  body: {
-    position: "relative",
-    overflow: "hidden"
-  }
-}));
+const useStyles = createUseStyles(theme => { 
+  const appTheme = theme as AppTheme;
+  return {
+    container: {
+      height: "100vh",
+      display: "grid",
+      overflow: "hidden",
+      gridTemplateColumns: "1fr",
+      gridTemplateRows: "auto 1fr 20px",
+      background: "linear-gradient(var(--bg-gradient-angle), var(--bg-gradient-start), var(--bg-gradient-end))",
+      backgroundSize: getBackgroundSize(appTheme),
+      backgroundImage:appTheme.background.image?`url('${appTheme.background.image}')`:"unset",
+      backgroundPosition:appTheme.background.position?appTheme.background.position:"unset",
+      color: "var(--ft-color-normal)"
+    },
+    body: {
+      position: "relative",
+      overflow: "hidden"
+    }
+  };
+});
 
 const Layout = observer(() => {
 

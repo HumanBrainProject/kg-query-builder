@@ -21,9 +21,10 @@
  *
  */
 
-import { Theme } from "./Theme";
+//import { Theme } from "./Theme";
+import { jss } from "react-jss";
 
-const theme: Theme = {
+const theme: Jss.Theme = {
   name: "default",
   background: {
     gradient: {
