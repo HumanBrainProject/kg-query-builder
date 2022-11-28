@@ -111,7 +111,6 @@ interface TabProps {
   icon: IconDefinition;
   iconColor: string;
   iconSpin: boolean;
-  Component: JSX.Element;
   hideLabel: boolean;
   path: string;
   onClick: (e: MouseEvent<HTMLDivElement>) => void;
@@ -126,7 +125,6 @@ const Tab = ({
   icon,
   iconColor,
   iconSpin,
-  Component,
   hideLabel,
   path,
   onClick,
@@ -165,24 +163,18 @@ const Tab = ({
       onClick={handleClick}
       title={label}
     >
-      {Component ? (
-        <Component />
-      ) : (
-        <React.Fragment>
-          <div className={classes.icon} style={color} title={label}>
-            {icon && <FontAwesomeIcon fixedWidth icon={icon} spin={iconSpin} />}
-          </div>
-          {!hideLabel && (
-            <div className={classes.text} title={label}>
-              {label}
-            </div>
-          )}
-          {closeable && (
-            <div className={classes.close} onClick={handleClose}>
-              <FontAwesomeIcon icon={faTimes} />
-            </div>
-          )}
-        </React.Fragment>
+      <div className={classes.icon} style={color} title={label}>
+        {icon && <FontAwesomeIcon fixedWidth icon={icon} spin={iconSpin} />}
+      </div>
+      {!hideLabel && (
+        <div className={classes.text} title={label}>
+          {label}
+        </div>
+      )}
+      {closeable && (
+        <div className={classes.close} onClick={handleClose}>
+          <FontAwesomeIcon icon={faTimes} />
+        </div>
       )}
     </div>
   );

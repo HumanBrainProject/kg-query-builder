@@ -21,9 +21,11 @@
  *
  */
 
+import { observer } from "mobx-react-lite";
 import React from "react";
 import Toggle from "../../../../../Components/Toggle";
 import Field from "../../../../../Stores/Field";
+import { QuerySpecification } from "../../../../../Stores/QueryBuilderStore/QuerySpecification";
 import Filter from "./Filter";
 import SingleItemStrategy from "./SingleItemStrategy";
 import UnsupportedOption from "./UnsupportedOption";
@@ -35,85 +37,75 @@ interface OptionProps {
     name: string;
     value: boolean | string;
   }
-  onChange: (name: string, newValue?: boolean) => void;
+  onChange: (name?: string, newValue?: boolean) => void;
 }
 
-const Option = ({ field, rootField, option, onChange }: OptionProps) => {
-
+const Option = observer(({ field, rootField, option, onChange }:OptionProps) => {
   const { name, value } = option;
+  const isNotRootField = field !== rootField;
+  const hasLeaf = field.lookups.length > 0;
+  const isParentFieldFlattened = field?.parent?.isFlattened;
 
+  const showRequired = isNotRootField && !isParentFieldFlattened;
   if (name === "required") {
     return (
       <Toggle
         option={option}
         label="Required"
         comment="only applicable if parent field is not flattened"
-        show={field !== rootField  && !field.parent.isFlattened}
+        show={showRequired}
         onChange={onChange}
       />
     );
   }
 
+  const showSort = isNotRootField && !hasLeaf && field.isFlattenedToRoot;
   if (name === "sort") {
     return (
       <Toggle
         option={option}
-        label="Sort"
-        comment="enabling sort on this field will disable sort on other fields"
-        show={field !== rootField
-              && !field.lookups.length
-        }
+        label="Sort result by this property"
+        show={showSort}
         onChange={onChange}
       />
     );
   }
 
+  const showEnsureOrder = isNotRootField && hasLeaf && !isParentFieldFlattened;
   if (name === "ensureOrder") {
     return (
       <Toggle
         option={option}
         label="Ensure original order"
         comment="only applicable if parent field is not flattened"
-        show={field !== rootField
-          && !!field.lookups.length
-          && !field.parent.isFlattened
-        }
+        show={showEnsureOrder}
         onChange={onChange}
       />
     );
   }
 
+  const showFilter = isNotRootField && !hasLeaf;
   if (name === "filter") {
     return (
-      <Filter
-        filter={option.value}
-        show={field !== rootField
-          && !field.lookups.length
-        }
-        onChange={onChange}
-      />
+      <Filter filter={option as QuerySpecification.FilterItem} show={showFilter} onChange={onChange} />
     );
   }
 
+  const showSingleValue = isNotRootField && hasLeaf && !isParentFieldFlattened;
   if (name === "singleValue") {
     return (
       <SingleItemStrategy
         strategy={option.value}
-        show={field !== rootField
-          && !!field.lookups.length
-          && !field.parent.isFlattened
-        }
+        show={showSingleValue}
         onChange={onChange}
       />
     );
   }
 
   if (value !== undefined) {
-    return (
-      <UnsupportedOption name={name} value={value} onChange={onChange} />
-    );
+    return <UnsupportedOption name={name} value={value} onChange={onChange} />;
   }
   return null;
-};
+});
 
 export default Option;

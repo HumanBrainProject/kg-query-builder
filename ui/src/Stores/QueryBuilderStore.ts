@@ -34,7 +34,7 @@ import isEqual from "lodash/isEqual";
 import remove from "lodash/remove";
 import { v4 as uuidv4 } from "uuid";
 import jsonld from "jsonld";
-import jsdiff from "diff";
+import * as Diff from "diff";
 
 import {
   defaultContext,
@@ -923,7 +923,10 @@ export class QueryBuilderStore {
   }
 
   get JSONQueryDiff() {
-    return jsdiff.diffJson(this.JSONSourceQuery, this.JSONQuery);
+    if(this.JSONSourceQuery) {
+      return Diff.diffJson(this.JSONSourceQuery, this.JSONQuery);
+    }
+    return undefined;
   }
 
   selectQuery(query: Query.Query) {

@@ -53,14 +53,14 @@ class Field {
   structure: Field[] = [];
   alias?: string;
   aliasError?: boolean;
-  isFlattened: boolean = false;
-  isReverse: boolean = false;
+  isFlattened = false;
+  isReverse = false;
   optionsMap: Map<string, any> = new Map();
-  isUnknown: boolean = false;
-  isInvalid: boolean = false;
-  isInvalidLeaf: boolean = false;
+  isUnknown = false;
+  isInvalid = false;
+  isInvalidLeaf = false;
   typeFilter: string[] = [];
-  typeFilterEnabled: boolean = false;
+  typeFilterEnabled = false;
   parent?: Field;
 
   constructor(schema?: QuerySpecification.Schema | QuerySpecification.CombinedSchema, parent?: Field) {
@@ -86,7 +86,9 @@ class Field {
       toggleTypeFilter: action,
       typeFilter: observable,
       filterType: action,
-      types: computed
+      types: computed,
+      isFlattenedToRoot: computed,
+      rootField: computed
     });
 
     this.schema = schema;
@@ -104,6 +106,13 @@ class Field {
     } else {
       this.typeFilter = this.typeFilter.filter(t => t !== type);
     }
+  }
+
+  get isFlattenedToRoot():boolean {
+    if(!this.parent) {
+      return true;
+    }
+    return (this.lookups.length === 0 || this.isFlattened) && this.parent.isFlattenedToRoot;
   }
 
   get types() {
@@ -162,15 +171,28 @@ class Field {
     return this.optionsMap.has(name) ? this.optionsMap.get(name) : undefined;
   }
 
-  setOption(name: string, value: any, preventRecursivity?: boolean) {
+  setOption(name:string, value:any, preventRecursive?:boolean) {
     this.optionsMap.set(name, value);
-    if (name === "sort" && value && !preventRecursivity) {
-      this.parent && this.parent.structure.forEach(field => {
-        if (field !== this) {
-          field.setOption("sort", undefined, true);
-        }
-      });
+    if (name === "sort" && value && !preventRecursive) {
+      const rootField = this.rootField;      
+      this.setChildrenOption(rootField, name);
     }
+  }
+
+  get rootField(): Field {
+    if(!this.parent) {
+      return this;
+    }
+    return this.parent.rootField;
+  }
+
+  setChildrenOption(field:Field, property:string) {
+    field.structure.forEach(f => {
+      if (f !== this) {
+        f.setOption(property, undefined, true);
+        this.setChildrenOption(f, property);
+      }
+    });
   }
 
   setCurrentFieldFlattened(value: boolean) {
