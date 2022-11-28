@@ -120,7 +120,7 @@ const SpaceForm = observer(({ className }: SpaceFormProps) => {
     }
   };
 
-  const handleChangePrivate = (_:string, isSpaceShared?: boolean) => {
+  const handleChangePrivate = (_?:string, isSpaceShared?: boolean) => {
     if (!isReadMode) {
       if (isSpaceShared && authStore.sharedSpaces.length) {
         queryBuilderStore.setSpace(authStore.sharedSpaces[0]);

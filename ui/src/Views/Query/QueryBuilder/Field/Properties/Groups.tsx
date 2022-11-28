@@ -30,7 +30,7 @@ import { Type } from "../../../../../Stores/Type";
 interface GroupsProps {
   groups?: Type.PropertyGroup[];
   prefix: string;
-  onClick: (e: MouseEvent<HTMLDivElement>, property: Type.Property) => void;
+  onClick: (e: MouseEvent<HTMLElement>, property: Type.Property) => void;
 }
 
 const Groups = observer(({ groups, prefix, onClick }: GroupsProps) => {

@@ -96,9 +96,9 @@ class Field {
     );
   }
 
-  filterType(type: string, selected: boolean) {
+  filterType(type?: string, selected?: boolean) {
     if (selected) {
-      if (!this.typeFilter.includes(type)) {
+      if (type && !this.typeFilter.includes(type)) {
         this.typeFilter.push(type);
       }
     } else {

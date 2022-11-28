@@ -21,7 +21,7 @@
  *
  */
 
-import React, { useRef, useEffect, useState, MouseEvent, RefObject } from "react";
+import React, { useRef, useEffect, useState, MouseEvent } from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -84,8 +84,8 @@ interface PopOverButtonProps {
   buttonClassName: string;
   buttonTitle: string;
   children: React.ReactNode;
-  onCancel: () => void;
-  onOk: () => void;
+  onCancel: (e: MouseEvent<HTMLButtonElement>) => void;
+  onOk: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
 const PopOverButton = observer(
@@ -123,13 +123,13 @@ const PopOverButton = observer(
     const handleCancelClick = (e: MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       setShowPopOver(false);
-      onCancel();
+      onCancel(e);
     };
 
     const handleOkClick = (e: MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       setShowPopOver(false);
-      onOk();
+      onOk(e);
     };
 
     return (

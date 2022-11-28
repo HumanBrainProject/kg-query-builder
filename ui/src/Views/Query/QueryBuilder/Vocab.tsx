@@ -33,7 +33,7 @@ interface VocabProps{
 
 const Vocab = ({ defaultValue, value, onChange}: VocabProps) => {
 
-  const handleOnChange = (_:string, newValue?:boolean) => onChange(newValue?defaultValue:undefined);
+  const handleOnChange = (_?:string, newValue?:boolean) => onChange(newValue?defaultValue:undefined);
 
   return (
     <Toggle

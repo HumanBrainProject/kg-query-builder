@@ -37,7 +37,7 @@ import API from "../../../../Services/API";
 import { useStores } from "../../../../Hooks/UseStores";
 
 import PopOverButton from "../../../../Components/PopOverButton";
-import { Query } from "../../../../Stores/Query";
+import { Query as QuerySpecs } from "../../../../Stores/Query";
 
 const useStyles = createUseStyles({
   container:{
@@ -135,7 +135,7 @@ const useStyles = createUseStyles({
 });
 
 interface QueryProps {
-  query: Query.Query;
+  query: QuerySpecs.Query;
   enableDelete: boolean;
 }
 
@@ -149,7 +149,7 @@ const Query = observer(({query, enableDelete}: QueryProps) => {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const handleSelect = e => {
+  const handleSelect = (e: MouseEvent<HTMLDivElement>) => {
     API.trackEvent("Query", "Select", query.id);
     e.stopPropagation();
     if (!query.deleteError && !query.isDeleting) {
@@ -157,12 +157,12 @@ const Query = observer(({query, enableDelete}: QueryProps) => {
     }
   };
 
-  const handleConfirmDelete = e => {
+  const handleConfirmDelete = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setShowDeleteDialog(true);
   };
 
-  const handleDelete = e => {
+  const handleDelete = (e: MouseEvent<HTMLButtonElement>) => {
     API.trackEvent("Query", "Delete", query.id);
     e && e.stopPropagation();
     setShowDeleteDialog(false);
@@ -174,10 +174,11 @@ const Query = observer(({query, enableDelete}: QueryProps) => {
     setShowDeleteDialog(false);
   };
 
-  const handleCancelDelete = e => {
+  const handleCancelDelete = (e: MouseEvent<HTMLButtonElement>) => {
     e && e.stopPropagation();
     queryBuilderStore.cancelDeleteQuery(query);
   };
+
   return (
     <div className={`${classes.container} ${query.isDeleting?"is-deleting":""}`} key={query.id} onClick={handleSelect} onMouseLeave={handleCloseDeleteDialog} >
       <div className={classes.name}>

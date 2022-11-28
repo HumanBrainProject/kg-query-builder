@@ -1322,7 +1322,7 @@ export class QueryBuilderStore {
     }
   }
 
-  cancelDeleteQuery(query: Query.Query) {
+  cancelDeleteQuery(query?: Query.Query) {
     if (query && !query.isDeleting) {
       query.deleteError = undefined;
     }
@@ -1440,7 +1440,7 @@ export class QueryBuilderStore {
   async normalizeQuery(
     jsonSpec: QuerySpecification.JSONQuerySpecification
   ): Promise<Query.Query> {
-    let queryId = jsonSpec["@id"];
+    const queryId = jsonSpec["@id"];
     jsonSpec["@context"] = toJS(defaultContext);
     const expanded = await jsonld.expand(jsonSpec);
     const compacted = await jsonld.compact(expanded, jsonSpec["@context"]);

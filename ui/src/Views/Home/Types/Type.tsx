@@ -32,7 +32,7 @@ import API from "../../../Services/API";
 import Icon from "../../../Components/Icon";
 
 import { useStores } from "../../../Hooks/UseStores";
-import { Type as TypeSpec } from "../../../Stores/TypeStore";
+import { Type as TypeSpec} from "../../../Stores/Type";
 
 const useStyles = createUseStyles({
   container: {
@@ -65,7 +65,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const getTypeLabel = type => {
+const getTypeLabel = (type: TypeSpec.Type) => {
   if (!type) {
     return "";
   }
@@ -80,7 +80,7 @@ const getTypeLabel = type => {
 };
 
 interface TypeProps {
-  type: TypeSpec;
+  type: TypeSpec.Type;
   enableFocus: boolean; 
   onKeyDown: (e: KeyboardEvent<HTMLDivElement>) => void
 }

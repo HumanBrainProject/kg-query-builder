@@ -22,7 +22,6 @@
  */
 
 import { Permission } from "./AuthStore";
-import Field from "./Field";
 import { QuerySpecification } from "./QueryBuilderStore/QuerySpecification";
 
 export namespace Query {

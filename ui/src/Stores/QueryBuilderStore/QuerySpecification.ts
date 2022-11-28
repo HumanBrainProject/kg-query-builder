@@ -108,7 +108,7 @@ export namespace QuerySpecification {
   }
 
   export interface JSONQuerySpecification {
-    "@id": string;
+    "@id"?: string;
     "@context"?: Context;
     meta: Meta;
     space?: string;

@@ -21,7 +21,7 @@
  *
  */
 
-import React, { ChangeEvent, useEffect } from "react";
+import React, { useEffect } from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
@@ -77,7 +77,7 @@ const Queries = observer(({ className }: QueriesProps) => {
 
   const handleFetchSavedQueries = () => queryBuilderStore.fetchQueries();
 
-  const handleChange = (value: ChangeEvent<HTMLInputElement>) => queryBuilderStore.setQueriesFilterValue(value);
+  const handleChange = (value: string) => queryBuilderStore.setQueriesFilterValue(value);
 
   if (!queryBuilderStore.hasRootSchema) {
     return null;
@@ -99,7 +99,7 @@ const Queries = observer(({ className }: QueriesProps) => {
   if (queryBuilderStore.isFetchingQueries) {
     return (
       <Spinner>
-        Fetching queries for {queryBuilderStore.rootSchema.label}...
+        {queryBuilderStore.rootSchema ? `Fetching queries for ${queryBuilderStore.rootSchema.label}`:"Fetching queries"}...
       </Spinner>
     );
   }
@@ -111,8 +111,8 @@ const Queries = observer(({ className }: QueriesProps) => {
   if (!queryBuilderStore.hasQueries) {
     return (
       <ErrorPanel>
-        No saved queries available yet for {queryBuilderStore.rootSchema.label}
-        <small> - {queryBuilderStore.rootSchema.id}</small>
+        {queryBuilderStore.rootSchema ? `No saved queries available yet for ${queryBuilderStore.rootSchema.label}`: "No saved queries available"}
+        {queryBuilderStore.rootSchema && <small> - {queryBuilderStore.rootSchema.id}</small>}
         <br />
         <br />
         <Button variant="primary" onClick={handleFetchSavedQueries}>

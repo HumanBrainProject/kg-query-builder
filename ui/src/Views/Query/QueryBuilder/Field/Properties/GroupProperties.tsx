@@ -46,7 +46,7 @@ const useStyles = createUseStyles({
 interface GroupPropertiesProps {
   group: Type.PropertyGroup;
   prefix: string;
-  onClick: (e: MouseEvent<HTMLDivElement>, property: Type.Property) => void;
+  onClick: (e: MouseEvent<HTMLElement>, property: Type.Property) => void;
 }
 
 const GroupProperties = observer(({group, prefix, onClick }: GroupPropertiesProps) => {

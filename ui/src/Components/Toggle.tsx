@@ -57,7 +57,7 @@ interface ToggleProps {
   label?: string;
   comment?: string;
   show: boolean;
-  onChange: (name: string, newValue?: boolean) => void;
+  onChange: (name?: string, newValue?: boolean) => void;
 }
 
 const Toggle = ({

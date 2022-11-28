@@ -79,7 +79,7 @@ const useStyles = createUseStyles({
 
 interface TypeFilterItemProps {
   type: Query.TypeFilter;
-  onClick: (id: string, selected: boolean) => void;
+  onClick: (id?: string, selected?: boolean) => void;
 }
 
 const TypeFilterItem = ({ type, onClick }: TypeFilterItemProps) => {
@@ -88,7 +88,7 @@ const TypeFilterItem = ({ type, onClick }: TypeFilterItemProps) => {
 
   const handleOnClick = () => typeof onClick === "function" && onClick(type.id, !type.selected);
 
-  const handleToggleClick = (name: string, value?:boolean) => typeof onClick === "function" && onClick(name, !!value);
+  const handleToggleClick = (name?: string, value?:boolean) => typeof onClick === "function" && onClick(name, !!value);
 
   return(
     <div className={`${classes.typeFilter} ${type.isUnknown?"isUnknown":""} ${type.selected?"selected":""}`} onClick={handleOnClick} >
@@ -114,7 +114,7 @@ const TypeFilter = observer(() => {
 
   const handleToggleTypeFilter = () => queryBuilderStore.currentField && queryBuilderStore.currentField.toggleTypeFilter();
 
-  const toggleTypeFilter = (type: string, selected: boolean) => queryBuilderStore.currentField && queryBuilderStore.currentField.filterType(type, selected);
+  const toggleTypeFilter = (type?: string, selected?: boolean) => queryBuilderStore.currentField && queryBuilderStore.currentField.filterType(type, selected);
 
   if (!queryBuilderStore.currentField || !queryBuilderStore.currentField.types.length || queryBuilderStore.currentField === queryBuilderStore.rootField) {
     return null;
