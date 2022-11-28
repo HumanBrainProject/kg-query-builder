@@ -30,34 +30,33 @@ import { QuerySpecification } from "../../../../Stores/QueryBuilderStore/QuerySp
 import Field from "../../../../Stores/Field";
 
 interface TypeProps {
-  field: Field
+  field: Field;
 }
 
 const Type = observer(({ field }: TypeProps) => {
   if (field.isUnknown && field.parent) {
     if (field.schema?.simpleAttributeName) {
+      const attributeNameSpace = field.schema.attributeNamespace
+        ? field.schema.attributeNamespace
+        : field.schema.attribute;
       return (
-        <React.Fragment>
+        <>
           {field.schema.simpleAttributeName}&nbsp;
           <span title={field.schema?.attribute}>
-            ({" "}
-            {field.schema.attributeNamespace
-              ? field.schema.attributeNamespace
-              : field.schema.attribute}{" "}
-            )
+            (` ${attributeNameSpace} `)
           </span>
-        </React.Fragment>
+        </>
       );
     }
-    return field.schema?.attribute;
+    return <>{field.schema?.attribute}</>;
   }
 
   if (field.parent) {
     return (
-      <React.Fragment>
+      <>
         {field.schema?.label}
         <Types field={field} />
-      </React.Fragment>
+      </>
     );
   }
 
@@ -71,6 +70,5 @@ const Type = observer(({ field }: TypeProps) => {
   );
 });
 Type.displayName = "Type";
-
 
 export default Type;

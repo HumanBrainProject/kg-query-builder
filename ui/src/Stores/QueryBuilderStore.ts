@@ -354,7 +354,7 @@ export class QueryBuilderStore {
     }, [] as Type.Type[]);
   }
 
-  get currentFieldFilteredCommonProperties() {
+  get currentFieldFilteredCommonProperties(): Type.Property[] {
     const counters = {} as Counter;
 
     const addPropToNewCounter = (key: string, prop: Type.Property) => {
@@ -485,7 +485,7 @@ export class QueryBuilderStore {
         id: schema.id,
         label: schema.label,
         canBe: [schema.id]
-      });
+      } as QuerySpecification.Schema);
       this.rootField.isInvalidLeaf = true;
       this.isSaving = false;
       this.saveError = undefined;
@@ -597,11 +597,11 @@ export class QueryBuilderStore {
   }
 
   get rootSchema() {
-    return this.rootField?.schema;
+    return this.rootField?.schema as QuerySpecification.Schema;
   }
 
   get rootSchemaId() {
-    return this.rootField?.schema?.id;
+    return this.rootSchema?.id;
   }
 
   get hasRootSchema(): boolean {
@@ -877,7 +877,7 @@ export class QueryBuilderStore {
       this.rootField && this.rootField.schema
         ? {
             ...this.meta,
-            type: this.rootField.schema.id
+            type: this.rootSchemaId
           }
         : { ...this.meta };
     const name = this.label ? this.label.trim() : "";
@@ -932,9 +932,7 @@ export class QueryBuilderStore {
   selectQuery(query: Query.Query) {
     if (
       !this.isSaving &&
-      this.rootField &&
-      this.rootField.schema &&
-      this.rootField.schema.id &&
+      this.rootSchemaId &&
       query &&
       !query.isDeleting
     ) {
@@ -1011,7 +1009,7 @@ export class QueryBuilderStore {
         id: type.id,
         label: type.label,
         canBe: [type.id]
-      };
+      } as QuerySpecification.Schema;
       this.rootField = buildFieldTreeFromQuery(
         this.rootStore.typeStore.types,
         this.context,
@@ -1024,7 +1022,7 @@ export class QueryBuilderStore {
         id: unknownType,
         label: unknownType,
         canBe: typeName ? [typeName] : []
-      };
+      } as QuerySpecification.Schema;
       this.rootField = buildFieldTreeFromQuery(
         this.rootStore.typeStore.types,
         this.context,
@@ -1337,11 +1335,11 @@ export class QueryBuilderStore {
       this.queriesFilterValue = "";
       this.isQueriesFetched = false;
       this.fetchQueriesError = undefined;
-      if (this.rootField && this.rootField.schema && this.rootField.schema.id) {
+      if (this.rootSchemaId) {
         this.isFetchingQueries = true;
         try {
           const response = await this.transportLayer.listQueries(
-            this.rootField.schema.id
+            this.rootSchemaId
           );
           runInAction(() => {
             this.specifications = [];
@@ -1447,17 +1445,15 @@ export class QueryBuilderStore {
     jsonSpec["@context"] = toJS(defaultContext);
     const expanded = await jsonld.expand(jsonSpec);
     const compacted = await jsonld.compact(expanded, jsonSpec["@context"]);
+    const meta = compacted.meta as QuerySpecification.Meta;
     return {
       id: queryId,
-      context: compacted["@context"],
-      structure: compacted.structure,
-      properties: getProperties(compacted),
-      meta: compacted.meta,
-      label: compacted.meta && compacted.meta.name ? compacted.meta.name : "",
-      description:
-        compacted.meta && compacted.meta.description
-          ? compacted.meta.description
-          : "",
+      context: compacted["@context"] as QuerySpecification.Context,
+      structure: compacted.structure as QuerySpecification.Field[],
+      properties: getProperties(compacted as QuerySpecification.JSONQuerySpecification),
+      meta: meta,
+      label: meta.name ? meta.name  : "",
+      description: meta.description ? meta.description : "",
       space: jsonSpec["https://core.kg.ebrains.eu/vocab/meta/space"],
       isDeleting: false,
       deleteError: undefined

@@ -52,7 +52,7 @@ const UpdatableQueryActions = observer(() => {
 
   const compareDisabled = !hasQueryChanged;
   const saveAsDisabled = isQueryEmpty;
-  const saveDisabled = !hasChanged || isQueryEmpty || sourceQuery?.isDeleting;
+  const saveDisabled = !hasChanged || isQueryEmpty || !!sourceQuery?.isDeleting;
 
   return (
     <>

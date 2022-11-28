@@ -33,6 +33,7 @@ import Groups from "./Properties/Groups";
 import List from "./Properties/List";
 import Toggle from "../../../../Components/Toggle";
 import { Type } from "../../../../Stores/Type";
+import { QuerySpecification } from "../../../../Stores/QueryBuilderStore/QuerySpecification";
 
 const useStyles = createUseStyles({
   container: {
@@ -92,8 +93,12 @@ const Properties = observer(() => {
   const lookupsCommonsLinks = queryBuilderStore.currentFieldLookupsCommonLinks;
   const lookupsLinks = queryBuilderStore.currentFieldLookupsLinks;
 
-  const handleAddField = (e: MouseEvent<HTMLElement>, schema: Type.Property) => {
+  const handleAddField = (e: MouseEvent<HTMLElement>, property: Type.Property) => {
     //Don't got to newly chosen field options if ctrl is pressed (or cmd)
+    const schema = {
+      ...property,
+      isUnknown: false
+    } as QuerySpecification.CombinedSchema;
     queryBuilderStore.addField(schema, field, !e.ctrlKey && !e.metaKey);
   };
 

@@ -39,7 +39,7 @@ const CopyAsNewQueryButton = observer(() => {
   const { queryBuilderStore } = useStores();
 
   const onClick = () => {
-    API.trackEvent("Query", "CopyAsNew", queryBuilderStore.rootField.id);
+    API.trackEvent("Query", "CopyAsNew", queryBuilderStore.queryId);
     const uuid = uuidv4();
     queryBuilderStore.setAsNewQuery(uuid);
     navigate(`/queries/${uuid}`);

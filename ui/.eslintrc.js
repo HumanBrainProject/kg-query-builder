@@ -26,6 +26,7 @@ module.exports = {
     "rules": {
       "react/prop-types": [
           0
-        ]
+        ],
+        "@typescript-eslint/no-namespace": "off"
     }
 }

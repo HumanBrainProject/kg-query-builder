@@ -25,6 +25,7 @@ import React, { MouseEvent } from "react";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconDefinition } from "@fortawesome/fontawesome-common-types";
+import { PathMatch } from "react-router-dom";
 
 const useStyles = createUseStyles({
   container: {
@@ -99,7 +100,7 @@ const useStyles = createUseStyles({
 interface TabProps {
   label: string;
   disabled: boolean;
-  current?: boolean;
+  current?: PathMatch<string>|null;
   icon?: IconDefinition;
   iconColor?: string;
   iconSpin?: boolean;

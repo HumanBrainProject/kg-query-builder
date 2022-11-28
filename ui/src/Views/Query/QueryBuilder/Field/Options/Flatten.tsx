@@ -43,6 +43,7 @@ const Flatten = observer(({ field, show, onChange }: FlattenProps) => {
   return (
     <Toggle
       option={{
+        name: "",
         value: field.isFlattened ? true : undefined
       }}
       label="Flatten"

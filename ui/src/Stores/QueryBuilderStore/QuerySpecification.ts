@@ -21,14 +21,11 @@
  *
  */
 
+import { Type } from "../Type";
 export namespace QuerySpecification {
-  export interface AbstractSchema {
-    label?: string;
-    canBe?: string[];
-    simpleAttributeName?: string;
-    attribute?: string;
+
+  export interface AbstractSchema extends Type.Property {
     attributeNamespace?: string;
-    reverse?: boolean;
   }
 
   export interface Schema extends AbstractSchema {
@@ -101,7 +98,7 @@ export namespace QuerySpecification {
 
   export interface Context {
     "@vocab": string;
-    query: string;
+    query?: string;
     propertyName: JsonLdWithType;
     path: JsonLdWithType;
     [index: string]: any;

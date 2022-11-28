@@ -42,7 +42,7 @@ const SaveButton = observer(({ disabled }: SaveButtonProps) => {
   const { queryBuilderStore } = useStores();
 
   const onClick = () => {
-    API.trackEvent("Query", "Save", queryBuilderStore.rootField.id);
+    API.trackEvent("Query", "Save", queryBuilderStore.queryId);
     const match = matchPath({path:"/queries/:id/:mode"}, location.pathname);
     queryBuilderStore.saveQuery(navigate, match?.params?.mode);
   };

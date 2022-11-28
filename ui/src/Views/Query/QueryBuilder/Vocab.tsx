@@ -26,18 +26,19 @@ import React from "react";
 import Toggle from "../../../Components/Toggle";
 
 interface VocabProps{
-  defaultValue: string;
+  defaultValue?: string;
   value?: boolean; 
   onChange: (value?: string) => void
 }
 
 const Vocab = ({ defaultValue, value, onChange}: VocabProps) => {
 
-  const handleOnChange = (_?:string, newValue?:boolean) => onChange(newValue?defaultValue:undefined);
+  const handleOnChange = (_:string, newValue?:boolean) => onChange(newValue?defaultValue:undefined);
 
   return (
     <Toggle
       option={{
+        name: "",
         value: value?true:undefined
       }}
       label="Strip vocab"

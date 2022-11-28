@@ -28,21 +28,27 @@ import GroupProperties from "./GroupProperties";
 import { Type } from "../../../../../Stores/Type";
 
 interface GroupsProps {
-  groups?: Type.PropertyGroup[];
+  groups: Type.PropertyGroup[];
   prefix: string;
   onClick: (e: MouseEvent<HTMLElement>, property: Type.Property) => void;
 }
 
 const Groups = observer(({ groups, prefix, onClick }: GroupsProps) => {
-
   if (!Array.isArray(groups) || !groups.length) {
     return null;
   }
 
   return (
-    groups.map(group => (
-      <GroupProperties key={group.id} group={group} prefix={prefix} onClick={onClick} />
-    ))
+    <>
+      {groups.map(group => (
+        <GroupProperties
+          key={group.id}
+          group={group}
+          prefix={prefix}
+          onClick={onClick}
+        />
+      ))}
+    </>
   );
 });
 Groups.displayName = "Groups";

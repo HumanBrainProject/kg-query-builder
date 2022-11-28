@@ -33,11 +33,8 @@ import { useStores } from "../../../Hooks/UseStores";
 
 import Dialog from "../../../Components/Dialog";
 
-interface DeleteButtonProps {
-  disabled: boolean;
-}
 
-const DeleteButton = observer(({ disabled }: DeleteButtonProps) => {
+const DeleteButton = observer(() => {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -50,7 +47,7 @@ const DeleteButton = observer(({ disabled }: DeleteButtonProps) => {
   };
 
   const handleDelete = () => {
-    API.trackEvent("Query", "Delete", queryBuilderStore.rootField.id);
+    API.trackEvent("Query", "Delete", queryBuilderStore.queryId);
     setShowDeleteDialog(false);
     queryBuilderStore.deleteQuery(queryBuilderStore.sourceQuery, navigate);
   };
@@ -66,7 +63,7 @@ const DeleteButton = observer(({ disabled }: DeleteButtonProps) => {
 
   return (
       <>
-        <Button variant="danger" disabled={disabled} onClick={handleConfirmDelete}>
+        <Button variant="danger" onClick={handleConfirmDelete}>
           <FontAwesomeIcon icon={faTrashAlt} />&nbsp;Delete {showDeleteDialog}
         </Button>
         {showDeleteDialog && (

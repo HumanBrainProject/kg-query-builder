@@ -39,7 +39,7 @@ const CompareButton = observer(({ disabled }: CompareButtonProps) => {
   const { queryBuilderStore } = useStores();
 
   const onClick = () => {
-    API.trackEvent("Query", "Compare", queryBuilderStore.rootField.id);
+    API.trackEvent("Query", "Compare", queryBuilderStore.queryId);
     queryBuilderStore.toggleCompareChanges();
   };
 

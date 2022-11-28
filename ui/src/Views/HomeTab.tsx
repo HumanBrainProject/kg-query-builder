@@ -23,7 +23,7 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { matchPath, useLocation, useNavigate } from "react-router-dom";
+import { matchPath, PathMatch, useLocation, useNavigate } from "react-router-dom";
 import {faHome} from "@fortawesome/free-solid-svg-icons/faHome";
 
 import { useStores } from "../Hooks/UseStores";
@@ -56,10 +56,10 @@ const HomeTab = observer(() => {
   };
 
   const handleCancel = () => setShowConfirmationModal(false);
-
+  const match: PathMatch<string>|null = matchPath({ path: "/" }, location.pathname)
   return (
     <>
-    <Tab icon={faHome} current={matchPath({ path: "/" }, location.pathname)} onClick={handleHomeClick} label={"Home"} hideLabel disabled={queryBuilderStore.isSaving} />
+    <Tab icon={faHome} current={match} onClick={handleHomeClick} label={"Home"} hideLabel disabled={queryBuilderStore.isSaving} />
       {showConfirmationModal && (
         <Dialog message="Your query has unsaved changes. If you continue you'll loose your changes. Do you want to continue?" onCancel={handleCancel} onConfirm={goHome} />
       )}

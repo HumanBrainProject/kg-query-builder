@@ -154,7 +154,9 @@ const addOptions = (queryField: QuerySpecification.Field, options: Query.Option[
           break;
         }
         default:
-          queryField[name] = value;
+          if(name) {
+            queryField[name] = value;
+          }
       }
     });
   }
@@ -167,7 +169,7 @@ const addLastChildOptionsOfFlattenedField = (
 ) => {
   if (Array.isArray(options)) {
     const filteredOptions = options.filter(
-      ({ name }) => !optionsToKeepOnFlattenendField.includes(name)
+      ({ name }) => name && !optionsToKeepOnFlattenendField.includes(name)
     );
     addOptions(queryField, filteredOptions);
   }

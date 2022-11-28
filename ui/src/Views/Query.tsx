@@ -43,6 +43,8 @@ import DeletingMessage from "./Query/DeletingMessage";
 import SpinnerPanel from "../Components/SpinnerPanel";
 import ErrorPanel from "../Components/ErrorPanel";
 import API from "../Services/API";
+import { Type } from "../Stores/Type";
+import { QuerySpecification } from "../Stores/QueryBuilderStore/QuerySpecification";
 
 const useStyles = createUseStyles({
   container: {
@@ -94,7 +96,7 @@ const Query = observer(({ mode }:ModeProps) => {
   const { queryBuilderStore, typeStore } = useStores();
 
   const selectQuery = async () => {
-    if (queryBuilderStore && id != queryBuilderStore.queryId) {
+    if (id && queryBuilderStore && id != queryBuilderStore.queryId) {
       let query = queryBuilderStore.findQuery(id);
       if(!query) {
         await queryBuilderStore.fetchQuery(id);
@@ -103,9 +105,9 @@ const Query = observer(({ mode }:ModeProps) => {
       if(query) {
         const typeName = query.meta.type;
         if (localStorage.getItem("type")) {
-          localStorage.setItem("type", typeName);
+          localStorage.setItem("type", typeName?typeName:"");
         }
-        const type = typeStore.types.get(typeName);
+        const type = typeName && typeStore.types.get(typeName);
         if(type) {
           queryBuilderStore.selectRootSchema(type);
           queryBuilderStore.selectQuery(query);
@@ -114,8 +116,10 @@ const Query = observer(({ mode }:ModeProps) => {
           const unknownSchema = {
             id: unknownType,
             label: unknownType,
-            canBe: typeName?[typeName]:[]
-          };
+            color: "black",
+            description: "",
+            properties: []
+          } as Type.Type;
           queryBuilderStore.selectRootSchema(unknownSchema);
           queryBuilderStore.selectQuery(query);
           if (mode !== "edit") {

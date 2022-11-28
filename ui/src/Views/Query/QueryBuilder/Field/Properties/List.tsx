@@ -26,6 +26,7 @@ import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import PropertyComponent from "./Property";
 import { Type } from "../../../../../Stores/Type";
+import { QuerySpecification } from "../../../../../Stores/QueryBuilderStore/QuerySpecification";
 
 const useStyles = createUseStyles({
   container: {

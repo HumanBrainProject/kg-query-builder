@@ -27,14 +27,19 @@ import { observer } from "mobx-react-lite";
 import { useStores } from "../../../Hooks/UseStores";
 
 import ComparePart from "./ComparePart";
+import { Change } from "diff";
 
 const CompareChanges = observer(() => {
 
   const { queryBuilderStore } = useStores();
 
+  if(!queryBuilderStore.JSONQueryDiff) {
+    return null;
+  }
+
   return (
     <pre>
-      {queryBuilderStore.JSONQueryDiff.map((part, index) => (
+      {queryBuilderStore.JSONQueryDiff.map((part: Change, index) => (
         <ComparePart key={index} part={part} />
       ))}
     </pre>

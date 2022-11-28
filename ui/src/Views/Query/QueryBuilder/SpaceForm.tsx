@@ -112,20 +112,21 @@ const SpaceForm = observer(({ className }: SpaceFormProps) => {
   }`;
 
   const handleChangeSpace = (e: ChangeEvent<HTMLSelectElement>) => {
-    if(!isReadMode) {
-      const space = authStore.getSpace(e.target.value) || authStore.privateSpace;;
-      if(space) {
+    if (!isReadMode) {
+      const space =
+        authStore.getSpace(e.target.value) || authStore.privateSpace;
+      if (space) {
         queryBuilderStore.setSpace(space);
       }
     }
   };
 
-  const handleChangePrivate = (_?:string, isSpaceShared?: boolean) => {
+  const handleChangePrivate = (_?: string, isSpaceShared?: boolean) => {
     if (!isReadMode) {
       if (isSpaceShared && authStore.sharedSpaces.length) {
         queryBuilderStore.setSpace(authStore.sharedSpaces[0]);
       } else {
-        if(authStore.privateSpace) {
+        if (authStore.privateSpace) {
           queryBuilderStore.setSpace(authStore.privateSpace);
         }
       }
@@ -136,7 +137,7 @@ const SpaceForm = observer(({ className }: SpaceFormProps) => {
     <div className={`${classes.container} ${className ? className : ""}`}>
       <Toggle
         className={classes.toggle}
-        option={{ value: isShared ? true : undefined }}
+        option={{ name: "", value: isShared ? true : undefined }}
         label="Shared"
         show={true}
         onChange={handleChangePrivate}

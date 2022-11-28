@@ -64,7 +64,7 @@ const useStyles = createUseStyles({
 
 interface NameProps {
   field: Field;
-  rootField: Field;
+  rootField?: Field;
 }
 
 const Name = observer(({ field, rootField }: NameProps) => {

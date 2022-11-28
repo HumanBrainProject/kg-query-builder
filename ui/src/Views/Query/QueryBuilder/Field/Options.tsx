@@ -67,7 +67,7 @@ const Options = observer(() => {
 
   const handleChangeFlatten = (value: boolean) => field.setCurrentFieldFlattened(value);
 
-  const handleChangeOption = (name:string, value:boolean) => field.setOption(name, value);
+  const handleChangeOption = (name:string, value?:boolean) => field.setOption(name, value);
   const showFlatten = field !== rootField && field.lookups.length > 0 && field.structure.length === 1;
   return (
     <div className={classes.container}>

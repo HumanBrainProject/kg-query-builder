@@ -39,7 +39,7 @@ const SaveAsButton = observer(({ disabled }:SaveAsButtonProps) => {
   const { queryBuilderStore } = useStores();
 
   const onClick = () => {
-    API.trackEvent("Query", "SaveAs", queryBuilderStore.rootField.id);
+    API.trackEvent("Query", "SaveAs", queryBuilderStore.queryId);
     queryBuilderStore.setSaveAsMode(true);
   };
 

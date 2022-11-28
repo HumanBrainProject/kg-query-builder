@@ -132,9 +132,10 @@ const getPropertyFromLookups = (
 ): QuerySpecification.CombinedSchema => {
   const propertyFallback: QuerySpecification.CombinedSchema = {
     isUnknown: true,
-    attribute: attribute,
+    label: "",
+    attribute: attribute ? attribute: "",
     attributeNamespace: attributeNamespace,
-    simpleAttributeName: simpleAttributeName,
+    simpleAttributeName: simpleAttributeName?simpleAttributeName:"",
     reverse: isReverse
   };
   if (!(types instanceof Object) || !Array.isArray(lookups) || !attribute) {
@@ -418,7 +419,7 @@ export const buildFieldTreeFromQuery = (
     id: schema.id,
     label: schema.label,
     canBe: [schema.id]
-  });
+  } as QuerySpecification.Schema);
   addJsonFieldsToField(types, context, rootField, structure);
   properties &&
     Object.entries(properties).forEach(([name, value]) =>

@@ -32,12 +32,12 @@ import UnsupportedOption from "./UnsupportedOption";
 
 interface OptionProps {
   field: Field;
-  rootField: Field;
+  rootField?: Field;
   option: {
     name: string;
     value: boolean | string;
   }
-  onChange: (name?: string, newValue?: boolean) => void;
+  onChange: (name: string, newValue?: any) => void;
 }
 
 const Option = observer(({ field, rootField, option, onChange }:OptionProps) => {
@@ -95,7 +95,7 @@ const Option = observer(({ field, rootField, option, onChange }:OptionProps) => 
   if (name === "singleValue") {
     return (
       <SingleItemStrategy
-        strategy={option.value}
+        strategy={option.value as string}
         show={showSingleValue}
         onChange={onChange}
       />
@@ -103,7 +103,7 @@ const Option = observer(({ field, rootField, option, onChange }:OptionProps) => 
   }
 
   if (value !== undefined) {
-    return <UnsupportedOption name={name} value={value} onChange={onChange} />;
+    return <UnsupportedOption name={name} value={value as string} onChange={onChange} />;
   }
   return null;
 });

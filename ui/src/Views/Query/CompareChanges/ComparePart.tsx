@@ -21,6 +21,7 @@
  *
  */
 
+import { Change } from "diff";
 import React from "react";
 import { createUseStyles } from "react-jss";
 
@@ -42,11 +43,7 @@ const useStyles = createUseStyles({
 });
 
 interface ComparePartProps {
-  part: {
-    value: string;
-    added: boolean;
-    removed: boolean;
-  };
+  part: Change
 }
 
 const ComparePart = ({ part }: ComparePartProps) => {
