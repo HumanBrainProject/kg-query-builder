@@ -65,7 +65,11 @@ const Actions = observer(({ field, className }: ActionsProps) => {
 
   const { queryBuilderStore } = useStores();
 
-  const handleRemoveField = (e) => {
+  if (!field.parent) {
+    return null;
+  }
+
+  const handleRemoveField = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     queryBuilderStore.removeField(field);
   };
@@ -86,11 +90,7 @@ const Actions = observer(({ field, className }: ActionsProps) => {
 
   const canMoveUp = fieldIndex >= 1;
   const canMoveDown =
-    fieldIndex === -1 ? false : fieldIndex < field.parent.structure.length - 1;
-
-  if (!field.parent) {
-    return null;
-  }
+    fieldIndex === -1 ? false : fieldIndex < field.parent.structure.length - 1; 
 
   return (
     <div className={`${classes.container} ${className?className:""}`}>

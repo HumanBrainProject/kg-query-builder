@@ -80,8 +80,8 @@ export class TransportLayer {
   async performQuery(
     query: any,
     stage: string,
-    from: number,
-    size: number,
+    from: string,
+    size: string,
     instanceId: string | undefined,
     restrictToSpaces: string[]| undefined,
     params: any

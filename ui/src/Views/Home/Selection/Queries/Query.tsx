@@ -21,17 +21,14 @@
  *
  */
 
-import React, {useState} from "react";
+import React, {MouseEvent, useState} from "react";
 import { createUseStyles } from "react-jss";
 import {observer} from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons/faTrashAlt";
-import {faUndoAlt} from "@fortawesome/free-solid-svg-icons/faUndoAlt";
 import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
 import {faTag} from "@fortawesome/free-solid-svg-icons/faTag";
 import {faCircleNotch} from "@fortawesome/free-solid-svg-icons/faCircleNotch";
-import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
 import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
 
@@ -40,7 +37,7 @@ import API from "../../../../Services/API";
 import { useStores } from "../../../../Hooks/UseStores";
 
 import PopOverButton from "../../../../Components/PopOverButton";
-import { QuerySpecification } from "../../../../Stores/QueryBuilderStore";
+import { Query } from "../../../../Stores/Query";
 
 const useStyles = createUseStyles({
   container:{
@@ -138,13 +135,12 @@ const useStyles = createUseStyles({
 });
 
 interface QueryProps {
-  query: QuerySpecification;
+  query: Query.Query;
   enableDelete: boolean;
 }
 
 
 const Query = observer(({query, enableDelete}: QueryProps) => {
-// const SavedQuery = observer(({query, showUser, enableDelete}) => {
   const classes = useStyles();
 
   const navigate = useNavigate();
@@ -170,10 +166,10 @@ const Query = observer(({query, enableDelete}: QueryProps) => {
     API.trackEvent("Query", "Delete", query.id);
     e && e.stopPropagation();
     setShowDeleteDialog(false);
-    queryBuilderStore.deleteQuery(query, null);
+    queryBuilderStore.deleteQuery(query, undefined);
   };
 
-  const handleCloseDeleteDialog = e => {
+  const handleCloseDeleteDialog = (e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     setShowDeleteDialog(false);
   };

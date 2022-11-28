@@ -23,14 +23,14 @@
 import { init as SentryInit, captureException as SentryCaptureException, showReportDialog as SentryShowReportDialog, BrowserOptions } from "@sentry/browser";
 import ReactPiwik from "react-piwik";
 
-const getSize = (size?: number|null) => {
+const getSize = (size?: string|null) => {
   if (size !== undefined && size !== null) {
     return `size=${size}&`;
   }
   return "";
 };
 
-const getFrom = (from?: number|null) => {
+const getFrom = (from?: string|null) => {
   if (from !== undefined && from !== null) {
     return `from=${from}&`;
   }
@@ -83,7 +83,7 @@ const endpoints = {
   spaces: () => "/service/api/spaces",
   types: () => "/service/api/types",
   structure: () => "/service/api/structure?withLinks=true",
-  performQuery: (stage?:string, from?:number, size?:number, instanceId?:string, restrictToSpaces?:string[], params?: any) => {
+  performQuery: (stage?:string, from?:string, size?:string, instanceId?:string, restrictToSpaces?:string[], params?: any) => {
     const restrictToSpacesString =
       Array.isArray(restrictToSpaces) && restrictToSpaces.length
         ? "&restrictToSpaces=" +

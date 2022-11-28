@@ -57,7 +57,6 @@ export namespace Query {
   export interface SpaceQueries {
     name: string;
     label: string;
-    showUser: boolean;
     isPrivate: boolean;
     permissions: Permission;
     queries: Query[];

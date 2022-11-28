@@ -38,7 +38,7 @@ const RequiredFlag = observer(({ field }: FieldProps) => {
   
   const classes = useStyles();
 
-  if (!field.getOption("required") || field.parent.isFlattened) {
+  if (!field.getOption("required") || (field.parent  && field.parent.isFlattened)) {
     return null;
   }
 

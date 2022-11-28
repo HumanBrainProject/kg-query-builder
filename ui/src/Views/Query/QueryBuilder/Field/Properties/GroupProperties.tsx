@@ -27,8 +27,8 @@ import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
 
-import { PropertyGroup, Property } from "../../../../../Stores/TypeStore";
 import PropertyComponent from "./Property";
+import { Type } from "../../../../../Stores/Type";
 
 const useStyles = createUseStyles({
   container: {
@@ -44,9 +44,9 @@ const useStyles = createUseStyles({
 });
 
 interface GroupPropertiesProps {
-  group: PropertyGroup;
+  group: Type.PropertyGroup;
   prefix: string;
-  onClick: (e: MouseEvent<HTMLDivElement>, property: Property) => void;
+  onClick: (e: MouseEvent<HTMLDivElement>, property: Type.Property) => void;
 }
 
 const GroupProperties = observer(({group, prefix, onClick }: GroupPropertiesProps) => {

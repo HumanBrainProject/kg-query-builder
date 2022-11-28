@@ -23,7 +23,7 @@
 
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { createUseStyles, DefaultTheme, useTheme, Styles, jss } from "react-jss";
+import { createUseStyles, DefaultTheme, useTheme, Styles } from "react-jss";
 
 import { useStores } from "../Hooks/UseStores";
 
@@ -33,8 +33,8 @@ import Footer from "./Footer";
 import Authenticate from "./Authenticate";
 import { Theme as AppTheme } from "../Themes/Theme";
 
-const getGlobalUseStyles = () => createUseStyles(theme => {
-  const appTheme = theme as AppTheme;
+const getGlobalUseStyles = () => createUseStyles((theme: AppTheme) => {
+  const appTheme = theme;
   const styles = {
     "@global": {
       ":root": {

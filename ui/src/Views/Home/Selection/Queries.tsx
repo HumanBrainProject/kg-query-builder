@@ -138,7 +138,6 @@ const Queries = observer(({ className }: QueriesProps) => {
                 key={group.name}
                 title={group.label}
                 list={group.queries}
-                showUser={group.showUser}
                 enableDelete={group.permissions.canDelete}
               />
             ))}

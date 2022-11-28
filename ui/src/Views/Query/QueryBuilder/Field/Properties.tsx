@@ -21,7 +21,7 @@
  *
  */
 
-import React, { ChangeEvent, MouseEvent, useRef }  from "react";
+import React, { MouseEvent }  from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { Scrollbars } from "react-custom-scrollbars-2";
@@ -32,6 +32,7 @@ import Filter from "../../../../Components/Filter";
 import Groups from "./Properties/Groups";
 import List from "./Properties/List";
 import Toggle from "../../../../Components/Toggle";
+import { Type } from "../../../../Stores/Type";
 
 const useStyles = createUseStyles({
   container: {
@@ -91,12 +92,12 @@ const Properties = observer(() => {
   const lookupsCommonsLinks = queryBuilderStore.currentFieldLookupsCommonLinks;
   const lookupsLinks = queryBuilderStore.currentFieldLookupsLinks;
 
-  const handleAddField = (e: MouseEvent<HTMLElement>, schema) => {
+  const handleAddField = (e: MouseEvent<HTMLElement>, schema: Type.Property) => {
     //Don't got to newly chosen field options if ctrl is pressed (or cmd)
     queryBuilderStore.addField(schema, field, !e.ctrlKey && !e.metaKey);
   };
 
-  const handleChildrenFilterChange = (value: ChangeEvent<HTMLInputElement>) => queryBuilderStore.setChildrenFilterValue(value);
+  const handleChildrenFilterChange = (value: string) => queryBuilderStore.setChildrenFilterValue(value);
 
   const handleToggleAdvancedProperties = () => queryBuilderStore.toggleIncludeAdvancedAttributes();
 

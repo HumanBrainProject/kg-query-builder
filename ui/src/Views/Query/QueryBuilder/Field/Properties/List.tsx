@@ -24,9 +24,8 @@
 import React, { MouseEvent } from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-
-import { Property } from "../../../../../Stores/TypeStore";
 import PropertyComponent from "./Property";
+import { Type } from "../../../../../Stores/Type";
 
 const useStyles = createUseStyles({
   container: {
@@ -42,9 +41,9 @@ const useStyles = createUseStyles({
 });
 
 interface ListProps {
-  properties?: Property[];
+  properties?: Type.Property[];
   label: string;
-  onClick: (e: MouseEvent<HTMLElement>, property: Property) => void;
+  onClick: (e: MouseEvent<HTMLElement>, property: Type.Property) => void;
 }
 
 const List = observer(({ properties, label, onClick }: ListProps) => {

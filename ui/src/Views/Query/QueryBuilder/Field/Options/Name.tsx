@@ -72,7 +72,7 @@ const Name = observer(({ field, rootField }: NameProps) => {
 
   const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => field.setAlias(e.target.value);
 
-  if (field === rootField || field.parent.isFlattened) {
+  if (field === rootField || (field.parent && field.parent.isFlattened)) {
     return null;
   }
 

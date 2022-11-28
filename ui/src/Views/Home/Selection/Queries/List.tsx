@@ -24,9 +24,9 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-
+import { Query as QueryProps } from "../../../../Stores/Query";
 import Query from "./Query";
-import { QuerySpecification } from "../../../../Stores/QueryBuilderStore";
+
 
 const useStyles = createUseStyles({
   container: {
@@ -50,12 +50,11 @@ const useStyles = createUseStyles({
 
 interface ListProps {
   title: string;
-  list: QuerySpecification[];
-  showUser: boolean;
+  list: QueryProps.Query[];
   enableDelete: boolean;
 }
 
-const List = observer(({ title, list, showUser, enableDelete }: ListProps) => {
+const List = observer(({ title, list, enableDelete }: ListProps) => {
   const classes = useStyles();
   if (!list || !list.length) {
     return null;
@@ -70,7 +69,6 @@ const List = observer(({ title, list, showUser, enableDelete }: ListProps) => {
         <Query
           key={query.id}
           query={query}
-          showUser={showUser}
           enableDelete={enableDelete}
         />
       ))}

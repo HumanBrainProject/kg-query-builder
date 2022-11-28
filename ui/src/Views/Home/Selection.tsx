@@ -36,7 +36,7 @@ import { useStores } from "../../Hooks/UseStores";
 
 import Queries from "./Selection/Queries";
 import Icon from "../../Components/Icon";
-import { Type } from "../../Stores/TypeStore";
+import { Type } from "../../Stores/Type";
 
 const useStyles = createUseStyles({
   container: {
@@ -120,7 +120,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const getTypeLabel = (type: Type) => {
+const getTypeLabel = (type: Type.Type) => {
   if (!type) {
     return "";
   }
@@ -136,7 +136,7 @@ const getTypeLabel = (type: Type) => {
 
 interface TypeInfoProps {
   className: string;
-  type: Type;
+  type: Type.Type;
 }
 
 const TypeInfo = observer(({ className, type }: TypeInfoProps) => {

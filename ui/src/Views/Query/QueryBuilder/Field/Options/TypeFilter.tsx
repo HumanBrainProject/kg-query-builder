@@ -28,7 +28,7 @@ import { createUseStyles } from "react-jss";
 import { useStores } from "../../../../../Hooks/UseStores";
 import { Type as PropertyType } from "../../../../PropertyTypes";
 import Toggle from "../../../../../Components/Toggle";
-import { TypeFilter } from "../../../../../Stores/Field";
+import { Query } from "../../../../../Stores/Query";
 
 const useStyles = createUseStyles({
   container: {
@@ -78,7 +78,7 @@ const useStyles = createUseStyles({
 });
 
 interface TypeFilterItemProps {
-  type: TypeFilter;
+  type: Query.TypeFilter;
   onClick: (id: string, selected: boolean) => void;
 }
 
@@ -112,9 +112,9 @@ const TypeFilter = observer(() => {
 
   const { queryBuilderStore } = useStores();
 
-  const handleToggleTypeFilter = () => queryBuilderStore.currentField.toggleTypeFilter();
+  const handleToggleTypeFilter = () => queryBuilderStore.currentField && queryBuilderStore.currentField.toggleTypeFilter();
 
-  const toggleTypeFilter = (type: string, selected: boolean) => queryBuilderStore.currentField.filterType(type, selected);
+  const toggleTypeFilter = (type: string, selected: boolean) => queryBuilderStore.currentField && queryBuilderStore.currentField.filterType(type, selected);
 
   if (!queryBuilderStore.currentField || !queryBuilderStore.currentField.types.length || queryBuilderStore.currentField === queryBuilderStore.rootField) {
     return null;

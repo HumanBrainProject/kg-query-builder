@@ -501,8 +501,8 @@ export class QueryBuilderStore {
       this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
       this.space = toJS(this.rootStore.authStore.privateSpace);
       this.selectField(this.rootField);
-      this.resultStart = 0;
-      this.resultSize = defaultResultSize;
+      this.resultStart = "0";
+      this.resultSize = `${defaultResultSize}`;
       this.resultInstanceId = "";
       this.resultQueryParameters = {};
       this.resultRestrictToSpaces = undefined;
@@ -562,8 +562,8 @@ export class QueryBuilderStore {
       this.fromDescription = "";
       this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
       this.space = toJS(this.rootStore.authStore.privateSpace);
-      this.resultStart = 0;
-      this.resultSize = defaultResultSize;
+      this.resultStart = "0";
+      this.resultSize = `${defaultResultSize}`;
       this.resultInstanceId = "";
       this.resultQueryParameters = {};
       this.resultRestrictToSpaces = undefined;
@@ -668,7 +668,6 @@ export class QueryBuilderStore {
               label: space.isPrivate
                 ? "My private queries"
                 : `Shared queries in space ${space.name}`,
-              showUser: true,
               isPrivate: space.isPrivate,
               permissions: { ...space.permissions },
               queries: []
@@ -699,7 +698,6 @@ export class QueryBuilderStore {
         acc.push({
           name: group.name,
           label: group.label,
-          showUser: group.showUser,
           permissions: { ...group.permissions },
           queries: queries
         } as Query.SpaceQueries);
@@ -949,8 +947,8 @@ export class QueryBuilderStore {
       this.runError = undefined;
       this.saveAsMode = false;
       this.result = null;
-      this.resultStart = 0;
-      this.resultSize = defaultResultSize;
+      this.resultStart = "0";
+      this.resultSize = `${defaultResultSize}`;
       this.resultInstanceId = "";
       this.resultQueryParameters = {};
       this.resultRestrictToSpaces = undefined;
@@ -1286,7 +1284,7 @@ export class QueryBuilderStore {
     }
   }
 
-  async deleteQuery(query: Query.Query, navigate: NavigateFunction) {
+  async deleteQuery(query: Query.Query|undefined, navigate?: NavigateFunction) {
     if (
       query &&
       !query.isDeleting &&
