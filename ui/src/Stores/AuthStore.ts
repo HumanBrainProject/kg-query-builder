@@ -41,7 +41,7 @@ export interface User {
   id?: string,
   username?: string,
   email?: string,
-  displayName?: string,
+  name?: string,
   givenName?: string,
   familyName?: string,
   picture?: string
@@ -156,14 +156,14 @@ export class AuthStore {
       if (this.user.givenName) {
         return this.user.givenName;
       }
-      if (this.user.displayName) {
-        if (firstNameReg.test(this.user.displayName)) {
-          const match = this.user.displayName.match(firstNameReg);
+      if (this.user.name) {
+        if (firstNameReg.test(this.user.name)) {
+          const match = this.user.name.match(firstNameReg);
           if(match && match.length) {
             return match[1];
           }  
         }
-        return this.user.displayName;
+        return this.user.name;
       }
       if (this.user.username) {
         return this.user.username;

@@ -100,10 +100,6 @@ const useStyles = createUseStyles({
     color: "var(--ft-color-loud)"
   },
   email: {},
-  accountBtn: {
-    borderRadius: "2px",
-    marginTop: "25px"
-  },
   tokenCopiedBar: {
     width: "100%",
     height: 0,
@@ -127,12 +123,13 @@ const useStyles = createUseStyles({
   profilePictureButton: {
     margin: 0,
     padding: 0,
+    paddingTop: "10px",
     overflow: "hidden",
     border: 0,
     background: "none",
     "& .avatar.default.fa-user": {
       width: "100px",
-      transform: "scale(8)",
+      transform: "scale(3)",
       color: "#1b1b1b"
     }
   }
@@ -216,24 +213,14 @@ const UserProfileTab = observer(
           <Popover id={uniqueId("popover")} className={classes.popOver}>
             <div>
               <div className={classes.popOverContent}>
-                <button className={classes.profilePictureButton}>
+                <div className={classes.profilePictureButton}>
                   <Avatar user={authStore.user} size={100} />
-                </button>
+                </div>
                 <div>
                   <div className={classes.name}>
-                    {authStore.user.displayName}
+                    {authStore.user.name}
                   </div>
                   <div className={classes.email}>{authStore.user.email}</div>
-                  <Button
-                    variant="primary"
-                    className={classes.accountBtn}
-                    href="https://iam.ebrains.eu/auth/realms/hbp/account/"
-                    title="https://iam.ebrains.eu/auth/realms/hbp/account/"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    Account
-                  </Button>
                 </div>
               </div>
               <div className={classes.popOverFooterBar}>
@@ -242,7 +229,7 @@ const UserProfileTab = observer(
                     text={authStore.accessToken}
                     onCopy={handleCopyToken}
                   >
-                    <Button>Copy token to clipboard</Button>
+                    <Button variant="secondary">Copy token to clipboard</Button>
                   </CopyToClipboard>
                 </div>
                 <div>

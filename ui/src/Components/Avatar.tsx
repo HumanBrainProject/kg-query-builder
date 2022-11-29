@@ -53,7 +53,7 @@ const Avatar = observer(({ user, size = 20 }: AvatarProps) => {
     return null;
   }
 
-  const userName = user.displayName ? user.displayName : user.id;
+  const userName = user.name ? user.name : user.id;
 
   if (user.picture) {
     return (
