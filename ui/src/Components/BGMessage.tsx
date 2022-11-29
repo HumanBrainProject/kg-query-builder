@@ -24,10 +24,7 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  IconDefinition,
-  IconName
-} from "@fortawesome/fontawesome-common-types";
+import { IconDefinition } from "@fortawesome/fontawesome-common-types";
 
 const useStyles = createUseStyles({
   container: {

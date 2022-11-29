@@ -74,7 +74,7 @@ export namespace QuerySpecification {
     typeFilter?: TypeFilter | TypeFilter[];
   }
 
-  export interface TypeFilter extends JsonLd {} 
+  export type TypeFilter = JsonLd 
 
   export enum FilterOperation {
     IS_EMPTY = "IS_EMPTY",

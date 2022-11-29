@@ -21,7 +21,8 @@
  *
  */
 
-const { createProxyMiddleware } = require("http-proxy-middleware");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { createProxyMiddleware } = require("http-proxy-middleware"); //setup proxy currently supports only node syntax 
 
 module.exports = function(app) {
   app.use(

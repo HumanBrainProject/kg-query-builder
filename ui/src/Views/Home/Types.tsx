@@ -21,7 +21,7 @@
  *
  */
 
-import React, {ChangeEvent, KeyboardEvent, useState} from "react";
+import React, { KeyboardEvent, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { Scrollbars } from "react-custom-scrollbars-2";
@@ -45,12 +45,14 @@ const useStyles = createUseStyles({
   },
   filter: {
     border: 0,
-    background: "linear-gradient(90deg, rgba(20,50,60,0.2) 0%, rgba(20,50,60,0.4) 100%)"
+    background:
+      "linear-gradient(90deg, rgba(20,50,60,0.2) 0%, rgba(20,50,60,0.4) 100%)"
   },
   body: {
     borderTop: "1px solid var(--border-color-ui-contrast2)",
     padding: "10px 0",
-    background: "linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 100%)"
+    background:
+      "linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 100%)"
   },
   content: {
     padding: "0 10px"
@@ -70,19 +72,33 @@ const Types = observer(() => {
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLElement>) => {
-    if(cursor === undefined && (e.keyCode === 38 || e.keyCode === 40)) {
+    if (cursor === undefined && (e.keyCode === 38 || e.keyCode === 40)) {
       setCursor(0);
     }
     if (e.keyCode === 38 && cursor !== undefined && cursor > 0) {
-      setCursor(prevCursor => prevCursor !== undefined ? prevCursor - 1: prevCursor);
-    } else if (e.keyCode === 40 && cursor !== undefined && cursor < typeStore.filteredTypeList.length - 1) {
-      setCursor(prevCursor => prevCursor !== undefined ? prevCursor + 1: prevCursor);
+      setCursor(prevCursor =>
+        prevCursor !== undefined ? prevCursor - 1 : prevCursor
+      );
+    } else if (
+      e.keyCode === 40 &&
+      cursor !== undefined &&
+      cursor < typeStore.filteredTypeList.length - 1
+    ) {
+      setCursor(prevCursor =>
+        prevCursor !== undefined ? prevCursor + 1 : prevCursor
+      );
     }
   };
 
   return (
     <div className={classes.container}>
-      <Filter className={classes.filter} value={typeStore.filterValue} placeholder="Filter types" onChange={handleChange} onKeyDown={handleKeyDown} />
+      <Filter
+        className={classes.filter}
+        value={typeStore.filterValue}
+        placeholder="Filter types"
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+      />
       <div className={classes.body}>
         <Scrollbars autoHide>
           <div className={classes.content}>
