@@ -31,6 +31,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
 import { QuerySpecification } from "../../../../../Stores/QueryBuilderStore/QuerySpecification";
+import { debug } from "console";
 
 const useStyles = createUseStyles({
   container: {
@@ -140,7 +141,7 @@ const useStyles = createUseStyles({
 });
 
 interface FilterProps {
-  filter: QuerySpecification.FilterItem;
+  filter?: QuerySpecification.FilterItem;
   show: boolean;
   onChange: (op: string, value?: QuerySpecification.FilterItem) => void;
 }
@@ -170,10 +171,11 @@ const Filter = observer(({ filter, show, onChange }: FilterProps) => {
         break;
       }
       default: {
+        const f = filter as QuerySpecification.FilterItem;
         const value = {
           op: e.target.value,
-          parameter: filter.parameter,
-          value: filter.op === "IS_EMPTY" ? "" : filter.value
+          parameter: f.parameter,
+          value: f.op === "IS_EMPTY" ? "" : f.value
         };
         onChange("filter", value);
       }
@@ -181,58 +183,64 @@ const Filter = observer(({ filter, show, onChange }: FilterProps) => {
   };
 
   const handleAddValue = () => {
+    const f = filter as QuerySpecification.FilterItem;
     const value = {
-      op: filter.op,
-      parameter: filter.parameter,
+      op: f.op,
+      parameter: f.parameter,
       value: ""
     };
     onChange("filter", value);
   };
 
   const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+    const f = filter as QuerySpecification.FilterItem;
     const value = {
-      op: filter.op,
-      parameter: filter.parameter,
+      op: f.op,
+      parameter: f.parameter,
       value: e.target.value
     };
     onChange("filter", value);
   };
 
   const handleDeleteValue = () => {
+    const f = filter as QuerySpecification.FilterItem;
     const value =
-      filter.parameter !== undefined
+      f.parameter !== undefined
         ? {
-            op: filter.op,
-            parameter: filter.parameter
+            op: f.op,
+            parameter: f.parameter
           }
         : undefined;
     onChange("filter", value);
   };
 
   const handleAddParameter = () => {
+    const f = filter as QuerySpecification.FilterItem;
     const value = {
-      op: filter.op,
+      op: f.op,
       parameter: "",
-      value: filter.value
+      value: f.value
     };
     onChange("filter", value);
   };
 
   const handleChangeParameter = (e: ChangeEvent<HTMLInputElement>) => {
+    const f = filter as QuerySpecification.FilterItem;
     const value = {
-      op: filter.op,
+      op: f.op,
       parameter: e.target.value,
-      value: filter.value
+      value: f.value
     };
     onChange("filter", value);
   };
 
   const handleDeleteParameter = () => {
+    const f = filter as QuerySpecification.FilterItem;
     const value =
-      filter.value !== undefined
+      f.value !== undefined
         ? {
-            op: filter.op,
-            value: filter.value
+            op: f.op,
+            value: f.value
           }
         : undefined;
     onChange("filter", value);

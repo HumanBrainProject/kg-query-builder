@@ -87,7 +87,7 @@ const Option = observer(({ field, rootField, option, onChange }:OptionProps) => 
   const showFilter = isNotRootField && !hasLeaf;
   if (name === "filter") {
     return (
-      <Filter filter={option as QuerySpecification.FilterItem} show={showFilter} onChange={onChange} />
+      <Filter filter={option.value as QuerySpecification.FilterItem} show={showFilter} onChange={onChange} />
     );
   }
 
