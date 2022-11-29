@@ -120,7 +120,7 @@ const useStyles = createUseStyles({
     transition: "transform .3s ease-in-out",
     transform: "translateY(-48px)"
   },
-  profilePictureButton: {
+  icon: {
     margin: 0,
     padding: 0,
     paddingTop: "10px",
@@ -213,7 +213,7 @@ const UserProfileTab = observer(
           <Popover id={uniqueId("popover")} className={classes.popOver}>
             <div>
               <div className={classes.popOverContent}>
-                <div className={classes.profilePictureButton}>
+                <div className={classes.icon}>
                   <Avatar user={authStore.user} size={100} />
                 </div>
                 <div>
