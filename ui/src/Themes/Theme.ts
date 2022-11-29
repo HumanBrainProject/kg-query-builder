@@ -22,7 +22,7 @@
  */
 
 class Style {
-  [index:string]: String;
+  [index:string]: string;
 }
 
 interface Background {

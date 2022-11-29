@@ -44,7 +44,6 @@ import SpinnerPanel from "../Components/SpinnerPanel";
 import ErrorPanel from "../Components/ErrorPanel";
 import API from "../Services/API";
 import { Type } from "../Stores/Type";
-import { QuerySpecification } from "../Stores/QueryBuilderStore/QuerySpecification";
 
 const useStyles = createUseStyles({
   container: {

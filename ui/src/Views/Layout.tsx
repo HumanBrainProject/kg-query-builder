@@ -33,7 +33,7 @@ import Footer from "./Footer";
 import Authenticate from "./Authenticate";
 import { Theme as AppTheme } from "../Themes/Theme";
 
-const getGlobalUseStyles = () => createUseStyles((theme) => {
+const getGlobalUseStyles = () => createUseStyles((theme: Jss.Theme) => {
   const appTheme = theme as AppTheme;
   const styles = {
     "@global": {
