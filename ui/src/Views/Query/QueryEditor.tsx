@@ -35,6 +35,7 @@ import { useStores } from "../../Hooks/UseStores";
 import ThemeRJV from "../../Themes/ThemeRJV";
 import Actions from "./Actions";
 import { QuerySpecification } from "../../Stores/QueryBuilderStore/QuerySpecification";
+import { FIELD_FLAGS } from "../../Stores/Field";
 
 const useStyles = createUseStyles({
   container: {
@@ -97,12 +98,22 @@ const QueryEditor = observer(() => {
     queryBuilderStore.updateQueryFromJSONQuerySpecification(updated_src as QuerySpecification.JSONQuerySpecification);
   };
 
-  const handleOnAdd = ({existing_src, updated_src, namespace}:InteractionProps) => {
+  const handleOnAdd = ({existing_src, updated_src, namespace, name, new_value}:InteractionProps) => {
     const path = namespace ? namespace.join("/"): "";
-    if (path === ""){
+    if (path === "" && name === ""){
       setError("Adding properties to the root path is forbidden.");
       queryBuilderStore.updateQueryFromJSONQuerySpecification(existing_src as QuerySpecification.JSONQuerySpecification);
     } else {
+      if ((Array.isArray(namespace) && namespace.length && namespace[namespace.length-1]) || name === "structure") {
+        if (new_value instanceof Object) {
+          const new_value_object: {[index:string]: any} = new_value;
+          FIELD_FLAGS.forEach(name => {
+            if (name in new_value_object && !new_value_object[name]) {
+              new_value_object[name] = true;
+            }
+          });
+        }
+      }
       queryBuilderStore.updateQueryFromJSONQuerySpecification(updated_src as QuerySpecification.JSONQuerySpecification);
     }
   };
