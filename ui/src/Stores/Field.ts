@@ -24,13 +24,17 @@
 import { observable, action, computed, toJS, makeObservable } from "mobx";
 import { QuerySpecification } from "./QueryBuilderStore/QuerySpecification";
 
-export const FIELD_FLAGS = ["required", "sort", "ensureOrder", "singleValue"];
+export const FIELD_FLAGS = ["required", "sort", "ensureOrder"];
 
 const defaultOptions = [
   ...FIELD_FLAGS.map(name => ({
     name: name,
     value: undefined
   })),
+  {
+    name: "singleValue",
+    value: undefined
+  },
   {
     name: "filter",
     value: undefined

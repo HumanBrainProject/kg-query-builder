@@ -50,7 +50,7 @@ export namespace QuerySpecification {
     sort?: boolean;
     ensureOrder?: boolean;
     filter?: FilterItem;
-    singleValue?: boolean;
+    singleValue?: string;
     [any: string]: any;
   }
 

@@ -33,7 +33,7 @@ export namespace Query {
 
   export interface Option {
     name: string;
-    value?: boolean | string;
+    value?: any;
   }
 
   export interface Properties {

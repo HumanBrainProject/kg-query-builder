@@ -149,7 +149,7 @@ const addOptions = (queryField: QuerySpecification.Field, options: Query.Option[
         }
         case "singleValue": {
           if (value) {
-            queryField.singleValue = true;
+            queryField.singleValue = value;
           }
           break;
         }
