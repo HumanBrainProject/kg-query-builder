@@ -39,7 +39,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-
 @Configuration
 public class OauthClient {
     private final ExchangeStrategies exchangeStrategies = ExchangeStrategies.builder()
@@ -47,9 +46,10 @@ public class OauthClient {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final String AUTHORIZATION = "Authorization";
+    private final static String AUTHORIZATION = "Authorization";
 
-    private final String USER_AUTHORIZATION = "User-Authorization";
+    private final static String USER_AUTHORIZATION = "User-Authorization";
+
     @Bean
     WebClient webClient(ClientRegistrationRepository clientRegistrations, OAuth2AuthorizedClientService authorizedClientService, HttpServletRequest request) {
         AuthorizedClientServiceOAuth2AuthorizedClientManager clientManager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(clientRegistrations, authorizedClientService);
