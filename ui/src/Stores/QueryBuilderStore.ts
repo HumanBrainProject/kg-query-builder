@@ -829,7 +829,7 @@ export class QueryBuilderStore {
       }
     }
     if (Array.isArray(field.structure) && field.structure.length) {
-      field.structure.reduce((acc, f) => {
+      return field.structure.reduce((acc, f) => {
         acc.push(...this.getParametersFromField(f));
         return acc;
       }, parameters);
