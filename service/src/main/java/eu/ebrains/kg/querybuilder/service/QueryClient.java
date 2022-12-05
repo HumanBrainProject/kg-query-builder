@@ -63,52 +63,10 @@ public class QueryClient {
                 if (resolvedQueryId != null) {
                     query.put("@id", resolvedQueryId.toString());
                 }
-//            List<Map<String, Object>> userList = (List<Map<String, Object>>) query.get(SchemaFieldsConstants.META_USER);
-//            if (!CollectionUtils.isEmpty(userList)) {
-//                Map<String, Object> user = userList.get(0);
-//                UUID userId = idController.getSimplifyFullyQualifiedId(user);
-//                if (userId != null) {
-//                    query.put(SchemaFieldsConstants.META_USER, userId.toString());
-//                }
-//            }
                 query.remove(SchemaFieldsConstants.META_USER);
             });
         }
         return queriesResult;
-//        if(queriesResult != null){ //TODO: Fetch user info from new alternatives endpoint (not ready yet)
-//            List<Map<String, Object>> data = (List<Map<String, Object>>) queriesResult.get("data");
-//            List<String> userIds = data.stream().map(query -> {
-//                String[] splitQueryId = query.get("@id").toString().split("/");
-//                String queryId = splitQueryId[splitQueryId.length - 1];
-//                query.put("@id", queryId);
-//                Map<String, Object> user = (Map<String, Object>) query.get(META_USER);
-//                String[] splitUserId = user.get("@id").toString().split("/");
-//                String userId = splitUserId[splitUserId.length - 1];
-//                user.put("@id", userId);
-//              return userId;
-//            }).distinct().toList();
-//            try {
-//                Map<String, String> picturesResult = serviceCall.post(
-//                        String.format("%s/%s/users/pictures", kgCoreEndpoint, apiVersion),
-//                        userIds,
-//                        authContext.getAuthTokens(),
-//                        Map.class);
-//                if(picturesResult != null) {
-//                    data.forEach(query -> {
-//                        Map<String, Object> user = (Map<String, Object>) query.get(META_USER);
-//                        String userId = (String) user.get("@id");
-//                        String picture = picturesResult.get(userId);
-//                        if (picture != null) {
-//                            user.put(USER_PICTURE, picture);
-//                        }
-//                    });
-//                }
-//            } catch (RuntimeException e) {
-//                logger.info(String.format("Could not fetch users' pictures. Error:\n%s\n", e.getMessage()));
-//            }
-//            return queriesResult;
-//        }
-//        return Collections.emptyMap();
     }
 
     public ResponseEntity<Map<?, ?>> executeStoredQuery(String queryId,
@@ -150,22 +108,6 @@ public class QueryClient {
             if (resolvedQueryId != null) {
                 query.put("@id", resolvedQueryId.toString());
             }
-//            Map<String, Object> user = (Map<String, Object>) query.get(SchemaFieldsConstants.META_USER);
-//            if (user != null) {
-//                UUID userId = idController.getSimplifyFullyQualifiedId(user);
-//                if (userId != null) {
-//                    query.put(SchemaFieldsConstants.META_USER, userId.toString());
-//                }
-//            }
-// or
-//            List<Map<String, Object>> userList = (List<Map<String, Object>>) query.get(SchemaFieldsConstants.META_USER);
-//            if (!CollectionUtils.isEmpty(userList)) {
-//                Map<String, Object> user = userList.get(0);
-//                UUID userId = idController.getSimplifyFullyQualifiedId(user);
-//                if (userId != null) {
-//                    query.put(SchemaFieldsConstants.META_USER, userId.toString());
-//                }
-//            }
             query.remove(SchemaFieldsConstants.META_USER);
             return ResponseEntity.ok(query);
         }

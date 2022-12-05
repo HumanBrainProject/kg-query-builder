@@ -20,6 +20,7 @@ import eu.ebrains.kg.querybuilder.constants.SchemaFieldsConstants;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Property {
     private String simpleAttributeName;
@@ -90,7 +91,7 @@ public class Property {
         List<Map<String, Object>> canBeMap = (List<Map<String, Object>>) d.get(SchemaFieldsConstants.META_TARGET_TYPES);
         List<String> canBe = null;
         if (canBeMap != null) {
-            canBe = canBeMap.stream().map(p -> (String) p.get(SchemaFieldsConstants.META_TYPE)).toList();
+            canBe = canBeMap.stream().map(p -> (String) p.get(SchemaFieldsConstants.META_TYPE)).collect(Collectors.toList()); // NOSONAR
         }
         return new Property(simpleAttributeName, attribute, label, canBe);
     }
@@ -102,7 +103,7 @@ public class Property {
         List<Map<String, Object>> canBeMap = (List<Map<String, Object>>) d.get(SchemaFieldsConstants.META_SOURCE_TYPES);
         List<String> canBe = null;
         if (canBeMap != null) {
-            canBe = canBeMap.stream().map(p -> (String) p.get(SchemaFieldsConstants.META_TYPE)).toList();
+            canBe = canBeMap.stream().map(p -> (String) p.get(SchemaFieldsConstants.META_TYPE)).collect(Collectors.toList()); // NOSONAR
         }
         return new Property(simpleAttributeName, attribute, label, canBe, true);
     }
@@ -122,7 +123,7 @@ public class Property {
         if (p != null) {
             if (this.getCanBe() != null && p.getCanBe() != null) {
                 this.getCanBe().addAll(p.getCanBe());
-                this.setCanBe(this.getCanBe().stream().distinct().sorted().toList());
+                this.setCanBe(this.getCanBe().stream().distinct().sorted().collect(Collectors.toList())); // NOSONAR
             } else if (p.getCanBe() != null) {
                 this.setCanBe(p.getCanBe());
             }

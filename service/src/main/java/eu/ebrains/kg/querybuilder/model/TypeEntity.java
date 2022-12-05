@@ -84,7 +84,7 @@ public class TypeEntity {
         List<Property> properties = ((Collection<?>) d.get(SchemaFieldsConstants.META_PROPERTIES)).stream()
                 .filter(Map.class::isInstance)
                 .map(p -> Property.fromMap((Map<?, ?>) p))
-                .toList();
+                .collect(Collectors.toList());
         Map<String, String> propertyReverseLink = ((Collection<?>) d.get(SchemaFieldsConstants.META_PROPERTIES)).stream()
                 .filter(Map.class::isInstance)
                 .map(p -> (Map<?, ?>) p)
@@ -93,7 +93,7 @@ public class TypeEntity {
         List<Property> incomingLinksProperties = ((Collection<?>) d.get(SchemaFieldsConstants.META_INCOMING_LINKS)).stream()
                 .filter(Map.class::isInstance)
                 .map(p -> Property.fromIncomingLinksMap((Map<?, ?>) p, propertyReverseLink))
-                .toList();
+                .collect(Collectors.toList()); // NOSONAR
         properties.addAll(incomingLinksProperties);
         return new TypeEntity(id, name, color, description, properties);
     }
