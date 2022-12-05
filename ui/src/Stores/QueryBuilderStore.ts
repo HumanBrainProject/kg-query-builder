@@ -829,10 +829,9 @@ export class QueryBuilderStore {
       }
     }
     if (Array.isArray(field.structure) && field.structure.length) {
-      return field.structure.reduce((acc, f) => {
-        acc.push(...this.getParametersFromField(f));
-        return acc;
-      }, parameters);
+      field.structure.forEach(f => {
+        parameters.push(...this.getParametersFromField(f));
+      });
     }
     return parameters;
   }
