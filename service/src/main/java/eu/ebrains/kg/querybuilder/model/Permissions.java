@@ -21,20 +21,40 @@
  *
  */
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { createProxyMiddleware } = require("http-proxy-middleware"); //setup proxy currently supports only node syntax 
+package eu.ebrains.kg.querybuilder.model;
 
-module.exports = function(app) {
-  app.use(
-    "/service/api/**",
-    createProxyMiddleware({
-      target:"http://localhost:8080",
-      // target:"https://query.kg-dev.ebrains.eu",
-      secure:false,
-      changeOrigin: true,
-      pathRewrite: function(path) {
-        return path.replace("/service/api/", "/");
-      }
-    })
-  );
-};
+import java.util.List;
+
+public class Permissions {
+
+    private Permissions(boolean canCreate, boolean canWrite, boolean canDelete) {
+        this.canCreate = canCreate;
+        this.canWrite = canWrite;
+        this.canDelete = canDelete;
+    }
+
+    public static Permissions fromPermissionList(List<String> permissions){
+        return permissions == null ? null : new Permissions(
+                permissions.contains("CREATE"),
+                permissions.contains("WRITE"),
+                permissions.contains("DELETE")
+        );
+    }
+
+    private final boolean canCreate;
+    private final boolean canWrite;
+    private final boolean canDelete;
+
+    public boolean isCanCreate() {
+        return canCreate;
+    }
+
+    public boolean isCanWrite() {
+        return canWrite;
+    }
+
+    public boolean isCanDelete() {
+        return canDelete;
+    }
+
+}

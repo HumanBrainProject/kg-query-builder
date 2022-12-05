@@ -12,7 +12,7 @@
         </expiry>
         <listeners>
             <listener>
-                <class>eu.ebrains.kg.queryBuilder.helpers.CacheEventLogger</class>
+                <class>eu.ebrains.kg.querybuilder.helpers.CacheEventLogger</class>
                 <event-firing-mode>ASYNCHRONOUS</event-firing-mode>
                 <event-ordering-mode>UNORDERED</event-ordering-mode>
                 <events-to-fire-on>CREATED</events-to-fire-on>

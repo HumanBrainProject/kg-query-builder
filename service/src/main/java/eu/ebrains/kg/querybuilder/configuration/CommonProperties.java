@@ -18,23 +18,15 @@
  * Framework Programme for Research and Innovation under
  * Specific Grant Agreements No. 720270, No. 785907, and No. 945539
  * (Human Brain Project SGA1, SGA2 and SGA3).
- *
  */
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { createProxyMiddleware } = require("http-proxy-middleware"); //setup proxy currently supports only node syntax 
+package eu.ebrains.kg.querybuilder.configuration;
 
-module.exports = function(app) {
-  app.use(
-    "/service/api/**",
-    createProxyMiddleware({
-      target:"http://localhost:8080",
-      // target:"https://query.kg-dev.ebrains.eu",
-      secure:false,
-      changeOrigin: true,
-      pathRewrite: function(path) {
-        return path.replace("/service/api/", "/");
-      }
-    })
-  );
-};
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+
+@Configuration
+@PropertySource({"classpath:commit.properties"})
+public class CommonProperties {
+}

@@ -21,20 +21,12 @@
  *
  */
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { createProxyMiddleware } = require("http-proxy-middleware"); //setup proxy currently supports only node syntax 
+package eu.ebrains.kg.querybuilder.model;
 
-module.exports = function(app) {
-  app.use(
-    "/service/api/**",
-    createProxyMiddleware({
-      target:"http://localhost:8080",
-      // target:"https://query.kg-dev.ebrains.eu",
-      secure:false,
-      changeOrigin: true,
-      pathRewrite: function(path) {
-        return path.replace("/service/api/", "/");
-      }
-    })
-  );
-};
+public interface HasId {
+
+    void setId(String id);
+
+    String getId();
+
+}
