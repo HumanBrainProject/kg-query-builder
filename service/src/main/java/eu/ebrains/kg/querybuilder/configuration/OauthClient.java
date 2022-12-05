@@ -41,14 +41,14 @@ import java.util.List;
 
 @Configuration
 public class OauthClient {
+    private final static String AUTHORIZATION = "Authorization";
+
+    private final static String USER_AUTHORIZATION = "User-Authorization";
+
     private final ExchangeStrategies exchangeStrategies = ExchangeStrategies.builder()
             .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(1024 * 1000000)).build();
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private final static String AUTHORIZATION = "Authorization";
-
-    private final static String USER_AUTHORIZATION = "User-Authorization";
 
     @Bean
     WebClient webClient(ClientRegistrationRepository clientRegistrations, OAuth2AuthorizedClientService authorizedClientService, HttpServletRequest request) {
