@@ -34,7 +34,7 @@ import { QuerySpecification } from "./QuerySpecification";
 import { Query } from "../Query";
 import { Type } from "../Type";
 
-const getRelativePathFromObject = (path?: any): string | null => {
+const getRelativePathFromObject = (path?: null|undefined|string|QuerySpecification.Path): string | null => {
   if (!path) {
     return null;
   }
@@ -47,49 +47,49 @@ const getRelativePathFromObject = (path?: any): string | null => {
   return null;
 };
 
-const getRelativePathFromArray = (paths: any): string | null => {
+const getRelativePathFromArray = (paths: null|undefined|(string|QuerySpecification.Path)[]): string | null => {
   if (!Array.isArray(paths) || paths.length === 0) {
     return null;
   }
   return getRelativePathFromObject(paths[0]);
 };
 
-const getRelativePath = (path: any): string | null => {
+const getRelativePath = (path: null|undefined|string|QuerySpecification.Path|(string|QuerySpecification.Path)[]): string | null => {
   if (Array.isArray(path)) {
     return getRelativePathFromArray(path);
   }
   return getRelativePathFromObject(path);
 };
 
-const isReverseFromObject = (object: any): boolean => {
-  if (object instanceof Object) {
-    return !!object.reverse;
+const isReverseFromObject = (path?: null|undefined|string|QuerySpecification.Path): boolean => {
+  if (path instanceof Object) {
+    return !!path.reverse;
   }
   return false;
 };
 
-const isReverseFromArray = (list: any): boolean => {
-  if (!Array.isArray(list) || list.length === 0) {
+const isReverseFromArray = (paths: null|undefined|(string|QuerySpecification.Path)[]): boolean => {
+  if (!Array.isArray(paths) || paths.length === 0) {
     return false;
   }
-  return isReverseFromObject(list[0]);
+  return isReverseFromObject(paths[0]);
 };
 
-const getIsReverse = (object: any): boolean => {
-  if (Array.isArray(object)) {
-    return isReverseFromArray(object);
+const getIsReverse = (path: null|undefined|string|QuerySpecification.Path|(string|QuerySpecification.Path)[]): boolean => {
+  if (Array.isArray(path)) {
+    return isReverseFromArray(path);
   }
-  return isReverseFromObject(object);
+  return isReverseFromObject(path);
 };
 
-const getTypeFromObject = (object: any): string | undefined => {
-  if (object instanceof Object) {
-    return object["@id"];
+const getTypeFromObject = (path?: null|undefined|QuerySpecification.Path): string | undefined => {
+  if (path instanceof Object) {
+    return path["@id"];
   }
   return undefined;
 };
 
-const getTypes = (object: any): string[] => {
+const getTypes = (object: null|undefined|QuerySpecification.Path|QuerySpecification.Path[]): string[] => {
   if (Array.isArray(object)) {
     return object.map(t => getTypeFromObject(t)).filter(t => !!t) as string[];
   }
@@ -100,25 +100,25 @@ const getTypes = (object: any): string[] => {
   return [];
 };
 
-const getTypeFilterFromObject = (object: any): string[] => {
-  if (object instanceof Object) {
-    return getTypes(object.typeFilter);
+const getTypeFilterFromObject = (path?: null|undefined|string|QuerySpecification.Path): string[] => {
+  if (path instanceof Object) {
+    return getTypes(path.typeFilter);
   }
   return [];
 };
 
-const getTypeFilterFromArray = (list: any): string[] => {
-  if (!Array.isArray(list) || list.length === 0) {
+const getTypeFilterFromArray = (paths: null|undefined|(string|QuerySpecification.Path)[]): string[] => {
+  if (!Array.isArray(paths) || paths.length === 0) {
     return [];
   }
-  return getTypeFilterFromObject(list[0]);
+  return getTypeFilterFromObject(paths[0]);
 };
 
-const getTypeFilter = (object: any): string[] => {
-  if (Array.isArray(object)) {
-    return getTypeFilterFromArray(object);
+const getTypeFilter = (path: null|undefined|string|QuerySpecification.Path|(string|QuerySpecification.Path)[]): string[] => {
+  if (Array.isArray(path)) {
+    return getTypeFilterFromArray(path);
   }
-  return getTypeFilterFromObject(object);
+  return getTypeFilterFromObject(path);
 };
 
 const getPropertyFromLookups = (
@@ -129,8 +129,8 @@ const getPropertyFromLookups = (
   simpleAttributeName: string | undefined,
   isReverse: boolean,
   isLeaf: boolean
-): QuerySpecification.CombinedSchema => {
-  const propertyFallback: QuerySpecification.CombinedSchema = {
+): QuerySpecification.Schema => {
+  const propertyFallback: QuerySpecification.Schema = {
     isUnknown: true,
     label: "",
     attribute: attribute ? attribute: "",
@@ -172,7 +172,7 @@ const getPropertyFromLookups = (
       }
     }
     return acc;
-  }, {} as QuerySpecification.CombinedSchema);
+  }, {} as QuerySpecification.Schema);
   if (Object.keys(property).length) {
     return {
       ...toJS(property),
@@ -190,7 +190,7 @@ const getProperty = (
   relativePath: string | null,
   isReverse: boolean,
   isLeaf: boolean
-): QuerySpecification.CombinedSchema => {
+): QuerySpecification.Schema => {
   let attribute;
   let attributeNamespace;
   let simpleAttributeName;
@@ -250,7 +250,7 @@ const getField = (
     );
     const { isUnknown, ...schema } = property;
     const field = new Field(
-      schema as QuerySpecification.CombinedSchema,
+      schema as QuerySpecification.Schema,
       parentField
     );
     field.isUnknown = isUnknown;
@@ -273,8 +273,8 @@ const getField = (
   return field;
 };
 
-const getIsFlattened = (object: any) =>
-  Array.isArray(object) && object.length > 1;
+const getIsFlattened = (path: null|undefined|string|QuerySpecification.Path|(string|QuerySpecification.Path)[]) =>
+  Array.isArray(path) && path.length > 1;
 
 const addFieldToParent = (parentField: Field, field: Field) => {
   if (!Array.isArray(parentField.structure)) {
@@ -408,17 +408,16 @@ const addJsonFieldsToField = (
 export const buildFieldTreeFromQuery = (
   types: Map<string, Type.Type>,
   context: QuerySpecification.Context,
-  schema: QuerySpecification.Schema,
+  type: Type.Type,
   query: Query.Query
 ): Field | undefined=> {
-  if (!schema) {
+  if (!type) {
     return undefined;
   }
   const { structure, properties } = query;
   const rootField = new Field({
-    id: schema.id,
-    label: schema.label,
-    canBe: [schema.id]
+    label: type.label,
+    canBe: [type.id]
   } as QuerySpecification.Schema);
   addJsonFieldsToField(types, context, rootField, structure);
   properties &&

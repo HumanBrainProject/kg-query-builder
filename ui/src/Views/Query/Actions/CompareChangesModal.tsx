@@ -29,7 +29,7 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 
 import CompareChanges from "./CompareChanges/CompareChanges";
 
-import { useStores } from "../../Hooks/UseStores";
+import { useStores } from "../../../Hooks/UseStores";
 
 const useStyles = createUseStyles({
   modal:{
@@ -63,31 +63,32 @@ const useStyles = createUseStyles({
   }
 });
 
-const CompareChangesModal = observer(() => {
+interface CompareChangesModalProps {
+  show: boolean;
+  onClose: () => void;
+}
+
+const CompareChangesModal = observer(({ show, onClose }: CompareChangesModalProps) => {
 
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
 
-  const handleHide = () => queryBuilderStore.toggleCompareChanges();
-
-  if (!queryBuilderStore.compareChanges) {
-    return null;
-  }
-
   return (
-    <Modal show={true} dialogClassName={classes.modal} onHide={handleHide}>
-      <Modal.Header closeButton>
-        <strong>{queryBuilderStore.queryId}</strong>
-      </Modal.Header>
-      <Modal.Body>
-        <div className={classes.body}>
-          <Scrollbars autoHide>
-            <CompareChanges />
-          </Scrollbars>
-        </div>
-      </Modal.Body>
-    </Modal>
+    <>
+      <Modal show={show} dialogClassName={classes.modal} onHide={onClose}>
+        <Modal.Header closeButton>
+          <strong>{queryBuilderStore.queryId}</strong>
+        </Modal.Header>
+        <Modal.Body>
+          <div className={classes.body}>
+            <Scrollbars autoHide>
+              <CompareChanges />
+            </Scrollbars>
+          </div>
+        </Modal.Body>
+      </Modal>
+    </>
   );
 });
 CompareChangesModal.displayName = "CompareChangesModal";

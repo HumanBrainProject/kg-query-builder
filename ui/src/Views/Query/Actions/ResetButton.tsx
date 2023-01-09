@@ -34,7 +34,7 @@ const ResetButton = observer(() => {
   const { queryBuilderStore } = useStores();
 
   const onClick = () => {
-    queryBuilderStore.resetRootSchema();
+    queryBuilderStore.resetQuery();
   };
 
   return (

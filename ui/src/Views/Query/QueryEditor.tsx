@@ -29,6 +29,7 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import Alert from "react-bootstrap/Alert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
+import jsonld from "jsonld";
 
 import { useStores } from "../../Hooks/UseStores";
 
@@ -36,6 +37,7 @@ import ThemeRJV from "../../Themes/ThemeRJV";
 import Actions from "./Actions";
 import { QuerySpecification } from "../../Stores/QueryBuilderStore/QuerySpecification";
 import { FIELD_FLAGS } from "../../Stores/Field";
+import { Query } from "../../Stores/Query";
 
 const useStyles = createUseStyles({
   container: {
@@ -94,19 +96,31 @@ const QueryEditor = observer(() => {
     return null;
   }
 
+  const updateQuery = async (o: object) => {
+    if (o) {
+      try {
+        const jsonSpec = o as QuerySpecification.QuerySpecification;
+        const query = await Query.normalizeQuery(jsonSpec);
+        queryBuilderStore.updateQuery(query);
+      } catch (e) {
+        setError(`Error while trying to expand/compact JSON-LD (${e})`);
+      }
+    }
+  };
+
   const handleOnEdit = ({updated_src}:InteractionProps) => {
-    queryBuilderStore.updateQueryFromJSONQuerySpecification(updated_src as QuerySpecification.JSONQuerySpecification);
+    updateQuery(updated_src);
   };
 
   const handleOnAdd = ({existing_src, updated_src, namespace, name, new_value}:InteractionProps) => {
     const path = namespace ? namespace.join("/"): "";
     if (path === "" && name === ""){
       setError("Adding properties to the root path is forbidden.");
-      queryBuilderStore.updateQueryFromJSONQuerySpecification(existing_src as QuerySpecification.JSONQuerySpecification);
+      updateQuery(existing_src);
     } else {
       if ((Array.isArray(namespace) && namespace.length && namespace[namespace.length-1]) || name === "structure") {
         if (new_value instanceof Object) {
-          const new_value_object: {[index:string]: any} = new_value;
+          const new_value_object: jsonld.NodeObject = {...new_value};
           FIELD_FLAGS.forEach(name => {
             if (name in new_value_object && !new_value_object[name]) {
               new_value_object[name] = true;
@@ -114,7 +128,7 @@ const QueryEditor = observer(() => {
           });
         }
       }
-      queryBuilderStore.updateQueryFromJSONQuerySpecification(updated_src as QuerySpecification.JSONQuerySpecification);
+      updateQuery(updated_src);
     }
   };
 
@@ -130,9 +144,9 @@ const QueryEditor = observer(() => {
         (name === "@type" && path === "@context/path") ||
         (name === "@id" && path === "@context/path") ) {
       setError(`Deleting ${name} of ${path} is forbidden.`);
-      queryBuilderStore.updateQueryFromJSONQuerySpecification(existing_src as QuerySpecification.JSONQuerySpecification);
+      updateQuery(existing_src);
     } else {
-      queryBuilderStore.updateQueryFromJSONQuerySpecification(updated_src as QuerySpecification.JSONQuerySpecification);
+      updateQuery(updated_src);
     }
   };
 
@@ -149,7 +163,7 @@ const QueryEditor = observer(() => {
       </div>
       <div className={classes.body}>
         <Scrollbars autoHide>
-          <ReactJson collapsed={false} name={false} theme={ThemeRJV} src={queryBuilderStore.JSONQuery} onEdit={handleOnEdit} onAdd={handleOnAdd} onDelete={handleOnDelete}  />
+          <ReactJson collapsed={false} name={false} theme={ThemeRJV} src={queryBuilderStore.querySpecification} onEdit={handleOnEdit} onAdd={handleOnAdd} onDelete={handleOnDelete}  />
         </Scrollbars>
       </div>
       <div className={classes.actions}>

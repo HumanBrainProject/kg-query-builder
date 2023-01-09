@@ -21,22 +21,15 @@
  *
  */
 
-import React, {MouseEvent, useState} from "react";
+import React, { MouseEvent } from "react";
 import { createUseStyles } from "react-jss";
 import {observer} from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faTrashAlt} from "@fortawesome/free-solid-svg-icons/faTrashAlt";
-import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
 import {faTag} from "@fortawesome/free-solid-svg-icons/faTag";
-import {faCircleNotch} from "@fortawesome/free-solid-svg-icons/faCircleNotch";
-import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
 
 import API from "../../../../Services/API";
 
-import { useStores } from "../../../../Hooks/UseStores";
-
-import PopOverButton from "../../../../Components/PopOverButton";
 import { Query as QuerySpecs } from "../../../../Stores/Query";
 
 const useStyles = createUseStyles({
@@ -48,16 +41,7 @@ const useStyles = createUseStyles({
     background: "rgba(0,0,0,0.4)",
     color:"var(--ft-color-normal)",
     "&:hover": {
-      background: "linear-gradient(90deg, rgba(30,60,70,0.9) 0%, rgba(20,50,60,0.9) 100%)",
-      "& $deleteButton": {
-        color: "var(--ft-color-normal)",
-        "&:hover, &:active, &:focus": {
-          color: "var(--ft-color-louder)"
-        }
-      }
-    },
-    "&.is-deleting": {
-      cursor: "default"
+      background: "linear-gradient(90deg, rgba(30,60,70,0.9) 0%, rgba(20,50,60,0.9) 100%)"
     }
   },
   name: {
@@ -66,64 +50,11 @@ const useStyles = createUseStyles({
     display: "inline-block",
     color:"var(--ft-color-louder)",
     textTransform: "capitalize",
-    "& small":{
+    "& small": {
       color:"var(--ft-color-quiet)",
       fontStyle:"italic",
       textTransform: "none"
-    },
-    "& .author": {
-      position: "absolute",
-      right: 0,
-      color: "var(--ft-color-normal)",
-      textTransform: "none",
-      "&.extra-padding":{
-        right: "20px"
-      }
     }
-  },
-  deleteButton: {
-    position: "absolute",
-    top: "50%",
-    right: "-5px",
-    transform: "translateY(-50%)",
-    color: "transparent",
-    margin: 0,
-    border: 0,
-    background: "none",
-    "&:hover, &:active, &:focus": {
-      color: "var(--ft-color-louder)"
-    }
-  },
-  deleteDialog: {
-    position: "absolute",
-    top: "-5px",
-    right: "-200px",
-    transition: "right .2s ease",
-    "&.show": {
-      right: "-5px"
-    }
-  },
-  deleting:{
-    position:" absolute",
-    top: "-5px",
-    right: "-10px",
-    height: "100%",
-    padding: "5px 10px",
-    display: "block",
-    color: "var(--ft-color-normal)"
-  },
-  error: {
-    position:"absolute",
-    top:"-5px",
-    right:"-5px"
-  },
-  errorButton: {
-    color: "var(--ft-color-error)"
-  },
-  textError: {
-    color: "var(--ft-color-error)",
-    margin: "0px 15px",
-    wordBreak: "keep-all"
   },
   description: {
     overflow:"hidden",
@@ -136,78 +67,25 @@ const useStyles = createUseStyles({
 
 interface QueryProps {
   query: QuerySpecs.Query;
-  enableDelete: boolean;
 }
 
 
-const Query = observer(({query, enableDelete}: QueryProps) => {
+const Query = observer(({query}: QueryProps) => {
   const classes = useStyles();
 
   const navigate = useNavigate();
 
-  const { queryBuilderStore } = useStores();
-
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
   const handleSelect = (e: MouseEvent<HTMLDivElement>) => {
     API.trackEvent("Query", "Select", query.id);
     e.stopPropagation();
-    if (!query.deleteError && !query.isDeleting) {
-      navigate(`/queries/${query.id}`);
-    }
-  };
-
-  const handleConfirmDelete = (e: MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    setShowDeleteDialog(true);
-  };
-
-  const handleDelete = (e: MouseEvent<HTMLButtonElement>) => {
-    API.trackEvent("Query", "Delete", query.id);
-    e && e.stopPropagation();
-    setShowDeleteDialog(false);
-    queryBuilderStore.deleteQuery(query, undefined);
-  };
-
-  const handleCloseDeleteDialog = (e: MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    setShowDeleteDialog(false);
-  };
-
-  const handleCancelDelete = (e: MouseEvent<HTMLButtonElement>) => {
-    e && e.stopPropagation();
-    queryBuilderStore.cancelDeleteQuery(query);
+    navigate(`/queries/${query.id}`);
   };
 
   return (
-    <div className={`${classes.container} ${query.isDeleting?"is-deleting":""}`} key={query.id} onClick={handleSelect} onMouseLeave={handleCloseDeleteDialog} >
+    <div className={classes.container} key={query.id} onClick={handleSelect} >
       <div className={classes.name}>
         <FontAwesomeIcon icon={faTag} />&nbsp;&nbsp;
         <span>{query.label?query.label:query.id} - <small title="queryId">{query.id}</small></span>
-        {enableDelete && !query.deleteError && !query.isDeleting && !showDeleteDialog && (
-          <button className={classes.deleteButton} title="delete" onClick={handleConfirmDelete}><FontAwesomeIcon icon={faTimes}/></button>
-        )}
-        {enableDelete && !query.deleteError && !query.isDeleting && (
-          <div className={`${classes.deleteDialog} ${showDeleteDialog?"show":""}`}>
-            <Button variant="danger" size="sm" onClick={handleDelete}><FontAwesomeIcon icon={faTrashAlt}/>&nbsp;Delete</Button>
-          </div>
-        )}
-        {enableDelete && !query.deleteError && query.isDeleting && (
-          <div className={classes.deleting} title={`deleting query ${query.id}...`}>
-            <FontAwesomeIcon icon={faCircleNotch} spin/>
-          </div>
-        )}
-        {enableDelete && query.deleteError && (
-          <PopOverButton
-            className={classes.error}
-            buttonClassName={classes.errorButton}
-            buttonTitle={query.deleteError}
-            onOk={handleDelete}
-            onCancel={handleCancelDelete}
-          >
-            <h5 className={classes.textError}>{query.deleteError}</h5>
-          </PopOverButton>
-        )}
       </div>
       {query.description && (
         <div className={classes.description} title={query.description}>{query.description}</div>

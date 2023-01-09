@@ -50,7 +50,6 @@ const HomeTab = observer(() => {
 
   const goHome = () => {
     setShowConfirmationModal(false);
-    queryBuilderStore.clearQueries();
     queryBuilderStore.clearQuery();
     navigate("/");
   };
@@ -59,7 +58,7 @@ const HomeTab = observer(() => {
   const match: PathMatch<string>|null = matchPath({ path: "/" }, location.pathname)
   return (
     <>
-    <Tab icon={faHome} current={match} onClick={handleHomeClick} label={"Home"} hideLabel disabled={queryBuilderStore.isSaving} />
+    <Tab icon={faHome} current={match} onClick={handleHomeClick} label={"Home"} hideLabel disabled={false} />
       {showConfirmationModal && (
         <Dialog message="Your query has unsaved changes. If you continue you'll loose your changes. Do you want to continue?" onCancel={handleCancel} onConfirm={goHome} />
       )}

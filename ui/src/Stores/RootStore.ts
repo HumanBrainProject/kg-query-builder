@@ -25,13 +25,17 @@ import { TransportLayer } from "../Services/TransportLayer";
 import { AppStore } from "./AppStore";
 import { AuthStore } from "./AuthStore";
 import { TypeStore } from "./TypeStore";
+import { QueriesStore } from "./QueriesStore";
 import { QueryBuilderStore } from "./QueryBuilderStore";
+import { QueryRunStore } from "./QueryRunStore";
 
 export class RootStore {
 
   authStore: AuthStore;
   typeStore: TypeStore;
+  queriesStore: QueriesStore;
   queryBuilderStore: QueryBuilderStore;
+  queryRunStore: QueryRunStore;
   appStore: AppStore;
   transportLayer: TransportLayer;
 
@@ -45,7 +49,9 @@ export class RootStore {
 
     // Domain stores
     this.typeStore = new TypeStore(transportLayer, this);
+    this.queriesStore = new QueriesStore(transportLayer, this);
     this.queryBuilderStore = new QueryBuilderStore(transportLayer, this);
+    this.queryRunStore = new QueryRunStore(transportLayer, this);
 
     this.authStore = new AuthStore(transportLayer);
     transportLayer.setAuthStore(this.authStore);

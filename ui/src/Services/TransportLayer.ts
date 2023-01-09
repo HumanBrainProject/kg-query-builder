@@ -21,7 +21,11 @@
  *
  */
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import jsonld from "jsonld";
+
 import AuthStore from "../Stores/AuthStore";
+import { QuerySpecification } from "../Stores/QueryBuilderStore/QuerySpecification";
+import { Result } from "../Views/Query/QueryExecution/ExecutionResult";
 import API from "./API";
 
 export class TransportLayer {
@@ -78,14 +82,14 @@ export class TransportLayer {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async performQuery(
-    query: any,
+    query: QuerySpecification.QuerySpecification,
     stage: string,
     from: string,
     size: string,
     instanceId: string | undefined,
     restrictToSpaces: string[]| undefined,
-    params: any
-  ): Promise<AxiosResponse<any, any>> {
+    params: object
+  ): Promise<AxiosResponse<Result, jsonld.NodeObject>> {
     return this._axios.post(
       API.endpoints.performQuery(
         stage,
@@ -112,9 +116,9 @@ export class TransportLayer {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async saveQuery(
     queryId: string,
-    query: any,
+    query: QuerySpecification.QuerySpecification,
     space: string
-  ): Promise<AxiosResponse<any, any>> {
+  ): Promise<AxiosResponse<jsonld.NodeObject, jsonld.NodeObject>> {
     return this._axios.put(API.endpoints.saveQuery(queryId, space), query);
   }
 

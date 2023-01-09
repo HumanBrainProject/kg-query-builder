@@ -51,10 +51,16 @@ const useStyles = createUseStyles({
 
 interface SpinnerPanelProps {
   text: string;
+  show?: boolean;
 }
 
-const SpinnerPanel = ({ text }: SpinnerPanelProps) => {
+const SpinnerPanel = ({ text, show }: SpinnerPanelProps) => {
+  
   const classes = useStyles();
+
+  if (show === false) {
+    return null;
+  }
 
   return (
     <div className={classes.container}>

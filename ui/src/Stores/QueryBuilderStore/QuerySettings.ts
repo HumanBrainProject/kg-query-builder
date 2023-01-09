@@ -21,21 +21,6 @@
  *
  */
 
-import { QuerySpecification } from "./QuerySpecification";
-
-export const defaultContext: QuerySpecification.Context = {
-  "@vocab": "https://core.kg.ebrains.eu/vocab/query/",
-  query: "https://schema.hbp.eu/myQuery/",
-  propertyName: {
-    "@id": "propertyName",
-    "@type": "@id"
-  },
-  path: {
-    "@id": "path",
-    "@type": "@id"
-  }
-};
-
 export const rootFieldReservedProperties: string[] = [
   "root_schema",
   "schema:root_schema",

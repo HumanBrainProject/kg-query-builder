@@ -35,9 +35,9 @@ interface OptionProps {
   rootField?: Field;
   option: {
     name: string;
-    value: boolean | string;
+    value: QuerySpecification.Value;
   }
-  onChange: (name: string, newValue?: any) => void;
+  onChange: (name: string, newValue?: QuerySpecification.Value) => void;
 }
 
 const Option = observer(({ field, rootField, option, onChange }:OptionProps) => {

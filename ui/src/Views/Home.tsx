@@ -21,7 +21,7 @@
  *
  */
 
-import React, {useEffect, useState } from "react";
+import React, {useEffect, useState, useRef} from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
@@ -55,6 +55,8 @@ const useStyles = createUseStyles({
 
 const Home = observer(() => {
 
+  const initializedRef = useRef(false);
+
   const classes = useStyles();
 
   const [ showWelcomeTip, setShowWelcomeTip ] = useState(!localStorage.getItem("hideWelcomeTip"));
@@ -62,15 +64,18 @@ const Home = observer(() => {
   const { typeStore, queryBuilderStore } = useStores();
 
   useEffect(() => {
-    API.trackCustomUrl(window.location.href);
-    API.trackPageView();
-    if (!queryBuilderStore.hasRootSchema) {
-      const typeId = localStorage.getItem("type");
-      const type = typeId && typeStore.types.get(typeId);
-      if (type) {
-          queryBuilderStore.selectRootSchema(type);
-      } else {
-        localStorage.removeItem("type");
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      API.setCustomUrl(window.location.href);
+      API.trackPageView();
+      if (!queryBuilderStore.hasType) {
+        const typeId = localStorage.getItem("type");
+        const type = typeId && typeStore.types.get(typeId);
+        if (type) {
+            queryBuilderStore.setType(type);
+        } else {
+          localStorage.removeItem("type");
+        }
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

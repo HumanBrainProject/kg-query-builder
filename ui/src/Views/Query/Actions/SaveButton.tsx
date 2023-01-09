@@ -21,15 +21,20 @@
  *
  */
 
-import React from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faSave} from "@fortawesome/free-solid-svg-icons/faSave";
 import { useNavigate, matchPath } from "react-router-dom";
+import { AxiosError } from "axios";
 
 import API from "../../../Services/API";
 import { useStores } from "../../../Hooks/UseStores";
+import { Query } from "../../../Stores/Query";
+
+import SpinnerPanel from "../../../Components/SpinnerPanel";
+import ActionError from "../../../Components/ActionError";
 
 interface SaveButtonProps {
   disabled: boolean;
@@ -39,18 +44,84 @@ const SaveButton = observer(({ disabled }: SaveButtonProps) => {
 
   const navigate = useNavigate();
 
-  const { queryBuilderStore } = useStores();
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string|undefined>(undefined);
 
-  const onClick = () => {
+  const { queryBuilderStore, queriesStore, authStore, transportLayer } = useStores();
+
+  const handleSave = () => {
     API.trackEvent("Query", "Save", queryBuilderStore.queryId);
-    const match = matchPath({path:"/queries/:id/:mode"}, location.pathname);
-    queryBuilderStore.saveQuery(navigate, match?.params?.mode);
+    saveQuery();
   };
 
+  const saveQuery = async () => {
+    if (!queryBuilderStore.isQueryEmpty) {
+      setIsSaving(true);
+      setError(undefined);
+      if (!queryBuilderStore.space && authStore.privateSpace) {
+        queryBuilderStore.setSpace(authStore.privateSpace);
+      }
+      //TODO: fix queryId undefined check after QueryBuilderStore refactoring/splitting
+      const queryId = queryBuilderStore.saveAsMode
+        ? queryBuilderStore.queryId
+          ? queryBuilderStore.queryId
+          : ""
+        : queryBuilderStore.sourceQuery
+        ? queryBuilderStore.sourceQuery.id
+        : "";
+      const querySpecification = queryBuilderStore.querySpecification;
+      const spaceName = (queryBuilderStore.space?.name)?queryBuilderStore.space.name:"myspace";
+      try {
+        await transportLayer.saveQuery(queryId, querySpecification, spaceName);
+        if (queryBuilderStore.saveAsMode) {
+          const sourceQuery = {
+            id: queryId,
+            context: querySpecification["@context"],
+            structure: querySpecification.structure,
+            properties: Query.getProperties(querySpecification),
+            meta: querySpecification.meta,
+            label: (querySpecification.meta?.name)?querySpecification.meta.name:"",
+            description: (querySpecification.meta?.description)?querySpecification.meta.description:"",
+            space: spaceName
+          } as Query.Query;
+          queriesStore.addQuery(sourceQuery);
+          queryBuilderStore.setSourceQuery(sourceQuery);
+          queryBuilderStore.setQuerySaved();
+          setIsSaving(false);
+          const match = matchPath({path:"/queries/:id/:mode"}, location.pathname);
+          const mode = match?.params?.mode;
+          const path = mode
+            ? `/queries/${queryId}/${mode}`
+            : `/queries/${queryId}`;
+          navigate(path);
+        } else {
+          if (!queryBuilderStore.sourceQuery) {
+            const sourceQuery = queriesStore.findQuery(queryId);
+            queryBuilderStore.setSourceQuery(sourceQuery);
+          }
+          queryBuilderStore.updateSourceQuery(querySpecification);
+          queryBuilderStore.setQuerySaved();
+          setIsSaving(false);
+        }
+      } catch (e) {
+        const axiosError = e as AxiosError;
+        const message = axiosError?.message;
+        setError(`Error while saving query "${queryId}" (${message})`);
+        setIsSaving(false);
+      }
+    }
+  };
+
+  const handleCancelSave = () => setError(undefined);
+
   return (
-      <Button variant="primary" disabled={disabled} onClick={onClick}>
+    <>
+      <Button variant="primary" disabled={disabled} onClick={handleSave}>
         <FontAwesomeIcon icon={faSave} />&nbsp;Save
       </Button>
+      <SpinnerPanel show={isSaving} text={`Saving query ${queryBuilderStore.queryId}`} />
+      <ActionError error={error} onCancel={handleCancelSave} onRetry={saveQuery} />
+    </>
   );
 });
 SaveButton.displayName = "SaveButton";

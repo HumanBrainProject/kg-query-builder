@@ -26,14 +26,19 @@ import { observer } from "mobx-react-lite";
 
 import PropertyTypes from "../../../PropertyTypes";
 import Types from "./Types";
-import { QuerySpecification } from "../../../../Stores/QueryBuilderStore/QuerySpecification";
 import Field from "../../../../Stores/Field";
+
+import { useStores } from "../../../../Hooks/UseStores";
 
 interface TypeProps {
   field: Field;
 }
 
 const Type = observer(({ field }: TypeProps) => {
+
+
+  const { queryBuilderStore } = useStores();
+
   if (field.isUnknown && field.parent) {
     if (field.schema?.simpleAttributeName) {
       const attributeNameSpace = field.schema.attributeNamespace
@@ -60,14 +65,18 @@ const Type = observer(({ field }: TypeProps) => {
     );
   }
 
-  const rootSchema = field.schema as QuerySpecification.Schema;
+  const type = queryBuilderStore.type?.id;
 
-  return (
-    <>
-      <PropertyTypes types={rootSchema?.canBe} />
-      &nbsp;- <small>{rootSchema.id}</small>
-    </>
-  );
+  if (type) {
+    return (
+      <>
+        <PropertyTypes types={[type]} />
+        &nbsp;- <small>{type}</small>
+      </>
+    );
+  }
+
+  return null;
 });
 Type.displayName = "Type";
 

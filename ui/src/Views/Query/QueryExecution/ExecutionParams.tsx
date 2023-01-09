@@ -21,7 +21,7 @@
  *
  */
 
-import React, { ChangeEvent } from "react";
+import React, { useEffect, ChangeEvent } from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import Button from "react-bootstrap/Button";
@@ -30,7 +30,6 @@ import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 
-import API from "../../../Services/API";
 import { useStores } from "../../../Hooks/UseStores";
 
 import SpaceRestriction from "./SpaceRestriction";
@@ -92,10 +91,9 @@ interface QueryParameterProps {
 const QueryParameter = observer(({ parameter }:QueryParameterProps) => {
   const classes = useStyles();
 
-  const { queryBuilderStore } = useStores();
+  const { queryRunStore } = useStores();
 
-  const handleChangeParameter = (e: ChangeEvent<HTMLInputElement>) =>
-    queryBuilderStore.setResultQueryParameter(parameter.name, e.target.value);
+  const handleChangeParameter = (e: ChangeEvent<HTMLInputElement>) => queryRunStore.setParameter(parameter.name, e.target.value);
 
   return (
     <Form.Group>
@@ -124,9 +122,15 @@ interface Row {
 }
 
 const QueryParameters = observer(() => {
-  const { queryBuilderStore } = useStores();
+  
+  const { queryBuilderStore, queryRunStore } = useStores();
 
-  const parameters = queryBuilderStore.getQueryParameters();
+  useEffect(() => {
+    queryRunStore.updateParameters(queryBuilderStore.queryParametersNames);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryBuilderStore.queryParametersNames]);
+
+  const parameters = Object.values(queryRunStore.parameters).filter(p => queryBuilderStore.queryParametersNames.includes(p.name));
 
   if (!parameters.length) {
     return null;
@@ -168,10 +172,14 @@ const QueryParameters = observer(() => {
   );
 });
 
-const ExecutionParams = observer(() => {
+interface ExecutionParamsProps {
+  onExecute: () => void;
+}
+
+const ExecutionParams = observer(({ onExecute }: ExecutionParamsProps) => {
   const classes = useStyles();
 
-  const { queryBuilderStore } = useStores();
+  const { queryBuilderStore, queryRunStore } = useStores();
 
   const scopeOptions = [
     { label: "Released", value: "RELEASED" },
@@ -179,24 +187,16 @@ const ExecutionParams = observer(() => {
   ];
 
   const isSpaceRestricted = Array.isArray(
-    queryBuilderStore.resultRestrictToSpaces
+    queryRunStore.spaces
   );
 
-  const handleChangeSize = (e: React.ChangeEvent<HTMLInputElement>) =>
-    queryBuilderStore.setResultSize(e.target.value);
+  const handleChangeSize = (e: React.ChangeEvent<HTMLInputElement>) => queryRunStore.setSize(e.target.value);
 
-  const handleChangeStart = (e: ChangeEvent<HTMLInputElement>) =>
-    queryBuilderStore.setResultStart(e.target.value);
+  const handleChangeStart = (e: ChangeEvent<HTMLInputElement>) => queryRunStore.setStart(e.target.value);
 
-  const handleChangeStage = (e:ChangeEvent<HTMLInputElement>) => queryBuilderStore.setStage(e.target.value);
+  const handleChangeStage = (e:ChangeEvent<HTMLInputElement>) => queryRunStore.setStage(e.target.value);
 
-  const handleChangeInstanceId = (e:ChangeEvent<HTMLInputElement> ) =>
-    queryBuilderStore.setResultInstanceId(e.target.value);
-
-  const handlExecuteQuery = () => {
-    API.trackEvent("Query", "Execute", queryBuilderStore.isQuerySaved?queryBuilderStore.queryId:"unsaved query");
-    queryBuilderStore.executeQuery();
-  };
+  const handleChangeInstanceId = (e:ChangeEvent<HTMLInputElement> ) => queryRunStore.setInstanceId(e.target.value);
 
   const title = !queryBuilderStore.isQueryEmpty
     ? "Run it"
@@ -215,7 +215,7 @@ const ExecutionParams = observer(() => {
                 <Form.Control
                   className={classes.input}
                   as="select"
-                  value={queryBuilderStore.stage}
+                  value={queryRunStore.stage}
                   onChange={handleChangeStage}
                 >
                   {scopeOptions.map((space) => (
@@ -235,7 +235,7 @@ const ExecutionParams = observer(() => {
               <Form.Control
                 className={classes.input}
                 type="number"
-                value={queryBuilderStore.resultSize}
+                value={queryRunStore.size}
                 placeholder="20"
                 onChange={handleChangeSize}
               />
@@ -249,7 +249,7 @@ const ExecutionParams = observer(() => {
               <Form.Control
                 className={classes.input}
                 type="number"
-                value={queryBuilderStore.resultStart}
+                value={queryRunStore.start}
                 placeholder="0"
                 onChange={handleChangeStart}
               />
@@ -261,7 +261,7 @@ const ExecutionParams = observer(() => {
               <Form.Control
                 className={classes.input}
                 type="text"
-                value={queryBuilderStore.resultInstanceId}
+                value={queryRunStore.instanceId}
                 placeholder=""
                 onChange={handleChangeInstanceId}
               />
@@ -283,7 +283,7 @@ const ExecutionParams = observer(() => {
                   variant="primary"
                   className={"btn-block"}
                   disabled={queryBuilderStore.isQueryEmpty}
-                  onClick={handlExecuteQuery}
+                  onClick={onExecute}
                   title={title}
                 >
                   Run it
@@ -302,7 +302,7 @@ const ExecutionParams = observer(() => {
                 variant="primary"
                 className={"btn-block"}
                 disabled={queryBuilderStore.isQueryEmpty}
-                onClick={handlExecuteQuery}
+                onClick={onExecute}
                 title={title}
               >
                 Run it

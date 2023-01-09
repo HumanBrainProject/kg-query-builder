@@ -23,6 +23,8 @@
 import { init as SentryInit, captureException as SentryCaptureException, showReportDialog as SentryShowReportDialog, BrowserOptions } from "@sentry/browser";
 import ReactPiwik from "react-piwik";
 
+const style = "color: #f88900;";
+
 const getSize = (size?: string|null) => {
   if (size !== undefined && size !== null) {
     return `size=${size}&`;
@@ -161,27 +163,35 @@ class API {
     }
   }
 
-  trackCustomUrl(url: string) {
+  setCustomUrl(url: string) {
     if (this._matomo && url) {
       ReactPiwik.push(["setCustomUrl", url]);
+    } else {
+      console.info("%cMatomo:setCustomUrl", style, url);
     }
   }
 
   trackPageView() {
     if (this._matomo) {
       ReactPiwik.push(["trackPageView"]);
+    } else {
+      console.info("%cMatomo:trackPageView", style);
     }
   }
 
   trackEvent(category: string, name: string, value?: string) {
     if (this._matomo) {
       ReactPiwik.push(["trackEvent", category, name, value]);
+    }else {
+      console.info("%cMatomo:trackEvent", style, category, name, value);
     }
   }
 
   trackLink(category: string, name: string) {
     if (this._matomo) {
       ReactPiwik.push(["trackLink", category, name]);
+    } else {
+      console.info("%cMatomo:trackLink", style, category, name);
     }
   }
 

@@ -21,7 +21,7 @@
  *
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { ThemeProvider } from "react-jss";
 import { BrowserRouter } from "react-router-dom";
@@ -31,6 +31,8 @@ import ErrorBoundary from "./ErrorBoundary";
 import Layout from "./Layout";
 
 const App = observer(() => {
+
+  const initializedRef = useRef(false);
 
   const { appStore, queryBuilderStore } = useStores();
 
@@ -50,16 +52,17 @@ const App = observer(() => {
       }
     };
 
-    window.addEventListener("beforeunload", onUnload);
-    document.addEventListener("keydown", handleKeyDown);
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      window.addEventListener("beforeunload", onUnload);
+      document.addEventListener("keydown", handleKeyDown);
+    }
     return () => {
       window.removeEventListener("beforeunload", onUnload);
       document.removeEventListener("keydown", handleKeyDown);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  
 
   return (
     <ErrorBoundary>

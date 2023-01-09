@@ -61,13 +61,17 @@ const useStyles = createUseStyles({
 });
 
 interface ActionErrorProps {
-  error: string;
+  error: string|undefined;
   onCancel: () => void;
   onRetry: () => void;
 }
 
 const ActionError = ({ error, onCancel, onRetry }: ActionErrorProps) => {
   const classes = useStyles();
+
+  if (!error) {
+    return null;
+  }
 
   return (
     <div className={classes.container}>

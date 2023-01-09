@@ -21,19 +21,22 @@
  *
  */
 
-import React from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
+import { AxiosError } from "axios";
+import jsonld from "jsonld";
 
+import API from "../../Services/API";
 import { useStores } from "../../Hooks/UseStores";
 
 import BGMessage from "../../Components/BGMessage";
 import SpinnerPanel from "../../Components/SpinnerPanel";
-import Result from "./QueryExecution/Result";
+import ExecutionResult, { Result } from "./QueryExecution/ExecutionResult";
 import ExecutionParams from "./QueryExecution/ExecutionParams";
 
 const useStyles = createUseStyles({
@@ -91,35 +94,76 @@ const QueryExecution = observer(() => {
 
   const classes = useStyles();
 
-  const { queryBuilderStore } = useStores();
+  const [isRunning, setIsRunning] = useState(false);
+  const [error, setError] = useState<string|undefined>();
+  const [result, setResult] = useState<Result|undefined>();
 
-  const handlExecuteQuery = () => queryBuilderStore.executeQuery();
+  const { transportLayer, queryBuilderStore, queryRunStore } = useStores();
 
-  const handlClearError = () => queryBuilderStore.setRunError(undefined);
+  const executeQuery = async () => {
+    if (!queryBuilderStore.isQueryEmpty && !isRunning) {
+      setIsRunning(true);
+      setError(undefined);
+      setResult(undefined);
+      API.trackEvent("Query", "Execute", queryBuilderStore.isQuerySaved?queryBuilderStore.queryId:"unsaved query");
+      try {
+        const query = queryBuilderStore.querySpecification;
+        const instanceId =
+          typeof queryRunStore.instanceId === "string"
+            ? queryRunStore.instanceId.trim()
+            : null;
+        const params = queryBuilderStore.queryParametersNames.reduce((acc, name) => {
+          if (typeof queryRunStore.parameters[name]?.value === "string" && queryRunStore.parameters[name].value) {
+            acc[name] = queryRunStore.parameters[name].value;
+          }
+          return acc;
+        }, {} as jsonld.NodeObject);
+        const response = await transportLayer.performQuery(
+          query,
+          queryRunStore.stage,
+          queryRunStore.start,
+          queryRunStore.size,
+          instanceId ? instanceId : undefined,
+          queryRunStore.spaces,
+          params
+        );
+        setResult(response.data);
+        setIsRunning(false);
+      } catch (e) {
+        const error = e as AxiosError;
+        const message = error?.message;
+        setResult(undefined);
+        setError(`Error while executing query (${message})`);
+        setIsRunning(false);
+      }
+    }
+  };
+
+  const handlClearError = () => setError(undefined);
 
   return (
     <div className={classes.container}>
       <div className={classes.params}>
-        <ExecutionParams />
+        <ExecutionParams onExecute={executeQuery} />
       </div>
-      <Result />
-      {queryBuilderStore.runError && (
+      <ExecutionResult data={result} />
+      {error && (
         <BGMessage icon={faBan}>
           There was a network problem fetching the query.<br/>
           If the problem persists, please contact the support.<br/>
-          <small>{queryBuilderStore.runError}</small><br/><br/>
+          <small>{error}</small><br/><br/>
           {queryBuilderStore.isQueryEmpty?
             <Button variant="primary" onClick={handlClearError}>
               <FontAwesomeIcon icon={faRedoAlt}/>&nbsp;&nbsp; OK
             </Button>
             :
-            <Button variant="primary" onClick={handlExecuteQuery}>
+            <Button variant="primary" onClick={executeQuery}>
               <FontAwesomeIcon icon={faRedoAlt}/>&nbsp;&nbsp; Retry
             </Button>
           }
         </BGMessage>
       )}
-      {queryBuilderStore.isRunning && (
+      {isRunning && (
         <SpinnerPanel text="Fetching query..." />
       )}
     </div>

@@ -34,16 +34,17 @@ const HomeTab = observer(() => {
 
   const { queryBuilderStore } = useStores();
 
-  if (!queryBuilderStore.rootSchema) {
-    return null;
-  }
+  const type = queryBuilderStore.type?.id;
 
-  return (
-    <div>
-      <PropertyTypes types={queryBuilderStore.rootSchema.canBe} />&nbsp;-&nbsp;<small>{queryBuilderStore.rootSchema.id}</small>
-      <FontAwesomeIcon icon={faCaretDown} style={{marginLeft: "5px"}} />
-    </div>
-  );
+  if (type) {
+    return (
+      <div>
+        <PropertyTypes types={[type]} />&nbsp;-&nbsp;<small>{type}</small>
+        <FontAwesomeIcon icon={faCaretDown} style={{marginLeft: "5px"}} />
+      </div>
+    );
+  }
+  return null;
 });
 HomeTab.displayName = "HomeTab";
 

@@ -98,7 +98,7 @@ const Properties = observer(() => {
     const schema = {
       ...property,
       isUnknown: false
-    } as QuerySpecification.CombinedSchema;
+    } as QuerySpecification.Schema;
     queryBuilderStore.addField(schema, field, !e.ctrlKey && !e.metaKey);
   };
 

@@ -23,30 +23,28 @@
 
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { useNavigate } from "react-router-dom";
 
-import { useStores } from "../../Hooks/UseStores";
+import { useStores } from "../../../../Hooks/UseStores";
 
-import ActionError from "../../Components/ActionError";
+import ComparePart from "./ComparePart";
+import { Change } from "diff";
 
-const DeleteError = observer(() => {
-
-  const navigate = useNavigate();
+const CompareChanges = observer(() => {
 
   const { queryBuilderStore } = useStores();
 
-  const handleDelete = () =>  queryBuilderStore.deleteQuery(queryBuilderStore.sourceQuery, navigate);
-
-  const handleCancelDelete = () => queryBuilderStore.cancelDeleteQuery(queryBuilderStore.sourceQuery);
-
-  if (!queryBuilderStore.sourceQuery?.deleteError) {
+  if(!queryBuilderStore.querySpecificationDiff) {
     return null;
   }
 
   return (
-    <ActionError error={queryBuilderStore.sourceQuery.deleteError} onCancel={handleCancelDelete} onRetry={handleDelete} />
+    <pre>
+      {queryBuilderStore.querySpecificationDiff.map((part: Change, index) => (
+        <ComparePart key={index} part={part} />
+      ))}
+    </pre>
   );
 });
-DeleteError.displayName = "DeleteError";
+CompareChanges.displayName = "CompareChanges";
 
-export default DeleteError;
+export default CompareChanges;

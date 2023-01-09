@@ -21,9 +21,10 @@
  *
  */
 
-import React, { useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
+import { AxiosError } from "axios";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
@@ -35,15 +36,12 @@ import Tabs from "./Query/Tabs";
 import QueryBuilder from "./Query/QueryBuilder";
 import QueryEditor from "./Query/QueryEditor";
 import QueryExecution from "./Query/QueryExecution";
-import CompareChangesModal from "./Query/CompareChangesModal";
-import SaveError from "./Query/SaveError";
-import SavingMessage from "./Query/SavingMessage";
-import DeleteError from "./Query/DeleteError";
-import DeletingMessage from "./Query/DeletingMessage";
 import SpinnerPanel from "../Components/SpinnerPanel";
 import ErrorPanel from "../Components/ErrorPanel";
+
 import API from "../Services/API";
 import { Type } from "../Stores/Type";
+import { Query as QuerySpecs } from "../Stores/Query";
 
 const useStyles = createUseStyles({
   container: {
@@ -85,6 +83,8 @@ const View = ({mode}:ModeProps) => {
 
 const Query = observer(({ mode }:ModeProps) => {
 
+  const queryIdRef = useRef<string|undefined>(undefined);
+
   const classes = useStyles();
   
   const params = useParams();
@@ -92,14 +92,63 @@ const Query = observer(({ mode }:ModeProps) => {
 
   const navigate = useNavigate();
 
-  const { queryBuilderStore, typeStore } = useStores();
+  const { queryBuilderStore, queriesStore, typeStore, transportLayer } = useStores();
+
+  const [isFetching, setIsFetching] = useState(false);
+  const [error, setError] = useState<string|undefined>(undefined);
+
+  const fetchQuery = async (queryId: string) => {
+    if (queriesStore.findQuery(queryId) || isFetching) {
+      return;
+    }
+    setIsFetching(true);
+    setError(undefined);
+    try {
+      const response = await transportLayer.getQuery(queryId);
+      const jsonSpecification =
+        response && response.data ? response.data : null;
+      try {
+        const query = await QuerySpecs.normalizeQuery(jsonSpecification);
+        queriesStore.addQuery(query);
+      } catch (e) {
+        setError(`Error while trying to expand/compact JSON-LD (${e})`);
+      }
+      setIsFetching(false);
+    } catch (e) {
+      const error = e as AxiosError;
+      const { response } = error;
+      const status = response?.status;
+      const message = error?.message;
+      setIsFetching(false);
+      switch (status) {
+        case 401: // Unauthorized
+        case 403: {
+          // Forbidden
+          setError(`You do not have permission to access the query with id "${queryId}"`);
+          break;
+        }
+        case 404: {
+          if (queryBuilderStore.hasType) {
+            // it's a new query created from ui
+            queryBuilderStore.setAsNewQuery(queryId);
+          } else {
+            setError(`Query id "${queryId}" does not exist`);
+          }
+          break;
+        }
+        default: {
+          setError(`Error while fetching query with id "${queryId}" (${message})`);
+        }
+      }
+    }
+  };
 
   const selectQuery = async () => {
     if (id && queryBuilderStore && id != queryBuilderStore.queryId) {
-      let query = queryBuilderStore.findQuery(id);
+      let query = queriesStore.findQuery(id);
       if(!query) {
-        await queryBuilderStore.fetchQuery(id);
-        query = queryBuilderStore.findQuery(id);
+        await fetchQuery(id);
+        query = queriesStore.findQuery(id);
       }
       if(query) {
         const typeName = query.meta.type;
@@ -108,18 +157,18 @@ const Query = observer(({ mode }:ModeProps) => {
         }
         const type = typeName && typeStore.types.get(typeName);
         if(type) {
-          queryBuilderStore.selectRootSchema(type);
+          queryBuilderStore.setType(type);
           queryBuilderStore.selectQuery(query);
         } else {
-          const unknownType = typeName?typeName:"<undefined>";
-          const unknownSchema = {
-            id: unknownType,
-            label: unknownType,
+          const typeId = typeName?typeName:"<undefined>";
+          const unknownType = {
+            id: typeId,
+            label: typeId,
             color: "black",
             description: "",
             properties: []
           } as Type.Type;
-          queryBuilderStore.selectRootSchema(unknownSchema);
+          queryBuilderStore.setType(unknownType);
           queryBuilderStore.selectQuery(query);
           if (mode !== "edit") {
             navigate(`/queries/${id}/edit`)
@@ -130,9 +179,12 @@ const Query = observer(({ mode }:ModeProps) => {
   };
 
   useEffect(() => {
-    API.trackCustomUrl(window.location.href);
-    API.trackPageView();
-    selectQuery();
+    if (!queryIdRef.current || queryIdRef.current !== id) {
+      queryIdRef.current = id;
+      API.setCustomUrl(window.location.href);
+      API.trackPageView();
+      selectQuery();
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -141,16 +193,16 @@ const Query = observer(({ mode }:ModeProps) => {
     navigate("/");
   };
 
-  if (queryBuilderStore.isFetchingQuery) {
+  if (isFetching) {
     return (
       <SpinnerPanel text={`Fetching query with id ${id} ... `} />
     );
   }
 
-  if (queryBuilderStore.fetchQueryError) {
+  if (error) {
     return (
       <ErrorPanel>
-        {queryBuilderStore.fetchQueryError}<br /><br />
+        {error}<br /><br />
         <Button variant="primary" onClick={selectQuery}>
           <FontAwesomeIcon icon={faRedoAlt} />&nbsp;&nbsp; Retry
         </Button>
@@ -159,18 +211,13 @@ const Query = observer(({ mode }:ModeProps) => {
     );
   }
 
-  if(queryBuilderStore.hasRootSchema && queryBuilderStore.queryId) {
+  if(queryBuilderStore.hasType && queryBuilderStore.queryId) {
     return (
       <div className={classes.container}>
         <Tabs mode={mode} />
         <div className={classes.body}>
           <View mode={mode} />
         </div>
-        <SavingMessage />
-        <SaveError />
-        <DeletingMessage />
-        <DeleteError />
-        <CompareChangesModal />
       </div>
     );
   }

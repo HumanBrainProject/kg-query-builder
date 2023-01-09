@@ -21,7 +21,7 @@
  *
  */
 
-import React from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -30,27 +30,35 @@ import {faGlasses} from "@fortawesome/free-solid-svg-icons/faGlasses";
 import API from "../../../Services/API";
 import { useStores } from "../../../Hooks/UseStores";
 
+import CompareChangesModal from "./CompareChangesModal";
 interface CompareButtonProps {
   disabled: boolean;
 }
 
 const CompareButton = observer(({ disabled }: CompareButtonProps) => {
 
+  const [ showChanges, setShowChanges ] = useState(false);
+
   const { queryBuilderStore } = useStores();
 
-  const onClick = () => {
+  const handleCompare = () => {
     API.trackEvent("Query", "Compare", queryBuilderStore.queryId);
-    queryBuilderStore.toggleCompareChanges();
+    setShowChanges(true);
   };
+
+  const handleCancelCompare = () => setShowChanges(false);
 
   if (!queryBuilderStore.hasChanged) {
     return null;
   }
 
   return (
-      <Button disabled={disabled} onClick={onClick}>
+    <>
+      <Button disabled={disabled} onClick={handleCompare}>
         <FontAwesomeIcon icon={faGlasses} />&nbsp;Compare
       </Button>
+      <CompareChangesModal show={showChanges} onClose={handleCancelCompare} />
+    </>
   );
 });
 CompareButton.displayName = "CompareButton";

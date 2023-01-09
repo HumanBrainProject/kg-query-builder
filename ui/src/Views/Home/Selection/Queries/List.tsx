@@ -51,10 +51,9 @@ const useStyles = createUseStyles({
 interface ListProps {
   title: string;
   list: QueryProps.Query[];
-  enableDelete: boolean;
 }
 
-const List = observer(({ title, list, enableDelete }: ListProps) => {
+const List = observer(({ title, list }: ListProps) => {
   const classes = useStyles();
   if (!list || !list.length) {
     return null;
@@ -69,7 +68,6 @@ const List = observer(({ title, list, enableDelete }: ListProps) => {
         <Query
           key={query.id}
           query={query}
-          enableDelete={enableDelete}
         />
       ))}
     </div>

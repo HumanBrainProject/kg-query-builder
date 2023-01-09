@@ -43,13 +43,13 @@ const defaultOptions = [
 
 class Field {
   namespace?: string;
-  schema?: QuerySpecification.Schema | QuerySpecification.CombinedSchema;
+  schema?: QuerySpecification.Schema;
   structure: Field[] = [];
   alias?: string;
   aliasError?: boolean;
   isFlattened = false;
   isReverse = false;
-  optionsMap: Map<string, any> = new Map();
+  optionsMap: Map<string, QuerySpecification.Value> = new Map();
   isUnknown = false;
   isInvalid = false;
   isInvalidLeaf = false;
@@ -57,7 +57,7 @@ class Field {
   typeFilterEnabled = false;
   parent?: Field;
 
-  constructor(schema?: QuerySpecification.Schema | QuerySpecification.CombinedSchema, parent?: Field) {
+  constructor(schema?: QuerySpecification.Schema, parent?: Field) {
     makeObservable(this, {
       namespace: observable,
       schema: observable,
@@ -165,7 +165,7 @@ class Field {
     return this.optionsMap.has(name) ? this.optionsMap.get(name) : undefined;
   }
 
-  setOption(name:string, value:any, preventRecursive?:boolean) {
+  setOption(name:string, value:QuerySpecification.Value, preventRecursive?:boolean) {
     this.optionsMap.set(name, value);
     if (name === "sort" && value && !preventRecursive) {
       const rootField = this.rootField;      

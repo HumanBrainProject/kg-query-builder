@@ -21,8 +21,11 @@
  *
  */
 
+import jsonld from "jsonld";
+
 import { Permission } from "./AuthStore";
 import { QuerySpecification } from "./QueryBuilderStore/QuerySpecification";
+import { rootFieldReservedProperties } from "./QueryBuilderStore/QuerySettings";
 
 export namespace Query {
   export interface TypeFilter {
@@ -33,11 +36,11 @@ export namespace Query {
 
   export interface Option {
     name: string;
-    value?: any;
+    value?: QuerySpecification.Value;
   }
 
   export interface Properties {
-    [name: string]: any;
+    [name: string]: QuerySpecification.Value;
   }
 
   export interface Query {
@@ -47,8 +50,6 @@ export namespace Query {
     space: string;
     meta: QuerySpecification.Meta;
     structure: QuerySpecification.Field[];
-    deleteError?: string;
-    isDeleting: boolean;
     context: QuerySpecification.Context;
     properties: Properties;
   }
@@ -71,4 +72,36 @@ export namespace Query {
       value: string;
     };
   }
+
+
+  export const getProperties = (query: QuerySpecification.QuerySpecification): Query.Properties => {
+    if (!query) {
+      return {};
+    }
+    return Object.entries(query)
+      .filter(([name]) => !rootFieldReservedProperties.includes(name))
+      .reduce((result, [name, value]) => {
+        result[name] = value;
+        return result;
+      }, {} as Query.Properties);
+  };
+  
+
+  export const normalizeQuery = async (jsonSpec: QuerySpecification.QuerySpecification): Promise<Query.Query> => {
+    const queryId = jsonSpec["@id"];
+    jsonSpec["@context"] = QuerySpecification.defaultContext();
+    const expanded = await jsonld.expand(jsonSpec as jsonld.JsonLdDocument);
+    const compacted = await jsonld.compact(expanded, jsonSpec["@context"] as jsonld.ContextDefinition);
+    const meta = compacted.meta as QuerySpecification.Meta;
+    return {
+      id: queryId,
+      context: compacted["@context"] as QuerySpecification.Context,
+      structure: compacted.structure as QuerySpecification.Field[],
+      properties: getProperties(compacted as QuerySpecification.QuerySpecification),
+      meta: meta,
+      label: meta.name ? meta.name  : "",
+      description: meta.description ? meta.description : "",
+      space: jsonSpec["https://core.kg.ebrains.eu/vocab/meta/space"],
+    } as Query.Query;
+  };
 }

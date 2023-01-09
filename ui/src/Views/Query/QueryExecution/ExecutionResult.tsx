@@ -28,8 +28,6 @@ import { createUseStyles } from "react-jss";
 import Button from "react-bootstrap/Button";
 import { Scrollbars } from "react-custom-scrollbars-2";
 
-import { useStores } from "../../../Hooks/UseStores";
-
 import ThemeRJV from "../../../Themes/ThemeRJV";
 
 const useStyles = createUseStyles({
@@ -67,18 +65,30 @@ const download = (content: BlobPart) => {
   a.click();
 };
 
-const Result = observer(() => {
+export interface Result {
+  data: object[];
+  startTime: number;
+  durationInMs: number;
+  total: number;
+  size: number;
+  from: number;
+}
+
+interface ResultProps {
+  data: Result|undefined;
+}
+
+const ExecutionResult = observer(({ data }: ResultProps) => {
+
   const classes = useStyles();
 
-  const { queryBuilderStore } = useStores();
+  const handeDownload = () => download(JSON.stringify(data));
 
-  const handeDownload = () => download(JSON.stringify(queryBuilderStore.result));
-
-  if (!queryBuilderStore.result) {
+  if (!data) {
     return null;
   }
 
-  const executionTime = `${queryBuilderStore.result.durationInMs / 1000} seconds`;
+  const executionTime = `${data.durationInMs / 1000} seconds`;
   return (
     <div className={classes.container}>
       <div className={classes.toggle}>
@@ -93,13 +103,13 @@ const Result = observer(() => {
             collapsed={1}
             name={false}
             theme={ThemeRJV}
-            src={queryBuilderStore.result}
+            src={data}
           />
         </Scrollbars>
       </div>
     </div>
   );
 });
-Result.displayName = "Result";
+ExecutionResult.displayName = "ExecutionResult";
 
-export default Result;
+export default ExecutionResult;

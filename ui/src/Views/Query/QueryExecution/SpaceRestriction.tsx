@@ -101,29 +101,29 @@ const SpaceRestriction = observer(() => {
 
   const classes = useStyles();
 
-  const { queryBuilderStore, authStore } = useStores();
+  const { queryRunStore, authStore } = useStores();
 
   if (!Array.isArray(authStore.spaces) || !authStore.spaces.length) {
     return null;
   }
 
-  const isRestricted = Array.isArray(queryBuilderStore.resultRestrictToSpaces);
+  const isRestricted = Array.isArray(queryRunStore.spaces);
 
   const spaces = isRestricted?authStore.spaces.map(space => ({
     name: space.name,
-    selected: queryBuilderStore.resultRestrictToSpaces?queryBuilderStore.resultRestrictToSpaces.includes(space.name):false
+    selected: queryRunStore.spaces?queryRunStore.spaces.includes(space.name):false
   })):[];
 
-  const handleToggleSpaceRestriction = (_?: string, value?: boolean) => queryBuilderStore.setResultRestrictToSpaces(value?[]:undefined);
+  const handleToggleSpaceRestriction = (_?: string, value?: boolean) => queryRunStore.setSpaces(value?[]:undefined);
 
   const toggleSpace = (name: string, selected: boolean) => {
     if (selected) {
-      if (queryBuilderStore.resultRestrictToSpaces && !queryBuilderStore.resultRestrictToSpaces.includes(name)) {
-        queryBuilderStore.setResultRestrictToSpaces([...queryBuilderStore.resultRestrictToSpaces, name]);
+      if (queryRunStore.spaces && !queryRunStore.spaces.includes(name)) {
+        queryRunStore.setSpaces([...queryRunStore.spaces, name]);
       }
     } else {
-      if (queryBuilderStore.resultRestrictToSpaces && queryBuilderStore.resultRestrictToSpaces.includes(name)) {
-        queryBuilderStore.setResultRestrictToSpaces(queryBuilderStore.resultRestrictToSpaces.filter(space => space !== name));
+      if (queryRunStore.spaces && queryRunStore.spaces.includes(name)) {
+        queryRunStore.setSpaces(queryRunStore.spaces.filter(space => space !== name));
       }
     }
   };

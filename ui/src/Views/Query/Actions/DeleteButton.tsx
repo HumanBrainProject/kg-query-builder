@@ -27,34 +27,58 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons/faTrashAlt";
 import { useNavigate } from "react-router-dom";
+import { AxiosError } from "axios";
 
 import API from "../../../Services/API";
 import { useStores } from "../../../Hooks/UseStores";
 
 import Dialog from "../../../Components/Dialog";
-
+import SpinnerPanel from "../../../Components/SpinnerPanel";
+import ActionError from "../../../Components/ActionError";
 
 const DeleteButton = observer(() => {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState<string|undefined>(undefined);
 
   const navigate = useNavigate();
 
-  const { queryBuilderStore } = useStores();
+  const { queryBuilderStore, queriesStore, transportLayer } = useStores();
 
   const handleConfirmDelete = () => {
     setShowDeleteDialog(true);
   };
 
+  const deleteQuery = async () => {
+    const queryId = queryBuilderStore.sourceQuery?.id;
+    if (queryId) {
+      setIsDeleting(true);
+      setError(undefined);
+      try {
+        await transportLayer.deleteQuery(queryId);
+        queriesStore.removeQuery(queryId);
+        setIsDeleting(false);
+        queryBuilderStore.clearQuery();
+        navigate("/");
+      } catch (e) {
+        const error = e as AxiosError;
+        const message = error?.message;
+        setError(`Error while deleting query "${queryId}" (${message})`);
+        setIsDeleting(false);
+      }
+    }
+  }
+
   const handleDelete = () => {
     API.trackEvent("Query", "Delete", queryBuilderStore.queryId);
     setShowDeleteDialog(false);
-    queryBuilderStore.deleteQuery(queryBuilderStore.sourceQuery, navigate);
+    deleteQuery();
   };
 
   const handleCancelDelete = () => {
     setShowDeleteDialog(false);
-    queryBuilderStore.cancelDeleteQuery(queryBuilderStore.sourceQuery);
+    setError(undefined);
   };
 
   if (!queryBuilderStore.sourceQuery || !queryBuilderStore.canDeleteQuery) {
@@ -64,11 +88,13 @@ const DeleteButton = observer(() => {
   return (
       <>
         <Button variant="danger" onClick={handleConfirmDelete}>
-          <FontAwesomeIcon icon={faTrashAlt} />&nbsp;Delete {showDeleteDialog}
+          <FontAwesomeIcon icon={faTrashAlt} />&nbsp;Delete
         </Button>
         {showDeleteDialog && (
           <Dialog message="Are you sure you want to delete this query?" onCancel={handleCancelDelete} onConfirm={handleDelete} />
         )}
+        <SpinnerPanel show={isDeleting} text={`Deleting query ${queryBuilderStore.queryId}...`} />
+        <ActionError error={error} onCancel={handleCancelDelete} onRetry={deleteQuery} />
       </>
   );
 });

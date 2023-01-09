@@ -24,15 +24,18 @@
 import { Type } from "../Type";
 export namespace QuerySpecification {
 
-  export interface AbstractSchema extends Type.Property {
+  export interface JsonLd {
+    "@id": string;
+  }
+
+  export interface JsonLdWithType extends JsonLd {
+    "@type": string;
+  }
+
+  export type Value  = undefined|null|object|string|number|boolean|(undefined|null|object|string|number|boolean)[];
+
+  export interface Schema extends Type.Property {
     attributeNamespace?: string;
-  }
-
-  export interface Schema extends AbstractSchema {
-    id: string;
-  }
-
-  export interface CombinedSchema extends AbstractSchema {
     isUnknown: boolean;
   }
 
@@ -51,7 +54,9 @@ export namespace QuerySpecification {
     ensureOrder?: boolean;
     filter?: FilterItem;
     singleValue?: string;
-    [any: string]: any;
+    [name: string]:
+      | Value
+      | Field[keyof Field];
   }
 
   export interface Meta {
@@ -59,14 +64,6 @@ export namespace QuerySpecification {
     description?: string;
     type?: string; //TODO: this shouldn't happen after we split QueryBuilderStore
     responseVocab?: string;
-  }
-
-  export interface JsonLd {
-    "@id": string;
-  }
-
-  export interface JsonLdWithType extends JsonLd {
-    "@type": string;
   }
 
   export interface Path extends JsonLd {
@@ -101,15 +98,38 @@ export namespace QuerySpecification {
     query?: string;
     propertyName: JsonLdWithType;
     path: JsonLdWithType;
-    [index: string]: any;
+    [name: string]: 
+        | null
+        | Value
+        | Context[keyof Context];
   }
 
-  export interface JSONQuerySpecification {
+  export interface QuerySpecification {
     "@id"?: string;
     "@context"?: Context;
     meta: Meta;
     space?: string;
     structure?: Field[];
-    [name: string]: any;
+    [name: string]:  
+      | Value
+      | QuerySpecification[keyof QuerySpecification];
   }
+
+  export const defaultResponseVocab = "https://schema.hbp.eu/myQuery/";
+
+  export const defaultContext = (): QuerySpecification.Context => {
+    return {
+      "@vocab": "https://core.kg.ebrains.eu/vocab/query/",
+      query: defaultResponseVocab,
+      propertyName: {
+        "@id": "propertyName",
+        "@type": "@id"
+      },
+      path: {
+        "@id": "path",
+        "@type": "@id"
+      }
+    };
+  };
+
 }

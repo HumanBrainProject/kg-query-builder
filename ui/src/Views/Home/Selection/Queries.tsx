@@ -21,13 +21,14 @@
  *
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRedoAlt } from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 import { Scrollbars } from "react-custom-scrollbars-2";
+import { AxiosError } from "axios";
 
 import { useStores } from "../../../Hooks/UseStores";
 
@@ -35,6 +36,8 @@ import Spinner from "../../../Components/Spinner";
 import ErrorPanel from "../../../Components/ErrorPanel";
 import Filter from "../../../Components/Filter";
 import List from "./Queries/List";
+import { Query } from "../../../Stores/Query";
+import { QuerySpecification } from "../../../Stores/QueryBuilderStore/QuerySpecification";
 
 const useStyles = createUseStyles({
   panel: {
@@ -60,62 +63,104 @@ const useStyles = createUseStyles({
 });
 
 interface QueriesProps {
-  className: string;
+  className?: string;
 }
 
 const Queries = observer(({ className }: QueriesProps) => {
+
+  const typeIdRef = useRef<string|undefined>(undefined);
+
   const classes = useStyles();
 
-  const { queryBuilderStore } = useStores();
+  const { transportLayer, queriesStore, queryBuilderStore } = useStores();
+
+  const [error, setError] = useState<string|undefined>(undefined);
+  const [isFetching, setIsFetching] = useState(false);
+
+  const fetchQueries = async (force?: boolean) => {
+    if (queryBuilderStore.typeId) {
+      if (force || queryBuilderStore.typeId !== queriesStore.type) {
+        if (queryBuilderStore.typeId !== queriesStore.type) {
+          queriesStore.clearQueries();
+        }
+        setError(undefined);
+        setIsFetching(true);
+        try {
+          const response = await transportLayer.listQueries(queryBuilderStore.typeId);
+          if (Array.isArray(response?.data?.data)) {
+            try {
+              const queries = await Promise.all(response.data.data.map(async (jsonSpec: QuerySpecification.QuerySpecification) => Query.normalizeQuery(jsonSpec)));
+              queriesStore.setQueries(queryBuilderStore.typeId, queries);
+            } catch (e) {
+              setError(`Error while trying to expand/compact JSON-LD (${e})`);
+            }
+          }
+          setIsFetching(false);
+        } catch (e) {
+          const error = e as AxiosError;
+          const message = error?.message;
+          setError(`Error while fetching saved queries (${message})`);
+          setIsFetching(false);
+        }
+      }
+    } else {
+      queriesStore.toggleShowSavedQueries(false);
+      queriesStore.clearQueries();
+      setError(undefined);
+    }
+  }
 
   useEffect(() => {
-    if (queryBuilderStore.hasRootSchema) {
-      queryBuilderStore.fetchQueries();
+    if (!typeIdRef.current || typeIdRef.current !== queryBuilderStore.typeId) {
+      typeIdRef.current = queryBuilderStore.typeId;
+      fetchQueries();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryBuilderStore.hasRootSchema]);
+  }, [queryBuilderStore.typeId]);
 
-  const handleFetchSavedQueries = () => queryBuilderStore.fetchQueries();
+  const handleRefresh = () => fetchQueries(true);
 
-  const handleChange = (value: string) => queryBuilderStore.setQueriesFilterValue(value);
+  const handleRetry = () => fetchQueries();
 
-  if (!queryBuilderStore.hasRootSchema) {
+  const handleChange = (value: string) => queriesStore.setFilter(value);
+
+  if (!queryBuilderStore.hasType) {
     return null;
   }
 
-  if (queryBuilderStore.fetchQueriesError) {
+  if (error) {
     return (
       <ErrorPanel>
-        {queryBuilderStore.fetchQueriesError}
+        {error}
         <br />
         <br />
-        <Button variant="primary" onClick={handleFetchSavedQueries}>
+        <Button variant="primary" onClick={handleRefresh}>
           <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Refresh
         </Button>
       </ErrorPanel>
     );
   }
 
-  if (queryBuilderStore.isFetchingQueries) {
+  if (isFetching) {
     return (
       <Spinner>
-        {queryBuilderStore.rootSchema ? `Fetching queries for ${queryBuilderStore.rootSchema.label}`:"Fetching queries"}...
+        {queryBuilderStore.type ? `Fetching queries for ${queryBuilderStore.type.label}`:"Fetching queries"}...
       </Spinner>
     );
   }
 
-  if (!queryBuilderStore.isQueriesFetched) {
+  if (!queryBuilderStore.typeId || queryBuilderStore.typeId !== queriesStore.type) {
     return null;
   }
 
-  if (!queryBuilderStore.hasQueries) {
+  if (!queriesStore.hasQueries) {
     return (
       <ErrorPanel>
-        {queryBuilderStore.rootSchema ? `No saved queries available yet for ${queryBuilderStore.rootSchema.label}`: "No saved queries available"}
-        {queryBuilderStore.rootSchema && <small> - {queryBuilderStore.rootSchema.id}</small>}
+        {queryBuilderStore.type ? `No saved queries available yet for ${queryBuilderStore.type.label}`: "No saved queries available"}
+        {queryBuilderStore.type && <small> - {queryBuilderStore.type.id}</small>}
         <br />
         <br />
-        <Button variant="primary" onClick={handleFetchSavedQueries}>
+        <Button variant="primary" onClick={handleRetry}>
           <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
         </Button>
       </ErrorPanel>
@@ -126,19 +171,18 @@ const Queries = observer(({ className }: QueriesProps) => {
     <div className={`${classes.panel} ${className ? className : ""}`}>
       <Filter
         className={classes.filter}
-        value={queryBuilderStore.queriesFilterValue}
+        value={queriesStore.filter}
         placeholder="Filter queries"
         onChange={handleChange}
       />
       <div className={classes.body}>
         <Scrollbars autoHide>
           <div className={classes.content}>
-            {queryBuilderStore.groupedFilteredQueries.map(group => (
+            {queriesStore.groupedFilteredQueries.map(group => (
               <List
                 key={group.name}
                 title={group.label}
                 list={group.queries}
-                enableDelete={group.permissions.canDelete}
               />
             ))}
           </div>

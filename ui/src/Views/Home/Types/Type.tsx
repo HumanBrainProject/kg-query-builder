@@ -101,10 +101,10 @@ const Type = observer(({ type, enableFocus, onKeyDown }: TypeProps) =>  {
   const { queryBuilderStore } = useStores();
 
   const selectType = () => {
-    if (type.id !== queryBuilderStore.rootSchemaId) {
+    if (type.id !== queryBuilderStore.typeId) {
       API.trackEvent("Type", "Select", type.id);
       localStorage.setItem("type", type.id);
-      queryBuilderStore.selectRootSchema(type);
+      queryBuilderStore.setType(type);
     }
   };
 
@@ -120,7 +120,7 @@ const Type = observer(({ type, enableFocus, onKeyDown }: TypeProps) =>  {
   const label = getTypeLabel(type);
 
   return (
-    <div tabIndex={-1} ref={ref as RefObject<any>} className={`${classes.container} ${type.id === queryBuilderStore.rootSchemaId?classes.selected:""}`} onClick={handleClick} onKeyDown={handleKeyDown}>
+    <div tabIndex={-1} ref={ref as RefObject<HTMLDivElement>} className={`${classes.container} ${type.id === queryBuilderStore.typeId?classes.selected:""}`} onClick={handleClick} onKeyDown={handleKeyDown}>
       <Icon icon={faCircle} color={type.color}/>
       {label} - <small>{type.id}</small>
       <div className={classes.nextIcon} >

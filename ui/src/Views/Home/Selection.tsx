@@ -154,7 +154,7 @@ const Selection = observer(() => {
 
   const navigate = useNavigate();
 
-  const { queryBuilderStore, typeStore } = useStores();
+  const { queryBuilderStore, queriesStore, typeStore } = useStores();
 
   const handleNewQueryClick = () => {
     const uuid = uuidv4();
@@ -162,13 +162,11 @@ const Selection = observer(() => {
   };
 
   const handlShowSavedClick = () =>
-    queryBuilderStore.toggleShowSavedQueries(
-      !queryBuilderStore.showSavedQueries
+    queriesStore.toggleShowSavedQueries(
+      !queriesStore.showSavedQueries
     );
 
-  const type = queryBuilderStore.hasRootSchema
-    ? typeStore.types.get(queryBuilderStore.rootSchemaId)
-    : null;
+  const type = queryBuilderStore.typeId && typeStore.types.get(queryBuilderStore.typeId);
 
   return (
     <div className={classes.container}>
@@ -190,14 +188,14 @@ const Selection = observer(() => {
                 icon={faChevronRight}
                 size="lg"
                 className={
-                  queryBuilderStore.showSavedQueries
+                  queriesStore.showSavedQueries
                     ? classes.showSavedQueries
                     : ""
                 }
               />
             </div>
           </div>
-          {queryBuilderStore.showSavedQueries && (
+          {queriesStore.showSavedQueries && (
             <Queries className={classes.savedQueries} />
           )}
         </div>

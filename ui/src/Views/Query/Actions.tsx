@@ -48,11 +48,11 @@ const QuerySaveAsModeActions = observer(() => {
 const UpdatableQueryActions = observer(() => {
 
   const { queryBuilderStore } = useStores();
-  const { hasQueryChanged, isQueryEmpty, hasChanged, sourceQuery } = queryBuilderStore;
+  const { hasQueryChanged, isQueryEmpty, hasChanged } = queryBuilderStore;
 
   const compareDisabled = !hasQueryChanged;
   const saveAsDisabled = isQueryEmpty;
-  const saveDisabled = !hasChanged || isQueryEmpty || !!sourceQuery?.isDeleting;
+  const saveDisabled = !hasChanged || isQueryEmpty;
 
   return (
     <>
