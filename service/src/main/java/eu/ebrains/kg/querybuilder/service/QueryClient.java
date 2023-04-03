@@ -139,6 +139,7 @@ public class QueryClient {
         allRequestParams.remove("instanceId");
         allRequestParams.remove("from");
         allRequestParams.remove("size");
+        allRequestParams.remove("restrictToSpaces");
         String relativeUrl = String.format("queries?from=%d&size=%d&stage=%s%s", from, size, stage, paramsToString(allRequestParams));
         if (instanceId != null) {
             relativeUrl += String.format("&instanceId=%s", instanceId);
