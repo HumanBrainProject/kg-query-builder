@@ -39,16 +39,6 @@ public class Queries {
         return queryClient.getQueries(type);
     }
 
-    @GetMapping("/{queryId}/instances")
-    public ResponseEntity<Map<?, ?>> executeStoredQuery(@PathVariable("queryId") String queryId,
-                                        @RequestParam("from") Integer from,
-                                        @RequestParam("size") Integer size,
-                                        @RequestParam("vocab") String vocab,
-                                        @RequestParam("stage") String stage,
-                                        @RequestParam(value = "restrictToSpaces", required = false) List<String> restrictToSpaces) {
-        return queryClient.executeStoredQuery(queryId, from, size, vocab, stage, restrictToSpaces);
-    }
-
     @GetMapping("/{queryId}")
     public ResponseEntity<Map<?, ?>> getQueryById(@PathVariable("queryId") String queryId) {
         return queryClient.getQueryById(queryId);

@@ -36,15 +36,10 @@ public class ServiceCall {
 
     final private String apiVersion;
 
-    final private String clientId;
-    final private String clientSecret;
-
-    public ServiceCall(WebClient webClient, @Value("${kgcore.endpoint}") String kgCoreEndpoint, @Value("${kgcore.apiVersion}") String apiVersion, @Value("${client.id}") String clientId, @Value("${client.secret}") String clientSecret) {
+    public ServiceCall(WebClient webClient, @Value("${kgcore.endpoint}") String kgCoreEndpoint, @Value("${kgcore.apiVersion}") String apiVersion) {
         this.webClient = webClient;
         this.kgCoreEndpoint = kgCoreEndpoint;
         this.apiVersion = apiVersion;
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
     }
 
     public String url(String relativeUri){

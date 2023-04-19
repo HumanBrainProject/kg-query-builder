@@ -17,57 +17,21 @@
 package eu.ebrains.kg.querybuilder.model;
 
 import eu.ebrains.kg.querybuilder.constants.SchemaFieldsConstants;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
 public class Property {
     private String simpleAttributeName;
     private String attribute;
     private String label;
     private List<String> canBe;
     private Boolean reverse;
-
-    public String getSimpleAttributeName() {
-        return simpleAttributeName;
-    }
-
-    public void setSimpleAttributeName(String simpleAttributeName) {
-        this.simpleAttributeName = simpleAttributeName;
-    }
-
-    public String getAttribute() {
-        return attribute;
-    }
-
-    public void setAttribute(String attribute) {
-        this.attribute = attribute;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public List<String> getCanBe() {
-        return canBe;
-    }
-
-    public void setCanBe(List<String> canBe) {
-        this.canBe = canBe;
-    }
-
-    public Boolean getReverse() {
-        return reverse;
-    }
-
-    public void setReverse(Boolean reverse) {
-        this.reverse = reverse;
-    }
 
     public Property(String simpleAttributeName, String attribute, String label, List<String> canBe) {
         this.simpleAttributeName = simpleAttributeName;

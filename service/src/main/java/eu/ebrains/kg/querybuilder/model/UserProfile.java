@@ -26,11 +26,18 @@ package eu.ebrains.kg.querybuilder.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.ebrains.kg.querybuilder.constants.SchemaFieldsConstants;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
+@Getter
+@Setter
 public class UserProfile extends UserSummary {
+    private final String givenName;
+    private final String familyName;
+    private final String email;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public UserProfile(
@@ -39,26 +46,10 @@ public class UserProfile extends UserSummary {
             @JsonProperty(SchemaFieldsConstants.NAME) String kgName,
             @JsonProperty(SchemaFieldsConstants.GIVEN_NAME) String kgGivenName,
             @JsonProperty(SchemaFieldsConstants.FAMILY_NAME) String kgFamilyName,
-            @JsonProperty(SchemaFieldsConstants.EMAIL) String kgEmail){
+            @JsonProperty(SchemaFieldsConstants.EMAIL) String kgEmail) {
         super(!CollectionUtils.isEmpty(kgId) ? kgId.get(0) : null, kgUserName, kgName);
         this.givenName = kgGivenName;
         this.familyName = kgFamilyName;
         this.email = kgEmail;
-    }
-
-    private final String givenName;
-    private final String familyName;
-    private final String email;
-
-    public String getGivenName() {
-        return givenName;
-    }
-
-    public String getFamilyName() {
-        return familyName;
-    }
-
-    public String getEmail() {
-        return email;
     }
 }

@@ -17,56 +17,20 @@
 package eu.ebrains.kg.querybuilder.model;
 
 import eu.ebrains.kg.querybuilder.constants.SchemaFieldsConstants;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
 public class TypeEntity {
     private String id;
     private String label;
     private String color;
     private String description;
     private List<Property> properties;
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<Property> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<Property> properties) {
-        this.properties = properties;
-    }
 
     public TypeEntity(String id, String label, String color, String description, List<Property> properties) {
         this.id = id;
@@ -89,7 +53,7 @@ public class TypeEntity {
                 .filter(Map.class::isInstance)
                 .map(p -> (Map<?, ?>) p)
                 .filter(f -> f.get(SchemaFieldsConstants.META_NAME_REVERSE_LINK) != null)
-                .collect(Collectors.toMap(k-> ((String) k.get(SchemaFieldsConstants.IDENTIFIER)), v-> ((String) v.get(SchemaFieldsConstants.META_NAME_REVERSE_LINK))));
+                .collect(Collectors.toMap(k -> ((String) k.get(SchemaFieldsConstants.IDENTIFIER)), v -> ((String) v.get(SchemaFieldsConstants.META_NAME_REVERSE_LINK))));
         List<Property> incomingLinksProperties = ((Collection<?>) d.get(SchemaFieldsConstants.META_INCOMING_LINKS)).stream()
                 .filter(Map.class::isInstance)
                 .map(p -> Property.fromIncomingLinksMap((Map<?, ?>) p, propertyReverseLink))
@@ -98,21 +62,21 @@ public class TypeEntity {
         return new TypeEntity(id, name, color, description, properties);
     }
 
-    private String getDistinctPropertyKey(Property p){
-       return String.format("%s-%b", p.getAttribute(), p.getReverse());
+    private String getDistinctPropertyKey(Property p) {
+        return String.format("%s-%b", p.getAttribute(), p.getReverse());
     }
 
-    public void mergeWith(TypeEntity typeEntity){
+    public void mergeWith(TypeEntity typeEntity) {
         final Map<String, Property> mappedProperties = typeEntity.getProperties().stream().collect(Collectors.toMap(this::getDistinctPropertyKey, v -> v));
         Set<String> handledProperties = new HashSet<>();
         this.properties.forEach(p -> {
             final String distinctPropertyKey = getDistinctPropertyKey(p);
-            if(mappedProperties.containsKey(distinctPropertyKey)){
+            if (mappedProperties.containsKey(distinctPropertyKey)) {
                 p.merge(mappedProperties.get(distinctPropertyKey));
             }
             handledProperties.add(p.getAttribute());
         });
-        typeEntity.getProperties().stream().filter(p -> !handledProperties.contains(p.getAttribute())).forEach(p->this.properties.add(p));
+        typeEntity.getProperties().stream().filter(p -> !handledProperties.contains(p.getAttribute())).forEach(p -> this.properties.add(p));
     }
 
 }

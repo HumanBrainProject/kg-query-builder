@@ -26,6 +26,7 @@ package eu.ebrains.kg.querybuilder.service;
 import eu.ebrains.kg.querybuilder.model.TypeEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,23 +39,23 @@ public class TypeClient {
         this.kg = kg;
     }
 
-    private static class KGResult extends HashMap<String, Object>{}
+    private static class KGResult extends HashMap<String, Object> {
+    }
 
-    private Map<String, Object> fetchTypes(String stage){
+    private Map<String, Object> fetchTypes(String stage) {
         String relativeUrl = String.format("types?stage=%s&withProperties=true&withIncomingLinks=true", stage);
-       return kg.client().get().uri(kg.url(relativeUrl))
+        return kg.client().get().uri(kg.url(relativeUrl))
                 .retrieve()
                 .bodyToMono(KGResult.class)
                 .block();
     }
 
 
-
     public List<TypeEntity> getTypes() {
         Map<String, Object> resultInProgress = fetchTypes("IN_PROGRESS");
         if (resultInProgress != null) {
             Map<String, Object> resultReleased = fetchTypes("RELEASED");
-            if(resultReleased!=null) {
+            if (resultReleased != null) {
                 Object dataInProgress = resultInProgress.get("data");
                 Object dataReleased = resultReleased.get("data");
                 if (dataInProgress instanceof Collection && dataReleased instanceof Collection) {
@@ -63,14 +64,14 @@ public class TypeClient {
                     List<TypeEntity> result = new ArrayList<>();
                     inProgressTypes.keySet().forEach(k -> {
                         final TypeEntity entity = inProgressTypes.get(k);
-                        if (releasedTypes.containsKey(k)){
+                        if (releasedTypes.containsKey(k)) {
                             entity.mergeWith(releasedTypes.get(k));
                         }
                         result.add(entity);
                     });
                     //Add all types which only exist in released
                     releasedTypes.keySet().forEach(k -> {
-                        if(!inProgressTypes.containsKey(k)){
+                        if (!inProgressTypes.containsKey(k)) {
                             result.add(releasedTypes.get(k));
                         }
                     });

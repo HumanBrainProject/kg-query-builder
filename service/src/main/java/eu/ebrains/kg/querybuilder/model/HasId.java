@@ -24,9 +24,6 @@
 package eu.ebrains.kg.querybuilder.model;
 
 public interface HasId {
-
     void setId(String id);
-
     String getId();
-
 }

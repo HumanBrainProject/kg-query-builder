@@ -16,31 +16,12 @@
 
 package eu.ebrains.kg.querybuilder.model;
 
-public class AuthTokens {
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+public class AuthTokens {
     protected UserAuthToken userAuthToken;
     protected ClientAuthToken clientAuthToken;
-
-    public AuthTokens() {
-    }
-
-    public AuthTokens(UserAuthToken userAuthToken) {
-        this.userAuthToken = userAuthToken;
-    }
-
-    public UserAuthToken getUserAuthToken() {
-        return userAuthToken;
-    }
-
-    public void setUserAuthToken(UserAuthToken userAuthToken) {
-        this.userAuthToken = userAuthToken;
-    }
-
-    public ClientAuthToken getClientAuthToken() {
-        return clientAuthToken;
-    }
-
-    public void setClientAuthToken(ClientAuthToken clientAuthToken) {
-        this.clientAuthToken = clientAuthToken;
-    }
 }

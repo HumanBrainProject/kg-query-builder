@@ -20,19 +20,14 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Component
 @RequestScope
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class AuthContext {
-
     private AuthTokens authTokens;
-
-    public AuthTokens getAuthTokens() {
-        return authTokens;
-    }
-
-    public void setAuthTokens(AuthTokens authTokens) {
-        this.authTokens = authTokens;
-    }
 }

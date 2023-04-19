@@ -56,7 +56,7 @@ public class QueryClient {
                 .retrieve()
                 .bodyToMono(Map.class)
                 .block();
-        if(queriesResult!=null) {
+        if (queriesResult != null) {
             List<Map<String, Object>> data = (List<Map<String, Object>>) queriesResult.get("data");
             data.forEach(query -> {
                 UUID resolvedQueryId = idController.getSimplifyFullyQualifiedId(query);
@@ -69,32 +69,6 @@ public class QueryClient {
         return queriesResult;
     }
 
-    public ResponseEntity<Map<?, ?>> executeStoredQuery(String queryId,
-                                        Integer from,
-                                        Integer size,
-                                        String vocab,
-                                        String stage,
-                                        List<String> restrictToSpaces) {
-        String relativeUrl = String.format("queries/%s/instances?from=%s&size=%s&vocab=%s&stage=%s", queryId, from, size, vocab, stage);
-        if (restrictToSpaces != null && !restrictToSpaces.isEmpty()) {
-            List<String> encodedSpaces = restrictToSpaces.stream().map(space -> {
-                try {
-                    return encodeValue(space);
-                } catch (UnsupportedEncodingException e) {
-                    return null;
-                }
-            }).filter(Objects::nonNull).toList();
-            if (encodedSpaces.size() != restrictToSpaces.size()) {
-                return ResponseEntity.badRequest().build();
-            }
-            relativeUrl += String.format("&restrictToSpaces=%s", String.join(",", restrictToSpaces));
-        }
-        Map<?, ?> result =kg.client().get().uri(kg.url(relativeUrl))
-                .retrieve()
-                .bodyToMono(Map.class)
-                .block();
-        return ResponseEntity.ok(result);
-    }
 
     public ResponseEntity<Map<?, ?>> getQueryById(String queryId) {
         String relativeUrl = String.format("queries/%s", queryId);

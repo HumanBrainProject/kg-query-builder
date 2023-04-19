@@ -36,7 +36,8 @@ public class UserClient {
         this.kg = kg;
     }
 
-    private static class UserFromKG extends KGCoreResult<UserProfile>{}
+    private static class UserFromKG extends KGCoreResult<UserProfile> {
+    }
 
     public UserProfile getUserProfile() {
         String relativeUrl = "users/me";

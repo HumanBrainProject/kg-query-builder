@@ -26,49 +26,25 @@ package eu.ebrains.kg.querybuilder.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.ebrains.kg.querybuilder.constants.SchemaFieldsConstants;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class UserSummary implements HasId {
+    private String id;
+    private final String username;
+    private final String name;
+    private String picture; //This is actually a data url...
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public UserSummary(
             @JsonProperty("@id") String kgId,
             @JsonProperty(SchemaFieldsConstants.ALTERNATENAME) String kgUserName,
             @JsonProperty(SchemaFieldsConstants.NAME) String kgName
-    ){
+    ) {
         this.id = kgId;
         this.username = kgUserName;
         this.name = kgName;
-    }
-
-    private String id;
-    private final String username;
-    private final String name;
-    //This is actually a data url...
-    private String picture;
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
     }
 }
