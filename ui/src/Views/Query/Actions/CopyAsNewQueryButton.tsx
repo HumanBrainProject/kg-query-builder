@@ -29,8 +29,8 @@ import {faCopy} from "@fortawesome/free-solid-svg-icons/faCopy";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 
-import API from "../../../Services/API";
-import { useStores } from "../../../Hooks/UseStores";
+import useStores from "../../../Hooks/useStores";
+import Matomo from "../../../Services/Matomo";
 
 const CopyAsNewQueryButton = observer(() => {
 
@@ -39,7 +39,7 @@ const CopyAsNewQueryButton = observer(() => {
   const { queryBuilderStore } = useStores();
 
   const onClick = () => {
-    API.trackEvent("Query", "CopyAsNew", queryBuilderStore.queryId);
+    Matomo.trackEvent("Query", "CopyAsNew", queryBuilderStore.queryId);
     const uuid = uuidv4();
     queryBuilderStore.setAsNewQuery(uuid);
     navigate(`/queries/${uuid}`);

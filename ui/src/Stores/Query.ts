@@ -23,9 +23,9 @@
 
 import jsonld from "jsonld";
 
-import { Permission } from "./AuthStore";
-import { QuerySpecification } from "./QueryBuilderStore/QuerySpecification";
-import { rootFieldReservedProperties } from "./QueryBuilderStore/QuerySettings";
+import { Permissions } from "../types";
+import { rootFieldReservedProperties, defaultContext } from "./QueryBuilderStore/QuerySettings";
+import { QuerySpecification } from "../Types/QuerySpecification";
 
 export namespace Query {
   export interface TypeFilter {
@@ -58,7 +58,7 @@ export namespace Query {
     name: string;
     label: string;
     isPrivate: boolean;
-    permissions: Permission;
+    permissions: Permissions;
     queries: Query[];
   }
 
@@ -89,7 +89,7 @@ export namespace Query {
 
   export const normalizeQuery = async (jsonSpec: QuerySpecification.QuerySpecification): Promise<Query.Query> => {
     const queryId = jsonSpec["@id"];
-    jsonSpec["@context"] = QuerySpecification.defaultContext();
+    jsonSpec["@context"] = defaultContext();
     const expanded = await jsonld.expand(jsonSpec as jsonld.JsonLdDocument);
     const compacted = await jsonld.compact(expanded, jsonSpec["@context"] as jsonld.ContextDefinition);
     const meta = compacted.meta as QuerySpecification.Meta;

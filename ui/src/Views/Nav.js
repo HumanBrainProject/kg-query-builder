@@ -25,40 +25,25 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
-import { useStores } from "../Hooks/UseStores";
+import useStores from "../Hooks/useStores";
+import useAuth from "../Hooks/useAuth";
 
-import HomeTab from "./HomeTab";
 import UserProfileTab from "./UserProfileTab";
+import HomeTab from "./HomeTab";
 
 const useStyles = createUseStyles({
   container: {
-    background: "rgba(0,0,0,0.4)",
     display: "grid",
     gridTemplateRows: "1fr",
-    gridTemplateColumns: "auto 1fr auto"
+    gridTemplateColumns: "1fr auto"
   },
   fixedTabsLeft: {
     display: "grid",
-    gridTemplateColumns: "auto auto auto auto 1fr"
+    gridTemplateColumns: "auto 1fr"
   },
   fixedTabsRight: {
     display: "grid",
     gridTemplateColumns: "repeat(6, auto)"
-  },
-  logo: {
-    padding: "10px",
-    cursor: "pointer",
-    "& span": {
-      color: "var(--ft-color-loud)",
-      display: "inline-block",
-      paddingLeft: "10px",
-      fontSize: "0.9em",
-      borderLeft: "1px solid var(--border-color-ui-contrast5)",
-      marginLeft: "10px"
-    },
-    "&:hover span": {
-      color: "var(--ft-color-louder)"
-    }
   },
   userProfileTab: {
     width: "50px",
@@ -79,31 +64,32 @@ const useStyles = createUseStyles({
   }
 });
 
-const Header = observer(() => {
-
+const Nav = observer(() => {
   const classes = useStyles();
 
-  const { appStore } = useStores();
+  const { isAuthenticated } = useAuth();
+  const { appStore, userProfileStore, spacesStore, typeStore } = useStores();
 
+  if (appStore.globalError) {
+    return null;
+  }
+  
   return (
-    <div className={classes.container}>
-      <div className={`${classes.logo} layout-logo`}>
-        <img src={`${window.rootPath}/assets/ebrains.svg`} alt="" height="30" />
-        <span>Knowledge Graph Query Builder</span>
+    <nav className={classes.container}>
+      <div className={classes.fixedTabsLeft}>
+        {isAuthenticated && spacesStore.hasSpaces && typeStore.hasTypes && (
+          <HomeTab />
+        )}
       </div>
-      {!appStore.globalError &&
-          <>
-            <div className={classes.fixedTabsLeft}>
-              <HomeTab />
-            </div>
-            <div className={classes.fixedTabsRight}>
-              <UserProfileTab className={classes.userProfileTab} size={32} />
-            </div>
-          </>
-      }
-    </div>
+      <div className={classes.fixedTabsRight}>
+        {isAuthenticated && !!userProfileStore.user && (
+           <UserProfileTab className={classes.userProfileTab} />
+        )}
+      </div>
+    </nav>
   );
 });
-Header.displayName = "Header";
+Nav.displayName = "Nav";
 
-export default Header;
+export default Nav;
+

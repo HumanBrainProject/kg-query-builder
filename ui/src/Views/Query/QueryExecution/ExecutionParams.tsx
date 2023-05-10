@@ -30,7 +30,7 @@ import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 
-import { useStores } from "../../../Hooks/UseStores";
+import useStores from "../../../Hooks/useStores";
 
 import SpaceRestriction from "./SpaceRestriction";
 

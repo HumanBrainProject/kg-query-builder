@@ -29,7 +29,7 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 
 import CompareChanges from "./CompareChanges/CompareChanges";
 
-import { useStores } from "../../../Hooks/UseStores";
+import useStores from "../../../Hooks/useStores";
 
 const useStyles = createUseStyles({
   modal:{

@@ -31,11 +31,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
 import jsonld from "jsonld";
 
-import { useStores } from "../../Hooks/UseStores";
+import useStores from "../../Hooks/useStores";
 
 import ThemeRJV from "../../Themes/ThemeRJV";
 import Actions from "./Actions";
-import { QuerySpecification } from "../../Stores/QueryBuilderStore/QuerySpecification";
+import { QuerySpecification } from "../../Types/QuerySpecification";
 import { FIELD_FLAGS } from "../../Stores/Field";
 import { Query } from "../../Stores/Query";
 

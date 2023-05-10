@@ -21,16 +21,18 @@
  *
  */
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-import { AxiosError } from "axios";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { useStores } from "../Hooks/UseStores";
+import useStores from "../Hooks/useStores";
+import Matomo from "../Services/Matomo";
+import { Type } from "../types";
+import useGetQueryQuery from "../Hooks/useGetQueryQuery";
 
 import Tabs from "./Query/Tabs";
 import QueryBuilder from "./Query/QueryBuilder";
@@ -39,9 +41,6 @@ import QueryExecution from "./Query/QueryExecution";
 import SpinnerPanel from "../Components/SpinnerPanel";
 import ErrorPanel from "../Components/ErrorPanel";
 
-import API from "../Services/API";
-import { Type } from "../Stores/Type";
-import { Query as QuerySpecs } from "../Stores/Query";
 
 const useStyles = createUseStyles({
   container: {
@@ -83,75 +82,35 @@ const View = ({mode}:ModeProps) => {
 
 const Query = observer(({ mode }:ModeProps) => {
 
-  const queryIdRef = useRef<string|undefined>(undefined);
-
   const classes = useStyles();
   
   const params = useParams();
   const { id } = params;
+  const queryId = id as string;
 
   const navigate = useNavigate();
 
-  const { queryBuilderStore, queriesStore, typeStore, transportLayer } = useStores();
+  const { queryBuilderStore, queriesStore, typeStore } = useStores();
 
-  const [isFetching, setIsFetching] = useState(false);
-  const [error, setError] = useState<string|undefined>(undefined);
+  const {
+    data: query,
+    error,
+    isUninitialized,
+    isFetching,
+    isError,
+    isAvailable,
+    refetch,
+  } = useGetQueryQuery(queryId, queriesStore.queries, queryBuilderStore.typeId);
 
-  const fetchQuery = async (queryId: string) => {
-    if (queriesStore.findQuery(queryId) || isFetching) {
-      return;
-    }
-    setIsFetching(true);
-    setError(undefined);
-    try {
-      const response = await transportLayer.getQuery(queryId);
-      const jsonSpecification =
-        response && response.data ? response.data : null;
-      try {
-        const query = await QuerySpecs.normalizeQuery(jsonSpecification);
-        queriesStore.addQuery(query);
-      } catch (e) {
-        setError(`Error while trying to expand/compact JSON-LD (${e})`);
-      }
-      setIsFetching(false);
-    } catch (e) {
-      const error = e as AxiosError;
-      const { response } = error;
-      const status = response?.status;
-      const message = error?.message;
-      setIsFetching(false);
-      switch (status) {
-        case 401: // Unauthorized
-        case 403: {
-          // Forbidden
-          setError(`You do not have permission to access the query with id "${queryId}"`);
-          break;
-        }
-        case 404: {
-          if (queryBuilderStore.hasType) {
-            // it's a new query created from ui
-            queryBuilderStore.setAsNewQuery(queryId);
-          } else {
-            setError(`Query id "${queryId}" does not exist`);
-          }
-          break;
-        }
-        default: {
-          setError(`Error while fetching query with id "${queryId}" (${message})`);
-        }
-      }
-    }
-  };
-
-  const selectQuery = async () => {
-    if (id && queryBuilderStore && id != queryBuilderStore.queryId) {
-      let query = queriesStore.findQuery(id);
-      if(!query) {
-        await fetchQuery(id);
-        query = queriesStore.findQuery(id);
-      }
-      if(query) {
-        const typeName = query.meta.type;
+  useEffect(() => {
+    if (isAvailable) {
+      Matomo.setCustomUrl(window.location.href);
+      Matomo.trackPageView();
+      queryBuilderStore.setAsNewQuery(queryId);
+    } else if (query) {
+      Matomo.setCustomUrl(window.location.href);
+      Matomo.trackPageView();
+      const typeName = query.meta.type;
         if (localStorage.getItem("type")) {
           localStorage.setItem("type", typeName?typeName:"");
         }
@@ -167,43 +126,33 @@ const Query = observer(({ mode }:ModeProps) => {
             color: "black",
             description: "",
             properties: []
-          } as Type.Type;
+          } as Type;
           queryBuilderStore.setType(unknownType);
           queryBuilderStore.selectQuery(query);
           if (mode !== "edit") {
             navigate(`/queries/${id}/edit`)
           }
         }
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (!queryIdRef.current || queryIdRef.current !== id) {
-      queryIdRef.current = id;
-      API.setCustomUrl(window.location.href);
-      API.trackPageView();
-      selectQuery();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [queryId, query, isAvailable]);
 
   const handleContinue = () => {
     queryBuilderStore.clearQuery();
     navigate("/");
   };
 
-  if (isFetching) {
+  if (isUninitialized || isFetching) {
     return (
       <SpinnerPanel text={`Fetching query with id ${id} ... `} />
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <ErrorPanel>
         {error}<br /><br />
-        <Button variant="primary" onClick={selectQuery}>
+        <Button variant="primary" onClick={refetch}>
           <FontAwesomeIcon icon={faRedoAlt} />&nbsp;&nbsp; Retry
         </Button>
         <Button variant={"primary"} onClick={handleContinue}>Continue</Button>

@@ -20,6 +20,7 @@
  * (Human Brain Project SGA1, SGA2 and SGA3).
  *
  */
+import { QuerySpecification } from "../../types";
 
 export const rootFieldReservedProperties: string[] = [
   "root_schema",
@@ -55,3 +56,20 @@ export const fieldReservedProperties: string[]  = ["propertyName", "path", "merg
 export const namespaceReg = /^(.+):(.+)$/;//NOSONAR
 export const attributeReg = /^https?:\/\/.+\/(.+)$/;//NOSONAR
 export const modelReg = /^\/?((.+)\/(.+)\/(.+)\/(.+))$/;//NOSONAR
+
+export const DEFAULT_RESPONSE_VOCAB = "https://schema.hbp.eu/myQuery/";
+
+export const defaultContext = (): QuerySpecification.Context => {
+  return {
+    "@vocab": "https://core.kg.ebrains.eu/vocab/query/",
+    query: DEFAULT_RESPONSE_VOCAB,
+    propertyName: {
+      "@id": "propertyName",
+      "@type": "@id"
+    },
+    path: {
+      "@id": "path",
+      "@type": "@id"
+    }
+  };
+};

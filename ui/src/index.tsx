@@ -20,26 +20,62 @@
  * (Human Brain Project SGA1, SGA2 and SGA3).
  *
  */
-
 import React from "react";
-import { createRoot } from "react-dom/client";
-import {JssProvider} from "react-jss";
-// import { configure } from "mobx";
-//import reportWebVitals from './reportWebVitals';
+import { createRoot } from 'react-dom/client';
+import axios, { InternalAxiosRequestConfig } from "axios";
+// import { configure } from "mobx"; //NOSONAR
+// import reportWebVitals from './reportWebVitals'; //NOSONAR
+import { JssProvider } from "react-jss";
+import { BrowserRouter } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import RootStore from "./Stores/RootStore";
+import KeycloakAuthAdapter from "./Services/KeycloakAuthAdapter";
+import APIBackendAdapter from "./Services/APIBackendAdapter";
 import App from "./Views/App";
+import ErrorBoundary from "./Views/ErrorBoundary";
 
-// configure({
-//   enforceActions: "always",
-//   computedRequiresReaction: true,
-//   reactionRequiresObservable: true,
-//   observableRequiresReaction: true,
-//   disableErrorBoundaries: false // help to debug only
-// });
+/* //NOSONAR React debug flags
+configure({
+  enforceActions: "always",
+  computedRequiresReaction: true,
+  reactionRequiresObservable: true,
+  observableRequiresReaction: false,
+  disableErrorBoundaries: false // help to debug only
+});
+*/
 
-//reportWebVitals();
+const rootPath = window.rootPath || "";
+
+const authAdapter = new KeycloakAuthAdapter({
+  onLoad: "login-required",
+  flow: "standard",
+  pkceMethod: "S256",
+  checkLoginIframe: false,
+  enableLogging: true
+}, `${window.location.protocol}//${window.location.host}${rootPath}/logout`);
+
+//reportWebVitals(); //NOSONAR
+const axiosInstance = axios.create({});
+axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
+  if (authAdapter.tokenProvider?.token && config.headers) {
+      config.headers.Authorization = `Bearer ${authAdapter.tokenProvider.token}`;
+  }
+  return Promise.resolve(config);
+});
+axiosInstance.interceptors.response.use(undefined, (error) => {
+  if (error.response && error.response.status === 401 && !error.config._isRetry) {
+      authAdapter.unauthorizedRequestResponseHandlerProvider.unauthorizedRequestResponseHandler && authAdapter.unauthorizedRequestResponseHandlerProvider.unauthorizedRequestResponseHandler();
+      return axios.request(error.config);
+  } else {
+      return Promise.reject(error);
+  }
+  });
+
+const api = new APIBackendAdapter(axiosInstance);
+
+const stores = new RootStore(api);
 
 const container = document.getElementById('root');
 if (!container) {
@@ -49,7 +85,11 @@ const root = createRoot(container);
 root.render(
   <React.StrictMode>
     <JssProvider id={{minify: process.env.NODE_ENV === 'production'}}>
-      <App />
+      <ErrorBoundary stores={stores} >
+        <BrowserRouter>
+          <App stores={stores} api={api} authAdapter={authAdapter}/>
+        </BrowserRouter>
+      </ErrorBoundary>
     </JssProvider>
   </React.StrictMode>
 );

@@ -25,12 +25,12 @@ import React, { MouseEvent } from "react";
 import { observer } from "mobx-react-lite";
 
 import GroupProperties from "./GroupProperties";
-import { Type } from "../../../../../Stores/Type";
+import { Property, PropertyGroup } from "../../../../../types";
 
 interface GroupsProps {
-  groups: Type.PropertyGroup[];
+  groups: PropertyGroup[];
   prefix: string;
-  onClick: (e: MouseEvent<HTMLElement>, property: Type.Property) => void;
+  onClick: (e: MouseEvent<HTMLElement>, property: Property) => void;
 }
 
 const Groups = observer(({ groups, prefix, onClick }: GroupsProps) => {

@@ -23,7 +23,7 @@
 
 import { observable, action, computed, makeObservable } from "mobx";
 
-import { RootStore } from "./RootStore";
+import RootStore from "./RootStore";
 
 import { Theme } from "../Themes/Theme";
 import DefaultTheme from "../Themes/Default";
@@ -43,7 +43,8 @@ const themes: Themes = {};
 themes[DefaultTheme.name] = DefaultTheme;
 themes[BrightTheme.name] = BrightTheme;
 
-export class AppStore{
+class AppStore{
+  commit?: string;
   globalError?: GlobalError;
   _currentThemeName: string = DefaultTheme.name;
 
@@ -51,13 +52,15 @@ export class AppStore{
 
   constructor(rootStore: RootStore) {
     makeObservable(this, {
+      commit: observable,
       globalError: observable,
       _currentThemeName: observable,
       currentTheme: computed,
       setGlobalError: action,
       dismissGlobalError: action,
       setTheme: action,
-      toggleTheme: action
+      toggleTheme: action,
+      setCommit: action
     });
 
     this.rootStore = rootStore;
@@ -91,6 +94,11 @@ export class AppStore{
       this.setTheme(BrightTheme.name);
     }
   }
+
+  setCommit(commit: string) {
+    this.commit = commit;
+  }
+  
 }
 
 export default AppStore;

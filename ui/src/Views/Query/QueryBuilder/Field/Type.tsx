@@ -28,7 +28,7 @@ import PropertyTypes from "../../../PropertyTypes";
 import Types from "./Types";
 import Field from "../../../../Stores/Field";
 
-import { useStores } from "../../../../Hooks/UseStores";
+import useStores from "../../../../Hooks/useStores";
 
 interface TypeProps {
   field: Field;

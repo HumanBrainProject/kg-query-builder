@@ -25,63 +25,77 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 
-import { useStores } from "../Hooks/UseStores";
+import useGetUserProfileQuery from "../Hooks/useGetUserProfileQuery";
+import useAuth from "../Hooks/useAuth";
+import useStores from "../Hooks/useStores";
 import SpinnerPanel from "../Components/SpinnerPanel";
 import ErrorPanel from "../Components/ErrorPanel";
 
-import Spaces from "./Spaces";
+interface UserProfileProps {
+  children?: string|JSX.Element|(null|undefined|string|JSX.Element)[];
+}
 
-const UserProfile = observer(() => {
+const UserProfile = observer(({ children }: UserProfileProps) => {
 
-  const { authStore } = useStores();
+  const {
+    data: userProfile,
+    error,
+    isUninitialized,
+    isFetching,
+    isSuccess,
+    isError,
+    refetch,
+  } = useGetUserProfileQuery();
+
+  const { logout } = useAuth();
+
+  const { userProfileStore } = useStores();
 
   useEffect(() => {
-    authStore.retrieveUserProfile();
+    if (userProfile) {
+      userProfileStore.setUserProfile(userProfile);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userProfile]);
 
-  const handleLogout = () => authStore.logout();
+  if (isError) {
+    return (
+      <ErrorPanel>
+        There was a problem retrieving the user profile ({error}).
+          If the problem persists, please contact the support.<br /><br />
+        <Button variant={"primary"} onClick={refetch}>
+          <FontAwesomeIcon icon={"redo-alt"} /> &nbsp; Retry
+        </Button>
+      </ErrorPanel>
+    );
+  }
 
-  const handleRetryToRetrieveUserProfile = () => authStore.retrieveUserProfile();
+  if (isUninitialized || isFetching) {
+    return (
+      <SpinnerPanel text="Retrieving user profile..." />
+    );
+  }
 
-  if (!authStore.hasUserProfile) {
+  if (isSuccess) {
 
-    if (authStore.userProfileError) {
-      return (
-        <ErrorPanel>
-          There was a problem retrieving the user profile ({authStore.userProfileError}).
-            If the problem persists, please contact the support.<br /><br />
-          <Button variant={"primary"} onClick={handleRetryToRetrieveUserProfile}>
-            <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
-          </Button>
-        </ErrorPanel>
-      );
-    }
-
-    if (!authStore.isUserAuthorizationInitialized || authStore.isRetrievingUserProfile) {
-      return (
-        <SpinnerPanel text="Retrieving user profile..." />
-      );
-    }
-
-    if (!authStore.isUserAuthorized) {
+    if (!userProfile) {
       return (
         <ErrorPanel>
           <h1>Welcome</h1>
           <p>You are currently not granted permission to acccess the application.</p>
           <p>Please contact our team by email at : <a href={"mailto:kg@ebrains.eu"}>kg@ebrains.eu</a></p>
-          <Button onClick={handleLogout}>Logout</Button>
+          <Button onClick={logout}>Logout</Button>
         </ErrorPanel>
       );
     }
   }
 
   return (
-    <Spaces/>
-  )
-
+    <>
+      {children}
+    </>
+  );
 });
 UserProfile.displayName = "UserProfile";
 

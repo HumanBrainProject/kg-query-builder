@@ -28,13 +28,13 @@ module.exports = function(app) {
   app.use(
     "/service/api/**",
     createProxyMiddleware({
-      target:"http://localhost:8080",
-      // target:"https://query.kg-dev.ebrains.eu",
+      //target:"http://localhost:8080",
+      target:"https://query.kg-dev.ebrains.eu",
       secure:false,
       changeOrigin: true,
-      pathRewrite: function(path) {
-        return path.replace("/service/api/", "/");
-      }
+      // pathRewrite: function(path) {
+      //   return path.replace("/service/api/", "/");
+      // }
     })
   );
 };

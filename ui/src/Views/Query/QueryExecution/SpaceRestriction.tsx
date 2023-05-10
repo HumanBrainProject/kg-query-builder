@@ -25,7 +25,7 @@ import React from "react";
 import {observer} from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
-import { useStores } from "../../../Hooks/UseStores";
+import useStores from "../../../Hooks/useStores";
 import Toggle from "../../../Components/Toggle";
 
 const useStyles = createUseStyles({
@@ -101,15 +101,15 @@ const SpaceRestriction = observer(() => {
 
   const classes = useStyles();
 
-  const { queryRunStore, authStore } = useStores();
+  const { queryRunStore, spacesStore } = useStores();
 
-  if (!Array.isArray(authStore.spaces) || !authStore.spaces.length) {
+  if (!Array.isArray(spacesStore.spaces) || !spacesStore.spaces.length) {
     return null;
   }
 
   const isRestricted = Array.isArray(queryRunStore.spaces);
 
-  const spaces = isRestricted?authStore.spaces.map(space => ({
+  const spaces = isRestricted?spacesStore.spaces.map(space => ({
     name: space.name,
     selected: queryRunStore.spaces?queryRunStore.spaces.includes(space.name):false
   })):[];

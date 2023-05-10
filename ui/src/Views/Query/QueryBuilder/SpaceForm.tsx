@@ -27,7 +27,7 @@ import { observer } from "mobx-react-lite";
 
 import Toggle from "../../../Components/Toggle";
 
-import { useStores } from "../../../Hooks/UseStores";
+import useStores from "../../../Hooks/useStores";
 
 const useStyles = createUseStyles({
   container: {
@@ -94,18 +94,18 @@ interface SpaceFormProps {
 const SpaceForm = observer(({ className }: SpaceFormProps) => {
   const classes = useStyles();
 
-  const { queryBuilderStore, authStore } = useStores();
+  const { queryBuilderStore, spacesStore } = useStores();
 
   const isShared =
     queryBuilderStore.space && !queryBuilderStore.space.isPrivate;
 
   const isReadMode =
     !queryBuilderStore.saveAsMode ||
-    !authStore.allowedSharedSpacesToCreateQueries.length;
+    !spacesStore.allowedSharedSpacesToCreateQueries.length;
 
   const sharedSpaces = isReadMode
-    ? authStore.sharedSpaces
-    : authStore.allowedSharedSpacesToCreateQueries;
+    ? spacesStore.sharedSpaces
+    : spacesStore.allowedSharedSpacesToCreateQueries;
 
   const sharedSpaceClass = `${classes.selectBox} ${
     isReadMode ? "disabled" : ""
@@ -113,8 +113,7 @@ const SpaceForm = observer(({ className }: SpaceFormProps) => {
 
   const handleChangeSpace = (e: ChangeEvent<HTMLSelectElement>) => {
     if (!isReadMode) {
-      const space =
-        authStore.getSpace(e.target.value) || authStore.privateSpace;
+      const space = spacesStore.getSpace(e.target.value) || spacesStore.privateSpace;
       if (space) {
         queryBuilderStore.setSpace(space);
       }
@@ -123,11 +122,11 @@ const SpaceForm = observer(({ className }: SpaceFormProps) => {
 
   const handleChangePrivate = (_?: string, isSpaceShared?: boolean) => {
     if (!isReadMode) {
-      if (isSpaceShared && authStore.sharedSpaces.length) {
-        queryBuilderStore.setSpace(authStore.sharedSpaces[0]);
+      if (isSpaceShared && spacesStore.sharedSpaces.length) {
+        queryBuilderStore.setSpace(spacesStore.sharedSpaces[0]);
       } else {
-        if (authStore.privateSpace) {
-          queryBuilderStore.setSpace(authStore.privateSpace);
+        if (spacesStore.privateSpace) {
+          queryBuilderStore.setSpace(spacesStore.privateSpace);
         }
       }
     }

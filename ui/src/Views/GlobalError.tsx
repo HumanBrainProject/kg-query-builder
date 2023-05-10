@@ -31,7 +31,7 @@ import {faEnvelope} from "@fortawesome/free-solid-svg-icons/faEnvelope";
 
 import * as Sentry from "@sentry/browser";
 
-import { useStores } from "../Hooks/UseStores";
+import useStores from "../Hooks/useStores";
 
 import BGMessage from "../Components/BGMessage";
 

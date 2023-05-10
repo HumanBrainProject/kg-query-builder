@@ -29,8 +29,9 @@ import {faSave} from "@fortawesome/free-solid-svg-icons/faSave";
 import { useNavigate, matchPath } from "react-router-dom";
 import { AxiosError } from "axios";
 
-import API from "../../../Services/API";
-import { useStores } from "../../../Hooks/UseStores";
+import useStores from "../../../Hooks/useStores";
+import useAPI from "../../../Hooks/useAPI";
+import Matomo from "../../../Services/Matomo";
 import { Query } from "../../../Stores/Query";
 
 import SpinnerPanel from "../../../Components/SpinnerPanel";
@@ -47,10 +48,12 @@ const SaveButton = observer(({ disabled }: SaveButtonProps) => {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string|undefined>(undefined);
 
-  const { queryBuilderStore, queriesStore, authStore, transportLayer } = useStores();
+  const API = useAPI();
+
+  const { queryBuilderStore, queriesStore, spacesStore } = useStores();
 
   const handleSave = () => {
-    API.trackEvent("Query", "Save", queryBuilderStore.queryId);
+    Matomo.trackEvent("Query", "Save", queryBuilderStore.queryId);
     saveQuery();
   };
 
@@ -58,8 +61,8 @@ const SaveButton = observer(({ disabled }: SaveButtonProps) => {
     if (!queryBuilderStore.isQueryEmpty) {
       setIsSaving(true);
       setError(undefined);
-      if (!queryBuilderStore.space && authStore.privateSpace) {
-        queryBuilderStore.setSpace(authStore.privateSpace);
+      if (!queryBuilderStore.space && spacesStore.privateSpace) {
+        queryBuilderStore.setSpace(spacesStore.privateSpace);
       }
       //TODO: fix queryId undefined check after QueryBuilderStore refactoring/splitting
       const queryId = queryBuilderStore.saveAsMode
@@ -72,7 +75,7 @@ const SaveButton = observer(({ disabled }: SaveButtonProps) => {
       const querySpecification = queryBuilderStore.querySpecification;
       const spaceName = (queryBuilderStore.space?.name)?queryBuilderStore.space.name:"myspace";
       try {
-        await transportLayer.saveQuery(queryId, querySpecification, spaceName);
+        await API.saveQuery(queryId, querySpecification, spaceName);
         if (queryBuilderStore.saveAsMode) {
           const sourceQuery = {
             id: queryId,

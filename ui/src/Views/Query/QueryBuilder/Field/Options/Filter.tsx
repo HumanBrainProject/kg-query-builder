@@ -30,7 +30,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
-import { QuerySpecification } from "../../../../../Stores/QueryBuilderStore/QuerySpecification";
+import { QuerySpecification } from "../../../../../Types/QuerySpecification";
 
 const useStyles = createUseStyles({
   container: {

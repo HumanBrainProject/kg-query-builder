@@ -26,7 +26,7 @@ import { observer } from "mobx-react-lite";
 import { matchPath, PathMatch, useLocation, useNavigate } from "react-router-dom";
 import {faHome} from "@fortawesome/free-solid-svg-icons/faHome";
 
-import { useStores } from "../Hooks/UseStores";
+import useStores from "../Hooks/useStores";
 
 import Tab from "../Components/Tab";
 import Dialog from "../Components/Dialog";

@@ -20,45 +20,24 @@
  * (Human Brain Project SGA1, SGA2 and SGA3).
  *
  */
+
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
 
-import { useStores } from "../Hooks/UseStores";
+import useStores from "../Hooks/useStores";
 
-const useStyles = createUseStyles({
-  footer: {
-    position: "relative",
-    background: "var(--bg-color-ui-contrast1)",
-    color: "var(--ft-color-loud)"
-  },
-  status: {
-    paddingLeft: "10px"
-  },
-  build: {
-    color: "var(--ft-color-loud)",
-    position: "absolute",
-    top: "0px",
-    right: "10px"
-  }
-});
+const Commit = observer(() => {
 
-const Footer = observer(() => {
-    const classes = useStyles();
-    const { authStore } = useStores();
-    const commit = authStore.commit;
-    
-    return(
-      <div className={classes.footer}>
-      <div className={`${classes.status} layout-status`}>
-              Copyright &copy; {new Date().getFullYear()} EBRAINS. All rights reserved.
-      </div>
-      <div className={classes.build}>
-        {commit && <span >build: <i>{commit}</i></span>}
-      </div>
+  const { appStore } = useStores();
+
+  const commit = appStore.commit;
+
+  return(
+    <div>
+      {commit && <span >build: <i>{commit}</i></span>}
     </div>
-    );
-  })
+  );
+});
+Commit.displayName = "Commit";
 
-  export default Footer;
-  
+export default Commit;

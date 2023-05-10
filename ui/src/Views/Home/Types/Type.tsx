@@ -28,11 +28,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faChevronRight} from "@fortawesome/free-solid-svg-icons/faChevronRight";
 import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
 
-import API from "../../../Services/API";
 import Icon from "../../../Components/Icon";
 
-import { useStores } from "../../../Hooks/UseStores";
+import useStores from "../../../Hooks/useStores";
 import { Type as TypeSpec} from "../../../Stores/Type";
+import Matomo from "../../../Services/Matomo";
 
 const useStyles = createUseStyles({
   container: {
@@ -102,7 +102,7 @@ const Type = observer(({ type, enableFocus, onKeyDown }: TypeProps) =>  {
 
   const selectType = () => {
     if (type.id !== queryBuilderStore.typeId) {
-      API.trackEvent("Type", "Select", type.id);
+      Matomo.trackEvent("Type", "Select", type.id);
       localStorage.setItem("type", type.id);
       queryBuilderStore.setType(type);
     }

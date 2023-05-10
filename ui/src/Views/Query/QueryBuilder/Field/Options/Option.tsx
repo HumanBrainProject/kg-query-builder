@@ -25,7 +25,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import Toggle from "../../../../../Components/Toggle";
 import Field from "../../../../../Stores/Field";
-import { QuerySpecification } from "../../../../../Stores/QueryBuilderStore/QuerySpecification";
+import { QuerySpecification } from "../../../../../Types/QuerySpecification";
 import Filter from "./Filter";
 import SingleItemStrategy from "./SingleItemStrategy";
 import UnsupportedOption from "./UnsupportedOption";

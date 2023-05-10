@@ -22,30 +22,9 @@
  */
 
 import React from "react";
-import { observer } from "mobx-react-lite";
-import {faCaretDown} from "@fortawesome/free-solid-svg-icons/faCaretDown";
 
-import { useStores } from "../../Hooks/UseStores";
+const Copyright = () => (
+    <div className="copyright">Copyright &copy; {new Date().getFullYear()} EBRAINS. All rights reserved.</div>
+);
 
-import PropertyTypes from "../PropertyTypes";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-const HomeTab = observer(() => {
-
-  const { queryBuilderStore } = useStores();
-
-  const type = queryBuilderStore.type?.id;
-
-  if (type) {
-    return (
-      <div>
-        <PropertyTypes types={[type]} />&nbsp;-&nbsp;<small>{type}</small>
-        <FontAwesomeIcon icon={faCaretDown} style={{marginLeft: "5px"}} />
-      </div>
-    );
-  }
-  return null;
-});
-HomeTab.displayName = "HomeTab";
-
-export default HomeTab;
+export default Copyright;

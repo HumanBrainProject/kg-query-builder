@@ -29,8 +29,9 @@ import {faTrashAlt} from "@fortawesome/free-solid-svg-icons/faTrashAlt";
 import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 
-import API from "../../../Services/API";
-import { useStores } from "../../../Hooks/UseStores";
+import useStores from "../../../Hooks/useStores";
+import useAPI from "../../../Hooks/useAPI";
+import Matomo from "../../../Services/Matomo";
 
 import Dialog from "../../../Components/Dialog";
 import SpinnerPanel from "../../../Components/SpinnerPanel";
@@ -44,7 +45,9 @@ const DeleteButton = observer(() => {
 
   const navigate = useNavigate();
 
-  const { queryBuilderStore, queriesStore, transportLayer } = useStores();
+  const API = useAPI();
+
+  const { queryBuilderStore, queriesStore } = useStores();
 
   const handleConfirmDelete = () => {
     setShowDeleteDialog(true);
@@ -56,7 +59,7 @@ const DeleteButton = observer(() => {
       setIsDeleting(true);
       setError(undefined);
       try {
-        await transportLayer.deleteQuery(queryId);
+        await API.deleteQuery(queryId);
         queriesStore.removeQuery(queryId);
         setIsDeleting(false);
         queryBuilderStore.clearQuery();
@@ -71,7 +74,7 @@ const DeleteButton = observer(() => {
   }
 
   const handleDelete = () => {
-    API.trackEvent("Query", "Delete", queryBuilderStore.queryId);
+    Matomo.trackEvent("Query", "Delete", queryBuilderStore.queryId);
     setShowDeleteDialog(false);
     deleteQuery();
   };

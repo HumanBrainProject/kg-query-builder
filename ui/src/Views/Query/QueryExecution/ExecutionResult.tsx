@@ -30,6 +30,8 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 
 import ThemeRJV from "../../../Themes/ThemeRJV";
 
+import { QueryExecutionResult } from "../../../types";
+
 const useStyles = createUseStyles({
   container: {
     position: "relative",
@@ -65,17 +67,8 @@ const download = (content: BlobPart) => {
   a.click();
 };
 
-export interface Result {
-  data: object[];
-  startTime: number;
-  durationInMs: number;
-  total: number;
-  size: number;
-  from: number;
-}
-
 interface ResultProps {
-  data: Result|undefined;
+  data: QueryExecutionResult|undefined;
 }
 
 const ExecutionResult = observer(({ data }: ResultProps) => {

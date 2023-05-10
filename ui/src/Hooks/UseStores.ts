@@ -23,13 +23,14 @@
 
 import React from "react";
 
-import { storesContext } from "../Contexts/StoresContext";
-import { RootStore } from "../Stores/RootStore";
+import StoresContext from "../Contexts/StoresContext";
 
-export const useStores = ():RootStore => {
-  const store = React.useContext<RootStore>(storesContext);
+const useStores = () => {
+  const store = React.useContext(StoresContext);
   if (!store) {
     throw new Error("useStores must be used within a StoreProvider.");
   }
   return store;
 };
+
+export default useStores;

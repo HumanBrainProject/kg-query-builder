@@ -22,7 +22,7 @@
  */
 
 import { observable, action, computed, toJS, makeObservable } from "mobx";
-import { QuerySpecification } from "./QueryBuilderStore/QuerySpecification";
+import { QuerySpecification } from "../Types/QuerySpecification";
 
 export const FIELD_FLAGS = ["required", "sort", "ensureOrder"];
 

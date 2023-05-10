@@ -25,11 +25,11 @@ import React, {useEffect, useState, useRef} from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
-import { useStores } from "../Hooks/UseStores";
+import useStores from "../Hooks/useStores";
+import Matomo from "../Services/Matomo";
 
 import Types from "./Home/Types";
 import Selection from "./Home/Selection";
-import API from "../Services/API";
 import WelcomeTip from "./WelcomeTip";
 
 const useStyles = createUseStyles({
@@ -66,8 +66,8 @@ const Home = observer(() => {
   useEffect(() => {
     if (!initializedRef.current) {
       initializedRef.current = true;
-      API.setCustomUrl(window.location.href);
-      API.trackPageView();
+      Matomo.setCustomUrl(window.location.href);
+      Matomo.trackPageView();
       if (!queryBuilderStore.hasType) {
         const typeId = localStorage.getItem("type");
         const type = typeId && typeStore.types.get(typeId);

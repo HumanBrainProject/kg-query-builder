@@ -25,7 +25,7 @@ import React, { KeyboardEvent } from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
-import { useStores } from "../../../Hooks/UseStores";
+import useStores from "../../../Hooks/useStores";
 
 import Type from "./Type";
 

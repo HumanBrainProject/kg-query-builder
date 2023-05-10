@@ -21,27 +21,22 @@
  *
  */
 
-export namespace Type {
-  export interface Type {
-    id: string;
-    label: string;
-    color: string;
-    description: string;
-    properties: Property[];
+import { observable, action, makeObservable } from "mobx";
+import { UserProfile } from "../types";
+
+export class UserProfileStore {
+  user: UserProfile|undefined = undefined;
+
+  constructor() {
+    makeObservable(this, {
+      user: observable,
+      setUserProfile: action
+    });
   }
 
-  export interface Property {
-    attribute: string;
-    canBe?: string[];
-    label: string;
-    simpleAttributeName: string;
-    reverse?: boolean;
-  }  
-
-  export interface PropertyGroup {
-    id: string;
-    label: string;
-    color: string;
-    properties: Property[];
+  setUserProfile(user: UserProfile|undefined) {
+    this.user = user
   }
 }
+
+export default UserProfileStore;

@@ -25,7 +25,7 @@ import React from "react";
 import { createUseStyles } from "react-jss";
 import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle";
 
-import { useStores } from "../Hooks/UseStores";
+import useStores from "../Hooks/useStores";
 
 import Icon from "../Components/Icon";
 

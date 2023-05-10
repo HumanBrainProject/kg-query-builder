@@ -32,8 +32,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
-import API from "../Services/API";
-import { useStores } from "../Hooks/UseStores";
+import useStores from "../Hooks/useStores";
+import useAuth from "../Hooks/useAuth";
+import Matomo from "../Services/Matomo";
+
 import Avatar from "../Components/Avatar";
 
 const useStyles = createUseStyles({
@@ -141,19 +143,21 @@ interface UserProfileTabProps {
 }
 
 const UserProfileTab = observer(
-  ({ className, size = 30 }: UserProfileTabProps) => {
+  ({ className }: UserProfileTabProps) => {
     const classes = useStyles();
+
+    const { tokenProvider, isAuthenticated, logout } = useAuth();
 
     const buttonRef = useRef<HTMLButtonElement>(null);
 
     const [showPopOver, setShowPopOver] = useState<boolean>(false);
     const [tokenCopied, setTokenCopied] = useState<NodeJS.Timeout>();
 
-    const { authStore } = useStores();
+    const { userProfileStore } = useStores();
 
     useEffect(() => {
       if (showPopOver) {
-        API.trackEvent("Tab", "UserProfile", "Open");
+        Matomo.trackEvent("Tab", "UserProfile", "Open");
       }
       return () => {
         if (showPopOver) {
@@ -173,25 +177,21 @@ const UserProfileTab = observer(
     };
 
     const handleCopyToken = () => {
-      API.trackEvent("Token", "Copy");
+      Matomo.trackEvent("Token", "Copy");
       clearTimeout(tokenCopied);
       const timer = setTimeout(() => setTokenCopied(undefined), 2000);
       setTokenCopied(timer);
     };
 
     const handleLogout = () => {
-      API.trackEvent("User", "Logout");
-      authStore.logout();
+      Matomo.trackEvent("User", "Logout");
+      logout();
     };
 
-    if (
-      !authStore.isAuthenticated ||
-      !authStore.isUserAuthorized ||
-      !authStore.user
-    ) {
+    if (!isAuthenticated || !userProfileStore.user) {
       return null;
     }
-
+  
     return (
       <div className={`${classes.container} ${className ? className : ""}`}>
         <button
@@ -200,7 +200,7 @@ const UserProfileTab = observer(
           title="Account"
           ref={buttonRef}
         >
-          <Avatar user={authStore.user} size={size} />
+          <Avatar user={userProfileStore.user} />
         </button>
         <Overlay
           show={showPopOver}
@@ -214,19 +214,19 @@ const UserProfileTab = observer(
             <div>
               <div className={classes.popOverContent}>
                 <div className={classes.icon}>
-                  <Avatar user={authStore.user} size={100} />
+                  <Avatar user={userProfileStore.user} />
                 </div>
                 <div>
                   <div className={classes.name}>
-                    {authStore.user.name}
+                    {userProfileStore.user.name}
                   </div>
-                  <div className={classes.email}>{authStore.user.email}</div>
+                  <div className={classes.email}>{userProfileStore.user.email}</div>
                 </div>
               </div>
               <div className={classes.popOverFooterBar}>
                 <div>
                   <CopyToClipboard
-                    text={authStore.accessToken}
+                    text={tokenProvider?.token as string}
                     onCopy={handleCopyToken}
                   >
                     <Button variant="secondary">Copy token to clipboard</Button>

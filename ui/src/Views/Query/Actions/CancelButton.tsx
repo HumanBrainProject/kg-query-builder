@@ -25,7 +25,7 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 
-import { useStores } from "../../../Hooks/UseStores";
+import useStores from "../../../Hooks/useStores";
 
 const CancelButton = observer(() => {
 

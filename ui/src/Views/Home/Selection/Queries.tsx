@@ -21,23 +21,21 @@
  *
  */
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect } from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRedoAlt } from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import { AxiosError } from "axios";
 
-import { useStores } from "../../../Hooks/UseStores";
+import useStores from "../../../Hooks/useStores";
+import useListQueriesQuery from "../../../Hooks/useListQueriesQuery";
 
 import Spinner from "../../../Components/Spinner";
 import ErrorPanel from "../../../Components/ErrorPanel";
 import Filter from "../../../Components/Filter";
 import List from "./Queries/List";
-import { Query } from "../../../Stores/Query";
-import { QuerySpecification } from "../../../Stores/QueryBuilderStore/QuerySpecification";
 
 const useStyles = createUseStyles({
   panel: {
@@ -68,59 +66,25 @@ interface QueriesProps {
 
 const Queries = observer(({ className }: QueriesProps) => {
 
-  const typeIdRef = useRef<string|undefined>(undefined);
-
   const classes = useStyles();
 
-  const { transportLayer, queriesStore, queryBuilderStore } = useStores();
+  const { queriesStore, queryBuilderStore } = useStores();
 
-  const [error, setError] = useState<string|undefined>(undefined);
-  const [isFetching, setIsFetching] = useState(false);
-
-  const fetchQueries = async (force?: boolean) => {
-    if (queryBuilderStore.typeId) {
-      if (force || queryBuilderStore.typeId !== queriesStore.type) {
-        if (queryBuilderStore.typeId !== queriesStore.type) {
-          queriesStore.clearQueries();
-        }
-        setError(undefined);
-        setIsFetching(true);
-        try {
-          const response = await transportLayer.listQueries(queryBuilderStore.typeId);
-          if (Array.isArray(response?.data?.data)) {
-            try {
-              const queries = await Promise.all(response.data.data.map(async (jsonSpec: QuerySpecification.QuerySpecification) => Query.normalizeQuery(jsonSpec)));
-              queriesStore.setQueries(queryBuilderStore.typeId, queries);
-            } catch (e) {
-              setError(`Error while trying to expand/compact JSON-LD (${e})`);
-            }
-          }
-          setIsFetching(false);
-        } catch (e) {
-          const error = e as AxiosError;
-          const message = error?.message;
-          setError(`Error while fetching saved queries (${message})`);
-          setIsFetching(false);
-        }
-      }
-    } else {
-      queriesStore.toggleShowSavedQueries(false);
-      queriesStore.clearQueries();
-      setError(undefined);
-    }
-  }
+  const {
+    data: queries,
+    error,
+    isUninitialized,
+    isFetching,
+    isError,
+    refetch,
+  } = useListQueriesQuery(queryBuilderStore.typeId as string);
 
   useEffect(() => {
-    if (!typeIdRef.current || typeIdRef.current !== queryBuilderStore.typeId) {
-      typeIdRef.current = queryBuilderStore.typeId;
-      fetchQueries();
+    if (queries) {
+      queriesStore.setQueries(queryBuilderStore.typeId, queries);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryBuilderStore.typeId]);
-
-  const handleRefresh = () => fetchQueries(true);
-
-  const handleRetry = () => fetchQueries();
+  }, [queries]);
 
   const handleChange = (value: string) => queriesStore.setFilter(value);
 
@@ -128,23 +92,23 @@ const Queries = observer(({ className }: QueriesProps) => {
     return null;
   }
 
-  if (error) {
+  if (isError) {
     return (
       <ErrorPanel>
         {error}
         <br />
         <br />
-        <Button variant="primary" onClick={handleRefresh}>
+        <Button variant="primary" onClick={refetch}>
           <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Refresh
         </Button>
       </ErrorPanel>
     );
   }
 
-  if (isFetching) {
+  if (isUninitialized || isFetching) {
     return (
       <Spinner>
-        {queryBuilderStore.type ? `Fetching queries for ${queryBuilderStore.type.label}`:"Fetching queries"}...
+        Fetching queries for {queryBuilderStore?.type?.label}...
       </Spinner>
     );
   }
@@ -160,7 +124,7 @@ const Queries = observer(({ className }: QueriesProps) => {
         {queryBuilderStore.type && <small> - {queryBuilderStore.type.id}</small>}
         <br />
         <br />
-        <Button variant="primary" onClick={handleRetry}>
+        <Button variant="primary" onClick={refetch}>
           <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
         </Button>
       </ErrorPanel>

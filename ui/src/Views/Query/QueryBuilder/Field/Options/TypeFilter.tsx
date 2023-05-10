@@ -25,7 +25,7 @@ import React from "react";
 import {observer} from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
-import { useStores } from "../../../../../Hooks/UseStores";
+import useStores from "../../../../../Hooks/useStores";
 import { Type as PropertyType } from "../../../../PropertyTypes";
 import Toggle from "../../../../../Components/Toggle";
 import { Query } from "../../../../../Stores/Query";
