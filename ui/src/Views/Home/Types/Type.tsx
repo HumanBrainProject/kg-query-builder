@@ -31,7 +31,7 @@ import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
 import Icon from "../../../Components/Icon";
 
 import useStores from "../../../Hooks/useStores";
-import { Type as TypeSpec} from "../../../Stores/Type";
+import { Type as TypeType} from "../../../types";
 import Matomo from "../../../Services/Matomo";
 
 const useStyles = createUseStyles({
@@ -65,7 +65,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const getTypeLabel = (type: TypeSpec.Type) => {
+const getTypeLabel = (type: TypeType) => {
   if (!type) {
     return "";
   }
@@ -80,7 +80,7 @@ const getTypeLabel = (type: TypeSpec.Type) => {
 };
 
 interface TypeProps {
-  type: TypeSpec.Type;
+  type: TypeType;
   enableFocus: boolean; 
   onKeyDown: (e: KeyboardEvent<HTMLDivElement>) => void
 }
