@@ -21,9 +21,10 @@
  *
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
+import { toJS } from "mobx";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
@@ -92,6 +93,8 @@ const Query = observer(({ mode }:ModeProps) => {
 
   const { queryBuilderStore, queriesStore, typeStore } = useStores();
 
+  const cachedQueries = useMemo(() => toJS(queriesStore.queries), [queriesStore.queries]);
+
   const {
     data: query,
     error,
@@ -100,13 +103,23 @@ const Query = observer(({ mode }:ModeProps) => {
     isError,
     isAvailable,
     refetch,
-  } = useGetQueryQuery(queryId, queriesStore.queries, queryBuilderStore.typeId);
+  } = useGetQueryQuery(queryId, cachedQueries);
+
+
+  const [isNotFound, setNotFound] = useState<boolean|undefined>(undefined);
 
   useEffect(() => {
-    if (isAvailable) {
-      Matomo.setCustomUrl(window.location.href);
-      Matomo.trackPageView();
-      queryBuilderStore.setAsNewQuery(queryId);
+    if (isFetching) {
+      setNotFound(undefined);
+    } else if (isAvailable) {
+      if (queryBuilderStore.typeId) {
+        Matomo.setCustomUrl(window.location.href);
+        Matomo.trackPageView();
+        setNotFound(false);
+        queryBuilderStore.setAsNewQuery(queryId);
+      } else {
+        setNotFound(true);
+      }
     } else if (query) {
       Matomo.setCustomUrl(window.location.href);
       Matomo.trackPageView();
@@ -148,16 +161,20 @@ const Query = observer(({ mode }:ModeProps) => {
     );
   }
 
-  if (isError) {
+  if (isError || isNotFound) {
     return (
       <ErrorPanel>
-        {error}<br /><br />
+        {isError?error:`Query id "${queryId}" does not exist`}<br /><br />
         <Button variant="primary" onClick={refetch}>
           <FontAwesomeIcon icon={faRedoAlt} />&nbsp;&nbsp; Retry
         </Button>
         <Button variant={"primary"} onClick={handleContinue}>Continue</Button>
       </ErrorPanel>
     );
+  }
+
+  if (isAvailable && isNotFound === undefined) {
+    return null;
   }
 
   if(queryBuilderStore.hasType && queryBuilderStore.queryId) {

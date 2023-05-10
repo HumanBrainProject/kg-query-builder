@@ -32,19 +32,19 @@ export interface GetQueryQuery extends GenericQuery<Query.Query|undefined> {
   isAvailable?: boolean;
 }
 
-const useGetQueryQuery = (queryId: UUID, queries: Query.Query[], type?: string): GetQueryQuery => {
+const useGetQueryQuery = (queryId: UUID, queries: Query.Query[]): GetQueryQuery => {
   
   const [isAvailable, setAvailability] = useState<boolean|undefined>(undefined);
 
   const API = useAPI();
 
   const fetch = useMemo(() => async () => {
-    console.log(queryId, queries, type);
     const cachedQuery = queries.find(q => q.id === queryId);
     if (cachedQuery) {
       setAvailability(false);
       return cachedQuery;
     }
+    setAvailability(undefined);
     try {
       const data = await API.getQuery(queryId);
       setAvailability(false);
@@ -66,11 +66,6 @@ const useGetQueryQuery = (queryId: UUID, queries: Query.Query[], type?: string):
           throw new Error(`You do not have permission to access the query with id "${queryId}"`);
         }
         case 404: {
-          if (type) {
-            setAvailability(true);
-          } else {
-            throw new Error(`Query id "${queryId}" does not exist`);
-          }
           setAvailability(true);
           return undefined;
         }
@@ -80,7 +75,7 @@ const useGetQueryQuery = (queryId: UUID, queries: Query.Query[], type?: string):
         }
       }
     }
-  }, [API, queryId, queries, type]);
+  }, [API, queryId, queries]);
 
   const genericQuery = useGenericQuery<Query.Query|undefined>(fetch);
 
