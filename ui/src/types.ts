@@ -102,7 +102,7 @@ export interface Property {
 export interface PropertyGroup {
     id: string;
     label: string;
-    color: string;
+    color?: string;
     properties: Property[];
 }
 

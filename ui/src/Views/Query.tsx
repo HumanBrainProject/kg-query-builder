@@ -148,7 +148,7 @@ const Query = observer(({ mode }:ModeProps) => {
         }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryId, query, isAvailable]);
+  }, [queryId, query, isFetching, isAvailable]);
 
   const handleContinue = () => {
     queryBuilderStore.clearQuery();

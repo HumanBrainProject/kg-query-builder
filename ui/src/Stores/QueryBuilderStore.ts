@@ -719,7 +719,7 @@ class QueryBuilderStore {
     if (this.context && !this.context?.query) {
       this.context.query = defaultContext().query;
     }
-    this.meta = toJS(query.meta) as QuerySpecification.Meta;
+    this.meta = toJS(query.meta);
     if (this.meta) {
       this.label = this.meta.name ? this.meta.name : "";
       this.description = this.meta.description ? this.meta.description : "";
@@ -746,7 +746,7 @@ class QueryBuilderStore {
     if (type) {
       this.rootField = buildFieldTreeFromQuery(
         this.rootStore.typeStore.types,
-        this.context,
+        this.context as QuerySpecification.Context,
         type,
         toJS(query)
       );
@@ -761,7 +761,7 @@ class QueryBuilderStore {
       } as Type;
       this.rootField = buildFieldTreeFromQuery(
         this.rootStore.typeStore.types,
-        this.context,
+        this.context as QuerySpecification.Context,
         unknownType,
         toJS(query)
       );
