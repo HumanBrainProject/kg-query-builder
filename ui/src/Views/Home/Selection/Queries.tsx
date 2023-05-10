@@ -70,6 +70,8 @@ const Queries = observer(({ className }: QueriesProps) => {
 
   const { queriesStore, queryBuilderStore } = useStores();
 
+  const skip = queryBuilderStore.typeId === queriesStore.type;
+
   const {
     data: queries,
     error,
@@ -77,7 +79,7 @@ const Queries = observer(({ className }: QueriesProps) => {
     isFetching,
     isError,
     refetch,
-  } = useListQueriesQuery(queryBuilderStore.typeId as string);
+  } = useListQueriesQuery(queryBuilderStore.typeId as string, skip);
 
   useEffect(() => {
     if (queries) {
@@ -105,7 +107,7 @@ const Queries = observer(({ className }: QueriesProps) => {
     );
   }
 
-  if (isUninitialized || isFetching) {
+  if ((isUninitialized && !skip) || isFetching) {
     return (
       <Spinner>
         Fetching queries for {queryBuilderStore?.type?.label}...

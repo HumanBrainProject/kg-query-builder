@@ -29,7 +29,7 @@ import { Query } from "../Stores/Query";
 
 export type ListQueriesQuery = GenericQuery<Query.Query[]>;
 
-const useListQueriesQuery = (type: string): ListQueriesQuery => {
+const useListQueriesQuery = (type: string, skip: boolean): ListQueriesQuery => {
   
   const API = useAPI();
 
@@ -43,7 +43,7 @@ const useListQueriesQuery = (type: string): ListQueriesQuery => {
     }
   }, [API, type]);
 
-  return useGenericQuery<Query.Query[]>(fetch);
+  return useGenericQuery<Query.Query[]>(fetch, skip);
 };
 
 export default useListQueriesQuery;

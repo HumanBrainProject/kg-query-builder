@@ -98,12 +98,14 @@ const Type = observer(({ type, enableFocus, onKeyDown }: TypeProps) =>  {
   });
 
 
-  const { queryBuilderStore } = useStores();
+  const { queryBuilderStore, queriesStore } = useStores();
 
   const selectType = () => {
     if (type.id !== queryBuilderStore.typeId) {
       Matomo.trackEvent("Type", "Select", type.id);
       localStorage.setItem("type", type.id);
+      queriesStore.toggleShowSavedQueries(false);
+      queriesStore.clearQueries();
       queryBuilderStore.setType(type);
     }
   };
