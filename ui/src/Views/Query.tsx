@@ -21,10 +21,9 @@
  *
  */
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-import { toJS } from "mobx";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
@@ -93,18 +92,19 @@ const Query = observer(({ mode }:ModeProps) => {
 
   const { queryBuilderStore, queriesStore, typeStore } = useStores();
 
-  const cachedQueries = useMemo(() => toJS(queriesStore.queries), [queriesStore.queries]);
+  const cachedQuery = queriesStore.findQuery(queryId);
 
   const {
-    data: query,
+    data,
     error,
     isUninitialized,
     isFetching,
     isError,
     isAvailable,
     refetch,
-  } = useGetQueryQuery(queryId, cachedQueries);
+  } = useGetQueryQuery(queryId, !!cachedQuery);
 
+  const query = cachedQuery?cachedQuery:data;
 
   const [isNotFound, setNotFound] = useState<boolean|undefined>(undefined);
 
@@ -155,7 +155,7 @@ const Query = observer(({ mode }:ModeProps) => {
     navigate("/");
   };
 
-  if (isUninitialized || isFetching) {
+  if ((isUninitialized && !cachedQuery) || isFetching) {
     return (
       <SpinnerPanel text={`Fetching query with id ${id} ... `} />
     );

@@ -32,18 +32,13 @@ export interface GetQueryQuery extends GenericQuery<Query.Query|undefined> {
   isAvailable?: boolean;
 }
 
-const useGetQueryQuery = (queryId: UUID, queries: Query.Query[]): GetQueryQuery => {
+const useGetQueryQuery = (queryId: UUID, skip: boolean): GetQueryQuery => {
   
   const [isAvailable, setAvailability] = useState<boolean|undefined>(undefined);
 
   const API = useAPI();
 
   const fetch = useMemo(() => async () => {
-    const cachedQuery = queries.find(q => q.id === queryId);
-    if (cachedQuery) {
-      setAvailability(false);
-      return cachedQuery;
-    }
     setAvailability(undefined);
     try {
       const data = await API.getQuery(queryId);
@@ -75,9 +70,9 @@ const useGetQueryQuery = (queryId: UUID, queries: Query.Query[]): GetQueryQuery 
         }
       }
     }
-  }, [API, queryId, queries]);
+  }, [API, queryId]);
 
-  const genericQuery = useGenericQuery<Query.Query|undefined>(fetch);
+  const genericQuery = useGenericQuery<Query.Query|undefined>(fetch, skip);
 
   return {
     ...genericQuery,
