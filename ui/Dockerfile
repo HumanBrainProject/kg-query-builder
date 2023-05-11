@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
 COPY package-lock.json /usr/src/app/package-lock.json
 COPY package.json /usr/src/app/package.json
-RUN npm install
+RUN npm install --legacy-peer-deps
 COPY . /usr/src/app
 RUN npm run build
 
