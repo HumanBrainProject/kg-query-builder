@@ -21,7 +21,7 @@
  *
  */
 
-import React, { useEffect, useRef } from "react";
+import React, { JSX, useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

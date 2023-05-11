@@ -24,9 +24,10 @@
 import { useMemo, useState } from "react";
 import useAPI from "./useAPI";
 import useGenericQuery, { GenericQuery } from "./useGenericQuery";
-import { Query } from "../Stores/Query";
+import { Query } from "../Types/Query";
 import { UUID } from "../types";
 import { APIError } from "../Services/API";
+import { normalizeQuery } from "../Helpers/QueryHelpers";
 
 export interface GetQueryQuery extends GenericQuery<Query.Query|undefined> {
   isAvailable?: boolean;
@@ -44,7 +45,7 @@ const useGetQueryQuery = (queryId: UUID, skip: boolean): GetQueryQuery => {
       const data = await API.getQuery(queryId);
       setAvailability(false);
       try {
-          const query = await Query.normalizeQuery(data);
+          const query = await normalizeQuery(data);
           return query;
       } catch (e) {
         throw new Error(`Error while trying to expand/compact JSON-LD (${e})`);

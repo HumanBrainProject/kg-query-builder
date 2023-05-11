@@ -27,6 +27,7 @@ import { createUseStyles } from "react-jss";
 
 import useStores from "../../../Hooks/useStores";
 import Toggle from "../../../Components/Toggle";
+import { ToggleItemValue } from "../../../Components/Toggle/types";
 
 const useStyles = createUseStyles({
   container: {
@@ -79,7 +80,7 @@ const Space = ({ space: {name, selected}, onClick }: SpaceProps) => {
 
   const handleOnClick = () => typeof onClick === "function" && onClick(name, !selected);
 
-  const handleToggleClick = (_?:string, value?:boolean) => typeof onClick === "function" && onClick(name, !!value);
+  const handleToggleClick = (_?:string, value?:ToggleItemValue) => typeof onClick === "function" && onClick(name, !!(value as boolean|undefined));
 
   return(
     <div className={`${classes.space}  ${selected?"selected":""}`} onClick={handleOnClick} >
@@ -114,7 +115,7 @@ const SpaceRestriction = observer(() => {
     selected: queryRunStore.spaces?queryRunStore.spaces.includes(space.name):false
   })):[];
 
-  const handleToggleSpaceRestriction = (_?: string, value?: boolean) => queryRunStore.setSpaces(value?[]:undefined);
+  const handleToggleSpaceRestriction = (_?: string, value?: ToggleItemValue) => queryRunStore.setSpaces((value as boolean|undefined)?[]:undefined);
 
   const toggleSpace = (name: string, selected: boolean) => {
     if (selected) {

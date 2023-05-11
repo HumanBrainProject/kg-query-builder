@@ -21,7 +21,7 @@
  *
  */
 
-import React, { useEffect } from "react";
+import React, { JSX, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";

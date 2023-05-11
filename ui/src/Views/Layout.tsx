@@ -21,7 +21,7 @@
  *
  */
 
-import React from "react";
+import React, { JSX } from "react";
 import { createUseStyles, DefaultTheme, useTheme, Styles } from "react-jss";
 
 import Logo from "./Logo";

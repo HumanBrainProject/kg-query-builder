@@ -26,6 +26,7 @@ import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 
 import Toggle from "../../../Components/Toggle";
+import { ToggleItemValue } from "../../../Components/Toggle/types";
 
 import useStores from "../../../Hooks/useStores";
 
@@ -120,8 +121,9 @@ const SpaceForm = observer(({ className }: SpaceFormProps) => {
     }
   };
 
-  const handleChangePrivate = (_?: string, isSpaceShared?: boolean) => {
+  const handleChangePrivate = (_?: string, spaceShared?: ToggleItemValue) => {
     if (!isReadMode) {
+      const isSpaceShared = spaceShared as boolean|undefined;
       if (isSpaceShared && spacesStore.sharedSpaces.length) {
         queryBuilderStore.setSpace(spacesStore.sharedSpaces[0]);
       } else {
@@ -146,6 +148,7 @@ const SpaceForm = observer(({ className }: SpaceFormProps) => {
           &nbsp;in space
           <div className={sharedSpaceClass}>
             <select
+              title="select space"
               className={classes.select}
               value={queryBuilderStore.space?.name}
               onChange={handleChangeSpace}

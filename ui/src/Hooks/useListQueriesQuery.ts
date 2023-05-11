@@ -25,7 +25,8 @@ import { useMemo } from "react";
 import useAPI from "./useAPI";
 import useGenericQuery, { GenericQuery } from "./useGenericQuery";
 import { QuerySpecification } from "../Types/QuerySpecification";
-import { Query } from "../Stores/Query";
+import { Query } from "../Types/Query";
+import { normalizeQuery } from "../Helpers/QueryHelpers";
 
 export type ListQueriesQuery = GenericQuery<Query.Query[]>;
 
@@ -36,7 +37,7 @@ const useListQueriesQuery = (type: string, skip: boolean): ListQueriesQuery => {
   const fetch = useMemo(() => async () => {
     const { data } = await API.getQueries(type);
     try {
-        const queries = await Promise.all(data.map(async (jsonSpec: QuerySpecification.QuerySpecification) => Query.normalizeQuery(jsonSpec)));
+        const queries = await Promise.all(data.map(async (jsonSpec: QuerySpecification.QuerySpecification) => normalizeQuery(jsonSpec)));
         return queries;
     } catch (e) {
       throw new Error(`Error while trying to expand/compact JSON-LD (${e})`);

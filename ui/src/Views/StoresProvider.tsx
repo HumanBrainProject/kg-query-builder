@@ -33,7 +33,7 @@
  *
  */
 
-import React from "react";
+import React, { JSX } from "react";
 import RootStore from "../Stores/RootStore";
 import StoresContext from "../Contexts/StoresContext";
 

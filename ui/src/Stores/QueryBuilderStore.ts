@@ -37,9 +37,9 @@ import { buildFieldTreeFromQuery } from "./QueryBuilderStore/QueryToFieldTree";
 import { buildQueryStructureFromFieldTree } from "./QueryBuilderStore/FieldTreeToQuery";
 import RootStore from "./RootStore";
 import Field from "./Field";
-import { DEFAULT_RESPONSE_VOCAB, defaultContext } from "./QueryBuilderStore/QuerySettings";
+import { DEFAULT_RESPONSE_VOCAB, defaultContext, getProperties } from "../Helpers/QueryHelpers";
 import { QuerySpecification } from "../Types/QuerySpecification";
-import { Query } from "./Query";
+import { Query } from "../Types/Query";
 import { Space, Type, Property, PropertyGroup } from "../types";
 
 interface Counter {
@@ -171,7 +171,7 @@ class QueryBuilderStore {
         this.sourceQuery.structure = querySpecification.structure;
       }
       this.sourceQuery.meta = querySpecification.meta;
-      this.sourceQuery.properties = Query.getProperties(querySpecification);
+      this.sourceQuery.properties = getProperties(querySpecification);
     }
   }
 

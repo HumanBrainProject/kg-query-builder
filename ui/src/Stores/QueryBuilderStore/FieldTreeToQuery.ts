@@ -27,8 +27,8 @@ import {
   optionsToKeepOnFlattenendField,
   attributeReg,
   modelReg
-} from "./QuerySettings";
-import { Query } from "../Query";
+} from "../../Helpers/QueryHelpers";
+import { Query } from "../../Types/Query";
 import { QuerySpecification } from "../../Types/QuerySpecification";
 import Field from "../Field";
 

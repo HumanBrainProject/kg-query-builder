@@ -21,10 +21,11 @@
  *
  */
 
-import React from "react";
+import React, { JSX } from "react";
 import { createUseStyles } from "react-jss";
 
 import MultiToggleItem from "./MultiToggleItem";
+import { ToggleItemValue } from "./types";
 
 const useStyles = createUseStyles({
   container: {
@@ -37,8 +38,8 @@ const useStyles = createUseStyles({
 
 interface MultiToggleProps {
   children: JSX.Element | JSX.Element[];
-  selectedValue: any;
-  onChange: (value: any) => void;
+  selectedValue: ToggleItemValue;
+  onChange: (value: ToggleItemValue) => void;
 }
 
 const MultiToggle = ({

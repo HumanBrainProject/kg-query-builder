@@ -27,7 +27,7 @@ import {
   makeObservable
 } from "mobx";
 
-import { Query } from "./Query";
+import { Query } from "../Types/Query";
 import { UUID, Stage } from "../types";
 
 const defaultResultSize = 20;

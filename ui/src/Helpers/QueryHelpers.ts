@@ -20,7 +20,11 @@
  * (Human Brain Project SGA1, SGA2 and SGA3).
  *
  */
-import { QuerySpecification } from "../../Types/QuerySpecification";
+
+import jsonld from "jsonld";
+
+import { Query } from "../Types/Query";
+import { QuerySpecification } from "../Types/QuerySpecification";
 
 export const rootFieldReservedProperties: string[] = [
   "root_schema",
@@ -72,4 +76,35 @@ export const defaultContext = (): QuerySpecification.Context => {
       "@type": "@id"
     }
   };
+};
+
+export const getProperties = (query: QuerySpecification.QuerySpecification): Query.Properties => {
+  if (!query) {
+    return {};
+  }
+  return Object.entries(query)
+    .filter(([name]) => !rootFieldReservedProperties.includes(name))
+    .reduce((result, [name, value]) => {
+      result[name] = value;
+      return result;
+    }, {} as Query.Properties);
+};
+
+
+export const normalizeQuery = async (jsonSpec: QuerySpecification.QuerySpecification): Promise<Query.Query> => {
+  const queryId = jsonSpec["@id"];
+  jsonSpec["@context"] = defaultContext();
+  const expanded = await jsonld.expand(jsonSpec as jsonld.JsonLdDocument);
+  const compacted = await jsonld.compact(expanded, jsonSpec["@context"] as jsonld.ContextDefinition);
+  const meta = compacted.meta as QuerySpecification.Meta;
+  return {
+    id: queryId,
+    context: compacted["@context"] as QuerySpecification.Context,
+    structure: compacted.structure as QuerySpecification.Field[],
+    properties: getProperties(compacted as QuerySpecification.QuerySpecification),
+    meta: meta,
+    label: meta.name ? meta.name  : "",
+    description: meta.description ? meta.description : "",
+    space: jsonSpec["https://core.kg.ebrains.eu/vocab/meta/space"],
+  } as Query.Query;
 };

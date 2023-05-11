@@ -33,7 +33,7 @@ export namespace QuerySpecification {
     "@type": string;
   }
 
-  export type Value  = undefined|null|object|string|number|boolean|(undefined|null|object|string|number|boolean)[];
+  export type Value = undefined|null|object|string|number|boolean|(undefined|null|object|string|number|boolean)[];
 
   export interface Schema extends Property {
     attributeNamespace?: string;

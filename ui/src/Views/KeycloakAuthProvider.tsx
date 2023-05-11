@@ -21,7 +21,7 @@
  *
  */
 
-import React from "react";
+import React, { JSX } from "react";
 
 import AuthContext from "../Contexts/AuthContext";
 import KeycloakAuthAdapter from "../Services/KeycloakAuthAdapter";

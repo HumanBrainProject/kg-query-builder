@@ -28,7 +28,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faTag} from "@fortawesome/free-solid-svg-icons/faTag";
 import { useNavigate } from "react-router-dom";
 
-import { Query as QuerySpecs } from "../../../../Stores/Query";
+import { Query as QuerySpecs } from "../../../../Types/Query";
 import Matomo from "../../../../Services/Matomo";
 
 const useStyles = createUseStyles({

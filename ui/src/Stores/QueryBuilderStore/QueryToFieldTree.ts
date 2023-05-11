@@ -28,10 +28,10 @@ import {
   namespaceReg,
   attributeReg,
   modelReg
-} from "./QuerySettings";
+} from "../../Helpers/QueryHelpers";
 import Field from "../Field";
 import { QuerySpecification } from "../../Types/QuerySpecification";
-import { Query } from "../Query";
+import { Query } from "../../Types/Query";
 import { Type } from "../../types";
 
 const getRelativePathFromObject = (path?: null|undefined|string|QuerySpecification.Path): string | null => {

@@ -25,6 +25,7 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 
 import Toggle from "../../../../../Components/Toggle";
+import { ToggleItemValue } from "../../../../../Components/Toggle/types";
 import Field from "../../../../../Stores/Field";
 
 interface FlattenProps {
@@ -34,7 +35,7 @@ interface FlattenProps {
 }
 
 const Flatten = observer(({ field, show, onChange }: FlattenProps) => {
-  const handleOnChange = (_:string, value?: boolean) => onChange(!!value);
+  const handleOnChange = (_:string, value?: ToggleItemValue) => onChange(!!(value as boolean|undefined));
 
   if (!show) {
     return null;

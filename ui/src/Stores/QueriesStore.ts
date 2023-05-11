@@ -29,7 +29,7 @@ import {
 } from "mobx";
 
 import RootStore from "./RootStore";
-import { Query } from "./Query";
+import { Query } from "../Types/Query";
 import { Space } from "../types";
 
 const queriesCompare = (a: Query.Query, b: Query.Query): number => {

@@ -33,7 +33,7 @@
  *
  */
 
-import React, { useEffect } from "react";
+import React, { JSX, useEffect } from "react";
 import Auth from "../Services/Auth";
 import AuthContext from "../Contexts/AuthContext";
 import AuthAdapter from "../Services/AuthAdapter";

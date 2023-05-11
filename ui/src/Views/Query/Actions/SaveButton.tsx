@@ -32,7 +32,8 @@ import { AxiosError } from "axios";
 import useStores from "../../../Hooks/useStores";
 import useAPI from "../../../Hooks/useAPI";
 import Matomo from "../../../Services/Matomo";
-import { Query } from "../../../Stores/Query";
+import { Query } from "../../../Types/Query";
+import { getProperties } from "../../../Helpers/QueryHelpers";
 
 import SpinnerPanel from "../../../Components/SpinnerPanel";
 import ActionError from "../../../Components/ActionError";
@@ -81,7 +82,7 @@ const SaveButton = observer(({ disabled }: SaveButtonProps) => {
             id: queryId,
             context: querySpecification["@context"],
             structure: querySpecification.structure,
-            properties: Query.getProperties(querySpecification),
+            properties: getProperties(querySpecification),
             meta: querySpecification.meta,
             label: (querySpecification.meta?.name)?querySpecification.meta.name:"",
             description: (querySpecification.meta?.description)?querySpecification.meta.description:"",

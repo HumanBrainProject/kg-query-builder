@@ -26,8 +26,8 @@ import { createUseStyles } from "react-jss";
 import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
 
-import MultiToggle from "./MultiToggle";
-import { Query } from "../Stores/Query";
+import MultiToggle from "./Toggle/MultiToggle";
+import { ToggleItemValue, ToggleItem } from "./Toggle/types";
 
 const useStyles = createUseStyles({
   option: {
@@ -53,11 +53,11 @@ const useStyles = createUseStyles({
 
 interface ToggleProps {
   className?: string;
-  option: Query.Option;
+  option: ToggleItem;
   label?: string;
   comment?: string;
   show: boolean;
-  onChange: (name: string, newValue?: boolean) => void;
+  onChange: (name: string, newValue?: ToggleItemValue) => void;
 }
 
 const Toggle = ({
@@ -74,7 +74,7 @@ const Toggle = ({
 
   const isReadOnly = typeof onChange !== "function";
 
-  const handleChange = (newValue: any) => !isReadOnly && onChange(name, newValue);
+  const handleChange = (newValue: ToggleItemValue) => !isReadOnly && onChange(name, newValue);
 
   if (!show) {
     return null;

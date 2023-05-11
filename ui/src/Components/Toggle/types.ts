@@ -33,21 +33,9 @@
  *
  */
 
-import React, { JSX } from "react";
-import API from "../Services/API";
-import APIContext from "../Contexts/APIContext";
+export type ToggleItemValue = undefined|null|object|string|number|boolean|(undefined|null|object|string|number|boolean)[];
 
-interface APIProviderProps {
-  api: API;
-  children?: string|JSX.Element|(null|undefined|string|JSX.Element)[];
+export interface ToggleItem {
+  name: string;
+  value?: ToggleItemValue;
 }
-
-const APIProvider = ({ api, children }: APIProviderProps): JSX.Element => (
-  <APIContext.Provider value={api} >
-    <>
-      {children}
-    </>
-  </APIContext.Provider>
-);
-
-export default APIProvider;

@@ -24,7 +24,7 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
-import { Query as QueryProps } from "../../../../Stores/Query";
+import { Query as QueryProps } from "../../../../Types/Query";
 import Query from "./Query";
 
 
