@@ -86,19 +86,19 @@ const endpoints = {
   spaces: () => `${RELATIVE_ROOT_PATH}/spaces`,
   types: () => `${RELATIVE_ROOT_PATH}/types`,
   structure: () => `${RELATIVE_ROOT_PATH}/structure?withLinks=true`,
-  performQuery: (stage?:Stage, from?:string, size?:string, instanceId?:string, restrictToSpaces?:string[], params?: any) => {
+  performQuery: (stage?:Stage, from?:string, size?:string, instanceId?:string, restrictToSpaces?:string[], params?: object) => {
     const restrictToSpacesString =
       Array.isArray(restrictToSpaces) && restrictToSpaces.length
         ? "&restrictToSpaces=" +
           restrictToSpaces.map((space) => encodeURIComponent(space)).join(",")
         : "";
-    const paramsString = Object.entries(params).reduce(
+    const paramsString = params?Object.entries(params).reduce(
       (acc, [name, value]) => {
         acc += `&${encodeURIComponent(name)}=${encodeURIComponent(value as string)}`;
         return acc;
       },
       ""
-    );
+    ):"";
     return `${RELATIVE_ROOT_PATH}/queries?${getSize(size)}${getFrom(from)}${getInstanceId(instanceId)}${getStage(stage)}${paramsString}${restrictToSpacesString}`;
   },
   getQuery: (queryId:UUID) => `${RELATIVE_ROOT_PATH}/queries/${queryId}`,
