@@ -39,6 +39,7 @@ import SpinnerPanel from "../../Components/SpinnerPanel";
 import ExecutionResult from "./QueryExecution/ExecutionResult";
 import ExecutionParams from "./QueryExecution/ExecutionParams";
 import useAPI from "../../Hooks/useAPI";
+import { QueryExecutionResult } from "../../types";
 
 const useStyles = createUseStyles({
   container:{
@@ -97,7 +98,7 @@ const QueryExecution = observer(() => {
 
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string|undefined>();
-  const [result, setResult] = useState<Result|undefined>();
+  const [result, setResult] = useState<QueryExecutionResult|undefined>();
 
   const API = useAPI()
   

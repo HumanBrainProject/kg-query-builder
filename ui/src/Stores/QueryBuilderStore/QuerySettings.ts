@@ -20,7 +20,7 @@
  * (Human Brain Project SGA1, SGA2 and SGA3).
  *
  */
-import { QuerySpecification } from "../../types";
+import { QuerySpecification } from "../../Types/QuerySpecification";
 
 export const rootFieldReservedProperties: string[] = [
   "root_schema",

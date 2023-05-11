@@ -33,6 +33,7 @@ import Form from "react-bootstrap/Form";
 import useStores from "../../../Hooks/useStores";
 
 import SpaceRestriction from "./SpaceRestriction";
+import { Stage } from "../../../types";
 
 const useStyles = createUseStyles({
   input: {
@@ -176,14 +177,19 @@ interface ExecutionParamsProps {
   onExecute: () => void;
 }
 
+interface ScopeOption {
+  label: string;
+  value: Stage;
+}
+
 const ExecutionParams = observer(({ onExecute }: ExecutionParamsProps) => {
   const classes = useStyles();
 
   const { queryBuilderStore, queryRunStore } = useStores();
 
-  const scopeOptions = [
+  const scopeOptions: ScopeOption[] = [
     { label: "Released", value: "RELEASED" },
-    { label: "In progress", value: "IN_PROGRESS" },
+    { label: "In progress", value: "IN_PROGRESS"},
   ];
 
   const isSpaceRestricted = Array.isArray(
@@ -194,7 +200,7 @@ const ExecutionParams = observer(({ onExecute }: ExecutionParamsProps) => {
 
   const handleChangeStart = (e: ChangeEvent<HTMLInputElement>) => queryRunStore.setStart(e.target.value);
 
-  const handleChangeStage = (e:ChangeEvent<HTMLInputElement>) => queryRunStore.setStage(e.target.value);
+  const handleChangeStage = (e:ChangeEvent<HTMLInputElement>) => queryRunStore.setStage(e.target.value as Stage);
 
   const handleChangeInstanceId = (e:ChangeEvent<HTMLInputElement> ) => queryRunStore.setInstanceId(e.target.value);
 
