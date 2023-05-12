@@ -31,13 +31,15 @@ import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
 import { AxiosError } from "axios";
 import jsonld from "jsonld";
 
-import API from "../../Services/API";
-import { useStores } from "../../Hooks/UseStores";
+import Matomo from "../../Services/Matomo";
+import useStores from "../../Hooks/useStores";
 
 import BGMessage from "../../Components/BGMessage";
 import SpinnerPanel from "../../Components/SpinnerPanel";
-import ExecutionResult, { Result } from "./QueryExecution/ExecutionResult";
+import ExecutionResult from "./QueryExecution/ExecutionResult";
 import ExecutionParams from "./QueryExecution/ExecutionParams";
+import useAPI from "../../Hooks/useAPI";
+import { QueryExecutionResult } from "../../types";
 
 const useStyles = createUseStyles({
   container:{
@@ -96,16 +98,18 @@ const QueryExecution = observer(() => {
 
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string|undefined>();
-  const [result, setResult] = useState<Result|undefined>();
+  const [result, setResult] = useState<QueryExecutionResult|undefined>();
 
-  const { transportLayer, queryBuilderStore, queryRunStore } = useStores();
+  const API = useAPI()
+  
+  const { queryBuilderStore, queryRunStore } = useStores();
 
   const executeQuery = async () => {
     if (!queryBuilderStore.isQueryEmpty && !isRunning) {
       setIsRunning(true);
       setError(undefined);
       setResult(undefined);
-      API.trackEvent("Query", "Execute", queryBuilderStore.isQuerySaved?queryBuilderStore.queryId:"unsaved query");
+      Matomo.trackEvent("Query", "Execute", queryBuilderStore.isQuerySaved?queryBuilderStore.queryId:"unsaved query");
       try {
         const query = queryBuilderStore.querySpecification;
         const instanceId =
@@ -118,7 +122,7 @@ const QueryExecution = observer(() => {
           }
           return acc;
         }, {} as jsonld.NodeObject);
-        const response = await transportLayer.performQuery(
+        const data = await API.performQuery(
           query,
           queryRunStore.stage,
           queryRunStore.start,
@@ -127,7 +131,7 @@ const QueryExecution = observer(() => {
           queryRunStore.spaces,
           params
         );
-        setResult(response.data);
+        setResult(data);
         setIsRunning(false);
       } catch (e) {
         const error = e as AxiosError;

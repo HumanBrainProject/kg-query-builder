@@ -27,7 +27,7 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faUndoAlt} from "@fortawesome/free-solid-svg-icons/faUndoAlt";
 
-import { useStores } from "../../../Hooks/UseStores";
+import useStores from "../../../Hooks/useStores";
 
 const ResetButton = observer(() => {
 

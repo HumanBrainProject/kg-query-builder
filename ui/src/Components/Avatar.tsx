@@ -26,7 +26,7 @@ import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons/faUser";
-import { User } from "../Stores/AuthStore";
+import { UserProfile } from "../types";
 
 const useStyles = createUseStyles({
   avatar: {
@@ -42,11 +42,10 @@ const useStyles = createUseStyles({
 });
 
 interface AvatarProps {
-  user: User;
-  size?: number
+  user: UserProfile;
 }
 
-const Avatar = observer(({ user, size = 20 }: AvatarProps) => {
+const Avatar = observer(({ user }: AvatarProps) => {
   const classes = useStyles();
 
   if (!user) {
@@ -54,19 +53,6 @@ const Avatar = observer(({ user, size = 20 }: AvatarProps) => {
   }
 
   const userName = user.name ? user.name : user.id;
-
-  if (user.picture) {
-    return (
-      <img
-        alt={userName}
-        width={size}
-        height={size}
-        src={user.picture}
-        title={userName}
-        className={`${classes.avatar} avatar picture`}
-      />
-    );
-  }
 
   return (
     <FontAwesomeIcon

@@ -31,7 +31,7 @@ import {faArrowDown} from "@fortawesome/free-solid-svg-icons/faArrowDown";
 
 import Button from "react-bootstrap/Button";
 
-import { useStores } from "../../../../Hooks/UseStores";
+import useStores from "../../../../Hooks/useStores";
 import { FieldProps } from "../Field";
 
 const useStyles = createUseStyles({

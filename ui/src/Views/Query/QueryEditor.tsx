@@ -31,13 +31,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
 import jsonld from "jsonld";
 
-import { useStores } from "../../Hooks/UseStores";
+import useStores from "../../Hooks/useStores";
 
 import ThemeRJV from "../../Themes/ThemeRJV";
 import Actions from "./Actions";
-import { QuerySpecification } from "../../Stores/QueryBuilderStore/QuerySpecification";
+import { QuerySpecification } from "../../Types/QuerySpecification";
 import { FIELD_FLAGS } from "../../Stores/Field";
-import { Query } from "../../Stores/Query";
+import { normalizeQuery } from "../../Helpers/QueryHelpers";
 
 const useStyles = createUseStyles({
   container: {
@@ -100,7 +100,7 @@ const QueryEditor = observer(() => {
     if (o) {
       try {
         const jsonSpec = o as QuerySpecification.QuerySpecification;
-        const query = await Query.normalizeQuery(jsonSpec);
+        const query = await normalizeQuery(jsonSpec);
         queryBuilderStore.updateQuery(query);
       } catch (e) {
         setError(`Error while trying to expand/compact JSON-LD (${e})`);

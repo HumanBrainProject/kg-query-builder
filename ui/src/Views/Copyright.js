@@ -23,13 +23,8 @@
 
 import React from "react";
 
-import { storesContext } from "../Contexts/StoresContext";
-import { RootStore } from "../Stores/RootStore";
+const Copyright = () => (
+    <div className="copyright">Copyright &copy; {new Date().getFullYear()} EBRAINS. All rights reserved.</div>
+);
 
-export const useStores = ():RootStore => {
-  const store = React.useContext<RootStore>(storesContext);
-  if (!store) {
-    throw new Error("useStores must be used within a StoreProvider.");
-  }
-  return store;
-};
+export default Copyright;

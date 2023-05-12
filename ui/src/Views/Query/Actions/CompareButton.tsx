@@ -27,10 +27,10 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faGlasses} from "@fortawesome/free-solid-svg-icons/faGlasses";
 
-import API from "../../../Services/API";
-import { useStores } from "../../../Hooks/UseStores";
+import useStores from "../../../Hooks/useStores";
 
 import CompareChangesModal from "./CompareChangesModal";
+import Matomo from "../../../Services/Matomo";
 interface CompareButtonProps {
   disabled: boolean;
 }
@@ -42,7 +42,7 @@ const CompareButton = observer(({ disabled }: CompareButtonProps) => {
   const { queryBuilderStore } = useStores();
 
   const handleCompare = () => {
-    API.trackEvent("Query", "Compare", queryBuilderStore.queryId);
+    Matomo.trackEvent("Query", "Compare", queryBuilderStore.queryId);
     setShowChanges(true);
   };
 

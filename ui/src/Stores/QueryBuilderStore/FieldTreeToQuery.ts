@@ -27,9 +27,9 @@ import {
   optionsToKeepOnFlattenendField,
   attributeReg,
   modelReg
-} from "./QuerySettings";
-import { Query } from "../Query";
-import { QuerySpecification } from "./QuerySpecification";
+} from "../../Helpers/QueryHelpers";
+import { Query } from "../../Types/Query";
+import { QuerySpecification } from "../../Types/QuerySpecification";
 import Field from "../Field";
 
 const hasTypeFilter = (field: Field): boolean =>

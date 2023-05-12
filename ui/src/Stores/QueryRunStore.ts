@@ -27,24 +27,20 @@ import {
   makeObservable
 } from "mobx";
 
-import { TransportLayer } from "../Services/TransportLayer";
-import { RootStore } from "./RootStore";
-import { Query } from "./Query";
+import { Query } from "../Types/Query";
+import { UUID, Stage } from "../types";
 
 const defaultResultSize = 20;
 
-export class QueryRunStore {
-  stage = "RELEASED";
+class QueryRunStore {
+  stage: Stage = "RELEASED";
   size = `${defaultResultSize}`;
   start = "0";
-  instanceId = "";
+  instanceId: UUID = "";
   spaces?: string[];
   parameters: Query.ResultQueryParameters = {};
 
-  transportLayer: TransportLayer;
-  rootStore: RootStore;
-
-  constructor(transportLayer: TransportLayer, rootStore: RootStore) {
+  constructor() {
     makeObservable(this, {
       stage: observable,
       size: observable,
@@ -60,9 +56,6 @@ export class QueryRunStore {
       setParameter: action,
       setStage: action
     });
-
-    this.transportLayer = transportLayer;
-    this.rootStore = rootStore;
   }
 
   setSpaces(spaces: string[]|undefined) {
@@ -77,7 +70,7 @@ export class QueryRunStore {
     this.start = start;
   }
 
-  setInstanceId(instanceId: string) {
+  setInstanceId(instanceId: UUID) {
     this.instanceId = instanceId;
   }
 
@@ -92,8 +85,8 @@ export class QueryRunStore {
     }
   }
 
-  setStage(scope: string) {
-    this.stage = scope;
+  setStage(stage: Stage) {
+    this.stage = stage;
   }
 
   updateParameters(parameters: string[]) {

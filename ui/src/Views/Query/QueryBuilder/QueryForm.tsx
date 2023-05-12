@@ -29,7 +29,7 @@ import SpaceForm from "./SpaceForm";
 import Vocab from "./Vocab";
 import Links from "./Links";
 
-import { useStores } from "../../../Hooks/UseStores";
+import useStores from "../../../Hooks/useStores";
 
 const useStyles = createUseStyles({
   container: {

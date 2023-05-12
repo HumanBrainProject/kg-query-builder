@@ -21,7 +21,8 @@
  *
  */
 
-import { Type } from "../Type";
+import { Property } from "../types";
+
 export namespace QuerySpecification {
 
   export interface JsonLd {
@@ -32,9 +33,9 @@ export namespace QuerySpecification {
     "@type": string;
   }
 
-  export type Value  = undefined|null|object|string|number|boolean|(undefined|null|object|string|number|boolean)[];
+  export type Value = undefined|null|object|string|number|boolean|(undefined|null|object|string|number|boolean)[];
 
-  export interface Schema extends Type.Property {
+  export interface Schema extends Property {
     attributeNamespace?: string;
     isUnknown: boolean;
   }
@@ -114,22 +115,5 @@ export namespace QuerySpecification {
       | Value
       | QuerySpecification[keyof QuerySpecification];
   }
-
-  export const defaultResponseVocab = "https://schema.hbp.eu/myQuery/";
-
-  export const defaultContext = (): QuerySpecification.Context => {
-    return {
-      "@vocab": "https://core.kg.ebrains.eu/vocab/query/",
-      query: defaultResponseVocab,
-      propertyName: {
-        "@id": "propertyName",
-        "@type": "@id"
-      },
-      path: {
-        "@id": "path",
-        "@type": "@id"
-      }
-    };
-  };
 
 }

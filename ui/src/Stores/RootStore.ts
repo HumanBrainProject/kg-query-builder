@@ -21,42 +21,42 @@
  *
  */
 
-import { TransportLayer } from "../Services/TransportLayer";
-import { AppStore } from "./AppStore";
-import { AuthStore } from "./AuthStore";
-import { TypeStore } from "./TypeStore";
-import { QueriesStore } from "./QueriesStore";
-import { QueryBuilderStore } from "./QueryBuilderStore";
-import { QueryRunStore } from "./QueryRunStore";
+import API from "../Services/API";
+import AppStore from "./AppStore";
+import UserProfileStore from "./UserProfileStore";
+import SpacesStore from "./SpacesStore";
+import TypeStore from "./TypeStore";
+import QueriesStore from "./QueriesStore";
+import QueryBuilderStore from "./QueryBuilderStore";
+import QueryRunStore from "./QueryRunStore";
 
-export class RootStore {
+class RootStore {
 
-  authStore: AuthStore;
+  userProfileStore: UserProfileStore;
+  spacesStore: SpacesStore;
   typeStore: TypeStore;
   queriesStore: QueriesStore;
   queryBuilderStore: QueryBuilderStore;
   queryRunStore: QueryRunStore;
   appStore: AppStore;
-  transportLayer: TransportLayer;
 
-  constructor(transportLayer: TransportLayer) {
+  constructor(api: API) {
 
-    if (!transportLayer) {
-      throw new Error("no transport layer provided!");
+    if (!api) {
+      throw new Error("no api provided!");
     }
 
-    this.transportLayer = transportLayer;
-
     // Domain stores
-    this.typeStore = new TypeStore(transportLayer, this);
-    this.queriesStore = new QueriesStore(transportLayer, this);
-    this.queryBuilderStore = new QueryBuilderStore(transportLayer, this);
-    this.queryRunStore = new QueryRunStore(transportLayer, this);
-
-    this.authStore = new AuthStore(transportLayer);
-    transportLayer.setAuthStore(this.authStore);
+    this.userProfileStore = new UserProfileStore();
+    this.spacesStore = new SpacesStore();
+    this.typeStore = new TypeStore(api);
+    this.queriesStore = new QueriesStore(this);
+    this.queryBuilderStore = new QueryBuilderStore(this);
+    this.queryRunStore = new QueryRunStore();
 
     // UI stores
     this.appStore = new AppStore(this);
   }
 }
+
+export default RootStore;

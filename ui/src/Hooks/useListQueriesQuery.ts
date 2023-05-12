@@ -21,31 +21,30 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
-import {faCaretDown} from "@fortawesome/free-solid-svg-icons/faCaretDown";
+import { useMemo } from "react";
+import useAPI from "./useAPI";
+import useGenericQuery, { GenericQuery } from "./useGenericQuery";
+import { QuerySpecification } from "../Types/QuerySpecification";
+import { Query } from "../Types/Query";
+import { normalizeQuery } from "../Helpers/QueryHelpers";
 
-import { useStores } from "../../Hooks/UseStores";
+export type ListQueriesQuery = GenericQuery<Query.Query[]>;
 
-import PropertyTypes from "../PropertyTypes";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+const useListQueriesQuery = (type: string, skip: boolean): ListQueriesQuery => {
+  
+  const API = useAPI();
 
-const HomeTab = observer(() => {
+  const fetch = useMemo(() => async () => {
+    const { data } = await API.getQueries(type);
+    try {
+        const queries = await Promise.all(data.map(async (jsonSpec: QuerySpecification.QuerySpecification) => normalizeQuery(jsonSpec)));
+        return queries;
+    } catch (e) {
+      throw new Error(`Error while trying to expand/compact JSON-LD (${e})`);
+    }
+  }, [API, type]);
 
-  const { queryBuilderStore } = useStores();
+  return useGenericQuery<Query.Query[]>(fetch, skip);
+};
 
-  const type = queryBuilderStore.type?.id;
-
-  if (type) {
-    return (
-      <div>
-        <PropertyTypes types={[type]} />&nbsp;-&nbsp;<small>{type}</small>
-        <FontAwesomeIcon icon={faCaretDown} style={{marginLeft: "5px"}} />
-      </div>
-    );
-  }
-  return null;
-});
-HomeTab.displayName = "HomeTab";
-
-export default HomeTab;
+export default useListQueriesQuery;

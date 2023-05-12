@@ -24,49 +24,39 @@
 import { observable, action, computed, runInAction, makeObservable } from "mobx";
 import debounce from "lodash/debounce";
 
-import { TransportLayer } from "../Services/TransportLayer";
-import { RootStore } from "./RootStore";
-import { AxiosError } from "axios";
-import { Type } from "./Type";
+import API, { APIError }  from "../Services/API";
+import { Type } from "../types";
 
 
 export class TypeStore {
   filterValue = "";
-  types: Map<string, Type.Type> = new Map;
-  typeList: Type.Type[] = [];
-  fetchError?: string;
-  isFetching = false;
-  isFetched = false;
+  types: Map<string, Type> = new Map;
+  typeList: Type[] = [];
   typesQueue = new Set<string>();
   queueThreshold = 5000;
   queueTimeout = 250;
   fetchingQueueError?: string;
   isFetchingQueue = false;
 
-  transportLayer: TransportLayer;
-  rootStore: RootStore;
+  api: API;
 
-  constructor(transportLayer: TransportLayer, rootStore: RootStore) {
+  constructor(api: API) {
     makeObservable(this, {
       filterValue: observable,
       types: observable,
       typeList: observable,
-      fetchError: observable,
-      isFetching: observable,
       fetchingQueueError: observable,
       isFetchingQueue: observable,
-      isFetched: observable,
       filteredTypeList: computed,
       hasTypes: computed,
       setFilterValue: action,
-      fetch: action,
+      setTypes: action,
       addTypesToFetch: action,
       processQueue: action,
       fetchQueue: action
     });
 
-    this.transportLayer = transportLayer;
-    this.rootStore = rootStore;
+    this.api = api;
   }
 
   get filteredTypeList() {
@@ -74,51 +64,16 @@ export class TypeStore {
   }
 
   get hasTypes() {
-    return (
-      !!this.typeList.length
-    );
+    return !!this.typeList.length;
   }
 
   setFilterValue(value: string) {
     this.filterValue = value;
   }
 
-  async fetch() {
-    if (!this.isFetching) {
-      this.isFetching = true;
-      this.fetchError = undefined
-      try {
-        const response = await this.transportLayer.getTypes();
-        runInAction(() => {
-          const types = (Array.isArray(response.data)?response.data:[]).map(type => ({
-            id: type.id,
-            label: type.label,
-            color: type.color,
-            description: type.description,
-            properties: (Array.isArray(type.properties)?type.properties:[])
-              .map((p:Type.Property) => {
-                if(!p.label) {
-                  p.label = p.simpleAttributeName.charAt(0).toUpperCase() + p.simpleAttributeName.slice(1);
-                }
-                return p;
-              })
-              .sort((a: Type.Property, b: Type.Property) => a.label.localeCompare(b.label))
-          } as Type.Type));
-          this.typeList = types.sort((a, b) => a.label.localeCompare(b.label));
-          types.forEach(type => this.types.set(type.id, type));
-          this.isFetching = false;
-          this.isFetched = true;
-        });
-      } catch (e) {
-        const axiosError = e as AxiosError;
-        const message = axiosError?.message;
-        runInAction(() => {
-          this.fetchError = `Error while fetching types (${message})`;
-          this.isFetching = false;
-          this.isFetched = false;
-        });
-      }
-    }
+  setTypes(types: Type[]) {
+    this.typeList = types;
+    types.forEach(type => this.types.set(type.id, type));
   }
 
   addTypesToFetch(types: string[]) {
@@ -148,10 +103,10 @@ export class TypeStore {
     this.isFetchingQueue = true;
     const toProcess = Array.from(this.typesQueue).splice(0, this.queueThreshold);
     try{
-      const response = await this.transportLayer.getTypesByName(toProcess);
+      const typesByName = await this.api.getTypesByName(toProcess);
       runInAction(() =>{
         toProcess.forEach(identifier => {
-          const type =  response && response.data && response.data && response.data[identifier];
+          const type =  typesByName[identifier];
           if(type){
             this.types.set(identifier, type);
           }
@@ -161,9 +116,9 @@ export class TypeStore {
         this.processQueue();
       });
     } catch(e){
-      const axiosError = e as AxiosError;
+      const err = e as APIError;
       runInAction(() =>{
-        this.fetchingQueueError = `Error fetching types (${axiosError?.message})`;
+        this.fetchingQueueError = `Error fetching types (${err?.message})`;
         toProcess.forEach(identifier => this.typesQueue.delete(identifier));
         this.isFetchingQueue = false;
         this.processQueue();

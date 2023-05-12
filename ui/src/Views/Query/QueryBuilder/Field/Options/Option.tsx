@@ -21,11 +21,12 @@
  *
  */
 
-import { observer } from "mobx-react-lite";
 import React from "react";
+import { observer } from "mobx-react-lite";
 import Toggle from "../../../../../Components/Toggle";
 import Field from "../../../../../Stores/Field";
-import { QuerySpecification } from "../../../../../Stores/QueryBuilderStore/QuerySpecification";
+import { QuerySpecification } from "../../../../../Types/QuerySpecification";
+import { Query } from "../../../../../Types/Query";
 import Filter from "./Filter";
 import SingleItemStrategy from "./SingleItemStrategy";
 import UnsupportedOption from "./UnsupportedOption";
@@ -33,10 +34,7 @@ import UnsupportedOption from "./UnsupportedOption";
 interface OptionProps {
   field: Field;
   rootField?: Field;
-  option: {
-    name: string;
-    value: QuerySpecification.Value;
-  }
+  option: Query.Option
   onChange: (name: string, newValue?: QuerySpecification.Value) => void;
 }
 

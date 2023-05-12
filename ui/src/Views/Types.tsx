@@ -21,51 +21,64 @@
  *
  */
 
-import React, { useEffect } from "react";
+import React, { JSX, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 import Button from "react-bootstrap/Button"
 
-import { useStores } from "../Hooks/UseStores";
+import useStores from "../Hooks/useStores";
+import useListTypesQuery from "../Hooks/useListTypesQuery";
 
 import SpinnerPanel from "../Components/SpinnerPanel";
 import ErrorPanel from "../Components/ErrorPanel";
-import Views from "./Views";
 
-const Types = observer(() => {
+interface TypesProps {
+  children?: string|JSX.Element|(null|undefined|string|JSX.Element)[];
+}
+
+const Types = observer(({ children }: TypesProps) => {
+
+  const {
+    data: types,
+    error,
+    isUninitialized,
+    isFetching,
+    isError,
+    refetch,
+  } = useListTypesQuery();
 
   const { typeStore } = useStores();
 
-  const handeRetry = () => typeStore.fetch();
-
   useEffect(() => {
-    typeStore.fetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (types) {
+      typeStore.setTypes(types);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [types]);
 
-  if (typeStore.fetchError) {
+  if (isError) {
     return (
       <ErrorPanel>
-        There was a problem retrieving the types ({typeStore.fetchError}).
+        There was a problem retrieving the types ({error}).
           If the problem persists, please contact the support.<br /><br />
-        <Button variant={"primary"} onClick={handeRetry}>
+        <Button variant={"primary"} onClick={refetch}>
           <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
         </Button>
       </ErrorPanel>
     );
   }
 
-  if (!typeStore.isFetched || typeStore.isFetching) {
+  if (isUninitialized || isFetching) {
     return <SpinnerPanel text="Fetching types..." />;
   }  
 
-  if (!typeStore.typeList.length) {
+  if (!types?.length) {
     return (
       <ErrorPanel>
           No types available.
           If the problem persists, please contact the support.<br /><br />
-          <Button variant={"primary"} onClick={handeRetry}>
+          <Button variant={"primary"} onClick={refetch}>
           <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
         </Button>
       </ErrorPanel>
@@ -73,7 +86,9 @@ const Types = observer(() => {
   }
 
   return (
-    <Views />
+    <>
+      {children}
+    </>
   );
 });
 Types.displayName = "Types";

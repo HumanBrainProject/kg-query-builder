@@ -21,33 +21,39 @@
  *
  */
 
-export interface KeycloakSettings {
-  clientId: string,
-  realm: string,
-  url: string
+export type KeycloakOnLoad = 'login-required'|'check-sso';
+export type KeycloakFlow = 'standard'|'implicit'|'hybrid';
+
+export interface KeycloakConfig {
+  clientId: string;
+  realm: string;
+  url: string;
 }
 
 export interface KeycloakLogoutOptions {
-  redirectUri: string
+  redirectUri: string;
 }
 
 export interface KeycloakInitSettings {
-  onLoad: string,
-  pkceMethod: string,
-  checkLoginIframe: boolean
+  onLoad: KeycloakOnLoad;
+  flow: KeycloakFlow,
+  pkceMethod: string;
+  checkLoginIframe: boolean;
 }
 
 export interface KeycloakError {
-  error_description: string
+  error: string;
+  error_description: string;
 }
 
-export interface Keycloak {
-  token?: string,
-  login: () => void,
-  logout: (options: KeycloakLogoutOptions) => void,
-  onAuthSuccess: () => void,
-  onAuthError: (error: KeycloakError) => void,
-  onTokenExpired: () => void,
-  init: (settings: KeycloakInitSettings) => Promise<void>,
-  updateToken: (interval: number) => Promise<void>
+export interface KeycloakInstance {
+  token?: string;
+  login: () => void;
+  logout: (options: KeycloakLogoutOptions) => void;
+  onAuthSuccess: () => void;
+  onAuthError: (error: KeycloakError) => void;
+  onTokenExpired: () => void;
+  init: (settings: KeycloakInitSettings) => Promise<void>;
+  updateToken: (interval: number) => Promise<void>;
+  onReady: (callback: (authenticated: boolean) => void) => void;
 }

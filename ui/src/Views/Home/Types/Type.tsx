@@ -28,11 +28,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faChevronRight} from "@fortawesome/free-solid-svg-icons/faChevronRight";
 import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
 
-import API from "../../../Services/API";
 import Icon from "../../../Components/Icon";
 
-import { useStores } from "../../../Hooks/UseStores";
-import { Type as TypeSpec} from "../../../Stores/Type";
+import useStores from "../../../Hooks/useStores";
+import { Type as TypeType} from "../../../types";
+import Matomo from "../../../Services/Matomo";
 
 const useStyles = createUseStyles({
   container: {
@@ -65,7 +65,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const getTypeLabel = (type: TypeSpec.Type) => {
+const getTypeLabel = (type: TypeType) => {
   if (!type) {
     return "";
   }
@@ -80,7 +80,7 @@ const getTypeLabel = (type: TypeSpec.Type) => {
 };
 
 interface TypeProps {
-  type: TypeSpec.Type;
+  type: TypeType;
   enableFocus: boolean; 
   onKeyDown: (e: KeyboardEvent<HTMLDivElement>) => void
 }
@@ -98,12 +98,14 @@ const Type = observer(({ type, enableFocus, onKeyDown }: TypeProps) =>  {
   });
 
 
-  const { queryBuilderStore } = useStores();
+  const { queryBuilderStore, queriesStore } = useStores();
 
   const selectType = () => {
     if (type.id !== queryBuilderStore.typeId) {
-      API.trackEvent("Type", "Select", type.id);
+      Matomo.trackEvent("Type", "Select", type.id);
       localStorage.setItem("type", type.id);
+      queriesStore.toggleShowSavedQueries(false);
+      queriesStore.clearQueries();
       queryBuilderStore.setType(type);
     }
   };

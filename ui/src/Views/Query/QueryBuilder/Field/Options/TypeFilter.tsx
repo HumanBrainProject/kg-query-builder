@@ -25,10 +25,11 @@ import React from "react";
 import {observer} from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
-import { useStores } from "../../../../../Hooks/UseStores";
+import useStores from "../../../../../Hooks/useStores";
 import { Type as PropertyType } from "../../../../PropertyTypes";
 import Toggle from "../../../../../Components/Toggle";
-import { Query } from "../../../../../Stores/Query";
+import { ToggleItemValue } from "../../../../../Components/Toggle/types";
+import { Query } from "../../../../../Types/Query";
 
 const useStyles = createUseStyles({
   container: {
@@ -88,7 +89,7 @@ const TypeFilterItem = ({ type, onClick }: TypeFilterItemProps) => {
 
   const handleOnClick = () => typeof onClick === "function" && onClick(type.id, !type.selected);
 
-  const handleToggleClick = (name?: string, value?:boolean) => typeof onClick === "function" && onClick(name, !!value);
+  const handleToggleClick = (name?: string, value?:ToggleItemValue) => typeof onClick === "function" && onClick(name, !!(value as boolean|undefined));
 
   return(
     <div className={`${classes.typeFilter} ${type.isUnknown?"isUnknown":""} ${type.selected?"selected":""}`} onClick={handleOnClick} >

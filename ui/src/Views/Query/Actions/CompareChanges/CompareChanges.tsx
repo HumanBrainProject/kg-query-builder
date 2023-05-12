@@ -24,7 +24,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 
-import { useStores } from "../../../../Hooks/UseStores";
+import useStores from "../../../../Hooks/useStores";
 
 import ComparePart from "./ComparePart";
 import { Change } from "diff";

@@ -21,46 +21,56 @@
  *
  */
 
-import React, { useEffect } from "react";
-import {useLocation, useNavigate, matchPath} from "react-router-dom";
+import React, { JSX, useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 
-import { useStores } from "../Hooks/UseStores";
-
+import useAuth from "../Hooks/useAuth";
 import SpinnerPanel from "../Components/SpinnerPanel";
 import ErrorPanel from "../Components/ErrorPanel";
-import Panel from "../Components/Panel";
-import UserProfile from "./UserProfile";
-import API from "../Services/API";
+import Matomo from "../Services/Matomo";
 
-const Authenticate = observer(() => {
-  const { authStore } = useStores();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const isLogout = !!matchPath({path:"/logout"}, location.pathname);
+interface AuthenticateProps {
+  children?: string|JSX.Element|(null|undefined|string|JSX.Element)[];
+}
+
+const Authenticate = observer(({children}: AuthenticateProps) => {
+
+  const initializedRef = useRef(false);
+
+  const {
+    isTokenExpired,
+    error,
+    isError,
+    isUninitialized,
+    isInitializing,
+    isAuthenticated,
+    isAuthenticating,
+    authenticate,
+    login
+  } = useAuth();
+
   useEffect(() => {
-    if (!isLogout) {
-      authStore.authenticate();
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      authenticate();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLogout]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const handleRetryToAuthenticate = () => authStore.authenticate();
-  
   const handleLogin = () =>  {
-    API.trackEvent("User", "Login");
-    authStore.login();
+    Matomo.trackEvent("User", "Login");
+    login();
   };
 
-  const handleReLogin = () =>  {
-    API.trackEvent("User", "Login");
-    navigate("/");
-  };
+  if(isUninitialized || isInitializing || isAuthenticating) {
+    return (
+      <SpinnerPanel text="User authenticating..." />
+    );
+  }
 
-  if (authStore.isTokenExpired && !authStore.isLogout) {
+  if (isTokenExpired) {
     return (
       <ErrorPanel>
         <h3>Your session has expired</h3>
@@ -73,38 +83,26 @@ const Authenticate = observer(() => {
     );
   }
 
-  if (!authStore.isAuthenticated) {
-
-    if (authStore.authError) {
-      return (
-        <ErrorPanel>
-          There was a problem authenticating ({authStore.authError}).
-            If the problem persists, please contact the support.<br /><br />
-          <Button variant={"primary"} onClick={handleRetryToAuthenticate}>
-            <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
-          </Button>
-        </ErrorPanel>
-      );
-    }
-
-    if (isLogout) {
-      return (
-        <Panel>
-          <h3>You are logged out of the application</h3>
-          <p></p>
-          <Button variant={"primary"} onClick={handleReLogin}>Login</Button>
-        </Panel>
-      );
-    }
-  
+  if (isError) {
     return (
-      <SpinnerPanel text="User authenticating..." />
+      <ErrorPanel>
+      There was a problem authenticating ({error}).
+        If the problem persists, please contact the support.<br /><br />
+      <Button variant={"primary"} onClick={authenticate}>
+        <FontAwesomeIcon icon={"redo-alt"} /> &nbsp; Retry
+      </Button>
+    </ErrorPanel>
     );
   }
 
-  return (
-    <UserProfile />
-  );
+  if (isAuthenticated) {
+    return (
+      <>
+        {children}
+      </>
+    );
+  }
+  return null;
 });
 Authenticate.displayName = "Authenticate";
 

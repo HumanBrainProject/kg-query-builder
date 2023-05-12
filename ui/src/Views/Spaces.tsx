@@ -21,66 +21,78 @@
  *
  */
 
-import React, { useEffect } from "react";
+import React, { JSX, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 
-import { useStores } from "../Hooks/UseStores";
+import useAuth from "../Hooks/useAuth";
+import useStores from "../Hooks/useStores";
+import useListSpacesQuery from "../Hooks/useListSpacesQuery";
 import SpinnerPanel from "../Components/SpinnerPanel";
 import ErrorPanel from "../Components/ErrorPanel";
-import Types from "./Types";
 
+interface SpacesProps {
+  children?: string|JSX.Element|(null|undefined|string|JSX.Element)[];
+}
 
-const Spaces = observer(() => {
+const Spaces = observer(({ children }: SpacesProps) => {
 
-  const { authStore } = useStores();
+  const { logout } = useAuth();
+  
+  const {
+    data: spaces,
+    error,
+    isUninitialized,
+    isFetching,
+    isError,
+    refetch,
+  } = useListSpacesQuery();
 
-  const handleLogout = () => authStore.logout();
+  const { userProfileStore, spacesStore } = useStores();
 
   useEffect(() => {
-    authStore.retrieveSpaces();
+    if (spaces) {
+      spacesStore.setSpaces(spaces);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [spaces]);
 
-  const handleRetryToRetrieveSpaces = () => authStore.retrieveSpaces();
-
-  if (!authStore.isSpacesFetched) {
-
-    if (authStore.spacesError) {
-      return (
-        <ErrorPanel>
-          There was a problem retrieving the spaces ({authStore.spacesError}).
-            If the problem persists, please contact the support.<br /><br />
-          <Button variant={"primary"} onClick={handleRetryToRetrieveSpaces}>
-            <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
-          </Button>
-        </ErrorPanel>
-      );
-    }
-
-    if (!authStore.isSpacesInitialized || authStore.isRetrievingSpaces) {
-      return (
-        <SpinnerPanel text="Retrieving spaces..." />
-      );
-    }
-  }
-
-  if (!authStore.hasSpaces) {
+  if (isError) {
     return (
       <ErrorPanel>
-        <h1>Welcome <span title={authStore.firstName}>{authStore.firstName}</span></h1>
+        There was a problem retrieving the spaces ({error}).
+          If the problem persists, please contact the support.<br /><br />
+        <Button variant={"primary"} onClick={refetch}>
+          <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
+        </Button>
+      </ErrorPanel>
+    );
+  }
+  
+  if (isUninitialized || isFetching) {
+    return (
+      <SpinnerPanel text="Retrieving spaces..." />
+    );
+  }
+
+  if (!spaces?.length) {
+    return (
+      <ErrorPanel>
+        <h1>Welcome <span title={userProfileStore.user?.givenName}>{userProfileStore.user?.givenName}</span></h1>
         <p>You are currently not granted permission to acccess any spaces.</p>
         <p>Please contact our team by email at : <a href="mailto:kg@ebrains.eu">kg@ebrains.eu</a></p>
-        <Button onClick={handleLogout}>Logout</Button>
+        <Button onClick={logout}>Logout</Button>
       </ErrorPanel>
     );
   }
 
   return (
-    <Types/>
-  )
+    <>
+      {children}
+    </>
+  );
 
 });
 Spaces.displayName = "Spaces";

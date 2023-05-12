@@ -24,6 +24,7 @@
 import React from "react";
 
 import Toggle from "../../../Components/Toggle";
+import { ToggleItemValue } from "../../../Components/Toggle/types";
 
 interface VocabProps{
   defaultValue?: string;
@@ -33,7 +34,7 @@ interface VocabProps{
 
 const Vocab = ({ defaultValue, value, onChange}: VocabProps) => {
 
-  const handleOnChange = (_:string, newValue?:boolean) => onChange(newValue?defaultValue:undefined);
+  const handleOnChange = (_:string, newValue?:ToggleItemValue) => onChange((newValue as boolean|undefined)?defaultValue:undefined);
 
   return (
     <Toggle

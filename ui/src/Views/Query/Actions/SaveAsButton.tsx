@@ -27,8 +27,8 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faSave} from "@fortawesome/free-solid-svg-icons/faSave";
 
-import API from "../../../Services/API";
-import { useStores } from "../../../Hooks/UseStores";
+import useStores from "../../../Hooks/useStores";
+import Matomo from "../../../Services/Matomo";
 
 interface SaveAsButtonProps {
   disabled: boolean;
@@ -39,7 +39,7 @@ const SaveAsButton = observer(({ disabled }:SaveAsButtonProps) => {
   const { queryBuilderStore } = useStores();
 
   const onClick = () => {
-    API.trackEvent("Query", "SaveAs", queryBuilderStore.queryId);
+    Matomo.trackEvent("Query", "SaveAs", queryBuilderStore.queryId);
     queryBuilderStore.setSaveAsMode(true);
   };
 

@@ -98,7 +98,7 @@ const Filter = ({
   return (
     <div className={`${classes.container} ${className ? className : ""}`}>
       <Form.Control
-        ref={ref as RefObject<any>}
+        ref={ref as RefObject<HTMLInputElement>}
         className={classes.input}
         type="text"
         onChange={handleChange}

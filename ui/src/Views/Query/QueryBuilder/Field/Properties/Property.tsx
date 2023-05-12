@@ -28,7 +28,7 @@ import {faLongArrowAltLeft} from "@fortawesome/free-solid-svg-icons/faLongArrowA
 import { observer } from "mobx-react-lite";
 
 import PropertyTypes from "../../../../PropertyTypes";
-import { Type } from "../../../../../Stores/Type";
+import { Property as PropertyType } from "../../../../../types";
 
 const useStyles = createUseStyles({
   property: {
@@ -53,8 +53,8 @@ const useStyles = createUseStyles({
 });
 
 interface PropertyProps {
-  property: Type.Property;
-  onClick: (e: MouseEvent<HTMLElement>, property: Type.Property) => void;
+  property: PropertyType;
+  onClick: (e: MouseEvent<HTMLElement>, property: PropertyType) => void;
 }
 
 const Property = observer(({ property, onClick }: PropertyProps) => {

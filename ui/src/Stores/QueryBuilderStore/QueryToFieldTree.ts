@@ -28,11 +28,11 @@ import {
   namespaceReg,
   attributeReg,
   modelReg
-} from "./QuerySettings";
+} from "../../Helpers/QueryHelpers";
 import Field from "../Field";
-import { QuerySpecification } from "./QuerySpecification";
-import { Query } from "../Query";
-import { Type } from "../Type";
+import { QuerySpecification } from "../../Types/QuerySpecification";
+import { Query } from "../../Types/Query";
+import { Type } from "../../types";
 
 const getRelativePathFromObject = (path?: null|undefined|string|QuerySpecification.Path): string | null => {
   if (!path) {
@@ -122,7 +122,7 @@ const getTypeFilter = (path: null|undefined|string|QuerySpecification.Path|(stri
 };
 
 const getPropertyFromLookups = (
-  types: Map<string, Type.Type>,
+  types: Map<string, Type>,
   lookups: string[],
   attribute: string | undefined,
   attributeNamespace: string | undefined,
@@ -184,7 +184,7 @@ const getPropertyFromLookups = (
 };
 
 const getProperty = (
-  types: Map<string, Type.Type>,
+  types: Map<string, Type>,
   context: QuerySpecification.Context,
   lookups: string[],
   relativePath: string | null,
@@ -229,7 +229,7 @@ const getProperty = (
 };
 
 const getField = (
-  types: Map<string, Type.Type>,
+  types: Map<string, Type>,
   context: QuerySpecification.Context,
   parentField: Field,
   path: QuerySpecification.Path | string | (QuerySpecification.Path | string)[],
@@ -332,7 +332,7 @@ const addPropertiesToField = (
 };
 
 const addChildrenOfFlattenedField = (
-  types: Map<string, Type.Type>,
+  types: Map<string, Type>,
   context: QuerySpecification.Context,
   field: Field,
   jsonField: QuerySpecification.Field
@@ -357,7 +357,7 @@ const addChildrenOfFlattenedField = (
 };
 
 const addChildrenOfField = (
-  types: Map<string, Type.Type>,
+  types: Map<string, Type>,
   context: QuerySpecification.Context,
   field: Field,
   jsonField: QuerySpecification.Field
@@ -370,7 +370,7 @@ const addChildrenOfField = (
 };
 
 const addJsonFieldToField = (
-  types: Map<string, Type.Type>,
+  types: Map<string, Type>,
   context: QuerySpecification.Context,
   parentField: Field,
   jsonField: QuerySpecification.Field
@@ -389,7 +389,7 @@ const addJsonFieldToField = (
 };
 
 const addJsonFieldsToField = (
-  types: Map<string, Type.Type>,
+  types: Map<string, Type>,
   context: QuerySpecification.Context,
   parentField: Field,
   jsonFields?: QuerySpecification.Field | QuerySpecification.Field[]
@@ -406,9 +406,9 @@ const addJsonFieldsToField = (
 };
 
 export const buildFieldTreeFromQuery = (
-  types: Map<string, Type.Type>,
+  types: Map<string, Type>,
   context: QuerySpecification.Context,
-  type: Type.Type,
+  type: Type,
   query: Query.Query
 ): Field | undefined=> {
   if (!type) {

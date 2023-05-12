@@ -23,15 +23,14 @@
 
 import React, { ErrorInfo } from "react";
 
-import { useStores } from "../Hooks/UseStores";
-import { RootStore } from "../Stores/RootStore";
+import RootStore from "../Stores/RootStore";
 
-interface ErrorBoundaryComponentProps {
+interface ErrorBoundaryProps {
   children: React.ReactNode;
   stores: RootStore
 }
 
-class ErrorBoundaryComponent extends React.Component<ErrorBoundaryComponentProps> {
+class ErrorBoundaryComponent extends React.Component<ErrorBoundaryProps> {
 
   static getDerivedStateFromError() {
     return null;
@@ -48,19 +47,10 @@ class ErrorBoundaryComponent extends React.Component<ErrorBoundaryComponentProps
   }
 }
 
-interface ErrorBoundaryProps {
-  children: React.ReactNode
-}
-
-const ErrorBoundary = ({ children }: ErrorBoundaryProps) => {
-
-  const stores = useStores();
-
-  return (
-    <ErrorBoundaryComponent stores={stores} >
-      {children}
-    </ErrorBoundaryComponent>
-  );
-};
+const ErrorBoundary = ({ stores, children }: ErrorBoundaryProps) => (
+  <ErrorBoundaryComponent stores={stores} >
+    {children}
+  </ErrorBoundaryComponent>
+);
 
 export default ErrorBoundary;

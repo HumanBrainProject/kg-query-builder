@@ -28,9 +28,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faTag} from "@fortawesome/free-solid-svg-icons/faTag";
 import { useNavigate } from "react-router-dom";
 
-import API from "../../../../Services/API";
-
-import { Query as QuerySpecs } from "../../../../Stores/Query";
+import { Query as QuerySpecs } from "../../../../Types/Query";
+import Matomo from "../../../../Services/Matomo";
 
 const useStyles = createUseStyles({
   container:{
@@ -76,7 +75,7 @@ const Query = observer(({query}: QueryProps) => {
   const navigate = useNavigate();
 
   const handleSelect = (e: MouseEvent<HTMLDivElement>) => {
-    API.trackEvent("Query", "Select", query.id);
+    Matomo.trackEvent("Query", "Select", query.id);
     e.stopPropagation();
     navigate(`/queries/${query.id}`);
   };

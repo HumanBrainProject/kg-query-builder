@@ -25,12 +25,13 @@ import React  from "react";
 import { observer } from "mobx-react-lite";
 import { createUseStyles } from "react-jss";
 
-import { useStores } from "../../../../Hooks/UseStores";
+import useStores from "../../../../Hooks/useStores";
 
 import Name from "./Options/Name";
 import Flatten from "./Options/Flatten";
 import Option from "./Options/Option";
 import TypeFilter from "./Options/TypeFilter";
+import { QuerySpecification } from "../../../../Types/QuerySpecification";
 
 const useStyles = createUseStyles({
   container: {
@@ -67,7 +68,7 @@ const Options = observer(() => {
 
   const handleChangeFlatten = (value: boolean) => field.setCurrentFieldFlattened(value);
 
-  const handleChangeOption = (name:string, value?:any) => field.setOption(name, value);
+  const handleChangeOption = (name:string, value?:QuerySpecification.Value) => field.setOption(name, value);
   const showFlatten = field !== rootField && field.lookups.length > 0 && field.structure.length === 1;
   return (
     <div className={classes.container}>

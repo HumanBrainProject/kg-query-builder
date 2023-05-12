@@ -32,11 +32,11 @@ import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle";
 import { faFile } from "@fortawesome/free-solid-svg-icons/faFile";
 import { faTag } from "@fortawesome/free-solid-svg-icons/faTag";
 
-import { useStores } from "../../Hooks/UseStores";
+import useStores from "../../Hooks/useStores";
 
 import Queries from "./Selection/Queries";
 import Icon from "../../Components/Icon";
-import { Type } from "../../Stores/Type";
+import { Type } from "../../types";
 
 const useStyles = createUseStyles({
   container: {
@@ -120,7 +120,7 @@ const useStyles = createUseStyles({
   }
 });
 
-const getTypeLabel = (type: Type.Type) => {
+const getTypeLabel = (type: Type) => {
   if (!type) {
     return "";
   }
@@ -136,7 +136,7 @@ const getTypeLabel = (type: Type.Type) => {
 
 interface TypeInfoProps {
   className: string;
-  type: Type.Type;
+  type: Type;
 }
 
 const TypeInfo = observer(({ className, type }: TypeInfoProps) => {

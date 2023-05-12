@@ -35,17 +35,16 @@ import * as Diff from "diff";
 
 import { buildFieldTreeFromQuery } from "./QueryBuilderStore/QueryToFieldTree";
 import { buildQueryStructureFromFieldTree } from "./QueryBuilderStore/FieldTreeToQuery";
-import { Space } from "./AuthStore";
-import { TransportLayer } from "../Services/TransportLayer";
-import { RootStore } from "./RootStore";
+import RootStore from "./RootStore";
 import Field from "./Field";
-import { QuerySpecification } from "./QueryBuilderStore/QuerySpecification";
-import { Query } from "./Query";
-import { Type } from "./Type";
+import { DEFAULT_RESPONSE_VOCAB, defaultContext, getProperties } from "../Helpers/QueryHelpers";
+import { QuerySpecification } from "../Types/QuerySpecification";
+import { Query } from "../Types/Query";
+import { Space, Type, Property, PropertyGroup } from "../types";
 
 interface Counter {
   [index: string]: {
-    property: Type.Property;
+    property: Property;
     count: number;
   };
 }
@@ -62,11 +61,11 @@ const isChildOfField = (
   return field === parent;
 };
 
-export class QueryBuilderStore {
+class QueryBuilderStore {
   meta?: QuerySpecification.Meta;
-  defaultResponseVocab = QuerySpecification.defaultResponseVocab;
-  responseVocab?: string = QuerySpecification.defaultResponseVocab;
-  type?: Type.Type;
+  defaultResponseVocab = DEFAULT_RESPONSE_VOCAB;
+  responseVocab?: string = DEFAULT_RESPONSE_VOCAB;
+  type?: Type;
   queryId?: string;
   label = "";
   space?: Space;
@@ -85,10 +84,9 @@ export class QueryBuilderStore {
 
   currentField?: Field;
 
-  transportLayer: TransportLayer;
   rootStore: RootStore;
 
-  constructor(transportLayer: TransportLayer, rootStore: RootStore) {
+  constructor(rootStore: RootStore) {
     makeObservable(this, {
       type: observable,
       queryId: observable,
@@ -155,7 +153,6 @@ export class QueryBuilderStore {
       resetQuery: action
     });
 
-    this.transportLayer = transportLayer;
     this.rootStore = rootStore;
   }
 
@@ -174,7 +171,7 @@ export class QueryBuilderStore {
         this.sourceQuery.structure = querySpecification.structure;
       }
       this.sourceQuery.meta = querySpecification.meta;
-      this.sourceQuery.properties = Query.getProperties(querySpecification);
+      this.sourceQuery.properties = getProperties(querySpecification);
     }
   }
 
@@ -197,7 +194,7 @@ export class QueryBuilderStore {
     this.childrenFilterValue = value;
   }
 
-  get currentFieldFilteredPropertiesGroups(): Type.Type[] {
+  get currentFieldFilteredPropertiesGroups(): Type[] {
     const field = this.currentField;
     const lookups =
       field && field.typeFilterEnabled
@@ -240,17 +237,17 @@ export class QueryBuilderStore {
             label: type.label,
             color: type.color,
             properties: properties
-          } as Type.Type);
+          } as Type);
         }
       }
       return acc;
-    }, [] as Type.Type[]);
+    }, [] as Type[]);
   }
 
-  get currentFieldFilteredCommonProperties(): Type.Property[] {
+  get currentFieldFilteredCommonProperties(): Property[] {
     const counters = {} as Counter;
 
-    const addPropToNewCounter = (key: string, prop: Type.Property) => {
+    const addPropToNewCounter = (key: string, prop: Property) => {
       if (Array.isArray(prop.canBe)) {
         counters[key] = {
           property: { ...prop, canBe: [...prop.canBe].sort() },
@@ -264,7 +261,7 @@ export class QueryBuilderStore {
       }
     };
 
-    const addPropToCounter = (key: string, prop: Type.Property) => {
+    const addPropToCounter = (key: string, prop: Property) => {
       const property = counters[key].property;
       if (Array.isArray(prop.canBe)) {
         if (Array.isArray(property.canBe)) {
@@ -277,7 +274,7 @@ export class QueryBuilderStore {
       counters[key].count += 1;
     };
 
-    const addPropToCounters = (prop: Type.Property) => {
+    const addPropToCounters = (prop: Property) => {
       const key = `${prop.attribute}${prop.reverse ? ":is-reverse" : ""}`;
       if (!counters[key]) {
         addPropToNewCounter(key, prop);
@@ -300,7 +297,7 @@ export class QueryBuilderStore {
       .sort((a, b) => a.label.localeCompare(b.label));
   }
 
-  isACurrentFieldFilteredCommonProperty(property: Type.Property) {
+  isACurrentFieldFilteredCommonProperty(property: Property) {
     return this.currentFieldFilteredCommonProperties.some(
       prop =>
         prop.simpleAttributeName === property.simpleAttributeName &&
@@ -325,11 +322,11 @@ export class QueryBuilderStore {
         acc.push({ ...group, properties: properties });
       }
       return acc;
-    }, [] as Type.PropertyGroup[]);
+    }, [] as PropertyGroup[]);
   }
 
   get currentFieldLookupsLinks() {
-    const groups: Type.Type[] = this.currentFieldFilteredPropertiesGroups;
+    const groups: Type[] = this.currentFieldFilteredPropertiesGroups;
 
     if (!groups.length) {
       return [];
@@ -346,7 +343,7 @@ export class QueryBuilderStore {
         acc.push({ ...group, properties: properties });
       }
       return acc;
-    }, [] as Type.PropertyGroup[]);
+    }, [] as PropertyGroup[]);
   }
 
   get currentFieldLookupsCommonAttributes() {
@@ -361,15 +358,15 @@ export class QueryBuilderStore {
     );
   }
 
-  setType(type: Type.Type) {
+  setType(type: Type) {
     this.type = type;
     this.queryId = undefined;
     this.label = "";
     this.description = "";
-    this.context = QuerySpecification.defaultContext();
+    this.context = defaultContext();
     this.meta = undefined;
-    this.defaultResponseVocab = QuerySpecification.defaultResponseVocab;
-    this.responseVocab = QuerySpecification.defaultResponseVocab;
+    this.defaultResponseVocab = DEFAULT_RESPONSE_VOCAB;
+    this.responseVocab = DEFAULT_RESPONSE_VOCAB;
     this.sourceQuery = undefined;
     this.savedQueryHasInconsistencies = false;
     this.rootField = new Field({
@@ -382,8 +379,8 @@ export class QueryBuilderStore {
     this.fromQueryId = undefined;
     this.fromLabel = "";
     this.fromDescription = "";
-    this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
-    this.space = toJS(this.rootStore.authStore.privateSpace);
+    this.fromSpace = toJS(this.rootStore.spacesStore.privateSpace);
+    this.space = toJS(this.rootStore.spacesStore.privateSpace);
     this.selectField(this.rootField);
   }
 
@@ -408,10 +405,10 @@ export class QueryBuilderStore {
     this.queryId = undefined;
     this.label = "";
     this.description = "";
-    this.context = QuerySpecification.defaultContext();
+    this.context = defaultContext();
     this.meta = undefined;
-    this.defaultResponseVocab = QuerySpecification.defaultResponseVocab;
-    this.responseVocab = QuerySpecification.defaultResponseVocab;
+    this.defaultResponseVocab = DEFAULT_RESPONSE_VOCAB;
+    this.responseVocab = DEFAULT_RESPONSE_VOCAB;
     this.sourceQuery = undefined;
     this.savedQueryHasInconsistencies = false;
     this.saveAsMode = false;
@@ -419,8 +416,8 @@ export class QueryBuilderStore {
     this.fromQueryId = undefined;
     this.fromLabel = "";
     this.fromDescription = "";
-    this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
-    this.space = toJS(this.rootStore.authStore.privateSpace);
+    this.fromSpace = toJS(this.rootStore.spacesStore.privateSpace);
+    this.space = toJS(this.rootStore.spacesStore.privateSpace);
   }
 
   setAsNewQuery(queryId: string) {
@@ -434,8 +431,8 @@ export class QueryBuilderStore {
     this.fromQueryId = undefined;
     this.fromLabel = "";
     this.fromDescription = "";
-    this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
-    this.space = toJS(this.rootStore.authStore.privateSpace);
+    this.fromSpace = toJS(this.rootStore.spacesStore.privateSpace);
+    this.space = toJS(this.rootStore.spacesStore.privateSpace);
     if (this.rootField) {
       this.selectField(this.rootField);
     }
@@ -498,16 +495,16 @@ export class QueryBuilderStore {
   ) {
     if (this.context) {
       if (!this.context["@vocab"]) {
-        this.context["@vocab"] = QuerySpecification.defaultContext()["@vocab"];
+        this.context["@vocab"] = defaultContext()["@vocab"];
       }
       if (!this.context.query) {
         this.context.query = this.responseVocab;
       }
       if (!this.context.propertyName) {
-        this.context.propertyName = QuerySpecification.defaultContext().propertyName;
+        this.context.propertyName = defaultContext().propertyName;
       }
       if (!this.context.path) {
-        this.context.path = QuerySpecification.defaultContext().path;
+        this.context.path = defaultContext().path;
       }
     }
     if (!parent.isFlattened || parent.structure.length < 1) {
@@ -699,7 +696,7 @@ export class QueryBuilderStore {
     if (this.typeId) {
       this.queryId = query.id;
       this.space = query.space
-        ? toJS(this.rootStore.authStore.getSpace(query.space))
+        ? toJS(this.rootStore.spacesStore.getSpace(query.space))
         : undefined;
       this.sourceQuery = query;
       this.updateQuery(query);
@@ -708,7 +705,7 @@ export class QueryBuilderStore {
       this.fromLabel = "";
       this.fromDescription = "";
       this.fromSpace = query.space
-        ? toJS(this.rootStore.authStore.getSpace(query.space))
+        ? toJS(this.rootStore.spacesStore.getSpace(query.space))
         : undefined;
       this.savedQueryHasInconsistencies = this.hasQueryChanged;
     }
@@ -717,12 +714,12 @@ export class QueryBuilderStore {
   updateQuery(query: Query.Query) {
     this.context = toJS(query.context);
     if (!this.context) {
-      this.context = QuerySpecification.defaultContext();
+      this.context = defaultContext();
     }
     if (this.context && !this.context?.query) {
-      this.context.query = QuerySpecification.defaultContext().query;
+      this.context.query = defaultContext().query;
     }
-    this.meta = toJS(query.meta) as QuerySpecification.Meta;
+    this.meta = toJS(query.meta);
     if (this.meta) {
       this.label = this.meta.name ? this.meta.name : "";
       this.description = this.meta.description ? this.meta.description : "";
@@ -731,7 +728,7 @@ export class QueryBuilderStore {
       } else if (this.context?.query) {
         this.defaultResponseVocab = this.context?.query;
       } else {
-        this.defaultResponseVocab = QuerySpecification.defaultResponseVocab
+        this.defaultResponseVocab = DEFAULT_RESPONSE_VOCAB
       }
       if (this.meta.responseVocab) {
         this.responseVocab = this.meta.responseVocab;
@@ -740,7 +737,7 @@ export class QueryBuilderStore {
       if (this.context?.query) {
         this.defaultResponseVocab = this.context?.query;
       } else {
-        this.defaultResponseVocab = QuerySpecification.defaultResponseVocab
+        this.defaultResponseVocab = DEFAULT_RESPONSE_VOCAB
       }
       this.responseVocab = this.context?.query;
     }
@@ -749,7 +746,7 @@ export class QueryBuilderStore {
     if (type) {
       this.rootField = buildFieldTreeFromQuery(
         this.rootStore.typeStore.types,
-        this.context,
+        this.context as QuerySpecification.Context,
         type,
         toJS(query)
       );
@@ -761,10 +758,10 @@ export class QueryBuilderStore {
         color: "black",
         description: "",
         properties: []
-      } as Type.Type;
+      } as Type;
       this.rootField = buildFieldTreeFromQuery(
         this.rootStore.typeStore.types,
-        this.context,
+        this.context as QuerySpecification.Context,
         unknownType,
         toJS(query)
       );
@@ -791,7 +788,7 @@ export class QueryBuilderStore {
       this.fromQueryId = undefined;
       this.fromLabel = "";
       this.fromDescription = "";
-      this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
+      this.fromSpace = toJS(this.rootStore.spacesStore.privateSpace);
     }
   }
 
@@ -825,7 +822,7 @@ export class QueryBuilderStore {
       this.space =
         this.space && this.space.permissions && this.space.permissions.canCreate
           ? toJS(this.space)
-          : toJS(this.rootStore.authStore.privateSpace);
+          : toJS(this.rootStore.spacesStore.privateSpace);
     } else {
       this.queryId = this.fromQueryId;
       this.label = this.fromLabel;
@@ -834,7 +831,7 @@ export class QueryBuilderStore {
       this.fromQueryId = undefined;
       this.fromLabel = "";
       this.fromDescription = "";
-      this.fromSpace = toJS(this.rootStore.authStore.privateSpace);
+      this.fromSpace = toJS(this.rootStore.spacesStore.privateSpace);
     }
   }
 

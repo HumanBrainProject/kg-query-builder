@@ -1,11 +1,9 @@
-FROM node:16.13.2-alpine3.15 as build-stage
+FROM node:16.20-alpine3.16 AS build-stage
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
-COPY package-lock.json /usr/src/app/package-lock.json
-COPY package.json /usr/src/app/package.json
-RUN npm install
 COPY . /usr/src/app
+RUN npm install --force
 RUN npm run build
 
 FROM nginx:1.15.9-alpine

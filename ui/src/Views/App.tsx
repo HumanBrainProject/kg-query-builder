@@ -21,22 +21,48 @@
  *
  */
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, Suspense } from "react";
 import { observer } from "mobx-react-lite";
 import { ThemeProvider } from "react-jss";
-import { BrowserRouter } from "react-router-dom";
-import { useStores } from "../Hooks/UseStores";
+import { Navigate, Routes, Route, useLocation, matchPath } from "react-router-dom";
 
-import ErrorBoundary from "./ErrorBoundary";
+import Styles from "./Styles";
+import API from "../Services/API";
+import RootStore from "../Stores/RootStore";
+import APIProvider from "./APIProvider";
+import AuthProvider from "./AuthProvider";
+import StoresProvider from "./StoresProvider";
+import AuthAdapter from "../Services/AuthAdapter";
 import Layout from "./Layout";
+import Settings from "./Settings";
+import SpinnerPanel from "../Components/SpinnerPanel";
+import GlobalError from "./GlobalError";
+import Shortcuts from "./Shortcuts";
 
-const App = observer(() => {
+
+const Authenticate = React.lazy(() => import("./Authenticate"));
+const UserProfile = React.lazy(() => import("./UserProfile"));
+const Spaces = React.lazy(() => import("./Spaces"));
+const Types = React.lazy(() => import("./Types"));
+const Logout = React.lazy(() => import("./Logout"));
+const Home = React.lazy(() => import("./Home"));
+const Query = React.lazy(() => import("./Query"));
+
+interface AppProps {
+  stores: RootStore;
+  api: API;
+  authAdapter?: AuthAdapter;
+}
+const App = observer(({ stores, api, authAdapter } : AppProps) => {
 
   const initializedRef = useRef(false);
 
-  const { appStore, queryBuilderStore } = useStores();
+  const { appStore, queryBuilderStore } = stores;
 
   const theme = appStore.currentTheme;
+
+  const location = useLocation();
+  const matchQueryId = matchPath({path:"queries/:id/*"}, location.pathname);
 
   useEffect(() => { 
 
@@ -46,32 +72,60 @@ const App = observer(() => {
       }
     };
 
-    const handleKeyDown = (e: KeyboardEvent): void => {
-      if ((e.ctrlKey || e.metaKey) && e.altKey && e.keyCode === 84) {
-        appStore.toggleTheme();
-      }
-    };
-
     if (!initializedRef.current) {
       initializedRef.current = true;
       window.addEventListener("beforeunload", onUnload);
-      document.addEventListener("keydown", handleKeyDown);
     }
     return () => {
       window.removeEventListener("beforeunload", onUnload);
-      document.removeEventListener("keydown", handleKeyDown);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <ErrorBoundary>
-      <BrowserRouter>
-        <ThemeProvider theme={theme}>
-          <Layout />
-        </ThemeProvider>
-      </BrowserRouter>
-    </ErrorBoundary>
+    <ThemeProvider theme={theme}>
+      <Styles />
+      <APIProvider api={api}>
+        <AuthProvider adapter={authAdapter} >
+          <StoresProvider stores={stores}>
+            <Layout>
+              {appStore.globalError?
+                <GlobalError />
+                :
+                <Settings authAdapter={authAdapter}>
+                  <Suspense fallback={<SpinnerPanel text="Loading resource..." />} >
+                    <Routes>
+                      <Route path={"/logout"} element={<Logout />}/>
+                      <Route path={"*"} element={
+                        <Authenticate >
+                          <UserProfile>
+                            <Spaces>
+                              <Types>
+                                <Shortcuts />
+                                <Suspense fallback={<SpinnerPanel text="Loading resource..." />} >
+                                  <Routes>
+                                    <Route path="/" element={<Home />} />
+                                    <Route path="queries/:id" element={<Query mode="build" />} />
+                                    <Route path="queries/:id/edit" element={<Query mode="edit" />} />
+                                    <Route path="queries/:id/execute" element={<Query mode="execute" />} />
+                                    <Route path="queries/:id/*" element={<Navigate to={`/queries/${matchQueryId?.params.id}`} replace={true} />} />
+                                    <Route path="*" element={<Navigate to="/" replace={true} />} />  
+                                  </Routes>
+                                </Suspense>
+                              </Types>
+                            </Spaces>
+                          </UserProfile>
+                        </Authenticate>
+                      }/>
+                    </Routes>
+                  </Suspense>
+                </Settings>
+              }
+            </Layout>
+          </StoresProvider>
+        </AuthProvider>
+      </APIProvider>
+    </ThemeProvider>
   );
 });
 App.displayName = "App";

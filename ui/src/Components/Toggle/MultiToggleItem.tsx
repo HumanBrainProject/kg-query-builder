@@ -27,6 +27,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDotCircle } from "@fortawesome/free-solid-svg-icons/faDotCircle";
 import { IconDefinition } from "@fortawesome/fontawesome-common-types";
 
+
+import { ToggleItemValue } from "./types";
+
 const useStyles = createUseStyles({
   container: {
     textAlign: "center",
@@ -55,12 +58,12 @@ const useStyles = createUseStyles({
 });
 
 interface MultiToggleItemProps {
-  selectedValue?: any;
-  value: any;
+  selectedValue?: ToggleItemValue;
+  value: ToggleItemValue;
   color?: string;
   icon?: IconDefinition;
   noscale?: boolean;
-  onSelect?: (value: any) => void;
+  onSelect?: (value: ToggleItemValue) => void;
 }
 
 const MultiToggleItem = ({

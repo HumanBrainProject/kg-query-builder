@@ -22,56 +22,48 @@
  */
 
 import React from "react";
+import { observer } from "mobx-react-lite";
+import { useNavigate } from "react-router-dom";
 import { createUseStyles } from "react-jss";
 
-import MultiToggleItem from "./MultiToggleItem";
+import useStores from "../Hooks/useStores";
 
 const useStyles = createUseStyles({
   container: {
-    display: "inline-grid",
-    background: "var(--bg-color-ui-contrast4)",
-    borderRadius: "20px",
-    height: "24px"
+    padding: "10px",
+    cursor: "pointer",
+    "& span": {
+      color: "var(--ft-color-loud)",
+      display: "inline-block",
+      paddingLeft: "10px",
+      fontSize: "0.9em",
+      borderLeft: "1px solid var(--border-color-ui-contrast5)",
+      marginLeft: "10px"
+    },
+    "&:hover span": {
+      color: "var(--ft-color-louder)"
+    }
   }
 });
 
-interface MultiToggleProps {
-  children: JSX.Element | JSX.Element[];
-  selectedValue: any;
-  onChange: (value: any) => void;
-}
-
-const MultiToggle = ({
-  children,
-  selectedValue,
-  onChange
-}: MultiToggleProps) => {
+const Logo = observer(() => {
   const classes = useStyles();
 
-  const isReadOnly = typeof onChange !== "function";
+  const { appStore } = useStores();
+  const navigate = useNavigate();
 
-  const childrenWithProps = React.Children.map(
-    children,
-    child =>
-      child &&
-      React.cloneElement(child, {
-        selectedValue: selectedValue,
-        onSelect: isReadOnly ? null : onChange
-      })
-  );
+  const handleGoToHome = () => navigate("/")
+
+  const logo = appStore.currentTheme.name === "default"?`${window.rootPath}/assets/ebrains.svg`:`${window.rootPath}/assets/ebrains_dark.svg`;
 
   return (
-    <div
-      className={classes.container}
-      style={{
-        gridTemplateColumns: `repeat(${childrenWithProps.length}, 24px)`
-      }}
-    >
-      {childrenWithProps}
+    <div className={`${classes.container} layout-logo`} onClick={handleGoToHome}>
+      <img src={logo} alt="" height="30" />
+      <span>Knowledge Graph Query Editor</span>
     </div>
   );
-};
+});
+Logo.displayName = "Logo";
 
-MultiToggle.Toggle = MultiToggleItem;
+export default Logo;
 
-export default MultiToggle;

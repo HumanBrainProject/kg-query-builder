@@ -21,26 +21,33 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
-import { Navigate, Routes, Route, useLocation, matchPath } from "react-router-dom";
+import { useMemo } from "react";
+import { UserProfile } from "../types";
+import useAPI from "./useAPI";
+import { APIError } from "../Services/API";
+import useGenericQuery, { GenericQuery } from "./useGenericQuery";
 
-import Home from "./Home";
-import Query from "./Query";
+export type GetUserProfileQuery = GenericQuery<UserProfile|undefined>;
 
-const Views = observer(() => {
-  const location = useLocation();
-  const matchQueryId = matchPath({path:"queries/:id/*"}, location.pathname);
-  return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="queries/:id" element={<Query mode="build" />} />
-      <Route path="queries/:id/edit" element={<Query mode="edit" />} />
-      <Route path="queries/:id/execute" element={<Query mode="execute" />} />
-      <Route path="queries/:id/*" element={<Navigate to={`/queries/${matchQueryId?.params.id}`} replace={true} />} />
-      <Route path="*" element={<Navigate to="/" replace={true} />} />  
-    </Routes>
-  );
-});
+const useGetUserProfileQuery = (): GetUserProfileQuery => {
+  
+  const API = useAPI();
 
-export default Views;
+  const fetch = useMemo(() => async () => {
+    try {
+      const userProfile = await API.getUserProfile();
+      return userProfile;
+    } catch (e) {
+      const err = e as APIError;
+      if (err.response && err.response.status === 403) {
+        return undefined;
+      } else {
+        throw e;
+      }
+    }
+  }, [API]);
+
+  return useGenericQuery<UserProfile|undefined>(fetch);
+};
+
+export default useGetUserProfileQuery;

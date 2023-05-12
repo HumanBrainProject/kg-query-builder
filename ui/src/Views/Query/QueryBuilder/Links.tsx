@@ -26,7 +26,7 @@ const Links = () => null; //NOSONAR
 // import { createUseStyles } from "react-jss";
 // import { observer } from "mobx-react-lite";
 
-// import { useStores } from "../../../Hooks/UseStores";
+// import useStores from "../../../Hooks/useStores";
 
 // const useStyles = createUseStyles({
 //   container: {

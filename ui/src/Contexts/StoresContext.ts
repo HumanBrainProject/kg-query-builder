@@ -23,10 +23,8 @@
 
 import React from "react";
 
-import { RootStore } from "../Stores/RootStore";
-import { TransportLayer } from "../Services/TransportLayer";
+import RootStore from "../Stores/RootStore";
 
-const transportLayer = new TransportLayer();
-const stores = new RootStore(transportLayer);
+const StoresContext = React.createContext<RootStore|undefined>(undefined);
 
-export const storesContext = React.createContext<RootStore>(stores);
+export default StoresContext;

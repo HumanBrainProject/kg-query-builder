@@ -28,10 +28,9 @@ import {
   makeObservable
 } from "mobx";
 
-import { TransportLayer } from "../Services/TransportLayer";
-import { RootStore } from "./RootStore";
-import { Query } from "./Query";
-import { Space } from "./AuthStore";
+import RootStore from "./RootStore";
+import { Query } from "../Types/Query";
+import { Space } from "../types";
 
 const queriesCompare = (a: Query.Query, b: Query.Query): number => {
   if (a.label && b.label) {
@@ -67,17 +66,16 @@ const queriesFilter = (
     return a.name.localeCompare(b.name);
   };
 
-export class QueriesStore {
+class QueriesStore {
   type?: string;
   queries: Query.Query[] = [];
   filter = "";
   showSavedQueries = false;
 
 
-  transportLayer: TransportLayer;
   rootStore: RootStore;
 
-  constructor(transportLayer: TransportLayer, rootStore: RootStore) {
+  constructor(rootStore: RootStore) {
     makeObservable(this, {
       type: observable,
       queries: observable,
@@ -95,7 +93,6 @@ export class QueriesStore {
       toggleShowSavedQueries: action
     });
 
-    this.transportLayer = transportLayer;
     this.rootStore = rootStore;
   }
 
@@ -124,10 +121,10 @@ export class QueriesStore {
 
   get groupedQueries(): Query.SpaceQueries[] {
     const groups: Query.GroupedBySpaceQueries = {};
-    const authStore = this.rootStore.authStore;
+    const spacesStore = this.rootStore.spacesStore;
     this.queries.forEach(query => {
       if (query.space) {
-        const space: Space | undefined = authStore.getSpace(query.space);
+        const space: Space | undefined = spacesStore.getSpace(query.space);
         if (space) {
           if (!groups[query.space]) {
             groups[query.space] = {
