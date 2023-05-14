@@ -23,36 +23,39 @@
 
 import React, { useEffect, Suspense } from "react";
 import { observer } from "mobx-react-lite";
-import { ThemeProvider } from "react-jss";
-import { Navigate, Routes, Route, useLocation, matchPath } from "react-router-dom";
+import { JssProvider, ThemeProvider } from "react-jss";//NOSONAR
+import { BrowserRouter, Navigate, Routes, Route, useLocation, matchPath } from "react-router-dom";
 
-import Styles from "./Styles";
-import API from "../Services/API";
-import RootStore from "../Stores/RootStore";
-import APIProvider from "./APIProvider";
-import AuthProvider from "./AuthProvider";
-import StoresProvider from "./StoresProvider";
-import AuthAdapter from "../Services/AuthAdapter";
-import Layout from "./Layout";
-import Settings from "./Settings";
-import SpinnerPanel from "../Components/SpinnerPanel";
-import GlobalError from "./GlobalError";
-import Shortcuts from "./Shortcuts";
+import "bootstrap/dist/css/bootstrap.min.css";
 
+import Styles from "./Views/Styles";
+import API from "./Services/API";
+import RootStore from "./Stores/RootStore";
+import APIProvider from "./Views/APIProvider";
+import AuthProvider from "./Views/AuthProvider";
+import StoresProvider from "./Views/StoresProvider";
+import AuthAdapter from "./Services/AuthAdapter";
+import ErrorBoundary from "./Views/ErrorBoundary";
+import Layout from "./Views/Layout";
+import Settings from "./Views/Settings";
+import SpinnerPanel from "./Components/SpinnerPanel";
+import GlobalError from "./Views/GlobalError";
+import Shortcuts from "./Views/Shortcuts";
 
-const Authenticate = React.lazy(() => import("./Authenticate"));
-const UserProfile = React.lazy(() => import("./UserProfile"));
-const Spaces = React.lazy(() => import("./Spaces"));
-const Types = React.lazy(() => import("./Types"));
-const Logout = React.lazy(() => import("./Logout"));
-const Home = React.lazy(() => import("./Home"));
-const Query = React.lazy(() => import("./Query"));
+const Authenticate = React.lazy(() => import("./Views/Authenticate"));
+const UserProfile = React.lazy(() => import("./Views/UserProfile"));
+const Spaces = React.lazy(() => import("./Views/Spaces"));
+const Types = React.lazy(() => import("./Views/Types"));
+const Logout = React.lazy(() => import("./Views/Logout"));
+const Home = React.lazy(() => import("./Views/Home"));
+const Query = React.lazy(() => import("./Views/Query"));
 
 interface AppProps {
   stores: RootStore;
   api: API;
   authAdapter?: AuthAdapter;
 }
+
 const App = observer(({ stores, api, authAdapter } : AppProps) => {
 
   const { appStore, queryBuilderStore } = stores;
@@ -125,4 +128,14 @@ const App = observer(({ stores, api, authAdapter } : AppProps) => {
 });
 App.displayName = "App";
 
-export default App;
+const Component = ({ stores, api, authAdapter }: AppProps) => (
+  <JssProvider id={{minify: process.env.NODE_ENV === 'production'}}>
+    <ErrorBoundary stores={stores} >
+      <BrowserRouter>
+        <App stores={stores} api={api} authAdapter={authAdapter}/>
+      </BrowserRouter>
+    </ErrorBoundary>
+  </JssProvider>
+);
+
+export default Component;
