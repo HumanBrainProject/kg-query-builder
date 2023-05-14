@@ -32,6 +32,14 @@ const Shortcuts = observer(() => {
   const { appStore } = useStores();
 
   useEffect(() => {
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "t") {
+        Matomo.trackEvent("Shortcut", "ToggleTheme");
+        appStore.toggleTheme();
+      }
+    };
+    
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
@@ -39,12 +47,6 @@ const Shortcuts = observer(() => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "t") {
-      Matomo.trackEvent("Shortcut", "ToggleTheme");
-      appStore.toggleTheme();
-    }
-  };
   return null;
 });
 Shortcuts.displayName = "Shortcuts";

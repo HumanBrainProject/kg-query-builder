@@ -21,7 +21,7 @@
  *
  */
 
-import React, { useEffect, useRef, Suspense } from "react";
+import React, { useEffect, Suspense } from "react";
 import { observer } from "mobx-react-lite";
 import { ThemeProvider } from "react-jss";
 import { Navigate, Routes, Route, useLocation, matchPath } from "react-router-dom";
@@ -55,8 +55,6 @@ interface AppProps {
 }
 const App = observer(({ stores, api, authAdapter } : AppProps) => {
 
-  const initializedRef = useRef(false);
-
   const { appStore, queryBuilderStore } = stores;
 
   const theme = appStore.currentTheme;
@@ -72,10 +70,7 @@ const App = observer(({ stores, api, authAdapter } : AppProps) => {
       }
     };
 
-    if (!initializedRef.current) {
-      initializedRef.current = true;
-      window.addEventListener("beforeunload", onUnload);
-    }
+    window.addEventListener("beforeunload", onUnload);
     return () => {
       window.removeEventListener("beforeunload", onUnload);
     };
