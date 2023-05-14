@@ -75,14 +75,14 @@ const getRelativePath = (field: Field) => {
   return getAttribute(field);
 };
 
-const getPath = (field: Field) => {
+const getPath = (field: Field): QuerySpecification.PathItem => {
   const relativePath = getRelativePath(field);
   if (!relativePath) {
     return null;
   }
   const hasType = hasTypeFilter(field);
   if (field.isReverse) {
-    const path: QuerySpecification.Path = {
+    const path: QuerySpecification.PathObject = {
       "@id": relativePath,
       reverse: true
     };
@@ -179,8 +179,8 @@ const getFlattenedField = (field: Field) => {
   const queryField = {} as QuerySpecification.Field;
   queryField.propertyName = getPopertyName(field);
   addOptions(queryField, field.options);
-  const paths: (QuerySpecification.Path | string)[] = [];
-  let targetField: "" | Field | null = field;
+  const paths: QuerySpecification.PathArrayItem[] = [];
+  let targetField: "" | Field | null | undefined = field;
   while (targetField && targetField.isFlattened) {
     const path = getPath(targetField);
     if (path) {

@@ -21,7 +21,7 @@
  *
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { createUseStyles } from "react-jss";
 import { observer } from "mobx-react-lite";
 import Button from "react-bootstrap/Button";
@@ -104,25 +104,26 @@ const Query = observer(({ mode }:ModeProps) => {
     refetch,
   } = useGetQueryQuery(queryId, !!cachedQuery);
 
-  const query = cachedQuery?cachedQuery:data;
+  const query = useMemo(() => cachedQuery?cachedQuery:data, [cachedQuery, data]);
 
   const [isNotFound, setNotFound] = useState<boolean|undefined>(undefined);
+
+  useEffect(() => {
+        Matomo.setCustomUrl(window.location.href);
+        Matomo.trackPageView();
+  }, [queryId]);
 
   useEffect(() => {
     if (isFetching) {
       setNotFound(undefined);
     } else if (isAvailable) {
       if (queryBuilderStore.typeId) {
-        Matomo.setCustomUrl(window.location.href);
-        Matomo.trackPageView();
         setNotFound(false);
         queryBuilderStore.setAsNewQuery(queryId);
       } else {
         setNotFound(true);
       }
     } else if (query) {
-      Matomo.setCustomUrl(window.location.href);
-      Matomo.trackPageView();
       const typeName = query.meta.type;
         if (localStorage.getItem("type")) {
           localStorage.setItem("type", typeName?typeName:"");

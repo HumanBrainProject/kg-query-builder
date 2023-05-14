@@ -27,11 +27,11 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons/faTrashAlt";
 import { useNavigate } from "react-router-dom";
-import { AxiosError } from "axios";
 
 import useStores from "../../../Hooks/useStores";
 import useAPI from "../../../Hooks/useAPI";
 import Matomo from "../../../Services/Matomo";
+import { APIError } from "../../../Services/API";
 
 import Dialog from "../../../Components/Dialog";
 import SpinnerPanel from "../../../Components/SpinnerPanel";
@@ -65,7 +65,7 @@ const DeleteButton = observer(() => {
         queryBuilderStore.clearQuery();
         navigate("/");
       } catch (e) {
-        const error = e as AxiosError;
+        const error = e as APIError;
         const message = error?.message;
         setError(`Error while deleting query "${queryId}" (${message})`);
         setIsDeleting(false);

@@ -49,7 +49,7 @@ export namespace QuerySpecification {
   export interface Field {
     propertyName?: string;
     structure?: Field | Field[];
-    path: Path | string | (Path | string)[];
+    path: Path;
     required?: boolean;
     sort?: boolean;
     ensureOrder?: boolean;
@@ -67,10 +67,16 @@ export namespace QuerySpecification {
     responseVocab?: string;
   }
 
-  export interface Path extends JsonLd {
+  export interface PathObject extends JsonLd {
     reverse?: boolean;
     typeFilter?: TypeFilter | TypeFilter[];
   }
+
+  export type PathItem = null | undefined | string | PathObject;
+
+  export type PathArrayItem = string | PathObject;
+
+  export type Path = PathItem | PathArrayItem[];
 
   export type TypeFilter = JsonLd 
 

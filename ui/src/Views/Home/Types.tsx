@@ -72,15 +72,15 @@ const Types = observer(() => {
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLElement>) => {
-    if (cursor === undefined && (e.keyCode === 38 || e.keyCode === 40)) {
+    if (cursor === undefined && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
       setCursor(0);
     }
-    if (e.keyCode === 38 && cursor !== undefined && cursor > 0) {
+    if (e.key === "ArrowUp" && cursor !== undefined && cursor > 0) {
       setCursor(prevCursor =>
         prevCursor !== undefined ? prevCursor - 1 : prevCursor
       );
     } else if (
-      e.keyCode === 40 &&
+      e.key === "ArrowDown" &&
       cursor !== undefined &&
       cursor < typeStore.filteredTypeList.length - 1
     ) {

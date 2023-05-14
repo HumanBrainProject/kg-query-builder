@@ -34,7 +34,7 @@ import { QuerySpecification } from "../../Types/QuerySpecification";
 import { Query } from "../../Types/Query";
 import { Type } from "../../types";
 
-const getRelativePathFromObject = (path?: null|undefined|string|QuerySpecification.Path): string | null => {
+const getRelativePathFromObject = (path?: QuerySpecification.PathItem): string | null => {
   if (!path) {
     return null;
   }
@@ -47,49 +47,52 @@ const getRelativePathFromObject = (path?: null|undefined|string|QuerySpecificati
   return null;
 };
 
-const getRelativePathFromArray = (paths: null|undefined|(string|QuerySpecification.Path)[]): string | null => {
-  if (!Array.isArray(paths) || paths.length === 0) {
+const getRelativePathFromArray = (paths: QuerySpecification.PathArrayItem[]): string | null => {
+  if (paths.length === 0) {
     return null;
   }
   return getRelativePathFromObject(paths[0]);
 };
 
-const getRelativePath = (path: null|undefined|string|QuerySpecification.Path|(string|QuerySpecification.Path)[]): string | null => {
+const getRelativePath = (path: QuerySpecification.Path): string | null => {
   if (Array.isArray(path)) {
     return getRelativePathFromArray(path);
   }
   return getRelativePathFromObject(path);
 };
 
-const isReverseFromObject = (path?: null|undefined|string|QuerySpecification.Path): boolean => {
+const isReverseFromObject = (path?: QuerySpecification.PathItem): boolean => {
   if (path instanceof Object) {
     return !!path.reverse;
   }
   return false;
 };
 
-const isReverseFromArray = (paths: null|undefined|(string|QuerySpecification.Path)[]): boolean => {
+const isReverseFromArray = (paths: null|undefined|(string|QuerySpecification.PathObject)[]): boolean => {
   if (!Array.isArray(paths) || paths.length === 0) {
     return false;
   }
   return isReverseFromObject(paths[0]);
 };
 
-const getIsReverse = (path: null|undefined|string|QuerySpecification.Path|(string|QuerySpecification.Path)[]): boolean => {
+const getIsReverse = (path: QuerySpecification.Path): boolean => {
   if (Array.isArray(path)) {
     return isReverseFromArray(path);
   }
   return isReverseFromObject(path);
 };
 
-const getTypeFromObject = (path?: null|undefined|QuerySpecification.Path): string | undefined => {
+const getTypeFromObject = (path?: QuerySpecification.TypeFilter): string | undefined => {
   if (path instanceof Object) {
     return path["@id"];
   }
   return undefined;
 };
 
-const getTypes = (object: null|undefined|QuerySpecification.Path|QuerySpecification.Path[]): string[] => {
+const getTypes = (object?: QuerySpecification.TypeFilter | QuerySpecification.TypeFilter[]): string[] => {
+  if (!object) {
+    return [];
+  }
   if (Array.isArray(object)) {
     return object.map(t => getTypeFromObject(t)).filter(t => !!t) as string[];
   }
@@ -100,21 +103,24 @@ const getTypes = (object: null|undefined|QuerySpecification.Path|QuerySpecificat
   return [];
 };
 
-const getTypeFilterFromObject = (path?: null|undefined|string|QuerySpecification.Path): string[] => {
+const getTypeFilterFromObject = (path?: QuerySpecification.PathArrayItem): string[] => {
   if (path instanceof Object) {
     return getTypes(path.typeFilter);
   }
   return [];
 };
 
-const getTypeFilterFromArray = (paths: null|undefined|(string|QuerySpecification.Path)[]): string[] => {
+const getTypeFilterFromArray = (paths: QuerySpecification.PathArrayItem[]): string[] => {
   if (!Array.isArray(paths) || paths.length === 0) {
     return [];
   }
   return getTypeFilterFromObject(paths[0]);
 };
 
-const getTypeFilter = (path: null|undefined|string|QuerySpecification.Path|(string|QuerySpecification.Path)[]): string[] => {
+const getTypeFilter = (path: QuerySpecification.Path): string[] => {
+  if (!path) {
+    return [];
+  }
   if (Array.isArray(path)) {
     return getTypeFilterFromArray(path);
   }
@@ -232,7 +238,7 @@ const getField = (
   types: Map<string, Type>,
   context: QuerySpecification.Context,
   parentField: Field,
-  path: QuerySpecification.Path | string | (QuerySpecification.Path | string)[],
+  path: QuerySpecification.Path,
   isLeaf: boolean
 ) => {
   if (path) {
@@ -273,7 +279,7 @@ const getField = (
   return field;
 };
 
-const getIsFlattened = (path: null|undefined|string|QuerySpecification.Path|(string|QuerySpecification.Path)[]) =>
+const getIsFlattened = (path: null|undefined|string|QuerySpecification.PathObject|(string|QuerySpecification.PathObject)[]) =>
   Array.isArray(path) && path.length > 1;
 
 const addFieldToParent = (parentField: Field, field: Field) => {
@@ -284,7 +290,7 @@ const addFieldToParent = (parentField: Field, field: Field) => {
   parentField.isInvalidLeaf = false;
 };
 
-const getFlattenRelativePath = (path: (QuerySpecification.Path | string)[]) => {
+const getFlattenRelativePath = (path: (QuerySpecification.PathObject | string)[]) => {
   return path.length > 2 ? path.slice(1) : path[1];
 };
 
@@ -338,7 +344,7 @@ const addChildrenOfFlattenedField = (
   jsonField: QuerySpecification.Field
 ) => {
   const flattenRelativePath = getFlattenRelativePath(
-    jsonField.path as (QuerySpecification.Path | string)[]
+    jsonField.path as (QuerySpecification.PathObject | string)[]
   );
   const childrenJsonFields: QuerySpecification.Field[] = [
     {

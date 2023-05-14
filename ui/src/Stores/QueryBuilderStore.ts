@@ -746,7 +746,7 @@ class QueryBuilderStore {
     if (type) {
       this.rootField = buildFieldTreeFromQuery(
         this.rootStore.typeStore.types,
-        this.context as QuerySpecification.Context,
+        this.context,
         type,
         toJS(query)
       );
@@ -761,7 +761,7 @@ class QueryBuilderStore {
       } as Type;
       this.rootField = buildFieldTreeFromQuery(
         this.rootStore.typeStore.types,
-        this.context as QuerySpecification.Context,
+        this.context,
         unknownType,
         toJS(query)
       );

@@ -28,18 +28,18 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
 import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
-import { AxiosError } from "axios";
 import jsonld from "jsonld";
 
 import Matomo from "../../Services/Matomo";
 import useStores from "../../Hooks/useStores";
+import useAPI from "../../Hooks/useAPI";
+import { APIError } from "../../Services/API";
+import { QueryExecutionResult } from "../../types";
 
 import BGMessage from "../../Components/BGMessage";
 import SpinnerPanel from "../../Components/SpinnerPanel";
 import ExecutionResult from "./QueryExecution/ExecutionResult";
 import ExecutionParams from "./QueryExecution/ExecutionParams";
-import useAPI from "../../Hooks/useAPI";
-import { QueryExecutionResult } from "../../types";
 
 const useStyles = createUseStyles({
   container:{
@@ -134,7 +134,7 @@ const QueryExecution = observer(() => {
         setResult(data);
         setIsRunning(false);
       } catch (e) {
-        const error = e as AxiosError;
+        const error = e as APIError;
         const message = error?.message;
         setResult(undefined);
         setError(`Error while executing query (${message})`);

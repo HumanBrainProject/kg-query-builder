@@ -113,7 +113,7 @@ const Type = observer(({ type, enableFocus, onKeyDown }: TypeProps) =>  {
   const handleClick = () => selectType();
 
   const handleKeyDown= (e: KeyboardEvent<HTMLDivElement>) => {
-    if(e.keyCode === 13) {
+    if(e.key === "Enter") {
       selectType();
     }
     onKeyDown(e);

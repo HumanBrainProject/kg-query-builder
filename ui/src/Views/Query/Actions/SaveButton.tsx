@@ -27,13 +27,13 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faSave} from "@fortawesome/free-solid-svg-icons/faSave";
 import { useNavigate, matchPath } from "react-router-dom";
-import { AxiosError } from "axios";
 
 import useStores from "../../../Hooks/useStores";
 import useAPI from "../../../Hooks/useAPI";
 import Matomo from "../../../Services/Matomo";
 import { Query } from "../../../Types/Query";
 import { getProperties } from "../../../Helpers/QueryHelpers";
+import { APIError } from "../../../Services/API";
 
 import SpinnerPanel from "../../../Components/SpinnerPanel";
 import ActionError from "../../../Components/ActionError";
@@ -66,13 +66,7 @@ const SaveButton = observer(({ disabled }: SaveButtonProps) => {
         queryBuilderStore.setSpace(spacesStore.privateSpace);
       }
       //TODO: fix queryId undefined check after QueryBuilderStore refactoring/splitting
-      const queryId = queryBuilderStore.saveAsMode
-        ? queryBuilderStore.queryId
-          ? queryBuilderStore.queryId
-          : ""
-        : queryBuilderStore.sourceQuery
-        ? queryBuilderStore.sourceQuery.id
-        : "";
+      const queryId = (queryBuilderStore.saveAsMode?queryBuilderStore?.queryId:queryBuilderStore.sourceQuery?.id) as string;
       const querySpecification = queryBuilderStore.querySpecification;
       const spaceName = (queryBuilderStore.space?.name)?queryBuilderStore.space.name:"myspace";
       try {
@@ -108,8 +102,8 @@ const SaveButton = observer(({ disabled }: SaveButtonProps) => {
           setIsSaving(false);
         }
       } catch (e) {
-        const axiosError = e as AxiosError;
-        const message = axiosError?.message;
+        const error = e as APIError;
+        const message = error?.message;
         setError(`Error while saving query "${queryId}" (${message})`);
         setIsSaving(false);
       }
