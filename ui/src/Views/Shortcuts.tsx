@@ -34,7 +34,7 @@ const Shortcuts = observer(() => {
   useEffect(() => {
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "t") {
+      if ((e.ctrlKey || e.metaKey) && e.altKey && e.code === "KeyT") {
         Matomo.trackEvent("Shortcut", "ToggleTheme");
         appStore.toggleTheme();
       }
