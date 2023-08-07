@@ -59,7 +59,7 @@ const Logo = observer(() => {
   return (
     <div className={`${classes.container} layout-logo`} onClick={handleGoToHome}>
       <img src={logo} alt="" height="30" />
-      <span>Knowledge Graph Query Editor</span>
+      <span>Knowledge Graph Query Builder</span>
     </div>
   );
 });
