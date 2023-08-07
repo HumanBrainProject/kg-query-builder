@@ -48,6 +48,7 @@ const Spaces = React.lazy(() => import("./Views/Spaces"));
 const Types = React.lazy(() => import("./Views/Types"));
 const Logout = React.lazy(() => import("./Views/Logout"));
 const Home = React.lazy(() => import("./Views/Home"));
+const QueryByType = React.lazy(() => import("./Views/QueryByType"));
 const Query = React.lazy(() => import("./Views/Query"));
 
 interface AppProps {
@@ -103,6 +104,7 @@ const App = observer(({ stores, api, authAdapter } : AppProps) => {
                                 <Suspense fallback={<SpinnerPanel text="Loading resource..." />} >
                                   <Routes>
                                     <Route path="/" element={<Home />} />
+                                    <Route path="queries" element={<QueryByType />} />
                                     <Route path="queries/:id" element={<Query mode="build" />} />
                                     <Route path="queries/:id/edit" element={<Query mode="edit" />} />
                                     <Route path="queries/:id/execute" element={<Query mode="execute" />} />
