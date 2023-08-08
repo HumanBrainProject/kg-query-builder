@@ -104,7 +104,7 @@ const Query = observer(({ mode }:ModeProps) => {
     refetch,
   } = useGetQueryQuery(queryId, !!cachedQuery);
 
-  const query = useMemo(() => cachedQuery?cachedQuery:data, [cachedQuery, data]);
+  const query = useMemo(() => cachedQuery??data, [cachedQuery, data]);
 
   const [isNotFound, setNotFound] = useState<boolean|undefined>(undefined);
 
@@ -126,14 +126,14 @@ const Query = observer(({ mode }:ModeProps) => {
     } else if (query) {
       const typeName = query.meta.type;
         if (localStorage.getItem("type")) {
-          localStorage.setItem("type", typeName?typeName:"");
+          localStorage.setItem("type", typeName??"");
         }
         const type = typeName && typeStore.types.get(typeName);
         if(type) {
           queryBuilderStore.setType(type);
           queryBuilderStore.selectQuery(query);
         } else {
-          const typeId = typeName?typeName:"<undefined>";
+          const typeId = typeName??"<undefined>";
           const unknownType = {
             id: typeId,
             label: typeId,

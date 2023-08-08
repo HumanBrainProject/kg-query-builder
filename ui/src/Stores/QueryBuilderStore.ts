@@ -315,7 +315,7 @@ class QueryBuilderStore {
     return groups.reduce((acc, group) => {
       const properties = group.properties.filter(
         prop =>
-          (!prop.canBe || !prop.canBe.length) &&
+          (!prop.canBe?.length) &&
           !this.isACurrentFieldFilteredCommonProperty(prop)
       );
       if (properties.length) {
@@ -348,7 +348,7 @@ class QueryBuilderStore {
 
   get currentFieldLookupsCommonAttributes() {
     return this.currentFieldFilteredCommonProperties.filter(
-      prop => !prop.canBe || !prop.canBe.length
+      prop => !prop.canBe?.length
     );
   }
 
@@ -595,9 +595,9 @@ class QueryBuilderStore {
 
   getParametersFromField(field: Field) {
     const parameters = [];
-    if (field.optionsMap && field.optionsMap.has("filter")) {
+    if (field.optionsMap?.has("filter")) {
       const filter = field.optionsMap.get("filter") as QuerySpecification.FilterItem;
-      if (filter && filter.parameter && typeof filter.parameter === "string") {
+      if (filter?.parameter && typeof filter.parameter === "string") {
         const parameter = filter.parameter.trim();
         if (parameter) {
           parameters.push(parameter);
@@ -635,7 +635,7 @@ class QueryBuilderStore {
   get querySpecificationMeta() {
     //TODO: trootField and schema should always be available after we split QueryBuilderStore
     const meta: QuerySpecification.Meta =
-      this.rootField && this.rootField.schema
+      this.rootField?.schema
         ? {
             ...this.meta,
             type: this.typeId
@@ -749,7 +749,7 @@ class QueryBuilderStore {
         toJS(query)
       );
     } else {
-      const typeId = typeName ? typeName : "<undefined>";
+      const typeId = typeName??"<undefined>";
       const unknownType = {
         id: typeId,
         label: typeId,
@@ -794,7 +794,7 @@ class QueryBuilderStore {
     if (!this.label) {
       return this.label;
     }
-    if (this.label && this.label.endsWith("-Copy")) {
+    if (this.label?.endsWith("-Copy")) {
       return this.label;
     }
     return this.label + "-Copy";
@@ -818,7 +818,7 @@ class QueryBuilderStore {
       this.queryId = uuidv4();
       this.label = this.saveLabel;
       this.space =
-        this.space && this.space.permissions && this.space.permissions.canCreate
+        this.space?.permissions?.canCreate
           ? toJS(this.space)
           : toJS(this.rootStore.spacesStore.privateSpace);
     } else {

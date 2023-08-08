@@ -105,7 +105,7 @@ const getNamespace = (field: Field) => field.namespace || "query";
 
 const getPopertyName = (field: Field) => {
   const namespace = getNamespace(field);
-  const alias = field.alias && field.alias.trim();
+  const alias = field.alias?.trim();
   const name =
     alias ||
     (field.schema &&
@@ -181,12 +181,12 @@ const getFlattenedField = (field: Field) => {
   addOptions(queryField, field.options);
   const paths: QuerySpecification.PathArrayItem[] = [];
   let targetField: "" | Field | null | undefined = field;
-  while (targetField && targetField.isFlattened) {
+  while (!!targetField && targetField.isFlattened) {
     const path = getPath(targetField);
     if (path) {
       paths.push(path);
     }
-    targetField = path && targetField.structure && targetField.structure[0];
+    targetField = path && targetField.structure?.[0];
   }
   if (targetField) {
     const path = getPath(targetField);

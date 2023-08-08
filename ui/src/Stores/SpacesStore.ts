@@ -54,7 +54,7 @@ export class SpacesStore {
   }
 
   get allowedSharedSpacesToCreateQueries() {
-    return this.sharedSpaces.filter(s => s.permissions && s.permissions.canCreate);
+    return this.sharedSpaces.filter(s => s.permissions?.canCreate);
   }
 
   setSpaces(spaces: Space[]) {
