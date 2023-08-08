@@ -21,13 +21,13 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faUndoAlt} from "@fortawesome/free-solid-svg-icons/faUndoAlt";
+import {faUndoAlt} from '@fortawesome/free-solid-svg-icons/faUndoAlt';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import Button from 'react-bootstrap/Button';
 
-import useStores from "../../../Hooks/useStores";
+import useStores from '../../../Hooks/useStores';
 
 const UndoChangesButton = observer(() => {
 
@@ -40,9 +40,9 @@ const UndoChangesButton = observer(() => {
   }
 
   return (
-      <Button variant="primary" onClick={onClick}>
-        <FontAwesomeIcon icon={faUndoAlt} />&nbsp;Undo changes
-      </Button>
+    <Button variant={'primary'} onClick={onClick}>
+      <FontAwesomeIcon icon={faUndoAlt} />&nbsp;Undo changes
+    </Button>
   );
 });
 

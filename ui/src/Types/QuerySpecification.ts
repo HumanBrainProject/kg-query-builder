@@ -21,16 +21,16 @@
  *
  */
 
-import { Property } from "../types";
+import type { Property } from '../types';
 
 export namespace QuerySpecification {
 
   export interface JsonLd {
-    "@id": string;
+    '@id': string;
   }
 
   export interface JsonLdWithType extends JsonLd {
-    "@type": string;
+    '@type': string;
   }
 
   export type Value = undefined|null|object|string|number|boolean|(undefined|null|object|string|number|boolean)[];
@@ -78,15 +78,15 @@ export namespace QuerySpecification {
 
   export type Path = PathItem | PathArrayItem[];
 
-  export type TypeFilter = JsonLd 
+  export type TypeFilter = JsonLd
 
   export enum FilterOperation {
-    IS_EMPTY = "IS_EMPTY",
-    STARTS_WITH = "STARTS_WITH",
-    ENDS_WITH = "ENDS_WITH",
-    CONTAINS = "CONTAINS",
-    EQUALS = "EQUALS",
-    REGEX = "REGEX"
+    IS_EMPTY = 'IS_EMPTY',
+    STARTS_WITH = 'STARTS_WITH',
+    ENDS_WITH = 'ENDS_WITH',
+    CONTAINS = 'CONTAINS',
+    EQUALS = 'EQUALS',
+    REGEX = 'REGEX'
   }
 
   export interface ValueFilter {
@@ -96,28 +96,28 @@ export namespace QuerySpecification {
   }
 
   export enum SingleItemStrategy {
-    FIRST = "FIRST",
-    CONCAT = "CONCAT"
+    FIRST = 'FIRST',
+    CONCAT = 'CONCAT'
   }
 
   export interface Context {
-    "@vocab": string;
+    '@vocab': string;
     query?: string;
     propertyName: JsonLdWithType;
     path: JsonLdWithType;
-    [name: string]: 
+    [name: string]:
         | null
         | Value
         | Context[keyof Context];
   }
 
   export interface QuerySpecification {
-    "@id"?: string;
-    "@context"?: Context;
+    '@id'?: string;
+    '@context'?: Context;
     meta: Meta;
     space?: string;
     structure?: Field[];
-    [name: string]:  
+    [name: string]:
       | Value
       | QuerySpecification[keyof QuerySpecification];
   }

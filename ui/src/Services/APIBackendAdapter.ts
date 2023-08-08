@@ -32,12 +32,12 @@
  *   limitations under the License.
  *
  */
-import { AxiosInstance } from "axios";
-import API from "./API";
-import { UUID, Stage, Settings, UserProfile, Space, Type, TypesByName, QueryExecutionResult, KGCoreResult } from "../types";
-import { QuerySpecification } from "../Types/QuerySpecification";
+import type API from './API';
+import type { QuerySpecification } from '../Types/QuerySpecification';
+import type { UUID, Stage, Settings, UserProfile, Space, Type, TypesByName, QueryExecutionResult, KGCoreResult } from '../types';
+import type { AxiosInstance } from 'axios';
 
-const RELATIVE_ROOT_PATH = "/service/api";
+const RELATIVE_ROOT_PATH = '/service/api';
 
 declare global {
 	interface Window {
@@ -49,36 +49,36 @@ const getSize = (size?: string|null) => {
   if (size !== undefined && size !== null) {
     return `size=${size}&`;
   }
-  return "";
+  return '';
 };
 
 const getFrom = (from?: string|null) => {
   if (from !== undefined && from !== null) {
     return `from=${from}&`;
   }
-  return "";
+  return '';
 };
 
 const getInstanceId = (instanceId?: UUID|null) => {
   if (instanceId !== undefined && instanceId !== null) {
     return `instanceId=${encodeURIComponent(instanceId)}&`;
   }
-  return "";
+  return '';
 };
 
 const getStage = (stage?: Stage) => {
   if (stage) {
     return `stage=${stage}`;
   }
-  return "";
+  return '';
 };
 
 const getSpace = (space?: string) => {
   if(space) {
     return `?space=${space}`;
   }
-  return "";
-}
+  return '';
+};
 
 const endpoints = {
   settings: () => `${RELATIVE_ROOT_PATH}/settings`,
@@ -89,16 +89,16 @@ const endpoints = {
   performQuery: (stage?:Stage, from?:string, size?:string, instanceId?:string, restrictToSpaces?:string[], params?: object) => {
     const restrictToSpacesString =
       Array.isArray(restrictToSpaces) && restrictToSpaces.length
-        ? "&restrictToSpaces=" +
-          restrictToSpaces.map((space) => encodeURIComponent(space)).join(",")
-        : "";
+        ? '&restrictToSpaces=' +
+          restrictToSpaces.map((space) => encodeURIComponent(space)).join(',')
+        : '';
     const paramsString = params?Object.entries(params).reduce(
       (acc, [name, value]) => {
         acc += `&${encodeURIComponent(name)}=${encodeURIComponent(value as string)}`;
         return acc;
       },
-      ""
-    ):"";
+      ''
+    ):'';
     return `${RELATIVE_ROOT_PATH}/queries?${getSize(size)}${getFrom(from)}${getInstanceId(instanceId)}${getStage(stage)}${paramsString}${restrictToSpacesString}`;
   },
   getQuery: (queryId:UUID) => `${RELATIVE_ROOT_PATH}/queries/${queryId}`,

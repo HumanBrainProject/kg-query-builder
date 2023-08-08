@@ -21,20 +21,20 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import Button from "react-bootstrap/Button";
+import React from 'react';
+import Button from 'react-bootstrap/Button';
+import { createUseStyles } from 'react-jss';
 
-import Modal from "./Modal";
+import Modal from './Modal';
 
 const useStyles = createUseStyles({
   container: {
-    "& h5": {
-      margin: "0",
-      paddingBottom: "20px"
+    '& h5': {
+      margin: '0',
+      paddingBottom: '20px'
     },
-    "& button + button, & a + button, & a + a": {
-      marginLeft: "20px"
+    '& button + button, & a + button, & a + a': {
+      marginLeft: '20px'
     }
   }
 });
@@ -55,7 +55,7 @@ const Dialog = ({ message, onCancel, onConfirm }: DialogProps) => {
         <Button variant="secondary" onClick={onCancel}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={onConfirm}>
+        <Button variant={'primary'} onClick={onConfirm}>
           Confirm
         </Button>
       </div>

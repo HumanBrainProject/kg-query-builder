@@ -21,20 +21,20 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import Button from 'react-bootstrap/Button';
 
-import useStores from "../../../Hooks/useStores";
+import useStores from '../../../Hooks/useStores';
 
 const CancelButton = observer(() => {
 
   const { queryBuilderStore } = useStores();
-  
+
   const onClick = () => queryBuilderStore.setSaveAsMode(false);
 
   return (
-      <Button variant="secondary" onClick={onClick}>Cancel</Button>
+    <Button variant="secondary" onClick={onClick}>Cancel</Button>
   );
 });
 

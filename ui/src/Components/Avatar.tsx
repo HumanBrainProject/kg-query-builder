@@ -21,22 +21,22 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons/faUser";
-import { UserProfile } from "../types";
+import { faUser } from '@fortawesome/free-solid-svg-icons/faUser';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import type { UserProfile } from '../types';
 
 const useStyles = createUseStyles({
   avatar: {
-    verticalAlign: "middle",
-    "&.picture": {
+    verticalAlign: 'middle',
+    '&.picture': {
       border: 0,
-      borderRadius: "50%"
+      borderRadius: '50%'
     },
-    "&.default": {
-      transform: "scale(1.35)"
+    '&.default': {
+      transform: 'scale(1.35)'
     }
   }
 });
@@ -62,6 +62,6 @@ const Avatar = observer(({ user }: AvatarProps) => {
     />
   );
 });
-Avatar.displayName = "Avatar";
+Avatar.displayName = 'Avatar';
 
 export default Avatar;

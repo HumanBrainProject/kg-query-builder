@@ -21,11 +21,12 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
-import uniqueId from "lodash/uniqueId";
+import uniqueId from 'lodash/uniqueId';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 
-import Field, { FieldProps } from "../Field";
+import Field from '../Field';
+import type { FieldProps } from '../Field';
 
 interface ChildrenProps extends FieldProps {
   className: string;
@@ -35,11 +36,9 @@ const Children = observer(({ field, className }: ChildrenProps) => (
   <div className={className}>
     {field.structure &&
       field.structure.length > 0 &&
-      field.structure.map(structureField => {
-        return <Field field={structureField} key={uniqueId("field_")} />;
-      })}
+      field.structure.map(structureField => <Field field={structureField} key={uniqueId('field_')} />)}
   </div>
 ));
-Children.displayName = "Children";
+Children.displayName = 'Children';
 
 export default Children;

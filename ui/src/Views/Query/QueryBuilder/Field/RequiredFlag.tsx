@@ -21,24 +21,24 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faAsterisk} from "@fortawesome/free-solid-svg-icons/faAsterisk";
-import { FieldProps } from "../Field";
+import {faAsterisk} from '@fortawesome/free-solid-svg-icons/faAsterisk';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import type { FieldProps } from '../Field';
 
 const useStyles = createUseStyles({
   container: {
-    color: "var(--ft-color-louder)"
+    color: 'var(--ft-color-louder)'
   },
 });
 
 const RequiredFlag = observer(({ field }: FieldProps) => {
-  
+
   const classes = useStyles();
 
-  if (!field.getOption("required") || (field.parent  && field.parent.isFlattened)) {
+  if (!field.getOption('required') || (field.parent?.isFlattened)) {
     return null;
   }
 
@@ -49,6 +49,6 @@ const RequiredFlag = observer(({ field }: FieldProps) => {
     </span>
   );
 });
-RequiredFlag.displayName = "RequiredFlag";
+RequiredFlag.displayName = 'RequiredFlag';
 
 export default RequiredFlag;

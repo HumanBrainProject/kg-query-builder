@@ -21,15 +21,16 @@
  *
  */
 
-import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
-import { matchPath, PathMatch, useLocation, useNavigate } from "react-router-dom";
-import {faHome} from "@fortawesome/free-solid-svg-icons/faHome";
+import {faHome} from '@fortawesome/free-solid-svg-icons/faHome';
+import { observer } from 'mobx-react-lite';
+import React, { useState } from 'react';
+import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 
-import useStores from "../Hooks/useStores";
+import Dialog from '../Components/Dialog';
+import Tab from '../Components/Tab';
+import useStores from '../Hooks/useStores';
+import type { PathMatch} from 'react-router-dom';
 
-import Tab from "../Components/Tab";
-import Dialog from "../Components/Dialog";
 
 const HomeTab = observer(() => {
 
@@ -51,20 +52,20 @@ const HomeTab = observer(() => {
   const goHome = () => {
     setShowConfirmationModal(false);
     queryBuilderStore.clearQuery();
-    navigate("/");
+    navigate('/');
   };
 
   const handleCancel = () => setShowConfirmationModal(false);
-  const match: PathMatch<string>|null = matchPath({ path: "/" }, location.pathname)
+  const match: PathMatch<string>|null = matchPath({ path: '/' }, location.pathname);
   return (
     <>
-    <Tab icon={faHome} current={match} onClick={handleHomeClick} label={"Home"} hideLabel disabled={false} />
+      <Tab icon={faHome} current={match} onClick={handleHomeClick} label={'Home'} hideLabel disabled={false} />
       {showConfirmationModal && (
         <Dialog message="Your query has unsaved changes. If you continue you'll loose your changes. Do you want to continue?" onCancel={handleCancel} onConfirm={goHome} />
       )}
     </>
   );
 });
-HomeTab.displayName = "HomeTab";
+HomeTab.displayName = 'HomeTab';
 
 export default HomeTab;

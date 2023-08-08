@@ -21,11 +21,11 @@
  *
  */
 
-import { useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from 'mobx-react-lite';
+import { useEffect } from 'react';
 
-import useStores from "../Hooks/useStores";
-import Matomo from "../Services/Matomo";
+import useStores from '../Hooks/useStores';
+import Matomo from '../Services/Matomo';
 
 const Shortcuts = observer(() => {
 
@@ -34,21 +34,21 @@ const Shortcuts = observer(() => {
   useEffect(() => {
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.altKey && e.code === "KeyT") {
-        Matomo.trackEvent("Shortcut", "ToggleTheme");
+      if ((e.ctrlKey || e.metaKey) && e.altKey && e.code === 'KeyT') {
+        Matomo.trackEvent('Shortcut', 'ToggleTheme');
         appStore.toggleTheme();
       }
     };
-    
-    document.addEventListener("keydown", handleKeyDown);
+
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return null;
 });
-Shortcuts.displayName = "Shortcuts";
+Shortcuts.displayName = 'Shortcuts';
 
 export default Shortcuts;

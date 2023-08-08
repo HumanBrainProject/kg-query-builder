@@ -21,8 +21,8 @@
  *
  */
 
-import { Permissions } from "../types";
-import { QuerySpecification } from "./QuerySpecification";
+import type { QuerySpecification } from './QuerySpecification';
+import type { Permissions } from '../types';
 
 export namespace Query {
   export interface TypeFilter {

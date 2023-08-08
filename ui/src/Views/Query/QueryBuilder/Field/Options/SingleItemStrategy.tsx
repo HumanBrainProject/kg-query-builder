@@ -21,54 +21,55 @@
  *
  */
 
-import React, { ChangeEvent } from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import type { ChangeEvent } from 'react';
 
 const useStyles = createUseStyles({
   container: {
-    display: "flex",
-    alignItems: "baseline",
-    marginBottom: "20px",
-    "&:last-child": {
+    display: 'flex',
+    alignItems: 'baseline',
+    marginBottom: '20px',
+    '&:last-child': {
       marginBottom: 0
     }
   },
   select: {
-    display: "inline-block",
-    minWidth: "140px",
-    padding: "0.25rem 20px 0.25rem 6px",
-    borderRadius: "4px",
-    backgroundColor: "rgb(108, 117, 125)",
-    borderColor: "transparent",
-    color: "white",
-    "-webkit-appearance": "none",
-    "&:hover": {
+    display: 'inline-block',
+    minWidth: '140px',
+    padding: '0.25rem 20px 0.25rem 6px',
+    borderRadius: '4px',
+    backgroundColor: 'rgb(108, 117, 125)',
+    borderColor: 'transparent',
+    color: 'white',
+    '-webkit-appearance': 'none',
+    '&:hover': {
       outline: 0,
-      backgroundColor: "#5a6268",
-      borderColor: "rgba(64, 169, 243, 0.5)",
-      boxShadow: "0 0 0 0.2rem rgb(0 123 255 / 25%)"
+      backgroundColor: '#5a6268',
+      borderColor: 'rgba(64, 169, 243, 0.5)',
+      boxShadow: '0 0 0 0.2rem rgb(0 123 255 / 25%)'
     }
   },
   selectBox: {
-    position: "relative",
-    "&:after": {
+    position: 'relative',
+    '&:after': {
       content: '""',
-      position: "absolute",
-      top: "50%",
-      right: "10px",
+      position: 'absolute',
+      top: '50%',
+      right: '10px',
       width: 0,
       height: 0,
-      marginTop: "-3px",
-      borderTop: "6px solid white",
-      borderRight: "6px solid transparent",
-      borderLeft: "6px solid transparent",
-      pointerEvents: "none"
+      marginTop: '-3px',
+      borderTop: '6px solid white',
+      borderRight: '6px solid transparent',
+      borderLeft: '6px solid transparent',
+      pointerEvents: 'none'
     }
   },
   label: {
-    lineHeight: "1.7rem",
-    marginRight: "6px"
+    lineHeight: '1.7rem',
+    marginRight: '6px'
   }
 });
 
@@ -83,21 +84,22 @@ const SingleItemStrategy = observer(
     const classes = useStyles();
 
     const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-      const value = e.target.value === "NONE" ? undefined : e.target.value;
-      onChange("singleValue", value);
+      const value = e.target.value === 'NONE' ? undefined : e.target.value;
+      onChange('singleValue', value);
     };
 
     if (!show) {
       return null;
     }
 
-    const selectedValue = strategy === undefined ? "NONE" : strategy;
+    const selectedValue = strategy === undefined ? 'NONE' : strategy;
 
     return (
       <div className={classes.container}>
         <span className={classes.label}>Single item strategy:&nbsp;</span>
         <div className={classes.selectBox}>
           <select
+            title="Single item strategy"
             className={classes.select}
             value={selectedValue}
             onChange={handleChange}
@@ -111,6 +113,6 @@ const SingleItemStrategy = observer(
     );
   }
 );
-SingleItemStrategy.displayName = "SingleItemStrategy";
+SingleItemStrategy.displayName = 'SingleItemStrategy';
 
 export default SingleItemStrategy;

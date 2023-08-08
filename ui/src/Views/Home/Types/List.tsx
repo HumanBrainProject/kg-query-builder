@@ -21,22 +21,23 @@
  *
  */
 
-import React, { KeyboardEvent } from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../../../Hooks/useStores";
+import useStores from '../../../Hooks/useStores';
 
-import Type from "./Type";
+import Type from './Type';
+import type { KeyboardEvent } from 'react';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative"
+    position: 'relative'
   },
   activeSchema: {
-    "& > div": {
-      background: "var(--bg-color-ui-contrast4)",
-      "&:focus": {
+    '& > div': {
+      background: 'var(--bg-color-ui-contrast4)',
+      '&:focus': {
         outline: 0
       }
     }
@@ -57,13 +58,13 @@ const List = observer(({cursor, onKeyDown}: ListProps) =>  {
   return (
     <div className={classes.container}>
       {typeStore.filteredTypeList.map((type, index) =>
-        (<div className={cursor === index ? classes.activeSchema: ""} key={type.id}>
+        (<div className={cursor === index ? classes.activeSchema: ''} key={type.id}>
           <Type key={type.id} type={type} enableFocus={cursor === index} onKeyDown={onKeyDown}/>
         </div>)
       )}
     </div>
   );
 });
-List.displayName = "List";
+List.displayName = 'List';
 
 export default List;

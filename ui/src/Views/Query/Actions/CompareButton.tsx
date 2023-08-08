@@ -21,16 +21,16 @@
  *
  */
 
-import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faGlasses} from "@fortawesome/free-solid-svg-icons/faGlasses";
+import {faGlasses} from '@fortawesome/free-solid-svg-icons/faGlasses';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React, { useState } from 'react';
+import Button from 'react-bootstrap/Button';
 
-import useStores from "../../../Hooks/useStores";
+import useStores from '../../../Hooks/useStores';
 
-import CompareChangesModal from "./CompareChangesModal";
-import Matomo from "../../../Services/Matomo";
+import Matomo from '../../../Services/Matomo';
+import CompareChangesModal from './CompareChangesModal';
 interface CompareButtonProps {
   disabled: boolean;
 }
@@ -42,7 +42,7 @@ const CompareButton = observer(({ disabled }: CompareButtonProps) => {
   const { queryBuilderStore } = useStores();
 
   const handleCompare = () => {
-    Matomo.trackEvent("Query", "Compare", queryBuilderStore.queryId);
+    Matomo.trackEvent('Query', 'Compare', queryBuilderStore.queryId);
     setShowChanges(true);
   };
 
@@ -61,6 +61,6 @@ const CompareButton = observer(({ disabled }: CompareButtonProps) => {
     </>
   );
 });
-CompareButton.displayName = "CompareButton";
+CompareButton.displayName = 'CompareButton';
 
 export default CompareButton;

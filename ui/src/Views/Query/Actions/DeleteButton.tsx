@@ -21,21 +21,21 @@
  *
  */
 
-import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faTrashAlt} from "@fortawesome/free-solid-svg-icons/faTrashAlt";
-import { useNavigate } from "react-router-dom";
+import {faTrashAlt} from '@fortawesome/free-solid-svg-icons/faTrashAlt';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React, { useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import { useNavigate } from 'react-router-dom';
 
-import useStores from "../../../Hooks/useStores";
-import useAPI from "../../../Hooks/useAPI";
-import Matomo from "../../../Services/Matomo";
-import { APIError } from "../../../Services/API";
+import ActionError from '../../../Components/ActionError';
+import Dialog from '../../../Components/Dialog';
+import SpinnerPanel from '../../../Components/SpinnerPanel';
+import useAPI from '../../../Hooks/useAPI';
+import useStores from '../../../Hooks/useStores';
+import Matomo from '../../../Services/Matomo';
+import type { APIError } from '../../../Services/API';
 
-import Dialog from "../../../Components/Dialog";
-import SpinnerPanel from "../../../Components/SpinnerPanel";
-import ActionError from "../../../Components/ActionError";
 
 const DeleteButton = observer(() => {
 
@@ -63,7 +63,7 @@ const DeleteButton = observer(() => {
         queriesStore.removeQuery(queryId);
         setIsDeleting(false);
         queryBuilderStore.clearQuery();
-        navigate("/");
+        navigate('/');
       } catch (e) {
         const error = e as APIError;
         const message = error?.message;
@@ -71,10 +71,10 @@ const DeleteButton = observer(() => {
         setIsDeleting(false);
       }
     }
-  }
+  };
 
   const handleDelete = () => {
-    Matomo.trackEvent("Query", "Delete", queryBuilderStore.queryId);
+    Matomo.trackEvent('Query', 'Delete', queryBuilderStore.queryId);
     setShowDeleteDialog(false);
     deleteQuery();
   };
@@ -89,18 +89,18 @@ const DeleteButton = observer(() => {
   }
 
   return (
-      <>
-        <Button variant="danger" onClick={handleConfirmDelete}>
-          <FontAwesomeIcon icon={faTrashAlt} />&nbsp;Delete
-        </Button>
-        {showDeleteDialog && (
-          <Dialog message="Are you sure you want to delete this query?" onCancel={handleCancelDelete} onConfirm={handleDelete} />
-        )}
-        <SpinnerPanel show={isDeleting} text={`Deleting query ${queryBuilderStore.queryId}...`} />
-        <ActionError error={error} onCancel={handleCancelDelete} onRetry={deleteQuery} />
-      </>
+    <>
+      <Button variant="danger" onClick={handleConfirmDelete}>
+        <FontAwesomeIcon icon={faTrashAlt} />&nbsp;Delete
+      </Button>
+      {showDeleteDialog && (
+        <Dialog message="Are you sure you want to delete this query?" onCancel={handleCancelDelete} onConfirm={handleDelete} />
+      )}
+      <SpinnerPanel show={isDeleting} text={`Deleting query ${queryBuilderStore.queryId}...`} />
+      <ActionError error={error} onCancel={handleCancelDelete} onRetry={deleteQuery} />
+    </>
   );
 });
-DeleteButton.displayName = "DeleteButton";
+DeleteButton.displayName = 'DeleteButton';
 
 export default DeleteButton;

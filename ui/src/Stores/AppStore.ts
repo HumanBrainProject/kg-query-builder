@@ -21,17 +21,17 @@
  *
  */
 
-import { observable, action, computed, makeObservable } from "mobx";
+import { observable, action, computed, makeObservable } from 'mobx';
 
-import RootStore from "./RootStore";
+import BrightTheme from '../Themes/Bright';
+import DefaultTheme from '../Themes/Default';
+import type RootStore from './RootStore';
+import type { Theme } from '../Themes/Theme';
 
-import { Theme } from "../Themes/Theme";
-import DefaultTheme from "../Themes/Default";
-import BrightTheme from "../Themes/Bright";
-import { ErrorInfo } from "react";
+import type { ErrorInfo } from 'react';
 
 interface GlobalError {
-  error: Error, 
+  error: Error,
   info: ErrorInfo
 }
 
@@ -64,12 +64,12 @@ class AppStore{
     });
 
     this.rootStore = rootStore;
-    this.setTheme(localStorage.getItem("theme") ?? DefaultTheme.name);
+    this.setTheme(localStorage.getItem('theme') ?? DefaultTheme.name);
   }
 
   setGlobalError(error: Error, info: ErrorInfo) {
     this.globalError = {
-      error:error, 
+      error:error,
       info:info
     };
   }
@@ -84,7 +84,7 @@ class AppStore{
 
   setTheme(name: string){
     this._currentThemeName = themes[name]? name: DefaultTheme.name;
-    localStorage.setItem("theme", this._currentThemeName);
+    localStorage.setItem('theme', this._currentThemeName);
   }
 
   toggleTheme(){
@@ -98,7 +98,7 @@ class AppStore{
   setCommit(commit: string) {
     this.commit = commit;
   }
-  
+
 }
 
 export default AppStore;

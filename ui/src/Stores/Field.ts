@@ -21,10 +21,10 @@
  *
  */
 
-import { observable, action, computed, toJS, makeObservable } from "mobx";
-import { QuerySpecification } from "../Types/QuerySpecification";
+import { observable, action, computed, toJS, makeObservable } from 'mobx';
+import type { QuerySpecification } from '../Types/QuerySpecification';
 
-export const FIELD_FLAGS = ["required", "sort", "ensureOrder"];
+export const FIELD_FLAGS = ['required', 'sort', 'ensureOrder'];
 
 const defaultOptions = [
   ...FIELD_FLAGS.map(name => ({
@@ -32,11 +32,11 @@ const defaultOptions = [
     value: undefined
   })),
   {
-    name: "singleValue",
+    name: 'singleValue',
     value: undefined
   },
   {
-    name: "filter",
+    name: 'filter',
     value: undefined
   }
 ];
@@ -167,8 +167,8 @@ class Field {
 
   setOption(name:string, value:QuerySpecification.Value, preventRecursive?:boolean) {
     this.optionsMap.set(name, value);
-    if (name === "sort" && value && !preventRecursive) {
-      const rootField = this.rootField;      
+    if (name === 'sort' && value && !preventRecursive) {
+      const rootField = this.rootField;
       this.setChildrenOption(rootField, name);
     }
   }
@@ -209,10 +209,10 @@ class Field {
       currentField = currentField.structure[0];
     }
     if (!currentField.schema) {
-      return "";
+      return '';
     }
     return (
-      currentField.schema.simpleAttributeName || currentField.schema.label || ""
+      currentField.schema.simpleAttributeName || currentField.schema.label || ''
     );
   }
 }

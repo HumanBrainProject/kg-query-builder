@@ -21,40 +21,40 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import Button from "react-bootstrap/Button";
+import React from 'react';
+import Button from 'react-bootstrap/Button';
+import { createUseStyles } from 'react-jss';
 
 const useStyles = createUseStyles({
   container: {
-    position: "fixed",
-    top: "0",
-    left: "0",
-    width: "100%",
-    height: "100%",
-    background: "var(--bg-color-blend-contrast1)",
-    zIndex: "1200",
-    "& > div": {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      minWidth: "220px",
-      padding: "30px",
-      transform: "translate(-50%, -50%)",
-      border: "1px solid var(--border-color-ui-contrast1)",
-      borderRadius: "4px",
-      fontSize: "1.2em",
-      fontWeight: "lighter",
-      textAlign: "center",
-      color: "var(--ft-color-loud)",
-      background: "#0a2332",
-      "& h5": {
-        margin: "0",
-        paddingBottom: "20px",
-        color: "red"
+    position: 'fixed',
+    top: '0',
+    left: '0',
+    width: '100%',
+    height: '100%',
+    background: 'var(--bg-color-blend-contrast1)',
+    zIndex: '1200',
+    '& > div': {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      minWidth: '220px',
+      padding: '30px',
+      transform: 'translate(-50%, -50%)',
+      border: '1px solid var(--border-color-ui-contrast1)',
+      borderRadius: '4px',
+      fontSize: '1.2em',
+      fontWeight: 'lighter',
+      textAlign: 'center',
+      color: 'var(--ft-color-loud)',
+      background: '#0a2332',
+      '& h5': {
+        margin: '0',
+        paddingBottom: '20px',
+        color: 'red'
       },
-      "& button + button, & a + button, & a + a": {
-        marginLeft: "20px"
+      '& button + button, & a + button, & a + a': {
+        marginLeft: '20px'
       }
     }
   }
@@ -81,7 +81,7 @@ const ActionError = ({ error, onCancel, onRetry }: ActionErrorProps) => {
           <Button variant="secondary" onClick={onCancel}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={onRetry}>
+          <Button variant={'primary'} onClick={onRetry}>
             Retry
           </Button>
         </div>

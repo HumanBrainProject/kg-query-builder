@@ -21,19 +21,19 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 
-import useStores from "../../Hooks/useStores";
+import useStores from '../../Hooks/useStores';
 
-import CancelButton from "./Actions/CancelButton";
-import CompareButton from "./Actions/CompareButton";
-import CopyAsNewQueryButton from "./Actions/CopyAsNewQueryButton";
-import ResetButton from "./Actions/ResetButton";
-import SaveAsButton from "./Actions/SaveAsButton";
-import SaveButton from "./Actions/SaveButton";
-import UndoChangesButton from "./Actions/UndoChangesButton";
-import DeleteButton from "./Actions/DeleteButton";
+import CancelButton from './Actions/CancelButton';
+import CompareButton from './Actions/CompareButton';
+import CopyAsNewQueryButton from './Actions/CopyAsNewQueryButton';
+import DeleteButton from './Actions/DeleteButton';
+import ResetButton from './Actions/ResetButton';
+import SaveAsButton from './Actions/SaveAsButton';
+import SaveButton from './Actions/SaveButton';
+import UndoChangesButton from './Actions/UndoChangesButton';
 
 const QuerySaveAsModeActions = observer(() => {
   const { queryBuilderStore } = useStores();

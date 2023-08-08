@@ -21,68 +21,68 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../../Hooks/useStores";
+import useStores from '../../Hooks/useStores';
 
-import QueryForm from "./QueryBuilder/QueryForm";
-import Representation from "./QueryBuilder/Representation";
-import Actions from "./Actions";
-import Options from "./QueryBuilder/Field/Options";
-import Properties from "./QueryBuilder/Field/Properties";
+import Actions from './Actions';
+import Options from './QueryBuilder/Field/Options';
+import Properties from './QueryBuilder/Field/Properties';
+import QueryForm from './QueryBuilder/QueryForm';
+import Representation from './QueryBuilder/Representation';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
+    position: 'relative',
     flex: 1,
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gridGap: "10px",
-    height: "100%",
-    padding: "10px"
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gridGap: '10px',
+    height: '100%',
+    padding: '10px'
   },
   body:{
-    position: "relative",
-    display: "grid",
-    gridTemplateRows: "auto 1fr auto",
-    gridGap: "10px",
-    height: "100%",
-    "&:not(.hasChanged)": {
-      "& $form": {
-        display: "none"
+    position: 'relative',
+    display: 'grid',
+    gridTemplateRows: 'auto 1fr auto',
+    gridGap: '10px',
+    height: '100%',
+    '&:not(.hasChanged)': {
+      '& $form': {
+        display: 'none'
       },
-      "& $representation": {
-        gridRowStart: "span 3"
+      '& $representation': {
+        gridRowStart: 'span 3'
       },
-      "& $actions": {
-        display: "none"
+      '& $actions': {
+        display: 'none'
       }
     }
   },
   options: {
-    position:"relative",
-    display: "grid",
-    gridTemplateRows: "auto 1fr",
-    background: "linear-gradient(135deg, rgba(5,20,40,0.6) 0%, rgba(5,25,40,0.9) 100%)",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    color: "var(--ft-color-loud)",
-    padding: "10px"
+    position:'relative',
+    display: 'grid',
+    gridTemplateRows: 'auto 1fr',
+    background: 'linear-gradient(135deg, rgba(5,20,40,0.6) 0%, rgba(5,25,40,0.9) 100%)',
+    border: '1px solid var(--border-color-ui-contrast1)',
+    color: 'var(--ft-color-loud)',
+    padding: '10px'
   },
   form: {},
   representation:{},
   actions: {
-    position: "relative",
-    background: "linear-gradient(90deg, rgba(5,25,35,0.4) 0%, rgba(5,20,35,0.8) 100%)",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    color: "var(--ft-color-loud)",
-    padding: "10px 10px 0 0",
-    "& > div": {
-      textAlign: "right",
-      "& > button": {
-        marginLeft: "10px",
-        marginBottom: "10px"
+    position: 'relative',
+    background: 'linear-gradient(90deg, rgba(5,25,35,0.4) 0%, rgba(5,20,35,0.8) 100%)',
+    border: '1px solid var(--border-color-ui-contrast1)',
+    color: 'var(--ft-color-loud)',
+    padding: '10px 10px 0 0',
+    '& > div': {
+      textAlign: 'right',
+      '& > button': {
+        marginLeft: '10px',
+        marginBottom: '10px'
       }
     }
   }
@@ -99,7 +99,7 @@ const QueryBuilder = observer(() => {
 
   return (
     <div className={classes.container}>
-      <div className={`${classes.body} ${queryBuilderStore.isQuerySaved || !queryBuilderStore.isQueryEmpty?"hasChanged":""}`}>
+      <div className={`${classes.body} ${queryBuilderStore.isQuerySaved || !queryBuilderStore.isQueryEmpty?'hasChanged':''}`}>
         <QueryForm className={classes.form} />
         <Representation className={classes.representation} />
         <div className={classes.actions}>
@@ -115,6 +115,6 @@ const QueryBuilder = observer(() => {
     </div>
   );
 });
-QueryBuilder.displayName = "QueryBuilder";
+QueryBuilder.displayName = 'QueryBuilder';
 
 export default QueryBuilder;

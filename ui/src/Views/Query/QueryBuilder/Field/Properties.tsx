@@ -21,58 +21,59 @@
  *
  */
 
-import React, { MouseEvent }  from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
-import { Scrollbars } from "react-custom-scrollbars-2";
+import { observer } from 'mobx-react-lite';
+import React  from 'react';
+import { Scrollbars } from 'react-custom-scrollbars-2';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../../../../Hooks/useStores";
+import Filter from '../../../../Components/Filter';
+import Toggle from '../../../../Components/Toggle';
+import useStores from '../../../../Hooks/useStores';
 
-import Filter from "../../../../Components/Filter";
-import Groups from "./Properties/Groups";
-import List from "./Properties/List";
-import Toggle from "../../../../Components/Toggle";
-import { Property } from "../../../../types";
-import { QuerySpecification } from "../../../../Types/QuerySpecification";
+import Groups from './Properties/Groups';
+import List from './Properties/List';
+import type { QuerySpecification } from '../../../../Types/QuerySpecification';
+import type { Property } from '../../../../types';
+import type { MouseEvent } from 'react';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
-    height: "100%",
-    color: "var(--ft-color-normal)",
-    "& input": {
-      color: "black"
+    position: 'relative',
+    height: '100%',
+    color: 'var(--ft-color-normal)',
+    '& input': {
+      color: 'black'
     },
-    "& hr": {
-      margin: "30px auto",
-      maxWidth: "500px",
-      borderTopColor: "var(--bg-color-ui-contrast4)"
+    '& hr': {
+      margin: '30px auto',
+      maxWidth: '500px',
+      borderTopColor: 'var(--bg-color-ui-contrast4)'
     },
-    "&.has-options": {
-      marginTop: "10px",
-      "& $panel": {
-        height: "calc(100% - 25px)"
+    '&.has-options': {
+      marginTop: '10px',
+      '& $panel': {
+        height: 'calc(100% - 25px)'
       }
     }
   },
   panel: {
-    position: "relative",
-    display: "grid",
-    gridTemplateRows: "auto 1fr auto",
-    border: "1px solid var(--bg-color-ui-contrast1)",
-    height: "100%"
+    position: 'relative',
+    display: 'grid',
+    gridTemplateRows: 'auto 1fr auto',
+    border: '1px solid var(--bg-color-ui-contrast1)',
+    height: '100%'
   },
   filter: {
     border: 0,
-    background: "linear-gradient(90deg, rgba(20,50,60,0.2) 0%, rgba(20,50,60,0.4) 100%)"
+    background: 'linear-gradient(90deg, rgba(20,50,60,0.2) 0%, rgba(20,50,60,0.4) 100%)'
   },
   body: {
-    padding: "0 10px 10px 10px",
-    borderTop: "1px solid var(--bg-color-ui-contrast1)"
+    padding: '0 10px 10px 10px',
+    borderTop: '1px solid var(--bg-color-ui-contrast1)'
   },
   advancedPropertiesToggle: {
-    padding: "10px",
-    borderTop: "1px solid var(--bg-color-ui-contrast1)"
+    padding: '10px',
+    borderTop: '1px solid var(--bg-color-ui-contrast1)'
   }
 });
 
@@ -107,7 +108,7 @@ const Properties = observer(() => {
   const handleToggleAdvancedProperties = () => queryBuilderStore.toggleIncludeAdvancedAttributes();
 
   return (
-    <div className={`${classes.container} ${queryBuilderStore.currentField === queryBuilderStore.rootField?"":"has-options"}`}>
+    <div className={`${classes.container} ${queryBuilderStore.currentField === queryBuilderStore.rootField?'':'has-options'}`}>
       <div className={classes.panel}>
         <Filter className={classes.filter} value={queryBuilderStore.childrenFilterValue} placeholder="Filter properties" onChange={handleChildrenFilterChange} />
         <div className={classes.body}>
@@ -138,7 +139,7 @@ const Properties = observer(() => {
           <Toggle
             label="Show advanced properties"
             option={{
-              name: "Show advanced properties",
+              name: 'Show advanced properties',
               value: queryBuilderStore.includeAdvancedAttributes?true:undefined
             }}
             show={true}
@@ -148,6 +149,6 @@ const Properties = observer(() => {
     </div>
   );
 });
-Properties.displayName = "Properties";
+Properties.displayName = 'Properties';
 
 export default Properties;

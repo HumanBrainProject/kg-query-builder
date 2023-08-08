@@ -21,14 +21,14 @@
  *
  */
 
-import API from "../Services/API";
-import AppStore from "./AppStore";
-import UserProfileStore from "./UserProfileStore";
-import SpacesStore from "./SpacesStore";
-import TypeStore from "./TypeStore";
-import QueriesStore from "./QueriesStore";
-import QueryBuilderStore from "./QueryBuilderStore";
-import QueryRunStore from "./QueryRunStore";
+import AppStore from './AppStore';
+import QueriesStore from './QueriesStore';
+import QueryBuilderStore from './QueryBuilderStore';
+import QueryRunStore from './QueryRunStore';
+import SpacesStore from './SpacesStore';
+import TypeStore from './TypeStore';
+import UserProfileStore from './UserProfileStore';
+import type API from '../Services/API';
 
 class RootStore {
 
@@ -43,7 +43,7 @@ class RootStore {
   constructor(api: API) {
 
     if (!api) {
-      throw new Error("no api provided!");
+      throw new Error('no api provided!');
     }
 
     // Domain stores

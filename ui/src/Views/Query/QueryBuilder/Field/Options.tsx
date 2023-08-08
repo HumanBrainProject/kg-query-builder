@@ -21,33 +21,33 @@
  *
  */
 
-import React  from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
+import { observer } from 'mobx-react-lite';
+import React  from 'react';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../../../../Hooks/useStores";
+import useStores from '../../../../Hooks/useStores';
 
-import Name from "./Options/Name";
-import Flatten from "./Options/Flatten";
-import Option from "./Options/Option";
-import TypeFilter from "./Options/TypeFilter";
-import { QuerySpecification } from "../../../../Types/QuerySpecification";
+import Flatten from './Options/Flatten';
+import Name from './Options/Name';
+import Option from './Options/Option';
+import TypeFilter from './Options/TypeFilter';
+import type { QuerySpecification } from '../../../../Types/QuerySpecification';
 
 const useStyles = createUseStyles({
   container: {
-    height: "100%",
-    color: "var(--ft-color-normal)",
-    "& input": {
-      color: "black"
+    height: '100%',
+    color: 'var(--ft-color-normal)',
+    '& input': {
+      color: 'black'
     },
-    "& hr": {
-      margin: "30px auto",
-      maxWidth: "500px",
-      borderTopColor: "var(--bg-color-ui-contrast4)"
+    '& hr': {
+      margin: '30px auto',
+      maxWidth: '500px',
+      borderTopColor: 'var(--bg-color-ui-contrast4)'
     }
   },
   fieldOptions: {
-    position: "relative"
+    position: 'relative'
   }
 });
 
@@ -87,6 +87,6 @@ const Options = observer(() => {
     </div>
   );
 });
-Options.displayName = "Options";
+Options.displayName = 'Options';
 
 export default Options;

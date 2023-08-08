@@ -21,20 +21,21 @@
  *
  */
 
-import React, { MouseEvent } from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import PropertyComponent from "./Property";
-import { Property } from "../../../../../types";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import PropertyComponent from './Property';
+import type { Property } from '../../../../../types';
+import type { MouseEvent } from 'react';
 
 const useStyles = createUseStyles({
   container: {
-    color: "var(--ft-color-loud)",
-    "& h5": {
-      margin: "18px 0 6px 5px",
-      "& small": {
-        color: "var(--ft-color-quiet)",
-        fontStyle: "italic"
+    color: 'var(--ft-color-loud)',
+    '& h5': {
+      margin: '18px 0 6px 5px',
+      '& small': {
+        color: 'var(--ft-color-quiet)',
+        fontStyle: 'italic'
       }
     }
   }
@@ -57,11 +58,11 @@ const List = observer(({ properties, label, onClick }: ListProps) => {
     <div className={classes.container}>
       <h5>{label}</h5>
       {properties.map(property => (
-        <PropertyComponent key={`${property.attribute}${property.reverse?"reverse":""}`} property={property} onClick={onClick} />
+        <PropertyComponent key={`${property.attribute}${property.reverse?'reverse':''}`} property={property} onClick={onClick} />
       ))}
     </div>
   );
 });
-List.displayName = "List";
+List.displayName = 'List';
 
 export default List;

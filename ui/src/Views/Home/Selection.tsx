@@ -21,116 +21,116 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
-import { useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons/faChevronRight";
-import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle";
-import { faFile } from "@fortawesome/free-solid-svg-icons/faFile";
-import { faTag } from "@fortawesome/free-solid-svg-icons/faTag";
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
+import { faCircle } from '@fortawesome/free-solid-svg-icons/faCircle';
+import { faFile } from '@fortawesome/free-solid-svg-icons/faFile';
+import { faTag } from '@fortawesome/free-solid-svg-icons/faTag';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
-import useStores from "../../Hooks/useStores";
+import Icon from '../../Components/Icon';
+import useStores from '../../Hooks/useStores';
 
-import Queries from "./Selection/Queries";
-import Icon from "../../Components/Icon";
-import { Type } from "../../types";
+import Queries from './Selection/Queries';
+import type { Type } from '../../types';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
-    height: "100%",
-    width: "100%",
-    padding: "10px",
+    position: 'relative',
+    height: '100%',
+    width: '100%',
+    padding: '10px',
     background:
-      "linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 100%)",
-    color: "var(--ft-color-normal)",
-    border: "1px solid var(--border-color-ui-contrast2)",
-    overflow: "hidden"
+      'linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 100%)',
+    color: 'var(--ft-color-normal)',
+    border: '1px solid var(--border-color-ui-contrast2)',
+    overflow: 'hidden'
   },
   noSelection: {
-    marginTop: "40%",
-    textAlign: "center",
-    fontSize: "1.4rem",
-    marginLeft: "10px",
-    marginRight: "10px"
+    marginTop: '40%',
+    textAlign: 'center',
+    fontSize: '1.4rem',
+    marginLeft: '10px',
+    marginRight: '10px'
   },
   noSelectionText: {
-    fontSize: "small",
-    marginTop: "10px"
+    fontSize: 'small',
+    marginTop: '10px'
   },
   choice: {
-    display: "flex",
-    flexDirection: "column",
-    height: "100%"
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%'
   },
   type: {
-    marginTop: "20px",
-    color: "var(--ft-color-loud)",
-    textAlign: "center",
-    fontSize: "1.2rem",
-    "& small": {
-      color: "var(--ft-color-quiet)",
-      fontStyle: "italic"
+    marginTop: '20px',
+    color: 'var(--ft-color-loud)',
+    textAlign: 'center',
+    fontSize: '1.2rem',
+    '& small': {
+      color: 'var(--ft-color-quiet)',
+      fontStyle: 'italic'
     },
-    "& p": {
-      marginTop: "10px",
-      fontSize: "small",
-      color: "var(--ft-color-quiet)"
+    '& p': {
+      marginTop: '10px',
+      fontSize: 'small',
+      color: 'var(--ft-color-quiet)'
     }
   },
   action: {
-    position: "relative",
-    marginTop: "30px",
-    padding: "15px 10px 15px 15px",
-    border: "1px solid var(--border-color-ui-contrast2)",
-    color: "var(--ft-color-quiet)",
-    fontSize: "1.2em",
-    fontWeight: "normal",
-    cursor: "pointer",
-    transition: "background .3s ease-in-out",
-    background: "rgba(0,0,0,0.4)",
-    "&:hover": {
+    position: 'relative',
+    marginTop: '30px',
+    padding: '15px 10px 15px 15px',
+    border: '1px solid var(--border-color-ui-contrast2)',
+    color: 'var(--ft-color-quiet)',
+    fontSize: '1.2em',
+    fontWeight: 'normal',
+    cursor: 'pointer',
+    transition: 'background .3s ease-in-out',
+    background: 'rgba(0,0,0,0.4)',
+    '&:hover': {
       background:
-        "linear-gradient(90deg, rgba(30,60,70,0.9) 0%, rgba(20,50,60,0.9) 100%)",
-      color: "var(--ft-color-loud)",
-      "& $nextIcon": {
-        color: "var(--ft-color-loud)"
+        'linear-gradient(90deg, rgba(30,60,70,0.9) 0%, rgba(20,50,60,0.9) 100%)',
+      color: 'var(--ft-color-loud)',
+      '& $nextIcon': {
+        color: 'var(--ft-color-loud)'
       }
     }
   },
   actionTitle: {
-    marginLeft: "10px"
+    marginLeft: '10px'
   },
   nextIcon: {
-    position: "absolute",
-    top: "16px",
-    right: "15px",
-    color: "var(--ft-color-quiet)",
-    transition: "background .3s ease-in-out, transform .3s ease-in-out"
+    position: 'absolute',
+    top: '16px',
+    right: '15px',
+    color: 'var(--ft-color-quiet)',
+    transition: 'background .3s ease-in-out, transform .3s ease-in-out'
   },
   showSavedQueries: {
-    transform: "rotate(90deg)"
+    transform: 'rotate(90deg)'
   },
   savedQueries: {
     flex: 1,
-    borderTop: "0 !important"
+    borderTop: '0 !important'
   }
 });
 
 const getTypeLabel = (type: Type) => {
   if (!type) {
-    return "";
+    return '';
   }
   if (type.label) {
     return type.label;
   }
   if (!type.id) {
-    return "";
+    return '';
   }
-  const parts = type.id.split("/");
+  const parts = type.id.split('/');
   return parts[parts.length - 1];
 };
 
@@ -139,15 +139,13 @@ interface TypeInfoProps {
   type: Type;
 }
 
-const TypeInfo = observer(({ className, type }: TypeInfoProps) => {
-  return (
-    <div className={className}>
-      <Icon icon={faCircle} color={type.color} />
-      {getTypeLabel(type)} - <small>{type.id}</small>
-      {type.description && <p>{type.description}</p>}
-    </div>
-  );
-});
+const TypeInfo = observer(({ className, type }: TypeInfoProps) => (
+  <div className={className}>
+    <Icon icon={faCircle} color={type.color} />
+    {getTypeLabel(type)} - <small>{type.id}</small>
+    {type.description && <p>{type.description}</p>}
+  </div>
+));
 
 const Selection = observer(() => {
   const classes = useStyles();
@@ -190,7 +188,7 @@ const Selection = observer(() => {
                 className={
                   queriesStore.showSavedQueries
                     ? classes.showSavedQueries
-                    : ""
+                    : ''
                 }
               />
             </div>
@@ -201,7 +199,7 @@ const Selection = observer(() => {
         </div>
       ) : (
         <div className={classes.noSelection}>
-          Please select a type{" "}
+          Please select a type{' '}
           <p className={classes.noSelectionText}>
             To start querying the EBRAINS Knowledge Graph, please select the
             type of the data structure of your main interest. You will then have
@@ -213,6 +211,6 @@ const Selection = observer(() => {
     </div>
   );
 });
-Selection.displayName = "Selection";
+Selection.displayName = 'Selection';
 
 export default Selection;

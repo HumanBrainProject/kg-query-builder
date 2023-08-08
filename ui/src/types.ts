@@ -32,16 +32,16 @@
  *   limitations under the License.
  *
  */
-import { BrowserOptions } from "@sentry/browser";
-import { KeycloakConfig } from "keycloak-js";
-import { PiwikOptions } from "react-piwik";
+import type { BrowserOptions } from '@sentry/browser';
+import type { KeycloakConfig } from 'keycloak-js';
+import type { PiwikOptions } from 'react-piwik';
 
 export type UUID = string;
 
 export interface Settings {
     commit: string;
     keycloak: KeycloakConfig;
-    matomo?: PiwikOptions; 
+    matomo?: PiwikOptions;
     sentry?: BrowserOptions;
 }
 
@@ -66,7 +66,7 @@ export interface UserProfile {
     email: string;
 }
 
-export type Stage = "IN_PROGRESS" | "RELEASED";
+export type Stage = 'IN_PROGRESS' | 'RELEASED';
 
 export interface KGCoreError {
     code: number;
@@ -97,7 +97,7 @@ export interface Property {
     label: string;
     simpleAttributeName: string;
     reverse?: boolean;
-}  
+}
 
 export interface PropertyGroup {
     id: string;
@@ -106,9 +106,7 @@ export interface PropertyGroup {
     properties: Property[];
 }
 
-export interface TypesByName {
-    [key: string]: Type
-}
+export type TypesByName = Record<string, Type>;
 
 export interface QueryExecutionResult {
     data: object[];

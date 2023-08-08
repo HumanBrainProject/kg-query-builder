@@ -21,43 +21,43 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import Modal from "react-bootstrap/Modal";
-import { Scrollbars } from "react-custom-scrollbars-2";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import Modal from 'react-bootstrap/Modal';
+import { Scrollbars } from 'react-custom-scrollbars-2';
+import { createUseStyles } from 'react-jss';
 
-import CompareChanges from "./CompareChanges/CompareChanges";
 
-import useStores from "../../../Hooks/useStores";
+import useStores from '../../../Hooks/useStores';
+import CompareChanges from './CompareChanges/CompareChanges';
 
 const useStyles = createUseStyles({
   modal:{
-    maxWidth: "85vw",
-    "@media screen and media (min-width: 576px)": {
-      maxWidth: "85vw"
+    maxWidth: '85vw',
+    '@media screen and media (min-width: 576px)': {
+      maxWidth: '85vw'
     },
-    "@media screen and (min-width:1600px)": {
-      maxWidth: "1400px"
+    '@media screen and (min-width:1600px)': {
+      maxWidth: '1400px'
     },
-    "& .modal-body": {
-      height: "calc(95vh - 112px)",
-      padding: "3px 0"
+    '& .modal-body': {
+      height: 'calc(95vh - 112px)',
+      padding: '3px 0'
     }
   },
   body:{
-    height: "100%",
-    padding: "20px",
-    "& pre": {
+    height: '100%',
+    padding: '20px',
+    '& pre': {
       border: 0,
       margin: 0,
       padding: 0,
-      display: "inline",
-      background: "transparent",
-      wordBreak: "break-word",
-      overflowWrap: "anywhere",
-      "& span": {
-        whiteSpace: "pre-wrap"
+      display: 'inline',
+      background: 'transparent',
+      wordBreak: 'break-word',
+      overflowWrap: 'anywhere',
+      '& span': {
+        whiteSpace: 'pre-wrap'
       }
     }
   }
@@ -91,6 +91,6 @@ const CompareChangesModal = observer(({ show, onClose }: CompareChangesModalProp
     </>
   );
 });
-CompareChangesModal.displayName = "CompareChangesModal";
+CompareChangesModal.displayName = 'CompareChangesModal';
 
 export default CompareChangesModal;

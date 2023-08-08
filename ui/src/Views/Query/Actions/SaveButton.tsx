@@ -21,22 +21,22 @@
  *
  */
 
-import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faSave} from "@fortawesome/free-solid-svg-icons/faSave";
-import { useNavigate, matchPath } from "react-router-dom";
+import {faSave} from '@fortawesome/free-solid-svg-icons/faSave';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React, { useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import { useNavigate, matchPath } from 'react-router-dom';
 
-import useStores from "../../../Hooks/useStores";
-import useAPI from "../../../Hooks/useAPI";
-import Matomo from "../../../Services/Matomo";
-import { Query } from "../../../Types/Query";
-import { getProperties } from "../../../Helpers/QueryHelpers";
-import { APIError } from "../../../Services/API";
+import ActionError from '../../../Components/ActionError';
+import SpinnerPanel from '../../../Components/SpinnerPanel';
+import { getProperties } from '../../../Helpers/QueryHelpers';
+import useAPI from '../../../Hooks/useAPI';
+import useStores from '../../../Hooks/useStores';
+import Matomo from '../../../Services/Matomo';
+import type { APIError } from '../../../Services/API';
+import type { Query } from '../../../Types/Query';
 
-import SpinnerPanel from "../../../Components/SpinnerPanel";
-import ActionError from "../../../Components/ActionError";
 
 interface SaveButtonProps {
   disabled: boolean;
@@ -54,7 +54,7 @@ const SaveButton = observer(({ disabled }: SaveButtonProps) => {
   const { queryBuilderStore, queriesStore, spacesStore } = useStores();
 
   const handleSave = () => {
-    Matomo.trackEvent("Query", "Save", queryBuilderStore.queryId);
+    Matomo.trackEvent('Query', 'Save', queryBuilderStore.queryId);
     saveQuery();
   };
 
@@ -68,25 +68,25 @@ const SaveButton = observer(({ disabled }: SaveButtonProps) => {
       //TODO: fix queryId undefined check after QueryBuilderStore refactoring/splitting
       const queryId = (queryBuilderStore.saveAsMode?queryBuilderStore?.queryId:queryBuilderStore.sourceQuery?.id) as string;
       const querySpecification = queryBuilderStore.querySpecification;
-      const spaceName = (queryBuilderStore.space?.name)?queryBuilderStore.space.name:"myspace";
+      const spaceName = (queryBuilderStore.space?.name)?queryBuilderStore.space.name:'myspace';
       try {
         await API.saveQuery(queryId, querySpecification, spaceName);
         if (queryBuilderStore.saveAsMode) {
           const sourceQuery = {
             id: queryId,
-            context: querySpecification["@context"],
+            context: querySpecification['@context'],
             structure: querySpecification.structure,
             properties: getProperties(querySpecification),
             meta: querySpecification.meta,
-            label: (querySpecification.meta?.name)?querySpecification.meta.name:"",
-            description: (querySpecification.meta?.description)?querySpecification.meta.description:"",
+            label: (querySpecification.meta?.name)?querySpecification.meta.name:'',
+            description: (querySpecification.meta?.description)?querySpecification.meta.description:'',
             space: spaceName
           } as Query.Query;
           queriesStore.addQuery(sourceQuery);
           queryBuilderStore.setSourceQuery(sourceQuery);
           queryBuilderStore.setQuerySaved();
           setIsSaving(false);
-          const match = matchPath({path:"/queries/:id/:mode"}, location.pathname);
+          const match = matchPath({path:'/queries/:id/:mode'}, location.pathname);
           const mode = match?.params?.mode;
           const path = mode
             ? `/queries/${queryId}/${mode}`
@@ -114,7 +114,7 @@ const SaveButton = observer(({ disabled }: SaveButtonProps) => {
 
   return (
     <>
-      <Button variant="primary" disabled={disabled} onClick={handleSave}>
+      <Button variant={'primary'} disabled={disabled} onClick={handleSave}>
         <FontAwesomeIcon icon={faSave} />&nbsp;Save
       </Button>
       <SpinnerPanel show={isSaving} text={`Saving query ${queryBuilderStore.queryId}`} />
@@ -122,6 +122,6 @@ const SaveButton = observer(({ disabled }: SaveButtonProps) => {
     </>
   );
 });
-SaveButton.displayName = "SaveButton";
+SaveButton.displayName = 'SaveButton';
 
 export default SaveButton;

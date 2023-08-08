@@ -21,32 +21,32 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
-import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
+import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
+import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
-import MultiToggle from "./Toggle/MultiToggle";
-import { ToggleItemValue, ToggleItem } from "./Toggle/types";
+import MultiToggle from './Toggle/MultiToggle';
+import type { ToggleItemValue, ToggleItem } from './Toggle/types';
 
 const useStyles = createUseStyles({
   option: {
-    marginBottom: "20px",
-    "&:last-child": {
+    marginBottom: '20px',
+    '&:last-child': {
       marginBottom: 0
     }
   },
   toggle: {
-    display: "inline-block"
+    display: 'inline-block'
   },
   optionLabel: {
-    display: "inline-block",
-    fontWeight: "bold",
-    marginBottom: "5px",
-    marginLeft: "5px",
-    "& small": {
-      fontWeight: "normal",
-      fontStyle: "italic"
+    display: 'inline-block',
+    fontWeight: 'bold',
+    marginBottom: '5px',
+    marginLeft: '5px',
+    '& small': {
+      fontWeight: 'normal',
+      fontStyle: 'italic'
     }
   }
 });
@@ -72,7 +72,7 @@ const Toggle = ({
 
   const { name, value } = option;
 
-  const isReadOnly = typeof onChange !== "function";
+  const isReadOnly = typeof onChange !== 'function';
 
   const handleChange = (newValue: ToggleItemValue) => !isReadOnly && onChange(name, newValue);
 
@@ -81,19 +81,19 @@ const Toggle = ({
   }
 
   return (
-    <div className={`${classes.option} ${className ? className : ""}`}>
+    <div className={`${classes.option} ${className ? className : ''}`}>
       <div className={classes.toggle}>
         <MultiToggle
           selectedValue={value}
           onChange={handleChange}
         >
           <MultiToggle.Toggle
-            color={value ? "#40a9f3" : "var(--ft-color-normal)"}
+            color={value ? '#40a9f3' : 'var(--ft-color-normal)'}
             icon={faCheck}
             value={true}
           />
           <MultiToggle.Toggle
-            color={value ? "var(--ft-color-normal)" : "var(--ft-color-loud)"}
+            color={value ? 'var(--ft-color-normal)' : 'var(--ft-color-loud)'}
             icon={faTimes}
             value={undefined}
           />

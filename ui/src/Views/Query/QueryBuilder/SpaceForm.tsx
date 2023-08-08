@@ -21,69 +21,70 @@
  *
  */
 
-import React, { ChangeEvent } from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
-import Toggle from "../../../Components/Toggle";
-import { ToggleItemValue } from "../../../Components/Toggle/types";
+import Toggle from '../../../Components/Toggle';
+import useStores from '../../../Hooks/useStores';
+import type { ToggleItemValue } from '../../../Components/Toggle/types';
 
-import useStores from "../../../Hooks/useStores";
+import type { ChangeEvent } from 'react';
 
 const useStyles = createUseStyles({
   container: {
-    display: "flex",
-    alignItems: "baseline",
-    whiteSpace: "nowrap"
+    display: 'flex',
+    alignItems: 'baseline',
+    whiteSpace: 'nowrap'
   },
   toggle: {
-    display: "inline-block",
-    margin: "6px 0"
+    display: 'inline-block',
+    margin: '6px 0'
   },
   select: {
     marginBottom: 0,
-    display: "inline-block",
-    minWidth: "100px",
-    width: "100%",
-    padding: "0.375rem 20px 0.75rem 6px",
-    color: "var(--ft-color-loud)",
-    border: "1px solid transparent",
-    borderRadius: "2px",
-    backgroundColor: "var(--bg-color-blend-contrast1)",
-    "-webkit-appearance": "none",
-    "&:not(.disabled):not(:disabled):hover": {
+    display: 'inline-block',
+    minWidth: '100px',
+    width: '100%',
+    padding: '0.375rem 20px 0.75rem 6px',
+    color: 'var(--ft-color-loud)',
+    border: '1px solid transparent',
+    borderRadius: '2px',
+    backgroundColor: 'var(--bg-color-blend-contrast1)',
+    '-webkit-appearance': 'none',
+    '&:not(.disabled):not(:disabled):hover': {
       //backgroundColor: "#5a6268",
       //borderColor: "#5a6268"
     },
-    "&:focus": {
-      color: "var(--ft-color-loud)",
-      borderColor: "rgba(64, 169, 243, 0.5)",
-      backgroundColor: "transparent",
+    '&:focus': {
+      color: 'var(--ft-color-loud)',
+      borderColor: 'rgba(64, 169, 243, 0.5)',
+      backgroundColor: 'transparent',
       outline: 0,
-      boxShadow: "0 0 0 0.2rem rgb(0 123 255 / 25%)"
+      boxShadow: '0 0 0 0.2rem rgb(0 123 255 / 25%)'
     },
-    "&.disabled,&:disabled": {
-      backgroundColor: "var(--bg-color-blend-contrast1)",
-      color: "var(--ft-color-normal)",
-      cursor: "text"
+    '&.disabled,&:disabled': {
+      backgroundColor: 'var(--bg-color-blend-contrast1)',
+      color: 'var(--ft-color-normal)',
+      cursor: 'text'
     }
   },
   selectBox: {
     flex: 1,
-    position: "relative",
-    marginLeft: "5px",
-    "&:not(.disabled):after": {
+    position: 'relative',
+    marginLeft: '5px',
+    '&:not(.disabled):after': {
       content: '""',
-      position: "absolute",
-      top: "50%",
-      right: "10px",
+      position: 'absolute',
+      top: '50%',
+      right: '10px',
       width: 0,
       height: 0,
-      marginTop: "-3px",
-      borderTop: "6px solid white",
-      borderRight: "6px solid transparent",
-      borderLeft: "6px solid transparent",
-      pointerEvents: "none"
+      marginTop: '-3px',
+      borderTop: '6px solid white',
+      borderRight: '6px solid transparent',
+      borderLeft: '6px solid transparent',
+      pointerEvents: 'none'
     }
   }
 });
@@ -109,7 +110,7 @@ const SpaceForm = observer(({ className }: SpaceFormProps) => {
     : spacesStore.allowedSharedSpacesToCreateQueries;
 
   const sharedSpaceClass = `${classes.selectBox} ${
-    isReadMode ? "disabled" : ""
+    isReadMode ? 'disabled' : ''
   }`;
 
   const handleChangeSpace = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -135,10 +136,10 @@ const SpaceForm = observer(({ className }: SpaceFormProps) => {
   };
 
   return (
-    <div className={`${classes.container} ${className ? className : ""}`}>
+    <div className={`${classes.container} ${className ? className : ''}`}>
       <Toggle
         className={classes.toggle}
-        option={{ name: "", value: isShared ? true : undefined }}
+        option={{ name: '', value: isShared ? true : undefined }}
         label="Shared"
         show={true}
         onChange={handleChangePrivate}
@@ -163,11 +164,11 @@ const SpaceForm = observer(({ className }: SpaceFormProps) => {
           </div>
         </>
       ) : (
-        <span style={{ flex: 1 }}></span>
+        <span style={{ flex: 1 }} />
       )}
     </div>
   );
 });
-SpaceForm.displayName = "SpaceForm";
+SpaceForm.displayName = 'SpaceForm';
 
 export default SpaceForm;

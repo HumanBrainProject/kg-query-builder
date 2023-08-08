@@ -21,22 +21,22 @@
  *
  */
 
-import { Change } from "diff";
-import React from "react";
-import { createUseStyles } from "react-jss";
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import type { Change } from 'diff';
 
 const useStyles = createUseStyles({
   removed: {
-    background: "#FADBD7",
-    textDecoration: "line-through",
-    "& + $added": {
-      marginLeft: "3px"
+    background: '#FADBD7',
+    textDecoration: 'line-through',
+    '& + $added': {
+      marginLeft: '3px'
     }
   },
   added: {
-    background: "#A5EBC3",
-    "& + $removed": {
-      marginLeft: "3px"
+    background: '#A5EBC3',
+    '& + $removed': {
+      marginLeft: '3px'
     }
   },
   unchanged: {}

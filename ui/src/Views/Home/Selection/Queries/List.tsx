@@ -21,29 +21,29 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import { Query as QueryProps } from "../../../../Types/Query";
-import Query from "./Query";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import Query from './Query';
+import type { Query as QueryProps } from '../../../../Types/Query';
 
 
 const useStyles = createUseStyles({
   container: {
-    color: "var(--ft-color-loud)"
+    color: 'var(--ft-color-loud)'
   },
   title: {
-    display: "flex",
-    marginBottom: "10px",
-    paddingBottom: "10px",
-    paddingTop: "20px",
-    borderBottom: "1px solid var(--border-color-ui-contrast5)",
-    "& h4": {
+    display: 'flex',
+    marginBottom: '10px',
+    paddingBottom: '10px',
+    paddingTop: '20px',
+    borderBottom: '1px solid var(--border-color-ui-contrast5)',
+    '& h4': {
       flex: 1,
-      display: "inline-block",
+      display: 'inline-block',
       margin: 0,
       padding: 0,
-      fontSize: "1.2rem"
+      fontSize: '1.2rem'
     }
   }
 });
@@ -73,6 +73,6 @@ const List = observer(({ title, list }: ListProps) => {
     </div>
   );
 });
-List.displayName = "List";
+List.displayName = 'List';
 
 export default List;

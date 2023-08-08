@@ -21,78 +21,79 @@
  *
  */
 
-import React, { MouseEvent } from "react";
-import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconDefinition } from "@fortawesome/fontawesome-common-types";
-import { PathMatch } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import type { IconDefinition } from '@fortawesome/fontawesome-common-types';
+import type { MouseEvent } from 'react';
+import type { PathMatch } from 'react-router-dom';
 
 const useStyles = createUseStyles({
   container: {
-    height: "50px",
-    lineHeight: "45px",
-    color: "var(--ft-color-normal)",
-    background: "rgba(255,255,255,0.05)",
-    padding: "0 20px 0 20px",
-    border: "1px solid var(--border-color-ui-contrast2)",
-    borderLeft: "none",
-    cursor: "pointer",
-    display: "grid",
-    gridTemplateColumns: "auto 1fr auto",
-    "&$closable": {
-      paddingRight: "10px"
+    height: '50px',
+    lineHeight: '45px',
+    color: 'var(--ft-color-normal)',
+    background: 'rgba(255,255,255,0.05)',
+    padding: '0 20px 0 20px',
+    border: '1px solid var(--border-color-ui-contrast2)',
+    borderLeft: 'none',
+    cursor: 'pointer',
+    display: 'grid',
+    gridTemplateColumns: 'auto 1fr auto',
+    '&$closable': {
+      paddingRight: '10px'
     },
-    "& $icon": {
+    '& $icon': {
       opacity: 0.7
     },
-    "&:hover": {
-      backgroundColor: "rgba(255,255,255,0.1)",
-      color: "var(--ft-color-loud)",
-      "& $icon": {
+    '&:hover': {
+      backgroundColor: 'rgba(255,255,255,0.1)',
+      color: 'var(--ft-color-loud)',
+      '& $icon': {
         opacity: 1
       }
     }
   },
   closable: {},
   disabled: {
-    "&, &:hover": {
-      background: "rgba(255,255,255,0.05)",
-      color: "var(--ft-color-normal)",
-      cursor: "not-allowed",
-      "& $icon": {
+    '&, &:hover': {
+      background: 'rgba(255,255,255,0.05)',
+      color: 'var(--ft-color-normal)',
+      cursor: 'not-allowed',
+      '& $icon': {
         opacity: 0.2
       }
     }
   },
   current: {
-    backgroundColor: "rgba(255,255,255,0.1)",
-    color: "var(--ft-color-loud)",
-    borderBottom: "1px solid var(--list-border-selected)",
-    "& $icon": {
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    color: 'var(--ft-color-loud)',
+    borderBottom: '1px solid var(--list-border-selected)',
+    '& $icon': {
       opacity: 1
     }
   },
   text: {
-    display: "inline-block",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-    "& + $close": {
-      marginLeft: "10px"
+    display: 'inline-block',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    '& + $close': {
+      marginLeft: '10px'
     }
   },
   icon: {
-    color: "var(--ft-color-loud)",
-    display: "inline-block",
-    "& + $text": {
-      marginLeft: "10px"
+    color: 'var(--ft-color-loud)',
+    display: 'inline-block',
+    '& + $text': {
+      marginLeft: '10px'
     }
   },
   close: {
-    color: "var(--ft-color-normal)",
-    padding: "0 10px",
-    "&:hover": {
-      color: "var(--ft-color-loud)"
+    color: 'var(--ft-color-normal)',
+    padding: '0 10px',
+    '&:hover': {
+      color: 'var(--ft-color-loud)'
     }
   }
 });
@@ -121,11 +122,11 @@ const Tab = ({
   onClose
 }: TabProps) => {
   const classes = useStyles();
-  const closeable = typeof onClose === "function";
+  const closeable = typeof onClose === 'function';
 
   const handleClick = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    typeof onClick === "function" && onClick(e);
+    typeof onClick === 'function' && onClick(e);
   };
 
   const handleClose = (e: MouseEvent<HTMLElement>) => {
@@ -135,9 +136,9 @@ const Tab = ({
 
   return (
     <div
-      className={`${classes.container} ${disabled ? classes.disabled : ""} ${
-        current ? classes.current : ""
-      } ${closeable ? classes.closable : ""}`}
+      className={`${classes.container} ${disabled ? classes.disabled : ''} ${
+        current ? classes.current : ''
+      } ${closeable ? classes.closable : ''}`}
       onClick={handleClick}
     >
       <div
@@ -154,7 +155,7 @@ const Tab = ({
       )}
       {closeable ? (
         <div className={classes.close} onClick={handleClose}>
-          <FontAwesomeIcon icon={"times"} />
+          <FontAwesomeIcon icon={'times'} />
         </div>
       ) : null}
     </div>

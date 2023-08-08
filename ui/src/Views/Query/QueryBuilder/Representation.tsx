@@ -21,21 +21,21 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import { Scrollbars } from "react-custom-scrollbars-2";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { Scrollbars } from 'react-custom-scrollbars-2';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../../../Hooks/useStores";
+import useStores from '../../../Hooks/useStores';
 
-import Field from "./Field";
+import Field from './Field';
 
 const useStyles = createUseStyles({
   container: {
-    position:"relative",
-    background: "linear-gradient(135deg, rgba(15,35,45,0.2) 0%, rgba(5,20,35,0.6) 100%)",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    color:"var(--ft-color-normal)"
+    position:'relative',
+    background: 'linear-gradient(135deg, rgba(15,35,45,0.2) 0%, rgba(5,20,35,0.6) 100%)',
+    border: '1px solid var(--border-color-ui-contrast1)',
+    color:'var(--ft-color-normal)'
   }
 });
 
@@ -61,6 +61,6 @@ const Representation = observer(({ className }:RepresentationProps) => {
     </div>
   );
 });
-Representation.displayName = "Representation";
+Representation.displayName = 'Representation';
 
 export default Representation;

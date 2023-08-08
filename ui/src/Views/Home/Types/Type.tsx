@@ -21,67 +21,68 @@
  *
  */
 
-import React, {KeyboardEvent, RefObject, useEffect, useRef} from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faChevronRight} from "@fortawesome/free-solid-svg-icons/faChevronRight";
-import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
+import {faChevronRight} from '@fortawesome/free-solid-svg-icons/faChevronRight';
+import {faCircle} from '@fortawesome/free-solid-svg-icons/faCircle';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React, { useEffect, useRef} from 'react';
+import { createUseStyles } from 'react-jss';
 
-import Icon from "../../../Components/Icon";
+import Icon from '../../../Components/Icon';
 
-import useStores from "../../../Hooks/useStores";
-import { Type as TypeType} from "../../../types";
-import Matomo from "../../../Services/Matomo";
+import useStores from '../../../Hooks/useStores';
+import Matomo from '../../../Services/Matomo';
+import type { Type as TypeType} from '../../../types';
+import type {KeyboardEvent, RefObject} from 'react';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
-    margin: "4px 1px",
-    padding: "15px 10px",
-    color: "var(--ft-color-loud)",
-    fontSize: "1.2em",
-    fontWeight: "normal",
-    cursor: "pointer",
-    transition: "background .3s ease-in-out",
-    background: "rgba(0,0,0,0.4)",
-    "& small": {
-      color: "var(--ft-color-quiet)",
-      fontStyle: "italic"
+    position: 'relative',
+    margin: '4px 1px',
+    padding: '15px 10px',
+    color: 'var(--ft-color-loud)',
+    fontSize: '1.2em',
+    fontWeight: 'normal',
+    cursor: 'pointer',
+    transition: 'background .3s ease-in-out',
+    background: 'rgba(0,0,0,0.4)',
+    '& small': {
+      color: 'var(--ft-color-quiet)',
+      fontStyle: 'italic'
     },
-    "&:hover, &$selected": {
-      background: "linear-gradient(90deg, rgba(30,60,70,0.9) 0%, rgba(20,50,60,0.9) 100%)",
-      "& $nextIcon": {
-        color: "var(--ft-color-loud)"
+    '&:hover, &$selected': {
+      background: 'linear-gradient(90deg, rgba(30,60,70,0.9) 0%, rgba(20,50,60,0.9) 100%)',
+      '& $nextIcon': {
+        color: 'var(--ft-color-loud)'
       }
     }
   },
   selected: {},
   nextIcon: {
-    position: "absolute",
-    top: "16px",
-    right: "15px",
-    color: "var(--ft-color-quiet)"
+    position: 'absolute',
+    top: '16px',
+    right: '15px',
+    color: 'var(--ft-color-quiet)'
   }
 });
 
 const getTypeLabel = (type: TypeType) => {
   if (!type) {
-    return "";
+    return '';
   }
   if (type.label) {
     return type.label;
   }
   if (!type.id) {
-    return "";
+    return '';
   }
-  const parts = type.id.split("/");
+  const parts = type.id.split('/');
   return parts[parts.length-1];
 };
 
 interface TypeProps {
   type: TypeType;
-  enableFocus: boolean; 
+  enableFocus: boolean;
   onKeyDown: (e: KeyboardEvent<HTMLDivElement>) => void
 }
 
@@ -102,8 +103,8 @@ const Type = observer(({ type, enableFocus, onKeyDown }: TypeProps) =>  {
 
   const selectType = () => {
     if (type.id !== queryBuilderStore.typeId) {
-      Matomo.trackEvent("Type", "Select", type.id);
-      localStorage.setItem("type", type.id);
+      Matomo.trackEvent('Type', 'Select', type.id);
+      localStorage.setItem('type', type.id);
       queriesStore.toggleShowSavedQueries(false);
       queriesStore.clearQueries();
       queryBuilderStore.setType(type);
@@ -113,7 +114,7 @@ const Type = observer(({ type, enableFocus, onKeyDown }: TypeProps) =>  {
   const handleClick = () => selectType();
 
   const handleKeyDown= (e: KeyboardEvent<HTMLDivElement>) => {
-    if(e.key === "Enter") {
+    if(e.key === 'Enter') {
       selectType();
     }
     onKeyDown(e);
@@ -122,7 +123,7 @@ const Type = observer(({ type, enableFocus, onKeyDown }: TypeProps) =>  {
   const label = getTypeLabel(type);
 
   return (
-    <div tabIndex={-1} ref={ref as RefObject<HTMLDivElement>} className={`${classes.container} ${type.id === queryBuilderStore.typeId?classes.selected:""}`} onClick={handleClick} onKeyDown={handleKeyDown}>
+    <div tabIndex={-1} ref={ref as RefObject<HTMLDivElement>} className={`${classes.container} ${type.id === queryBuilderStore.typeId?classes.selected:''}`} onClick={handleClick} onKeyDown={handleKeyDown}>
       <Icon icon={faCircle} color={type.color}/>
       {label} - <small>{type.id}</small>
       <div className={classes.nextIcon} >
@@ -131,6 +132,6 @@ const Type = observer(({ type, enableFocus, onKeyDown }: TypeProps) =>  {
     </div>
   );
 });
-Type.displayName = "Type";
+Type.displayName = 'Type';
 
 export default Type;

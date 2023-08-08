@@ -21,17 +21,18 @@
  *
  */
 
-import React, { JSX, useEffect } from "react";
-import { observer } from "mobx-react-lite";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
-import Button from "react-bootstrap/Button"
+import {faRedoAlt} from '@fortawesome/free-solid-svg-icons/faRedoAlt';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React, { useEffect } from 'react';
+import Button from 'react-bootstrap/Button';
 
-import useStores from "../Hooks/useStores";
-import useListTypesQuery from "../Hooks/useListTypesQuery";
+import ErrorPanel from '../Components/ErrorPanel';
+import SpinnerPanel from '../Components/SpinnerPanel';
+import useListTypesQuery from '../Hooks/useListTypesQuery';
+import useStores from '../Hooks/useStores';
 
-import SpinnerPanel from "../Components/SpinnerPanel";
-import ErrorPanel from "../Components/ErrorPanel";
+import type { JSX} from 'react';
 
 interface TypesProps {
   children?: string|JSX.Element|(null|undefined|string|JSX.Element)[];
@@ -62,7 +63,7 @@ const Types = observer(({ children }: TypesProps) => {
       <ErrorPanel>
         There was a problem retrieving the types ({error}).
           If the problem persists, please contact the support.<br /><br />
-        <Button variant={"primary"} onClick={refetch}>
+        <Button variant={'primary'} onClick={refetch}>
           <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
         </Button>
       </ErrorPanel>
@@ -71,14 +72,14 @@ const Types = observer(({ children }: TypesProps) => {
 
   if (isUninitialized || isFetching) {
     return <SpinnerPanel text="Fetching types..." />;
-  }  
+  }
 
   if (!types?.length) {
     return (
       <ErrorPanel>
-          No types available.
-          If the problem persists, please contact the support.<br /><br />
-          <Button variant={"primary"} onClick={refetch}>
+        No types available.
+        If the problem persists, please contact the support.<br /><br />
+        <Button variant={'primary'} onClick={refetch}>
           <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
         </Button>
       </ErrorPanel>
@@ -91,6 +92,6 @@ const Types = observer(({ children }: TypesProps) => {
     </>
   );
 });
-Types.displayName = "Types";
+Types.displayName = 'Types';
 
 export default Types;

@@ -21,34 +21,35 @@
  *
  */
 
-import React, { MouseEvent } from "react";
-import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faLongArrowAltLeft} from "@fortawesome/free-solid-svg-icons/faLongArrowAltLeft";
-import { observer } from "mobx-react-lite";
+import {faLongArrowAltLeft} from '@fortawesome/free-solid-svg-icons/faLongArrowAltLeft';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
-import PropertyTypes from "../../../../PropertyTypes";
-import { Property as PropertyType } from "../../../../../types";
+import PropertyTypes from '../../../../PropertyTypes';
+import type { Property as PropertyType } from '../../../../../types';
+import type { MouseEvent } from 'react';
 
 const useStyles = createUseStyles({
   property: {
-    color: "var(--ft-color-loud)",
-    fontWeight: "normal",
-    cursor: "pointer",
-    padding: "10px",
-    margin: "1px",
-    background: "rgba(0,0,0,0.4)",
-    "& small": {
-      color: "var(--ft-color-quiet)",
-      fontStyle: "italic"
+    color: 'var(--ft-color-loud)',
+    fontWeight: 'normal',
+    cursor: 'pointer',
+    padding: '10px',
+    margin: '1px',
+    background: 'rgba(0,0,0,0.4)',
+    '& small': {
+      color: 'var(--ft-color-quiet)',
+      fontStyle: 'italic'
     },
-    "&:hover": {
-      background: "linear-gradient(90deg, rgba(40,70,80,0.9) 0%, rgba(45,75,85,0.9) 100%)"
+    '&:hover': {
+      background: 'linear-gradient(90deg, rgba(40,70,80,0.9) 0%, rgba(45,75,85,0.9) 100%)'
     }
   },
   reverseLink: {
-    color: "greenyellow",
-    transform: "translateY(1px)"
+    color: 'greenyellow',
+    transform: 'translateY(1px)'
   }
 });
 
@@ -77,6 +78,6 @@ const Property = observer(({ property, onClick }: PropertyProps) => {
     </div>
   );
 });
-Property.displayName = "Property";
+Property.displayName = 'Property';
 
 export default Property;

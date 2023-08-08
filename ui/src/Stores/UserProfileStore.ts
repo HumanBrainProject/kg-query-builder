@@ -21,8 +21,8 @@
  *
  */
 
-import { observable, action, makeObservable } from "mobx";
-import { UserProfile } from "../types";
+import { observable, action, makeObservable } from 'mobx';
+import type { UserProfile } from '../types';
 
 export class UserProfileStore {
   user: UserProfile|undefined = undefined;
@@ -35,7 +35,7 @@ export class UserProfileStore {
   }
 
   setUserProfile(user: UserProfile|undefined) {
-    this.user = user
+    this.user = user;
   }
 }
 

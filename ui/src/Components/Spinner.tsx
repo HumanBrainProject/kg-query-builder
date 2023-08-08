@@ -21,25 +21,25 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleNotch } from "@fortawesome/free-solid-svg-icons/faCircleNotch";
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons/faCircleNotch';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
 const useStyles = createUseStyles({
   spinnerPanel: {
-    position: "absolute !important",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    fontSize: "1.2em",
-    fontWeight: "lighter",
-    width: "100%",
-    textAlign: "center"
+    position: 'absolute !important',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    fontSize: '1.2em',
+    fontWeight: 'lighter',
+    width: '100%',
+    textAlign: 'center'
   },
   spinnerLabel: {
-    paddingLeft: "6px",
-    display: "inline-block"
+    paddingLeft: '6px',
+    display: 'inline-block'
   }
 });
 

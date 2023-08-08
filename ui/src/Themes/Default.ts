@@ -21,123 +21,123 @@
  *
  */
 
-import { Theme } from "./Theme";
+import type { Theme } from './Theme';
 
 const theme: Theme = {
-  name: "default",
+  name: 'default',
   background: {
     gradient: {
-      colorStart: "#1C2022",
-      colorEnd: "#4895a4",
-      angle: "165deg"
+      colorStart: '#1C2022',
+      colorEnd: '#4895a4',
+      angle: '165deg'
     },
     image: `${window.rootPath}/assets/background-default.jpg`,
-    size: "cover"
+    size: 'cover'
   },
   contrast1: {
-    backgroundColor: "rgba(0,0,0,0.9)",
-    borderColor: "#111314"
+    backgroundColor: 'rgba(0,0,0,0.9)',
+    borderColor: '#111314'
   },
   contrast2: {
-    backgroundColor: "#24282a",
-    borderColor: "#141618"
+    backgroundColor: '#24282a',
+    borderColor: '#141618'
   },
   contrast3: {
-    backgroundColor: "#2B3032"
+    backgroundColor: '#2B3032'
   },
   contrast4: {
-    backgroundColor: "#4f5658"
+    backgroundColor: '#4f5658'
   },
   contrast5: {
-    borderColor: "rgba(255, 255, 255, 0.3)"
+    borderColor: 'rgba(255, 255, 255, 0.3)'
   },
   blendContrast1: {
-    backgroundColor: "rgba(0, 0, 0, 0.2)"
+    backgroundColor: 'rgba(0, 0, 0, 0.2)'
   },
   list: {
     hover: {
-      backgroundColor: "#2b353c",
-      borderColor: "#266ea1"
+      backgroundColor: '#2b353c',
+      borderColor: '#266ea1'
     },
     selected: {
-      backgroundColor: "#39464f",
-      borderColor: "#6caddc"
+      backgroundColor: '#39464f',
+      borderColor: '#6caddc'
     }
   },
   quiet: {
-    color: "rgba(255, 255, 255, 0.4)"
+    color: 'rgba(255, 255, 255, 0.4)'
   },
   normal: {
-    color: "rgba(255, 255, 255, 0.5)"
+    color: 'rgba(255, 255, 255, 0.5)'
   },
   loud: {
-    color: "rgb(224, 224, 224)"
+    color: 'rgb(224, 224, 224)'
   },
   louder: {
-    color: "rgb(244, 244, 244)"
+    color: 'rgb(244, 244, 244)'
   },
   error: {
-    color: "#e74c3c",
+    color: '#e74c3c',
     quiet: {
-      color: "#5b130b"
+      color: '#5b130b'
     },
     normal: {
-      color: "#ac2415"
+      color: '#ac2415'
     },
     loud: {
-      color: "#ac2415"
+      color: '#ac2415'
     }
   },
   warn: {
     quiet: {
-      color: "#473600"
+      color: '#473600'
     },
     normal: {
-      color: "#8f6b00"
+      color: '#8f6b00'
     },
     loud: {
-      color: "#b88a00"
+      color: '#b88a00'
     }
   },
   info: {
-    color: "#24282a",
+    color: '#24282a',
     normal: {
-      color: "#dfc36f"
+      color: '#dfc36f'
     }
   },
   pane: {
     boxShadow: {
-      color: "#333"
+      color: '#333'
     }
   },
   release: {
     status: {
       boxShadow: {
-        color: "#00000080"
+        color: '#00000080'
       },
       released: {
-        backgroundColor: "rgba(52, 152, 219, 0.25)",
-        color: "rgb(52, 152, 219)"
+        backgroundColor: 'rgba(52, 152, 219, 0.25)',
+        color: 'rgb(52, 152, 219)'
       },
       notReleased: {
-        backgroundColor: "rgba(231, 76, 60, 0.25)",
-        color: "rgb(231, 76, 60)"
+        backgroundColor: 'rgba(231, 76, 60, 0.25)',
+        color: 'rgb(231, 76, 60)'
       },
       hasChanged: {
-        backgroundColor: "rgba(241, 196, 15, 0.25)",
-        color: "rgb(241, 196, 15)"
+        backgroundColor: 'rgba(241, 196, 15, 0.25)',
+        color: 'rgb(241, 196, 15)'
       }
     },
     highlight: {
-      backgroundColor: "rgb(46, 204, 113, 0.25)",
-      color: "rgb(46, 204, 113)"
+      backgroundColor: 'rgb(46, 204, 113, 0.25)',
+      color: 'rgb(46, 204, 113)'
     }
   },
   bookmark: {
     on: {
-      color: "#EFEC2D",
+      color: '#EFEC2D',
       highlight: {
-        color: "#ffe100"
+        color: '#ffe100'
       }
     }
   }

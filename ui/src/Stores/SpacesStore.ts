@@ -21,9 +21,9 @@
  *
  */
 
-import { observable, action, computed, makeObservable } from "mobx";
+import { observable, action, computed, makeObservable } from 'mobx';
 
-import { Space } from "../types";
+import type { Space } from '../types';
 
 export class SpacesStore {
   spaces:Space[] = [];
@@ -33,7 +33,7 @@ export class SpacesStore {
       spaces: observable,
       privateSpace: computed,
       sharedSpaces: computed,
-      allowedSharedSpacesToCreateQueries: computed, 
+      allowedSharedSpacesToCreateQueries: computed,
       hasSpaces: computed,
       setSpaces: action
     });
@@ -58,7 +58,7 @@ export class SpacesStore {
   }
 
   setSpaces(spaces: Space[]) {
-    this.spaces = spaces
+    this.spaces = spaces;
   }
 }
 

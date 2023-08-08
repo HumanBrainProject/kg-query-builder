@@ -20,7 +20,7 @@
  * (Human Brain Project SGA1, SGA2 and SGA3).
  *
  */
-import { toJS } from "mobx";
+import { toJS } from 'mobx';
 
 import {
   optionsToKeepOnFlattenendField,
@@ -28,21 +28,21 @@ import {
   namespaceReg,
   attributeReg,
   modelReg
-} from "../../Helpers/QueryHelpers";
-import Field from "../Field";
-import { QuerySpecification } from "../../Types/QuerySpecification";
-import { Query } from "../../Types/Query";
-import { Type } from "../../types";
+} from '../../Helpers/QueryHelpers';
+import Field from '../Field';
+import type { Query } from '../../Types/Query';
+import type { QuerySpecification } from '../../Types/QuerySpecification';
+import type { Type } from '../../types';
 
 const getRelativePathFromObject = (path?: QuerySpecification.PathItem): string | null => {
   if (!path) {
     return null;
   }
-  if (typeof path === "string") {
+  if (typeof path === 'string') {
     return path;
   }
   if (path instanceof Object) {
-    return path["@id"];
+    return path['@id'];
   }
   return null;
 };
@@ -84,7 +84,7 @@ const getIsReverse = (path: QuerySpecification.Path): boolean => {
 
 const getTypeFromObject = (path?: QuerySpecification.TypeFilter): string | undefined => {
   if (path instanceof Object) {
-    return path["@id"];
+    return path['@id'];
   }
   return undefined;
 };
@@ -138,10 +138,10 @@ const getPropertyFromLookups = (
 ): QuerySpecification.Schema => {
   const propertyFallback: QuerySpecification.Schema = {
     isUnknown: true,
-    label: "",
-    attribute: attribute ? attribute: "",
+    label: '',
+    attribute: attribute ? attribute: '',
     attributeNamespace: attributeNamespace,
-    simpleAttributeName: simpleAttributeName?simpleAttributeName:"",
+    simpleAttributeName: simpleAttributeName?simpleAttributeName:'',
     reverse: isReverse
   };
   if (!(types instanceof Object) || !Array.isArray(lookups) || !attribute) {
@@ -217,7 +217,7 @@ const getProperty = (
         const modelMatch = relativePath.match(modelReg);
         if (modelMatch) {
           [, attribute] = modelMatch;
-        } else if (relativePath === "@id" || relativePath === "@type") {
+        } else if (relativePath === '@id' || relativePath === '@type') {
           attribute = relativePath;
         }
       }
@@ -290,9 +290,7 @@ const addFieldToParent = (parentField: Field, field: Field) => {
   parentField.isInvalidLeaf = false;
 };
 
-const getFlattenRelativePath = (path: (QuerySpecification.PathObject | string)[]) => {
-  return path.length > 2 ? path.slice(1) : path[1];
-};
+const getFlattenRelativePath = (path: (QuerySpecification.PathObject | string)[]) => path.length > 2 ? path.slice(1) : path[1];
 
 const setFieldProperties = (
   field: Field,

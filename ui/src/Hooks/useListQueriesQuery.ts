@@ -21,24 +21,25 @@
  *
  */
 
-import { useMemo } from "react";
-import useAPI from "./useAPI";
-import useGenericQuery, { GenericQuery } from "./useGenericQuery";
-import { QuerySpecification } from "../Types/QuerySpecification";
-import { Query } from "../Types/Query";
-import { normalizeQuery } from "../Helpers/QueryHelpers";
+import { useMemo } from 'react';
+import { normalizeQuery } from '../Helpers/QueryHelpers';
+import useAPI from './useAPI';
+import useGenericQuery from './useGenericQuery';
+import type { GenericQuery } from './useGenericQuery';
+import type { Query } from '../Types/Query';
+import type { QuerySpecification } from '../Types/QuerySpecification';
 
 export type ListQueriesQuery = GenericQuery<Query.Query[]>;
 
 const useListQueriesQuery = (type: string, skip: boolean): ListQueriesQuery => {
-  
+
   const API = useAPI();
 
   const fetch = useMemo(() => async () => {
     const { data } = await API.getQueries(type);
     try {
-        const queries = await Promise.all(data.map(async (jsonSpec: QuerySpecification.QuerySpecification) => normalizeQuery(jsonSpec)));
-        return queries;
+      const queries = await Promise.all(data.map(async (jsonSpec: QuerySpecification.QuerySpecification) => normalizeQuery(jsonSpec)));
+      return queries;
     } catch (e) {
       throw new Error(`Error while trying to expand/compact JSON-LD (${e})`);
     }

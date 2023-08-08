@@ -21,60 +21,60 @@
  *
  */
 
-import React from "react";
-import {observer} from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
+import {observer} from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../../../../../Hooks/useStores";
-import { Type as PropertyType } from "../../../../PropertyTypes";
-import Toggle from "../../../../../Components/Toggle";
-import { ToggleItemValue } from "../../../../../Components/Toggle/types";
-import { Query } from "../../../../../Types/Query";
+import Toggle from '../../../../../Components/Toggle';
+import useStores from '../../../../../Hooks/useStores';
+import { Type as PropertyType } from '../../../../PropertyTypes';
+import type { ToggleItemValue } from '../../../../../Components/Toggle/types';
+import type { Query } from '../../../../../Types/Query';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
-    paddingTop: "20px",
-    paddingBottom: "10px",
-    "& > div:first-child > div": {
+    position: 'relative',
+    paddingTop: '20px',
+    paddingBottom: '10px',
+    '& > div:first-child > div': {
       marginBottom: 0
     }
   },
   panel: {
-    display: "flex",
-    padding: "10px 10px 0 10px",
-    flexWrap: "wrap",
-    border: "1px solid var(--bg-color-ui-contrast4)",
-    marginTop: "6px"
+    display: 'flex',
+    padding: '10px 10px 0 10px',
+    flexWrap: 'wrap',
+    border: '1px solid var(--bg-color-ui-contrast4)',
+    marginTop: '6px'
   },
   typeFilter: {
-    display: "inline-block",
-    border: "1px solid var(--bg-color-ui-contrast4)",
-    borderRadius: "20px",
-    padding: "7px 4px 7px 10px",
-    float: "left",
-    marginRight: "10px",
-    marginBottom: "10px",
-    cursor: "pointer",
-    maxHeight: "40px",
-    minHeight: "40px",
-    "-webkitTouchCallout": "none",
-    userSelect: "none",
-    transition: "color .3s ease-in-out, border-color .3s ease-in-out",
-    "&.selected, &:hover": {
-      color: "var(--ft-color-loud)",
-      borderColor: "var(--ft-color-loud)"
+    display: 'inline-block',
+    border: '1px solid var(--bg-color-ui-contrast4)',
+    borderRadius: '20px',
+    padding: '7px 4px 7px 10px',
+    float: 'left',
+    marginRight: '10px',
+    marginBottom: '10px',
+    cursor: 'pointer',
+    maxHeight: '40px',
+    minHeight: '40px',
+    '-webkitTouchCallout': 'none',
+    userSelect: 'none',
+    transition: 'color .3s ease-in-out, border-color .3s ease-in-out',
+    '&.selected, &:hover': {
+      color: 'var(--ft-color-loud)',
+      borderColor: 'var(--ft-color-loud)'
     },
-    "&.isUnknown" : {
-      borderColor: "var(--bg-color-warn-quiet)"
+    '&.isUnknown' : {
+      borderColor: 'var(--bg-color-warn-quiet)'
     },
-    "&.isUnknown.selected, &.isUnknown:hover": {
-      borderColor: "var(--bg-color-warn-loud)"
+    '&.isUnknown.selected, &.isUnknown:hover': {
+      borderColor: 'var(--bg-color-warn-loud)'
     }
   },
   toggle: {
-    display: "inline-block",
-    paddingLeft: "6px"
+    display: 'inline-block',
+    paddingLeft: '6px'
   }
 });
 
@@ -87,12 +87,12 @@ const TypeFilterItem = ({ type, onClick }: TypeFilterItemProps) => {
 
   const classes = useStyles();
 
-  const handleOnClick = () => typeof onClick === "function" && onClick(type.id, !type.selected);
+  const handleOnClick = () => typeof onClick === 'function' && onClick(type.id, !type.selected);
 
-  const handleToggleClick = (name?: string, value?:ToggleItemValue) => typeof onClick === "function" && onClick(name, !!(value as boolean|undefined));
+  const handleToggleClick = (name?: string, value?:ToggleItemValue) => typeof onClick === 'function' && onClick(name, !!(value as boolean|undefined));
 
   return(
-    <div className={`${classes.typeFilter} ${type.isUnknown?"isUnknown":""} ${type.selected?"selected":""}`} onClick={handleOnClick} >
+    <div className={`${classes.typeFilter} ${type.isUnknown?'isUnknown':''} ${type.selected?'selected':''}`} onClick={handleOnClick} >
       <PropertyType type={type.id} />
       <div className={classes.toggle}>
         <Toggle
@@ -127,7 +127,7 @@ const TypeFilter = observer(() => {
         <Toggle
           label="Type Filter"
           option={{
-            name: "Type Filter",
+            name: 'Type Filter',
             value: queryBuilderStore.currentField.typeFilterEnabled?true:undefined
           }}
           show={true}
@@ -142,6 +142,6 @@ const TypeFilter = observer(() => {
     </div>
   );
 });
-TypeFilter.displayName = "TypeFilter";
+TypeFilter.displayName = 'TypeFilter';
 
 export default TypeFilter;

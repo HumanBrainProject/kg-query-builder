@@ -21,44 +21,44 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../Hooks/useStores";
-import useAuth from "../Hooks/useAuth";
+import useAuth from '../Hooks/useAuth';
+import useStores from '../Hooks/useStores';
 
-import UserProfileTab from "./UserProfileTab";
-import HomeTab from "./HomeTab";
+import HomeTab from './HomeTab';
+import UserProfileTab from './UserProfileTab';
 
 const useStyles = createUseStyles({
   container: {
-    display: "grid",
-    gridTemplateRows: "1fr",
-    gridTemplateColumns: "1fr auto"
+    display: 'grid',
+    gridTemplateRows: '1fr',
+    gridTemplateColumns: '1fr auto'
   },
   fixedTabsLeft: {
-    display: "grid",
-    gridTemplateColumns: "auto 1fr"
+    display: 'grid',
+    gridTemplateColumns: 'auto 1fr'
   },
   fixedTabsRight: {
-    display: "grid",
-    gridTemplateColumns: "repeat(6, auto)"
+    display: 'grid',
+    gridTemplateColumns: 'repeat(6, auto)'
   },
   userProfileTab: {
-    width: "50px",
-    height: "50px",
-    lineHeight: "50px",
-    border1: "1px solid var(--border-color-ui-contrast2)",
-    borderLeft: "none",
+    width: '50px',
+    height: '50px',
+    lineHeight: '50px',
+    border1: '1px solid var(--border-color-ui-contrast2)',
+    borderLeft: 'none',
     border: 0,
-    "& > button": {
-      background: "transparent",
-      color: "rgba(255,255,255,0.6)",
-      transition: "background-color 0.3s ease-in-out",
-      "&:hover" : {
-        background: "rgba(0,0,0,0.2)",
-        color: "white"
+    '& > button': {
+      background: 'transparent',
+      color: 'rgba(255,255,255,0.6)',
+      transition: 'background-color 0.3s ease-in-out',
+      '&:hover' : {
+        background: 'rgba(0,0,0,0.2)',
+        color: 'white'
       }
     }
   }
@@ -73,7 +73,7 @@ const Nav = observer(() => {
   if (appStore.globalError) {
     return null;
   }
-  
+
   return (
     <nav className={classes.container}>
       <div className={classes.fixedTabsLeft}>
@@ -83,13 +83,13 @@ const Nav = observer(() => {
       </div>
       <div className={classes.fixedTabsRight}>
         {isAuthenticated && !!userProfileStore.user && (
-           <UserProfileTab className={classes.userProfileTab} />
+          <UserProfileTab className={classes.userProfileTab} />
         )}
       </div>
     </nav>
   );
 });
-Nav.displayName = "Nav";
+Nav.displayName = 'Nav';
 
 export default Nav;
 

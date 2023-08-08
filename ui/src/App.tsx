@@ -21,35 +21,35 @@
  *
  */
 
-import React, { Suspense } from "react";
-import { observer } from "mobx-react-lite";
-import { JssProvider, ThemeProvider } from "react-jss";//NOSONAR
-import { BrowserRouter, Navigate, Routes, Route, useLocation, matchPath } from "react-router-dom";
+import { observer } from 'mobx-react-lite';
+import React, { Suspense } from 'react';
+import { JssProvider, ThemeProvider } from 'react-jss';//NOSONAR
+import { BrowserRouter, Navigate, Routes, Route, useLocation, matchPath } from 'react-router-dom';
 
-import "bootstrap/dist/css/bootstrap.min.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-import Styles from "./Views/Styles";
-import API from "./Services/API";
-import RootStore from "./Stores/RootStore";
-import APIProvider from "./Views/APIProvider";
-import AuthProvider from "./Views/AuthProvider";
-import StoresProvider from "./Views/StoresProvider";
-import AuthAdapter from "./Services/AuthAdapter";
-import ErrorBoundary from "./Views/ErrorBoundary";
-import Layout from "./Views/Layout";
-import Settings from "./Views/Settings";
-import SpinnerPanel from "./Components/SpinnerPanel";
-import GlobalError from "./Views/GlobalError";
-import Shortcuts from "./Views/Shortcuts";
+import SpinnerPanel from './Components/SpinnerPanel';
+import APIProvider from './Views/APIProvider';
+import AuthProvider from './Views/AuthProvider';
+import ErrorBoundary from './Views/ErrorBoundary';
+import GlobalError from './Views/GlobalError';
+import Layout from './Views/Layout';
+import Settings from './Views/Settings';
+import Shortcuts from './Views/Shortcuts';
+import StoresProvider from './Views/StoresProvider';
+import Styles from './Views/Styles';
+import type API from './Services/API';
+import type AuthAdapter from './Services/AuthAdapter';
+import type RootStore from './Stores/RootStore';
 
-const Authenticate = React.lazy(() => import("./Views/Authenticate"));
-const UserProfile = React.lazy(() => import("./Views/UserProfile"));
-const Spaces = React.lazy(() => import("./Views/Spaces"));
-const Types = React.lazy(() => import("./Views/Types"));
-const Logout = React.lazy(() => import("./Views/Logout"));
-const Home = React.lazy(() => import("./Views/Home"));
-const QueryByType = React.lazy(() => import("./Views/QueryByType"));
-const Query = React.lazy(() => import("./Views/Query"));
+const Authenticate = React.lazy(() => import('./Views/Authenticate'));
+const UserProfile = React.lazy(() => import('./Views/UserProfile'));
+const Spaces = React.lazy(() => import('./Views/Spaces'));
+const Types = React.lazy(() => import('./Views/Types'));
+const Logout = React.lazy(() => import('./Views/Logout'));
+const Home = React.lazy(() => import('./Views/Home'));
+const QueryByType = React.lazy(() => import('./Views/QueryByType'));
+const Query = React.lazy(() => import('./Views/Query'));
 
 interface AppProps {
   stores: RootStore;
@@ -64,7 +64,7 @@ const App = observer(({ stores, api, authAdapter } : AppProps) => {
   const theme = appStore.currentTheme;
 
   const location = useLocation();
-  const matchQueryId = matchPath({path:"queries/:id/*"}, location.pathname);
+  const matchQueryId = matchPath({path:'queries/:id/*'}, location.pathname);
 
   return (
     <ThemeProvider theme={theme}>
@@ -79,8 +79,8 @@ const App = observer(({ stores, api, authAdapter } : AppProps) => {
                 <Settings authAdapter={authAdapter}>
                   <Suspense fallback={<SpinnerPanel text="Loading resource..." />} >
                     <Routes>
-                      <Route path={"/logout"} element={<Logout />}/>
-                      <Route path={"*"} element={
+                      <Route path={'/logout'} element={<Logout />}/>
+                      <Route path={'*'} element={
                         <Authenticate >
                           <UserProfile>
                             <Spaces>
@@ -94,7 +94,7 @@ const App = observer(({ stores, api, authAdapter } : AppProps) => {
                                     <Route path="queries/:id/edit" element={<Query mode="edit" />} />
                                     <Route path="queries/:id/execute" element={<Query mode="execute" />} />
                                     <Route path="queries/:id/*" element={<Navigate to={`/queries/${matchQueryId?.params.id}`} replace={true} />} />
-                                    <Route path="*" element={<Navigate to="/" replace={true} />} />  
+                                    <Route path="*" element={<Navigate to="/" replace={true} />} />
                                   </Routes>
                                 </Suspense>
                               </Types>
@@ -113,7 +113,7 @@ const App = observer(({ stores, api, authAdapter } : AppProps) => {
     </ThemeProvider>
   );
 });
-App.displayName = "App";
+App.displayName = 'App';
 
 const Component = ({ stores, api, authAdapter }: AppProps) => (
   <JssProvider id={{minify: process.env.NODE_ENV === 'production'}}>

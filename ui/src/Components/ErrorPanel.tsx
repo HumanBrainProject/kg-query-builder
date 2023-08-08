@@ -21,10 +21,10 @@
  *
  */
 
-import React from "react";
-import { faBan } from "@fortawesome/free-solid-svg-icons/faBan";
+import { faBan } from '@fortawesome/free-solid-svg-icons/faBan';
+import React from 'react';
 
-import Panel from "./Panel";
+import Panel from './Panel';
 
 interface ErrorPanelProps {
   children: React.ReactNode;

@@ -21,17 +21,18 @@
  *
  */
 
-import React, { JSX, useEffect } from "react";
-import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
+import {faRedoAlt} from '@fortawesome/free-solid-svg-icons/faRedoAlt';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React, { useEffect } from 'react';
+import Button from 'react-bootstrap/Button';
 
-import useAuth from "../Hooks/useAuth";
-import useStores from "../Hooks/useStores";
-import useListSpacesQuery from "../Hooks/useListSpacesQuery";
-import SpinnerPanel from "../Components/SpinnerPanel";
-import ErrorPanel from "../Components/ErrorPanel";
+import ErrorPanel from '../Components/ErrorPanel';
+import SpinnerPanel from '../Components/SpinnerPanel';
+import useAuth from '../Hooks/useAuth';
+import useListSpacesQuery from '../Hooks/useListSpacesQuery';
+import useStores from '../Hooks/useStores';
+import type { JSX} from 'react';
 
 interface SpacesProps {
   children?: string|JSX.Element|(null|undefined|string|JSX.Element)[];
@@ -40,7 +41,7 @@ interface SpacesProps {
 const Spaces = observer(({ children }: SpacesProps) => {
 
   const { logout } = useAuth();
-  
+
   const {
     data: spaces,
     error,
@@ -64,13 +65,13 @@ const Spaces = observer(({ children }: SpacesProps) => {
       <ErrorPanel>
         There was a problem retrieving the spaces ({error}).
           If the problem persists, please contact the support.<br /><br />
-        <Button variant={"primary"} onClick={refetch}>
+        <Button variant={'primary'} onClick={refetch}>
           <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
         </Button>
       </ErrorPanel>
     );
   }
-  
+
   if (isUninitialized || isFetching) {
     return (
       <SpinnerPanel text="Retrieving spaces..." />
@@ -95,6 +96,6 @@ const Spaces = observer(({ children }: SpacesProps) => {
   );
 
 });
-Spaces.displayName = "Spaces";
+Spaces.displayName = 'Spaces';
 
 export default Spaces;

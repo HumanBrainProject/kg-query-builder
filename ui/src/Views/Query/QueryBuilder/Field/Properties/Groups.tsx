@@ -21,11 +21,12 @@
  *
  */
 
-import React, { MouseEvent } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 
-import GroupProperties from "./GroupProperties";
-import { Property, PropertyGroup } from "../../../../../types";
+import GroupProperties from './GroupProperties';
+import type { Property, PropertyGroup } from '../../../../../types';
+import type { MouseEvent } from 'react';
 
 interface GroupsProps {
   groups: PropertyGroup[];
@@ -51,6 +52,6 @@ const Groups = observer(({ groups, prefix, onClick }: GroupsProps) => {
     </>
   );
 });
-Groups.displayName = "Groups";
+Groups.displayName = 'Groups';
 
 export default Groups;

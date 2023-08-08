@@ -21,54 +21,54 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faLongArrowAltLeft} from "@fortawesome/free-solid-svg-icons/faLongArrowAltLeft";
-import {faLongArrowAltRight} from "@fortawesome/free-solid-svg-icons/faLongArrowAltRight";
-import { FieldProps } from "../Field";
+import {faLongArrowAltLeft} from '@fortawesome/free-solid-svg-icons/faLongArrowAltLeft';
+import {faLongArrowAltRight} from '@fortawesome/free-solid-svg-icons/faLongArrowAltRight';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import type { FieldProps } from '../Field';
 
 const useStyles = createUseStyles({
   alias: {
-    color: "var(--ft-color-louder)",
-    fontWeight: "bold"
+    color: 'var(--ft-color-louder)',
+    fontWeight: 'bold'
   },
   default: {
-    color: "var(--ft-color-normal)",
-    fontStyle: "italic"
+    color: 'var(--ft-color-normal)',
+    fontStyle: 'italic'
   },
   link: {
-    transform: "translateY(1px)"
+    transform: 'translateY(1px)'
   },
   reverseLink: {
-    color: "greenyellow",
-    transform: "translateY(1px)"
+    color: 'greenyellow',
+    transform: 'translateY(1px)'
   }
 });
 
 const TargetName = observer(({ field }: FieldProps) => {
 
-    const classes = useStyles();
+  const classes = useStyles();
 
-    if (!field.parent || field.parent.isFlattened) {
-      return null;
-    }
-    const className = field.alias ? classes.alias : classes.default;
-    const iconClassName = field.isReverse ? classes.reverseLink : classes.link;
-    const icon = field.isReverse ? faLongArrowAltLeft : faLongArrowAltRight;
-    const title = field.isReverse ? "is an incoming link" : undefined;
-    const name = field.alias ? field.alias : field.defaultAlias;
-    return (
-      <span className={className}>
-        &nbsp;&nbsp;
-        <FontAwesomeIcon icon={icon} className={iconClassName} title={title} />
-        &nbsp;&nbsp;
-        {name}
-      </span>
-    );
+  if (!field.parent || field.parent.isFlattened) {
+    return null;
   }
+  const className = field.alias ? classes.alias : classes.default;
+  const iconClassName = field.isReverse ? classes.reverseLink : classes.link;
+  const icon = field.isReverse ? faLongArrowAltLeft : faLongArrowAltRight;
+  const title = field.isReverse ? 'is an incoming link' : undefined;
+  const name = field.alias ? field.alias : field.defaultAlias;
+  return (
+    <span className={className}>
+        &nbsp;&nbsp;
+      <FontAwesomeIcon icon={icon} className={iconClassName} title={title} />
+        &nbsp;&nbsp;
+      {name}
+    </span>
+  );
+}
 );
-TargetName.displayName = "TargetName";
+TargetName.displayName = 'TargetName';
 
 export default TargetName;

@@ -21,40 +21,41 @@
  *
  */
 
-import React, { useRef, useEffect, ChangeEvent, KeyboardEvent, RefObject } from "react";
-import { createUseStyles } from "react-jss";
-import Form from "react-bootstrap/Form";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons/faSearch";
-import { IconDefinition } from "@fortawesome/fontawesome-common-types";
+import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useRef, useEffect } from 'react';
+import Form from 'react-bootstrap/Form';
+import { createUseStyles } from 'react-jss';
+import type { IconDefinition } from '@fortawesome/fontawesome-common-types';
+import type { ChangeEvent, KeyboardEvent, RefObject } from 'react';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
-    color: "var(--ft-color-loud)",
-    backgroundColor: "var(--bg-color-ui-contrast3)",
+    position: 'relative',
+    color: 'var(--ft-color-loud)',
+    backgroundColor: 'var(--bg-color-ui-contrast3)',
     borderBottom: 0
   },
   input: {
-    color: "var(--ft-color-loud)",
-    width: "calc(100% - 20px)",
-    margin: "10px",
-    border: "1px solid transparent",
-    paddingLeft: "30px",
-    borderRadius: "2px",
-    backgroundColor: "var(--bg-color-blend-contrast1)",
-    "&:focus": {
-      color: "var(--ft-color-loud)",
-      borderColor: "rgba(64, 169, 243, 0.5)",
-      backgroundColor: "transparent"
+    color: 'var(--ft-color-loud)',
+    width: 'calc(100% - 20px)',
+    margin: '10px',
+    border: '1px solid transparent',
+    paddingLeft: '30px',
+    borderRadius: '2px',
+    backgroundColor: 'var(--bg-color-blend-contrast1)',
+    '&:focus': {
+      color: 'var(--ft-color-loud)',
+      borderColor: 'rgba(64, 169, 243, 0.5)',
+      backgroundColor: 'transparent'
     }
   },
   icon: {
-    position: "absolute",
-    top: "50%",
-    left: "20px",
-    transform: "translateY(-50%)",
-    color: "var(--ft-color-normal)"
+    position: 'absolute',
+    top: '50%',
+    left: '20px',
+    transform: 'translateY(-50%)',
+    color: 'var(--ft-color-normal)'
   }
 });
 
@@ -70,7 +71,7 @@ interface FilterProps {
 const Filter = ({
   value,
   className,
-  placeholder = "filter...",
+  placeholder = 'filter...',
   icon = faSearch,
   onChange,
   onKeyDown
@@ -84,7 +85,7 @@ const Filter = ({
       ref.current.focus();
     }
     return () => {
-      onChange("");
+      onChange('');
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -96,7 +97,7 @@ const Filter = ({
     onKeyDown && onKeyDown(e);
 
   return (
-    <div className={`${classes.container} ${className ? className : ""}`}>
+    <div className={`${classes.container} ${className ? className : ''}`}>
       <Form.Control
         ref={ref as RefObject<HTMLInputElement>}
         className={classes.input}

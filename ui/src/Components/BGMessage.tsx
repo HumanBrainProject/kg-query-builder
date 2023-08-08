@@ -21,30 +21,30 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconDefinition } from "@fortawesome/fontawesome-common-types";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import type { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
 const useStyles = createUseStyles({
   container: {
-    position: "absolute !important",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%,-200px)",
-    textAlign: "center"
+    position: 'absolute !important',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%,-200px)',
+    textAlign: 'center'
   },
   icon: {
-    fontSize: "10em",
-    "& path": {
-      fill: "var(--bg-color-blend-contrast1)",
-      stroke: "rgba(200,200,200,.1)",
-      strokeWidth: "3px"
+    fontSize: '10em',
+    '& path': {
+      fill: 'var(--bg-color-blend-contrast1)',
+      stroke: 'rgba(200,200,200,.1)',
+      strokeWidth: '3px'
     }
   },
   text: {
-    fontWeight: "300",
-    fontSize: "1.2em"
+    fontWeight: '300',
+    fontSize: '1.2em'
   }
 });
 

@@ -21,14 +21,14 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 
-import PropertyTypes from "../../../PropertyTypes";
-import Types from "./Types";
-import Field from "../../../../Stores/Field";
+import useStores from '../../../../Hooks/useStores';
+import PropertyTypes from '../../../PropertyTypes';
+import Types from './Types';
+import type Field from '../../../../Stores/Field';
 
-import useStores from "../../../../Hooks/useStores";
 
 interface TypeProps {
   field: Field;
@@ -78,6 +78,6 @@ const Type = observer(({ field }: TypeProps) => {
 
   return null;
 });
-Type.displayName = "Type";
+Type.displayName = 'Type';
 
 export default Type;

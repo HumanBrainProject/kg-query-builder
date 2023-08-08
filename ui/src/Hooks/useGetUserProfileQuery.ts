@@ -21,16 +21,17 @@
  *
  */
 
-import { useMemo } from "react";
-import { UserProfile } from "../types";
-import useAPI from "./useAPI";
-import { APIError } from "../Services/API";
-import useGenericQuery, { GenericQuery } from "./useGenericQuery";
+import { useMemo } from 'react';
+import useAPI from './useAPI';
+import useGenericQuery from './useGenericQuery';
+import type { GenericQuery } from './useGenericQuery';
+import type { APIError } from '../Services/API';
+import type { UserProfile } from '../types';
 
 export type GetUserProfileQuery = GenericQuery<UserProfile|undefined>;
 
 const useGetUserProfileQuery = (): GetUserProfileQuery => {
-  
+
   const API = useAPI();
 
   const fetch = useMemo(() => async () => {

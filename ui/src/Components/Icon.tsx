@@ -21,16 +21,16 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconDefinition } from "@fortawesome/fontawesome-common-types";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import type { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
 const useStyles = createUseStyles({
   container: {
-    display: "inline-block",
-    opacity: "0.5",
-    paddingRight: "4px"
+    display: 'inline-block',
+    opacity: '0.5',
+    paddingRight: '4px'
   }
 });
 
@@ -45,7 +45,7 @@ const Icon = ({ className, color, icon }: IconProps) => {
   const classes = useStyles();
 
   return (
-    <div className={`${classes.container} ${className?className:""}`} style={color ? { color: color } : {}} >
+    <div className={`${classes.container} ${className?className:''}`} style={color ? { color: color } : {}} >
       <FontAwesomeIcon fixedWidth icon={icon} />
     </div>
   );

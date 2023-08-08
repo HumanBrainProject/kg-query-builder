@@ -21,85 +21,85 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import ReactJson from "react-json-view";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
-import { observer } from "mobx-react-lite";
+import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import Button from 'react-bootstrap/Button';
+import ReactJson from 'react-json-view';
+import { createUseStyles } from 'react-jss';
 
-import ThemeRJV from "../../../../../Themes/ThemeRJV";
+import ThemeRJV from '../../../../../Themes/ThemeRJV';
 
 const useStyles = createUseStyles({
   option: {
-    marginBottom: "20px",
-    "&:last-child": {
+    marginBottom: '20px',
+    '&:last-child': {
       marginBottom: 0
     },
-    "&.unsupported": {
-      display: "flex",
-      "& button": {
-        alignSelf: "flex-start",
-        display: "inline-block",
-        margin: "0 5px 0 0",
-        background: "var(--bg-color-ui-contrast1)",
-        color: "var(--ft-color-loud)",
-        borderColor: "var(--bg-color-ui-contrast1)",
-        "&:hover": {
-          background: "var(--bg-color-ui-contrast1)",
-          color: "var(--ft-color-louder)",
-          borderColor: "var(--bg-color-ui-contrast1)"
+    '&.unsupported': {
+      display: 'flex',
+      '& button': {
+        alignSelf: 'flex-start',
+        display: 'inline-block',
+        margin: '0 5px 0 0',
+        background: 'var(--bg-color-ui-contrast1)',
+        color: 'var(--ft-color-loud)',
+        borderColor: 'var(--bg-color-ui-contrast1)',
+        '&:hover': {
+          background: 'var(--bg-color-ui-contrast1)',
+          color: 'var(--ft-color-louder)',
+          borderColor: 'var(--bg-color-ui-contrast1)'
         }
       },
-      "& $optionLabel": {
-        alignSelf: "flex-start",
-        display: "inline"
+      '& $optionLabel': {
+        alignSelf: 'flex-start',
+        display: 'inline'
       },
-      "& strong": {
+      '& strong': {
         flex: 1,
-        display: "inline-block",
-        fontWeight: "normal",
-        color: "var(--ft-color-loud)",
-        "& .react-json-view": {
-          backgroundColor: "transparent !important"
+        display: 'inline-block',
+        fontWeight: 'normal',
+        color: 'var(--ft-color-loud)',
+        '& .react-json-view': {
+          backgroundColor: 'transparent !important'
         }
       },
-      "&:last-child": {
-        marginBottom: "10px"
+      '&:last-child': {
+        marginBottom: '10px'
       }
     }
   },
   optionLabel: {
-    fontWeight: "bold",
-    marginBottom: "5px",
-    "& small": {
-      fontWeight: "normal",
-      fontStyle: "italic"
+    fontWeight: 'bold',
+    marginBottom: '5px',
+    '& small': {
+      fontWeight: 'normal',
+      fontStyle: 'italic'
     },
-    "& strong": {
-      color: "var(--ft-color-loud)"
+    '& strong': {
+      color: 'var(--ft-color-loud)'
     }
   },
   stringValue: {
-    color: "rgb(253, 151, 31)"
+    color: 'rgb(253, 151, 31)'
   },
   boolValue: {
-    color: "rgb(174, 129, 255)"
+    color: 'rgb(174, 129, 255)'
   },
   intValue: {
-    color: "rgb(204, 102, 51)"
+    color: 'rgb(204, 102, 51)'
   },
   floatValue: {
-    color: "rgb(84, 159, 61)"
+    color: 'rgb(84, 159, 61)'
   },
   dateValue: {
-    color: "rgb(45, 89, 168)"
+    color: 'rgb(45, 89, 168)'
   },
   typeValue: {
-    fontSize: "11px",
-    marginRight: "4px",
-    opacity: "0.8"
+    fontSize: '11px',
+    marginRight: '4px',
+    opacity: '0.8'
   }
 });
 
@@ -109,22 +109,22 @@ interface TypeProps {
 
 const Type = observer(({ value }: TypeProps) => {
   const classes = useStyles();
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     return (
       <div className={classes.stringValue}>
         <span className={classes.typeValue}>string</span>&quot;{value}&quot;
       </div>
     );
   }
-  if (typeof value === "boolean") {
+  if (typeof value === 'boolean') {
     return (
       <div className={classes.boolValue}>
         <span className={classes.typeValue}>bool</span>
-        {value ? "true" : "false"}
+        {value ? 'true' : 'false'}
       </div>
     );
   }
-  if (typeof value === "number") {
+  if (typeof value === 'number') {
     if (Number.isInteger(value)) {
       return (
         <div className={classes.intValue}>
@@ -150,7 +150,7 @@ const Type = observer(({ value }: TypeProps) => {
     />
   );
 });
-Type.displayName = "Type";
+Type.displayName = 'Type';
 
 interface UnsupportedOptionProps {
   name: string;

@@ -26,11 +26,11 @@ import {
   action,
   computed,
   makeObservable
-} from "mobx";
+} from 'mobx';
 
-import RootStore from "./RootStore";
-import { Query } from "../Types/Query";
-import { Space } from "../types";
+import type RootStore from './RootStore';
+import type { Query } from '../Types/Query';
+import type { Space } from '../types';
 
 const queriesCompare = (a: Query.Query, b: Query.Query): number => {
   if (a.label && b.label) {
@@ -53,23 +53,23 @@ const queriesFilter = (
   (!!query.description && query.description.toLowerCase().includes(filter)) ||
   (!!query.id && query.id.toLowerCase().includes(filter));
 
-  const spaceQueriesCompare = (
-    a: Query.SpaceQueries,
-    b: Query.SpaceQueries
-  ): number => {
-    if (a.isPrivate) {
-      return -1;
-    }
-    if (b.isPrivate) {
-      return 1;
-    }
-    return a.name.localeCompare(b.name);
-  };
+const spaceQueriesCompare = (
+  a: Query.SpaceQueries,
+  b: Query.SpaceQueries
+): number => {
+  if (a.isPrivate) {
+    return -1;
+  }
+  if (b.isPrivate) {
+    return 1;
+  }
+  return a.name.localeCompare(b.name);
+};
 
 class QueriesStore {
   type?: string;
   queries: Query.Query[] = [];
-  filter = "";
+  filter = '';
   showSavedQueries = false;
 
 
@@ -103,7 +103,7 @@ class QueriesStore {
   clearQueries() {
     this.type = undefined;
     this.queries = [];
-    this.filter = "";
+    this.filter = '';
   }
 
   setQueries(type: string|undefined, queries: Query.Query[]) {
@@ -130,7 +130,7 @@ class QueriesStore {
             groups[query.space] = {
               name: space.name,
               label: space.isPrivate
-                ? "My private queries"
+                ? 'My private queries'
                 : `Shared queries in space ${space.name}`,
               isPrivate: space.isPrivate,
               permissions: { ...space.permissions },

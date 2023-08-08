@@ -21,23 +21,24 @@
  *
  */
 
-import React, { MouseEvent } from "react";
-import Icon from "../../../../../Components/Icon";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import {faCircle} from "@fortawesome/free-solid-svg-icons/faCircle";
+import {faCircle} from '@fortawesome/free-solid-svg-icons/faCircle';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import Icon from '../../../../../Components/Icon';
 
-import PropertyComponent from "./Property";
-import { Property, PropertyGroup } from "../../../../../types";
+import PropertyComponent from './Property';
+import type { Property, PropertyGroup } from '../../../../../types';
+import type { MouseEvent } from 'react';
 
 const useStyles = createUseStyles({
   container: {
-    color: "var(--ft-color-loud)",
-    "& h5": {
-      margin: "18px 0 6px 5px",
-      "& small": {
-        color: "var(--ft-color-quiet)",
-        fontStyle: "italic"
+    color: 'var(--ft-color-loud)',
+    '& h5': {
+      margin: '18px 0 6px 5px',
+      '& small': {
+        color: 'var(--ft-color-quiet)',
+        fontStyle: 'italic'
       }
     }
   }
@@ -63,11 +64,11 @@ const GroupProperties = observer(({group, prefix, onClick }: GroupPropertiesProp
     <div className={classes.container}>
       <h5>{prefix} <Icon icon={faCircle} color={color}/> {label} <small> - {id}</small></h5>
       {properties.map(property => (
-        <PropertyComponent key={`${property.attribute}${property.reverse?"reverse":""}`} property={property} onClick={onClick} />
+        <PropertyComponent key={`${property.attribute}${property.reverse?'reverse':''}`} property={property} onClick={onClick} />
       ))}
     </div>
   );
 });
-GroupProperties.displayName = "GroupProperties";
+GroupProperties.displayName = 'GroupProperties';
 
 export default GroupProperties;

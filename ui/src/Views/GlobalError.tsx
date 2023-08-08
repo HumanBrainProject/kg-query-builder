@@ -21,24 +21,24 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons/faExclamationCircle";
-import {faCheck} from "@fortawesome/free-solid-svg-icons/faCheck";
-import {faEnvelope} from "@fortawesome/free-solid-svg-icons/faEnvelope";
+import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
+import {faEnvelope} from '@fortawesome/free-solid-svg-icons/faEnvelope';
+import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import * as Sentry from "@sentry/browser";
+import * as Sentry from '@sentry/browser';
+import React from 'react';
+import Button from 'react-bootstrap/Button';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../Hooks/useStores";
 
-import BGMessage from "../Components/BGMessage";
+import BGMessage from '../Components/BGMessage';
+import useStores from '../Hooks/useStores';
 
 const useStyles = createUseStyles({
   container: {
-    height: "100%",
-    color: "var(--ft-color-loud)"
+    height: '100%',
+    color: 'var(--ft-color-loud)'
   }
 });
 
@@ -56,10 +56,10 @@ const GlobalError = () => {
         An unexpected error has occured.<br />
         We recommend you to save all your changes and reload the application in your browser.<br />
         If the problem persists, please contact the support.<br /><br />
-        <Button variant="primary" onClick={handleDismiss}>
+        <Button variant={'primary'} onClick={handleDismiss}>
           <FontAwesomeIcon icon={faCheck} /> &nbsp; Dismiss
         </Button>&nbsp;&nbsp;
-        <Button variant="warning" onClick={() => Sentry.showReportDialog({ title: "An unexpected error has occured.", subtitle2: "We recommend you to save all your changes and reload the application in your browser. The KG team has been notified. If you'd like to help, tell us what happened below.", labelEmail: "Email(optional)", labelName: "Name(optional)", user: { email: "error@kgeditor.com", name: "Error Reporter" }, labelComments: "Please fill in a description of your error use case" })}>
+        <Button variant="warning" onClick={() => Sentry.showReportDialog({ title: 'An unexpected error has occured.', subtitle2: 'We recommend you to save all your changes and reload the application in your browser. The KG team has been notified. If you\'d like to help, tell us what happened below.', labelEmail: 'Email(optional)', labelName: 'Name(optional)', user: { email: 'error@kgeditor.com', name: 'Error Reporter' }, labelComments: 'Please fill in a description of your error use case' })}>
           <FontAwesomeIcon icon={faEnvelope} /> &nbsp; Send an error report
         </Button>
       </BGMessage>

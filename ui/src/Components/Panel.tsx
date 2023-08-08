@@ -21,20 +21,20 @@
  *
  */
 
-import { IconDefinition } from "@fortawesome/fontawesome-common-types";
-import React from "react";
-import { createUseStyles } from "react-jss";
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
-import BGMessage from "./BGMessage";
+import BGMessage from './BGMessage';
+import type { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
 const useStyles = createUseStyles({
   container: {
-    height: "100%"
+    height: '100%'
   },
   panel: {
-    color: "var(--ft-color-loud)",
-    "& button + button": {
-      marginLeft: "60px"
+    color: 'var(--ft-color-loud)',
+    '& button + button': {
+      marginLeft: '60px'
     }
   }
 });

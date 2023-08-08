@@ -21,121 +21,122 @@
  *
  */
 
-import React, { ChangeEvent } from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
-import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
-import { QuerySpecification } from "../../../../../Types/QuerySpecification";
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
+import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
+import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import { createUseStyles } from 'react-jss';
+import type { QuerySpecification } from '../../../../../Types/QuerySpecification';
+import type { ChangeEvent } from 'react';
 
 const useStyles = createUseStyles({
   container: {
-    paddingTop: "10px",
-    marginBottom: "20px",
-    "&:last-child": {
-      marginTop: "10px",
-      marginBottom: "10px"
+    paddingTop: '10px',
+    marginBottom: '20px',
+    '&:last-child': {
+      marginTop: '10px',
+      marginBottom: '10px'
     }
   },
   panel: {
-    position: "relative",
-    padding: "10px",
-    border: "1px solid rgb(108, 117, 125)",
-    "&:after": {
+    position: 'relative',
+    padding: '10px',
+    border: '1px solid rgb(108, 117, 125)',
+    '&:after': {
       content: '"Filter"',
-      position: "absolute",
-      top: "-11px",
-      left: "5px",
-      backgroundColor: "#282828",
-      padding: "0 5px"
+      position: 'absolute',
+      top: '-11px',
+      left: '5px',
+      backgroundColor: '#282828',
+      padding: '0 5px'
     }
   },
   select: {
-    display: "inline-block",
-    minWidth: "180px",
-    padding: "0.25rem 20px 0.25rem 6px",
-    borderRadius: "4px",
-    backgroundColor: "rgb(108, 117, 125)",
-    borderColor: "transparent",
-    color: "white",
-    "-webkit-appearance": "none",
-    "&:hover": {
+    display: 'inline-block',
+    minWidth: '180px',
+    padding: '0.25rem 20px 0.25rem 6px',
+    borderRadius: '4px',
+    backgroundColor: 'rgb(108, 117, 125)',
+    borderColor: 'transparent',
+    color: 'white',
+    '-webkit-appearance': 'none',
+    '&:hover': {
       outline: 0,
-      backgroundColor: "#5a6268",
-      borderColor: "rgba(64, 169, 243, 0.5)",
-      boxShadow: "0 0 0 0.2rem rgb(0 123 255 / 25%)"
+      backgroundColor: '#5a6268',
+      borderColor: 'rgba(64, 169, 243, 0.5)',
+      boxShadow: '0 0 0 0.2rem rgb(0 123 255 / 25%)'
     }
   },
   selectBox: {
-    position: "relative",
-    "&:after": {
+    position: 'relative',
+    '&:after': {
       content: '""',
-      position: "absolute",
-      top: "50%",
-      right: "10px",
+      position: 'absolute',
+      top: '50%',
+      right: '10px',
       width: 0,
       height: 0,
-      marginTop: "-3px",
-      borderTop: "6px solid white",
-      borderRight: "6px solid transparent",
-      borderLeft: "6px solid transparent",
-      pointerEvents: "none"
+      marginTop: '-3px',
+      borderTop: '6px solid white',
+      borderRight: '6px solid transparent',
+      borderLeft: '6px solid transparent',
+      pointerEvents: 'none'
     }
   },
   inputRow: {
-    display: "flex",
-    marginTop: "10px"
+    display: 'flex',
+    marginTop: '10px'
   },
   label: {
-    width: "75px",
-    lineHeight: "2.2rem",
-    textAlign: "right"
+    width: '75px',
+    lineHeight: '2.2rem',
+    textAlign: 'right'
   },
   input: {
     flex: 1,
-    color: "var(--ft-color-loud) !important",
-    width: "calc(100% - 20px)",
-    border: "1px solid transparent",
-    borderRadius: "2px",
-    backgroundColor: "var(--bg-color-blend-contrast1)",
-    marginRight: "4px",
-    "&:focus": {
-      color: "var(--ft-color-loud)",
-      borderColor: "rgba(64, 169, 243, 0.5)",
-      backgroundColor: "transparent"
+    color: 'var(--ft-color-loud) !important',
+    width: 'calc(100% - 20px)',
+    border: '1px solid transparent',
+    borderRadius: '2px',
+    backgroundColor: 'var(--bg-color-blend-contrast1)',
+    marginRight: '4px',
+    '&:focus': {
+      color: 'var(--ft-color-loud)',
+      borderColor: 'rgba(64, 169, 243, 0.5)',
+      backgroundColor: 'transparent'
     }
   },
   addButton: {
-    display: "block",
-    marginLeft: "15px",
-    borderRadius: "15px",
-    padding: "3px 9px"
+    display: 'block',
+    marginLeft: '15px',
+    borderRadius: '15px',
+    padding: '3px 9px'
   },
   addFilterButton: {
-    display: "block",
-    borderRadius: "15px",
-    padding: "3px 9px"
+    display: 'block',
+    borderRadius: '15px',
+    padding: '3px 9px'
   },
   deleteButton: {
-    "-webkit-appearance": "none",
-    backgroundColor: "rgb(108, 117, 125)",
-    borderColor: "transparent",
-    borderRadius: "50%",
-    color: "white",
-    padding: "3px 9px",
-    transform: "scale(0.8)",
-    "&:hover": {
-      backgroundColor: "#5a6268",
-      borderColor: "#5a6268"
+    '-webkit-appearance': 'none',
+    backgroundColor: 'rgb(108, 117, 125)',
+    borderColor: 'transparent',
+    borderRadius: '50%',
+    color: 'white',
+    padding: '3px 9px',
+    transform: 'scale(0.8)',
+    '&:hover': {
+      backgroundColor: '#5a6268',
+      borderColor: '#5a6268'
     }
   },
   warning: {
-    color: "var(--ft-color-error)",
-    marginRight: "35px"
+    color: 'var(--ft-color-error)',
+    marginRight: '35px'
   }
 });
 
@@ -150,34 +151,34 @@ const Filter = observer(({ filter, show, onChange }: FilterProps) => {
 
   const handleAddFilter = () => {
     const value = {
-      op: "CONTAINS",
-      value: ""
+      op: 'CONTAINS',
+      value: ''
     };
-    onChange("filter", value);
+    onChange('filter', value);
   };
 
   const handleChangeOp = (e: ChangeEvent<HTMLSelectElement>) => {
     switch (e.target.value) {
-      case "NONE": {
-        onChange("filter", undefined);
-        break;
-      }
-      case "IS_EMPTY": {
-        const value = {
-          op: e.target.value
-        };
-        onChange("filter", value);
-        break;
-      }
-      default: {
-        const f = filter as QuerySpecification.FilterItem;
-        const value = {
-          op: e.target.value,
-          parameter: f.parameter,
-          value: f.op === "IS_EMPTY" ? "" : f.value
-        };
-        onChange("filter", value);
-      }
+    case 'NONE': {
+      onChange('filter', undefined);
+      break;
+    }
+    case 'IS_EMPTY': {
+      const value = {
+        op: e.target.value
+      };
+      onChange('filter', value);
+      break;
+    }
+    default: {
+      const f = filter as QuerySpecification.FilterItem;
+      const value = {
+        op: e.target.value,
+        parameter: f.parameter,
+        value: f.op === 'IS_EMPTY' ? '' : f.value
+      };
+      onChange('filter', value);
+    }
     }
   };
 
@@ -186,9 +187,9 @@ const Filter = observer(({ filter, show, onChange }: FilterProps) => {
     const value = {
       op: f.op,
       parameter: f.parameter,
-      value: ""
+      value: ''
     };
-    onChange("filter", value);
+    onChange('filter', value);
   };
 
   const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -198,7 +199,7 @@ const Filter = observer(({ filter, show, onChange }: FilterProps) => {
       parameter: f.parameter,
       value: e.target.value
     };
-    onChange("filter", value);
+    onChange('filter', value);
   };
 
   const handleDeleteValue = () => {
@@ -206,21 +207,21 @@ const Filter = observer(({ filter, show, onChange }: FilterProps) => {
     const value =
       f.parameter !== undefined
         ? {
-            op: f.op,
-            parameter: f.parameter
-          }
+          op: f.op,
+          parameter: f.parameter
+        }
         : undefined;
-    onChange("filter", value);
+    onChange('filter', value);
   };
 
   const handleAddParameter = () => {
     const f = filter as QuerySpecification.FilterItem;
     const value = {
       op: f.op,
-      parameter: "",
+      parameter: '',
       value: f.value
     };
-    onChange("filter", value);
+    onChange('filter', value);
   };
 
   const handleChangeParameter = (e: ChangeEvent<HTMLInputElement>) => {
@@ -230,7 +231,7 @@ const Filter = observer(({ filter, show, onChange }: FilterProps) => {
       parameter: e.target.value,
       value: f.value
     };
-    onChange("filter", value);
+    onChange('filter', value);
   };
 
   const handleDeleteParameter = () => {
@@ -238,11 +239,11 @@ const Filter = observer(({ filter, show, onChange }: FilterProps) => {
     const value =
       f.value !== undefined
         ? {
-            op: f.op,
-            value: f.value
-          }
+          op: f.op,
+          value: f.value
+        }
         : undefined;
-    onChange("filter", value);
+    onChange('filter', value);
   };
 
   if (!show) {
@@ -251,19 +252,20 @@ const Filter = observer(({ filter, show, onChange }: FilterProps) => {
 
   return (
     <div className={classes.container}>
-      {!filter || filter.op === "NONE" ? (
+      {!filter || filter.op === 'NONE' ? (
         <Button
           variant="secondary"
           className={classes.addFilterButton}
           onClick={handleAddFilter}
         >
-          <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>&nbsp;add filter
+          <FontAwesomeIcon icon={faPlus} />&nbsp;add filter
         </Button>
       ) : (
         <div className={classes.panel}>
           <div className={classes.inputRow}>
             <div className={classes.selectBox}>
               <select
+                title="comparison operator"
                 className={classes.select}
                 value={filter.op}
                 onChange={handleChangeOp}
@@ -277,23 +279,23 @@ const Filter = observer(({ filter, show, onChange }: FilterProps) => {
                 <option value="REGEX">Regex</option>
               </select>
             </div>
-            {filter.parameter === undefined && filter.op !== "IS_EMPTY" && (
+            {filter.parameter === undefined && filter.op !== 'IS_EMPTY' && (
               <Button
                 variant="secondary"
                 className={classes.addButton}
                 onClick={handleAddParameter}
               >
-                <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>&nbsp;add
+                <FontAwesomeIcon icon={faPlus} />&nbsp;add
                 parameter
               </Button>
             )}
-            {filter.value === undefined && filter.op !== "IS_EMPTY" && (
+            {filter.value === undefined && filter.op !== 'IS_EMPTY' && (
               <Button
                 variant="secondary"
                 className={classes.addButton}
                 onClick={handleAddValue}
               >
-                <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>&nbsp;add value
+                <FontAwesomeIcon icon={faPlus} />&nbsp;add value
               </Button>
             )}
           </div>
@@ -313,14 +315,14 @@ const Filter = observer(({ filter, show, onChange }: FilterProps) => {
                   onClick={handleDeleteParameter}
                   title="delete parameter"
                 >
-                  <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
+                  <FontAwesomeIcon icon={faTimes} />
                 </button>
               </div>
-              {["scope", "size", "start", "instanceId"].includes(
+              {['scope', 'size', 'start', 'instanceId'].includes(
                 filter.parameter
               ) && (
                 <div className={classes.inputRow}>
-                  <span className={classes.label}></span>
+                  <span className={classes.label} />
                   <span className={classes.warning}>
                     <FontAwesomeIcon icon={faExclamationTriangle} />
                     &nbsp;&quot;{filter.parameter}&quot; is a reserved parameter
@@ -345,7 +347,7 @@ const Filter = observer(({ filter, show, onChange }: FilterProps) => {
                 onClick={handleDeleteValue}
                 title="delete value"
               >
-                <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
+                <FontAwesomeIcon icon={faTimes} />
               </button>
             </div>
           )}
@@ -354,6 +356,6 @@ const Filter = observer(({ filter, show, onChange }: FilterProps) => {
     </div>
   );
 });
-Filter.displayName = "Filter";
+Filter.displayName = 'Filter';
 
 export default Filter;

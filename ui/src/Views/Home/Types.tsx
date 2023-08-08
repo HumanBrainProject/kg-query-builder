@@ -21,41 +21,42 @@
  *
  */
 
-import React, { KeyboardEvent, useState } from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
-import { Scrollbars } from "react-custom-scrollbars-2";
+import { observer } from 'mobx-react-lite';
+import React, { useState } from 'react';
+import { Scrollbars } from 'react-custom-scrollbars-2';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../../Hooks/useStores";
+import Filter from '../../Components/Filter';
+import useStores from '../../Hooks/useStores';
 
-import Filter from "../../Components/Filter";
-import List from "./Types/List";
+import List from './Types/List';
+import type { KeyboardEvent} from 'react';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
-    display: "grid",
-    gridTemplateRows: "auto 1fr",
-    height: "100%",
-    width: "100%",
-    background: "transparent",
-    color: "var(--ft-color-normal)",
-    border: "1px solid var(--border-color-ui-contrast2)",
-    overflow: "hidden"
+    position: 'relative',
+    display: 'grid',
+    gridTemplateRows: 'auto 1fr',
+    height: '100%',
+    width: '100%',
+    background: 'transparent',
+    color: 'var(--ft-color-normal)',
+    border: '1px solid var(--border-color-ui-contrast2)',
+    overflow: 'hidden'
   },
   filter: {
     border: 0,
     background:
-      "linear-gradient(90deg, rgba(20,50,60,0.2) 0%, rgba(20,50,60,0.4) 100%)"
+      'linear-gradient(90deg, rgba(20,50,60,0.2) 0%, rgba(20,50,60,0.4) 100%)'
   },
   body: {
-    borderTop: "1px solid var(--border-color-ui-contrast2)",
-    padding: "10px 0",
+    borderTop: '1px solid var(--border-color-ui-contrast2)',
+    padding: '10px 0',
     background:
-      "linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 100%)"
+      'linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 100%)'
   },
   content: {
-    padding: "0 10px"
+    padding: '0 10px'
   }
 });
 
@@ -72,15 +73,15 @@ const Types = observer(() => {
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLElement>) => {
-    if (cursor === undefined && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
+    if (cursor === undefined && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
       setCursor(0);
     }
-    if (e.key === "ArrowUp" && cursor !== undefined && cursor > 0) {
+    if (e.key === 'ArrowUp' && cursor !== undefined && cursor > 0) {
       setCursor(prevCursor =>
         prevCursor !== undefined ? prevCursor - 1 : prevCursor
       );
     } else if (
-      e.key === "ArrowDown" &&
+      e.key === 'ArrowDown' &&
       cursor !== undefined &&
       cursor < typeStore.filteredTypeList.length - 1
     ) {
@@ -109,6 +110,6 @@ const Types = observer(() => {
     </div>
   );
 });
-Types.displayName = "Types";
+Types.displayName = 'Types';
 
 export default Types;

@@ -21,20 +21,21 @@
  *
  */
 
-import { useMemo, useState } from "react";
-import useAPI from "./useAPI";
-import useGenericQuery, { GenericQuery } from "./useGenericQuery";
-import { Query } from "../Types/Query";
-import { UUID } from "../types";
-import { APIError } from "../Services/API";
-import { normalizeQuery } from "../Helpers/QueryHelpers";
+import { useMemo, useState } from 'react';
+import { normalizeQuery } from '../Helpers/QueryHelpers';
+import useAPI from './useAPI';
+import useGenericQuery from './useGenericQuery';
+import type { GenericQuery } from './useGenericQuery';
+import type { APIError } from '../Services/API';
+import type { Query } from '../Types/Query';
+import type { UUID } from '../types';
 
 export interface GetQueryQuery extends GenericQuery<Query.Query|undefined> {
   isAvailable?: boolean;
 }
 
 const useGetQueryQuery = (queryId: UUID, skip: boolean): GetQueryQuery => {
-  
+
   const [isAvailable, setAvailability] = useState<boolean|undefined>(undefined);
 
   const API = useAPI();
@@ -45,8 +46,8 @@ const useGetQueryQuery = (queryId: UUID, skip: boolean): GetQueryQuery => {
       const data = await API.getQuery(queryId);
       setAvailability(false);
       try {
-          const query = await normalizeQuery(data);
-          return query;
+        const query = await normalizeQuery(data);
+        return query;
       } catch (e) {
         throw new Error(`Error while trying to expand/compact JSON-LD (${e})`);
       }
@@ -56,19 +57,19 @@ const useGetQueryQuery = (queryId: UUID, skip: boolean): GetQueryQuery => {
       const status = response?.status;
       const message = error?.message;
       switch (status) {
-        case 401: // Unauthorized
-        case 403: { // Forbidden
-          setAvailability(undefined);
-          throw new Error(`You do not have permission to access the query with id "${queryId}"`);
-        }
-        case 404: {
-          setAvailability(true);
-          return undefined;
-        }
-        default: {
-          setAvailability(undefined);
-          throw new Error(`Error while fetching query with id "${queryId}" (${message})`);
-        }
+      case 401: // Unauthorized
+      case 403: { // Forbidden
+        setAvailability(undefined);
+        throw new Error(`You do not have permission to access the query with id "${queryId}"`);
+      }
+      case 404: {
+        setAvailability(true);
+        return undefined;
+      }
+      default: {
+        setAvailability(undefined);
+        throw new Error(`Error while fetching query with id "${queryId}" (${message})`);
+      }
       }
     }
   }, [API, queryId]);

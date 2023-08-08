@@ -21,38 +21,38 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faLightbulb} from "@fortawesome/free-solid-svg-icons/faLightbulb";
-import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
+import {faLightbulb} from '@fortawesome/free-solid-svg-icons/faLightbulb';
+import {faTimes} from '@fortawesome/free-solid-svg-icons/faTimes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
 const useStyles = createUseStyles({
   container: {
-    display: "flex",
-    background: "rgba(0,0,0,0.2)",
-    padding: "8px 8px 8px 12px",
-    color: "var(--ft-color-loud)",
-    "& > svg": {
-      transform: "translateY(3px)"
+    display: 'flex',
+    background: 'rgba(0,0,0,0.2)',
+    padding: '8px 8px 8px 12px',
+    color: 'var(--ft-color-loud)',
+    '& > svg': {
+      transform: 'translateY(3px)'
     }
   },
   tip: {
-    padding: "0 10px",
+    padding: '0 10px',
     flex: 1,
-    "& a, & a:hover, & a:visited, & a:active": {
-      color: "var(--ft-color-loud)",
-      fontWeight: "bold"
+    '& a, & a:hover, & a:visited, & a:active': {
+      color: 'var(--ft-color-loud)',
+      fontWeight: 'bold'
     }
   },
   closeBtn: {
     margin: 0,
     border: 0,
-    background: "transparent",
-    color: "var(--ft-color-normal)",
-    "&:hover": {
-      color: "var(--ft-color-loud)",
+    background: 'transparent',
+    color: 'var(--ft-color-normal)',
+    '&:hover': {
+      color: 'var(--ft-color-loud)',
     }
   }
 });
@@ -72,13 +72,13 @@ const WelcomeTip = observer(({ className, show, onClose}: WelcomeTipProps) => {
   }
 
   return (
-    <div className={`${classes.container} ${className?className:""}`}>
+    <div className={`${classes.container} ${className?className:''}`}>
       <FontAwesomeIcon icon={faLightbulb} />
       <div className={classes.tip}> This is the place to query the EBRAINS Knowledge Graph conveniently by UI. If you need any help, please check out <a href="https://docs.kg.ebrains.eu/9b511d36d7608eafc94ea43c918f16b6/tutorials.html" rel="nofollow noreferrer noopener" target="_blank">our tutorials</a> or contact us at <a href="mailto:kg@ebrains.eu">kg@ebrains.eu</a></div>
       <button className={classes.closeBtn} onClick={onClose} title="close"><FontAwesomeIcon icon={faTimes} /></button>
     </div>
   );
 });
-WelcomeTip.displayName = "WelcomeTip";
+WelcomeTip.displayName = 'WelcomeTip';
 
 export default WelcomeTip;

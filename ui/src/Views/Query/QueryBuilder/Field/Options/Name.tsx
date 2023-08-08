@@ -21,43 +21,44 @@
  *
  */
 
-import React, { ChangeEvent } from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
-import Form from "react-bootstrap/Form";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
-import Field from "../../../../../Stores/Field";
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import Form from 'react-bootstrap/Form';
+import { createUseStyles } from 'react-jss';
+import type Field from '../../../../../Stores/Field';
+import type { ChangeEvent } from 'react';
 
 const useStyles = createUseStyles({
   option: {
-    marginBottom: "20px"
+    marginBottom: '20px'
   },
   optionLabel: {
-    fontWeight: "bold",
-    marginBottom: "5px",
-    "& small": {
-      fontWeight: "normal",
-      fontStyle: "italic"
+    fontWeight: 'bold',
+    marginBottom: '5px',
+    '& small': {
+      fontWeight: 'normal',
+      fontStyle: 'italic'
     },
-    "& strong": {
-      color: "var(--ft-color-loud)"
+    '& strong': {
+      color: 'var(--ft-color-loud)'
     }
   },
   aliasError: {
-    marginTop: "6px",
-    color: "var(--ft-color-error)"
+    marginTop: '6px',
+    color: 'var(--ft-color-error)'
   },
   targetInput: {
-    color: "var(--ft-color-loud) !important",
-    width: "calc(100% - 20px)",
-    border: "1px solid transparent",
-    borderRadius: "2px",
-    backgroundColor: "var(--bg-color-blend-contrast1)",
-    "&:focus": {
-      color: "var(--ft-color-loud)",
-      borderColor: "rgba(64, 169, 243, 0.5)",
-      backgroundColor: "transparent"
+    color: 'var(--ft-color-loud) !important',
+    width: 'calc(100% - 20px)',
+    border: '1px solid transparent',
+    borderRadius: '2px',
+    backgroundColor: 'var(--bg-color-blend-contrast1)',
+    '&:focus': {
+      color: 'var(--ft-color-loud)',
+      borderColor: 'rgba(64, 169, 243, 0.5)',
+      backgroundColor: 'transparent'
     }
   }
 });
@@ -79,14 +80,14 @@ const Name = observer(({ field, rootField }: NameProps) => {
   return (
     <div className={classes.option}>
       <div className={classes.optionLabel}>
-        Target name{" "}
+        Target name{' '}
         <small>(only applicable if parent field is not flattened)</small>
       </div>
       <div>
         <Form.Control
           className={classes.targetInput}
           type="text"
-          value={field.alias || ""}
+          value={field.alias || ''}
           placeholder={field.defaultAlias}
           onChange={handleChangeName}
         />
@@ -100,6 +101,6 @@ const Name = observer(({ field, rootField }: NameProps) => {
     </div>
   );
 });
-Name.displayName = "Name";
+Name.displayName = 'Name';
 
 export default Name;

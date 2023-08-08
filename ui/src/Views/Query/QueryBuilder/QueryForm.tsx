@@ -21,85 +21,86 @@
  *
  */
 
-import React, { ChangeEvent } from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
-import SpaceForm from "./SpaceForm";
-import Vocab from "./Vocab";
-import Links from "./Links";
+import useStores from '../../../Hooks/useStores';
+import Links from './Links';
+import SpaceForm from './SpaceForm';
+import Vocab from './Vocab';
 
-import useStores from "../../../Hooks/useStores";
+import type { ChangeEvent } from 'react';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
+    position: 'relative',
     background:
-      "linear-gradient(135deg, rgba(5,25,35,0.4) 0%, rgba(5,20,35,0.6) 100%)",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    color: "var(--ft-color-loud)",
-    padding: "10px"
+      'linear-gradient(135deg, rgba(5,25,35,0.4) 0%, rgba(5,20,35,0.6) 100%)',
+    border: '1px solid var(--border-color-ui-contrast1)',
+    color: 'var(--ft-color-loud)',
+    padding: '10px'
   },
   label: {
-    display: "flex",
-    alignItems: "center",
-    "& h5": {
+    display: 'flex',
+    alignItems: 'center',
+    '& h5': {
       margin: 0
     },
-    "& $input": {
+    '& $input': {
       flex: 1,
-      marginLeft: "3px"
+      marginLeft: '3px'
     }
   },
   description: {
-    marginTop: "20px",
-    "& h5": {
-      display: "inline-block",
+    marginTop: '20px',
+    '& h5': {
+      display: 'inline-block',
       marginTop: 0,
-      marginBottom: "8px"
+      marginBottom: '8px'
     },
-    "& $input": {
-      minWidth: "100%",
-      maxWidth: "100%",
-      minHeight: "10rem"
+    '& $input': {
+      minWidth: '100%',
+      maxWidth: '100%',
+      minHeight: '10rem'
     }
   },
   space: {
-    marginTop: "20px"
+    marginTop: '20px'
   },
   input: {
-    borderRadius: "2px",
-    backgroundColor: "var(--bg-color-blend-contrast1)",
-    color: "var(--ft-color-loud)",
-    width: "100%",
-    border: "1px solid transparent",
-    "&:focus": {
-      color: "var(--ft-color-loud)",
-      borderColor: "rgba(64, 169, 243, 0.5)",
-      backgroundColor: "transparent"
+    borderRadius: '2px',
+    backgroundColor: 'var(--bg-color-blend-contrast1)',
+    color: 'var(--ft-color-loud)',
+    width: '100%',
+    border: '1px solid transparent',
+    '&:focus': {
+      color: 'var(--ft-color-loud)',
+      borderColor: 'rgba(64, 169, 243, 0.5)',
+      backgroundColor: 'transparent'
     },
-    "&.disabled,&:disabled": {
-      backgroundColor: "var(--bg-color-blend-contrast1)",
-      color: "var(--ft-color-normal)",
-      cursor: "text"
+    '&.disabled,&:disabled': {
+      backgroundColor: 'var(--bg-color-blend-contrast1)',
+      color: 'var(--ft-color-normal)',
+      cursor: 'text'
     }
   },
   vocab: {
-    "&:not(:first-child)": {
-      marginTop: "20px"
+    '&:not(:first-child)': {
+      marginTop: '20px'
     }
   },
   author: {
-    marginTop: "6px",
-    color: "var(--ft-color-normal)"
+    marginTop: '6px',
+    color: 'var(--ft-color-normal)'
   },
   links: {
-    marginTop: "10px",
-    color: "var(--ft-color-normal)",
-    "& a, & a:visited, &a:active": {
-      color: "var(--ft-color-loud)",
-      "&:hover": {
-        color: "var(--ft-color-louder)"
+    marginTop: '10px',
+    color: 'var(--ft-color-normal)',
+    '& a, & a:visited, &a:active': {
+      color: 'var(--ft-color-loud)',
+      '&:hover': {
+        color: 'var(--ft-color-louder)'
       }
     }
   }
@@ -122,7 +123,7 @@ const QueryForm = observer(({ className }: QueryFormProps) => {
   const handleChangeVocab = (value?:string) => value && queryBuilderStore.setResponseVocab(value);
 
   return (
-    <div className={`${classes.container} ${className ? className : ""}`}>
+    <div className={`${classes.container} ${className ? className : ''}`}>
       {(queryBuilderStore.isQuerySaved || queryBuilderStore.saveAsMode) && (
         <React.Fragment>
           <div className={classes.label}>
@@ -134,7 +135,7 @@ const QueryForm = observer(({ className }: QueryFormProps) => {
                   queryBuilderStore.saveAsMode || queryBuilderStore.canSaveQuery
                 )
               }
-              placeholder={""}
+              placeholder={''}
               type="text"
               value={queryBuilderStore.label}
               onChange={handleChangeLabel}
@@ -149,7 +150,7 @@ const QueryForm = observer(({ className }: QueryFormProps) => {
                   queryBuilderStore.saveAsMode || queryBuilderStore.canSaveQuery
                 )
               }
-              placeholder={""}
+              placeholder={''}
               value={queryBuilderStore.description}
               onChange={handleChangeDescription}
             />
@@ -168,6 +169,6 @@ const QueryForm = observer(({ className }: QueryFormProps) => {
     </div>
   );
 });
-QueryForm.displayName = "QueryForm";
+QueryForm.displayName = 'QueryForm';
 
 export default QueryForm;

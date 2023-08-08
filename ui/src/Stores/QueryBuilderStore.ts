@@ -21,26 +21,26 @@
  *
  */
 
+import * as Diff from 'diff';
+import isEqual from 'lodash/isEqual';
+import remove from 'lodash/remove';
 import {
   observable,
   action,
   computed,
   toJS,
   makeObservable
-} from "mobx";
-import isEqual from "lodash/isEqual";
-import remove from "lodash/remove";
-import { v4 as uuidv4 } from "uuid";
-import * as Diff from "diff";
+} from 'mobx';
+import { v4 as uuidv4 } from 'uuid';
 
-import { buildFieldTreeFromQuery } from "./QueryBuilderStore/QueryToFieldTree";
-import { buildQueryStructureFromFieldTree } from "./QueryBuilderStore/FieldTreeToQuery";
-import RootStore from "./RootStore";
-import Field from "./Field";
-import { DEFAULT_RESPONSE_VOCAB, defaultContext, getProperties } from "../Helpers/QueryHelpers";
-import { QuerySpecification } from "../Types/QuerySpecification";
-import { Query } from "../Types/Query";
-import { Space, Type, Property, PropertyGroup } from "../types";
+import { DEFAULT_RESPONSE_VOCAB, defaultContext, getProperties } from '../Helpers/QueryHelpers';
+import Field from './Field';
+import { buildQueryStructureFromFieldTree } from './QueryBuilderStore/FieldTreeToQuery';
+import { buildFieldTreeFromQuery } from './QueryBuilderStore/QueryToFieldTree';
+import type RootStore from './RootStore';
+import type { Query } from '../Types/Query';
+import type { QuerySpecification } from '../Types/QuerySpecification';
+import type { Space, Type, Property, PropertyGroup } from '../types';
 
 interface Counter {
   [index: string]: {
@@ -67,18 +67,18 @@ class QueryBuilderStore {
   responseVocab?: string = DEFAULT_RESPONSE_VOCAB;
   type?: Type;
   queryId?: string;
-  label = "";
+  label = '';
   space?: Space;
-  description = "";
+  description = '';
   sourceQuery?: Query.Query;
   context?: QuerySpecification.Context;
   rootField?: Field;
   savedQueryHasInconsistencies = false;
   saveAsMode = false;
-  childrenFilterValue = "";
+  childrenFilterValue = '';
   fromQueryId?: string;
-  fromLabel = "";
-  fromDescription = "";
+  fromLabel = '';
+  fromDescription = '';
   fromSpace?: Space;
   includeAdvancedAttributes = false;
 
@@ -158,15 +158,15 @@ class QueryBuilderStore {
   }
 
   setSourceQuery(query: Query.Query | undefined) {
-    this.sourceQuery = query
+    this.sourceQuery = query;
   }
 
   updateSourceQuery(querySpecification: QuerySpecification.QuerySpecification) {
     if (this.sourceQuery) {
-      this.sourceQuery.label = (querySpecification.meta?.name)?querySpecification.meta.name:"";
-      this.sourceQuery.description = (querySpecification.meta?.description)?querySpecification.meta.description:"";
-      if (querySpecification["@context"]) {
-        this.sourceQuery.context = querySpecification["@context"];
+      this.sourceQuery.label = (querySpecification.meta?.name)?querySpecification.meta.name:'';
+      this.sourceQuery.description = (querySpecification.meta?.description)?querySpecification.meta.description:'';
+      if (querySpecification['@context']) {
+        this.sourceQuery.context = querySpecification['@context'];
       }
       if (querySpecification.structure) {
         this.sourceQuery.structure = querySpecification.structure;
@@ -200,8 +200,8 @@ class QueryBuilderStore {
     const lookups =
       field && field.typeFilterEnabled
         ? this.currentFieldLookups.filter(type =>
-            field.typeFilter.includes(type)
-          )
+          field.typeFilter.includes(type)
+        )
         : this.currentFieldLookups;
 
     if (!lookups.length) {
@@ -219,7 +219,7 @@ class QueryBuilderStore {
           prop =>
             (this.includeAdvancedAttributes ||
               !prop.attribute.startsWith(
-                "https://core.kg.ebrains.eu/vocab/meta"
+                'https://core.kg.ebrains.eu/vocab/meta'
               )) &&
             (!filter ||
               (prop.label && prop.label.toLowerCase().includes(filter)) ||
@@ -276,7 +276,7 @@ class QueryBuilderStore {
     };
 
     const addPropToCounters = (prop: Property) => {
-      const key = `${prop.attribute}${prop.reverse ? ":is-reverse" : ""}`;
+      const key = `${prop.attribute}${prop.reverse ? ':is-reverse' : ''}`;
       if (!counters[key]) {
         addPropToNewCounter(key, prop);
       } else {
@@ -362,8 +362,8 @@ class QueryBuilderStore {
   setType(type: Type) {
     this.type = type;
     this.queryId = undefined;
-    this.label = "";
-    this.description = "";
+    this.label = '';
+    this.description = '';
     this.context = defaultContext();
     this.meta = undefined;
     this.defaultResponseVocab = DEFAULT_RESPONSE_VOCAB;
@@ -376,10 +376,10 @@ class QueryBuilderStore {
     } as QuerySpecification.Schema);
     this.rootField.isInvalidLeaf = true;
     this.saveAsMode = false;
-    this.childrenFilterValue = "";
+    this.childrenFilterValue = '';
     this.fromQueryId = undefined;
-    this.fromLabel = "";
-    this.fromDescription = "";
+    this.fromLabel = '';
+    this.fromDescription = '';
     this.fromSpace = toJS(this.rootStore.spacesStore.privateSpace);
     this.space = toJS(this.rootStore.spacesStore.privateSpace);
     this.selectField(this.rootField);
@@ -404,8 +404,8 @@ class QueryBuilderStore {
       this.rootField.isInvalidLeaf = true;
     }
     this.queryId = undefined;
-    this.label = "";
-    this.description = "";
+    this.label = '';
+    this.description = '';
     this.context = defaultContext();
     this.meta = undefined;
     this.defaultResponseVocab = DEFAULT_RESPONSE_VOCAB;
@@ -413,25 +413,25 @@ class QueryBuilderStore {
     this.sourceQuery = undefined;
     this.savedQueryHasInconsistencies = false;
     this.saveAsMode = false;
-    this.childrenFilterValue = "";
+    this.childrenFilterValue = '';
     this.fromQueryId = undefined;
-    this.fromLabel = "";
-    this.fromDescription = "";
+    this.fromLabel = '';
+    this.fromDescription = '';
     this.fromSpace = toJS(this.rootStore.spacesStore.privateSpace);
     this.space = toJS(this.rootStore.spacesStore.privateSpace);
   }
 
   setAsNewQuery(queryId: string) {
     this.queryId = queryId;
-    this.label = "";
-    this.description = "";
+    this.label = '';
+    this.description = '';
     this.sourceQuery = undefined;
     this.savedQueryHasInconsistencies = false;
     this.saveAsMode = false;
-    this.childrenFilterValue = "";
+    this.childrenFilterValue = '';
     this.fromQueryId = undefined;
-    this.fromLabel = "";
-    this.fromDescription = "";
+    this.fromLabel = '';
+    this.fromDescription = '';
     this.fromSpace = toJS(this.rootStore.spacesStore.privateSpace);
     this.space = toJS(this.rootStore.spacesStore.privateSpace);
     if (this.rootField) {
@@ -497,8 +497,8 @@ class QueryBuilderStore {
     gotoField = true
   ) {
     if (this.context) {
-      if (!this.context["@vocab"]) {
-        this.context["@vocab"] = defaultContext()["@vocab"];
+      if (!this.context['@vocab']) {
+        this.context['@vocab'] = defaultContext()['@vocab'];
       }
       if (!this.context.query) {
         this.context.query = this.responseVocab;
@@ -560,7 +560,7 @@ class QueryBuilderStore {
   removeField(field: Field) {
     const currentField = this.currentField;
     const parentField = field.parent;
-    this.childrenFilterValue = "";
+    this.childrenFilterValue = '';
     if (this.currentField && parentField && this.rootField) {
       if (isChildOfField(this.currentField, field, this.rootField)) {
         this.selectField(parentField);
@@ -594,15 +594,15 @@ class QueryBuilderStore {
 
   selectField(field: Field) {
     this.currentField = field;
-    this.childrenFilterValue = "";
+    this.childrenFilterValue = '';
     this.rootStore.typeStore.addTypesToFetch(this.currentField.lookups);
   }
 
   getParametersFromField(field: Field) {
     const parameters = [];
-    if (field.optionsMap?.has("filter")) {
-      const filter = field.optionsMap.get("filter") as QuerySpecification.FilterItem;
-      if (filter?.parameter && typeof filter.parameter === "string") {
+    if (field.optionsMap?.has('filter')) {
+      const filter = field.optionsMap.get('filter') as QuerySpecification.FilterItem;
+      if (filter?.parameter && typeof filter.parameter === 'string') {
         const parameter = filter.parameter.trim();
         if (parameter) {
           parameters.push(parameter);
@@ -622,7 +622,7 @@ class QueryBuilderStore {
       return Array.from(
         new Set(
           this.getParametersFromField(this.rootField)
-            .filter(p => !["scope", "size", "start", "instanceId"].includes(p))
+            .filter(p => !['scope', 'size', 'start', 'instanceId'].includes(p))
             .sort()
         )
       );
@@ -642,12 +642,12 @@ class QueryBuilderStore {
     const meta: QuerySpecification.Meta =
       this.rootField?.schema
         ? {
-            ...this.meta,
-            type: this.typeId
-          }
+          ...this.meta,
+          type: this.typeId
+        }
         : { ...this.meta };
-    const name = this.label ? this.label.trim() : "";
-    const description = this.description ? this.description.trim() : "";
+    const name = this.label ? this.label.trim() : '';
+    const description = this.description ? this.description.trim() : '';
     if (name) {
       meta.name = name;
     }
@@ -664,7 +664,7 @@ class QueryBuilderStore {
 
   get querySpecification(): QuerySpecification.QuerySpecification {
     const query: QuerySpecification.QuerySpecification = {
-      "@context": toJS(this.context),
+      '@context': toJS(this.context),
       meta: this.querySpecificationMeta
     };
     if (this.querySpecificationStructure) {
@@ -678,7 +678,7 @@ class QueryBuilderStore {
       return null;
     }
     const json = toJS(this.sourceQuery.properties);
-    json["@context"] = toJS(this.sourceQuery.context);
+    json['@context'] = toJS(this.sourceQuery.context);
     if (this.sourceQuery.structure) {
       json.structure = toJS(this.sourceQuery.structure);
     }
@@ -705,8 +705,8 @@ class QueryBuilderStore {
       this.updateQuery(query);
       this.saveAsMode = false;
       this.fromQueryId = undefined;
-      this.fromLabel = "";
-      this.fromDescription = "";
+      this.fromLabel = '';
+      this.fromDescription = '';
       this.fromSpace = query.space
         ? toJS(this.rootStore.spacesStore.getSpace(query.space))
         : undefined;
@@ -724,14 +724,14 @@ class QueryBuilderStore {
     }
     this.meta = toJS(query.meta);
     if (this.meta) {
-      this.label = this.meta.name ? this.meta.name : "";
-      this.description = this.meta.description ? this.meta.description : "";
+      this.label = this.meta.name ? this.meta.name : '';
+      this.description = this.meta.description ? this.meta.description : '';
       if (this.meta.responseVocab) {
         this.defaultResponseVocab = this.meta.responseVocab;
       } else if (this.context?.query) {
         this.defaultResponseVocab = this.context?.query;
       } else {
-        this.defaultResponseVocab = DEFAULT_RESPONSE_VOCAB
+        this.defaultResponseVocab = DEFAULT_RESPONSE_VOCAB;
       }
       if (this.meta.responseVocab) {
         this.responseVocab = this.meta.responseVocab;
@@ -740,7 +740,7 @@ class QueryBuilderStore {
       if (this.context?.query) {
         this.defaultResponseVocab = this.context?.query;
       } else {
-        this.defaultResponseVocab = DEFAULT_RESPONSE_VOCAB
+        this.defaultResponseVocab = DEFAULT_RESPONSE_VOCAB;
       }
       this.responseVocab = this.context?.query;
     }
@@ -754,12 +754,12 @@ class QueryBuilderStore {
         toJS(query)
       );
     } else {
-      const typeId = typeName??"<undefined>";
+      const typeId = typeName??'<undefined>';
       const unknownType = {
         id: typeId,
         label: typeId,
-        color: "black",
-        description: "",
+        color: 'black',
+        description: '',
         properties: []
       } as Type;
       this.rootField = buildFieldTreeFromQuery(
@@ -789,8 +789,8 @@ class QueryBuilderStore {
         this.rootField.structure = [];
       }
       this.fromQueryId = undefined;
-      this.fromLabel = "";
-      this.fromDescription = "";
+      this.fromLabel = '';
+      this.fromDescription = '';
       this.fromSpace = toJS(this.rootStore.spacesStore.privateSpace);
     }
   }
@@ -799,17 +799,17 @@ class QueryBuilderStore {
     if (!this.label) {
       return this.label;
     }
-    if (this.label?.endsWith("-Copy")) {
+    if (this.label?.endsWith('-Copy')) {
       return this.label;
     }
-    return this.label + "-Copy";
+    return this.label + '-Copy';
   }
 
   setQuerySaved() {
     this.saveAsMode = false;
     this.fromQueryId = undefined;
-    this.fromLabel = "";
-    this.fromDescription = "";
+    this.fromLabel = '';
+    this.fromDescription = '';
     this.fromSpace = toJS(this.space);
   }
 
@@ -832,8 +832,8 @@ class QueryBuilderStore {
       this.description = this.fromDescription;
       this.space = toJS(this.fromSpace);
       this.fromQueryId = undefined;
-      this.fromLabel = "";
-      this.fromDescription = "";
+      this.fromLabel = '';
+      this.fromDescription = '';
       this.fromSpace = toJS(this.rootStore.spacesStore.privateSpace);
     }
   }

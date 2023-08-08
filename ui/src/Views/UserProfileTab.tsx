@@ -21,118 +21,119 @@
  *
  */
 
-import React, { useEffect, useState, useRef, MouseEvent } from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
-import Overlay from "react-bootstrap/Overlay";
-import Popover from "react-bootstrap/Popover";
-import Button from "react-bootstrap/Button";
-import uniqueId from "lodash/uniqueId";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
-import { CopyToClipboard } from "react-copy-to-clipboard";
+import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import uniqueId from 'lodash/uniqueId';
+import { observer } from 'mobx-react-lite';
+import React, { useEffect, useState, useRef } from 'react';
+import Button from 'react-bootstrap/Button';
+import Overlay from 'react-bootstrap/Overlay';
+import Popover from 'react-bootstrap/Popover';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../Hooks/useStores";
-import useAuth from "../Hooks/useAuth";
-import Matomo from "../Services/Matomo";
+import Avatar from '../Components/Avatar';
+import useAuth from '../Hooks/useAuth';
+import useStores from '../Hooks/useStores';
+import Matomo from '../Services/Matomo';
 
-import Avatar from "../Components/Avatar";
+import type { MouseEvent } from 'react';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
-    display: "inline-block"
+    position: 'relative',
+    display: 'inline-block'
   },
   button: {
-    position: "relative",
-    width: "100%",
+    position: 'relative',
+    width: '100%',
     margin: 0,
     padding: 0,
     border: 0,
-    backgroundColor: "transparent",
-    textAlign: "center",
+    backgroundColor: 'transparent',
+    textAlign: 'center',
     outline: 0,
-    cursor: "pointer"
+    cursor: 'pointer'
   },
   popOver: {
-    maxWidth: "unset !important",
-    margin: "0 !important",
-    padding: "0 !important",
-    transform: "translate(-5px, 5px)",
-    background: "var(--list-bg-hover)",
-    border: "1px solid var(--border-color-ui-contrast1)",
+    maxWidth: 'unset !important',
+    margin: '0 !important',
+    padding: '0 !important',
+    transform: 'translate(-5px, 5px)',
+    background: 'var(--list-bg-hover)',
+    border: '1px solid var(--border-color-ui-contrast1)',
     borderRadius: 0,
-    "& .popover-arrow:after": {
-      borderBottomColor: "var(--list-bg-hover)"
+    '& .popover-arrow:after': {
+      borderBottomColor: 'var(--list-bg-hover)'
     },
-    "& .popover-content": {
-      padding: "0 !important"
+    '& .popover-content': {
+      padding: '0 !important'
     }
   },
   popOverContent: {
-    display: "grid",
-    gridTemplateRows: "1fr",
-    gridTemplateColumns: "auto 1fr",
-    gridGap: "20px",
-    margin: "15px",
-    color: "var(--ft-color-normal)"
+    display: 'grid',
+    gridTemplateRows: '1fr',
+    gridTemplateColumns: 'auto 1fr',
+    gridGap: '20px',
+    margin: '15px',
+    color: 'var(--ft-color-normal)'
   },
   popOverFooterBar: {
-    display: "grid",
-    gridTemplateRows: "1fr",
-    gridTemplateColumns: "auto auto",
-    gridGap: "20px",
-    width: "100%",
-    padding: "8px 15px",
-    borderTop: "1px solid var(--border-color-ui-contrast1)",
-    background: "var(--bg-color-blend-contrast1)",
-    wordBreak: "keep-all",
-    whiteSpace: "nowrap",
-    "& > div": {
-      textAlign: "left",
-      "& + div": {
-        textAlign: "right"
+    display: 'grid',
+    gridTemplateRows: '1fr',
+    gridTemplateColumns: 'auto auto',
+    gridGap: '20px',
+    width: '100%',
+    padding: '8px 15px',
+    borderTop: '1px solid var(--border-color-ui-contrast1)',
+    background: 'var(--bg-color-blend-contrast1)',
+    wordBreak: 'keep-all',
+    whiteSpace: 'nowrap',
+    '& > div': {
+      textAlign: 'left',
+      '& + div': {
+        textAlign: 'right'
       }
     },
-    "& button": {
-      borderRadius: "2px"
+    '& button': {
+      borderRadius: '2px'
     }
   },
   name: {
-    color: "var(--ft-color-loud)"
+    color: 'var(--ft-color-loud)'
   },
   email: {},
   tokenCopiedBar: {
-    width: "100%",
+    width: '100%',
     height: 0,
-    background: "var(--list-bg-hover)",
-    overflow: "hidden",
-    transition: "height .3s ease-in-out",
-    "&.show": {
-      height: "48px",
-      "& $tokenCopied": {
-        transform: "translateY(0)"
+    background: 'var(--list-bg-hover)',
+    overflow: 'hidden',
+    transition: 'height .3s ease-in-out',
+    '&.show': {
+      height: '48px',
+      '& $tokenCopied': {
+        transform: 'translateY(0)'
       }
     }
   },
   tokenCopied: {
-    margin: "8px 15px",
-    padding: "6px 0",
-    color: "var(--release-color-highlight)",
-    transition: "transform .3s ease-in-out",
-    transform: "translateY(-48px)"
+    margin: '8px 15px',
+    padding: '6px 0',
+    color: 'var(--release-color-highlight)',
+    transition: 'transform .3s ease-in-out',
+    transform: 'translateY(-48px)'
   },
   icon: {
     margin: 0,
     padding: 0,
-    paddingTop: "10px",
-    overflow: "hidden",
+    paddingTop: '10px',
+    overflow: 'hidden',
     border: 0,
-    background: "none",
-    "& .avatar.default.fa-user": {
-      width: "100px",
-      transform: "scale(3)",
-      color: "#1b1b1b"
+    background: 'none',
+    '& .avatar.default.fa-user': {
+      width: '100px',
+      transform: 'scale(3)',
+      color: '#1b1b1b'
     }
   }
 });
@@ -157,7 +158,7 @@ const UserProfileTab = observer(
 
     useEffect(() => {
       if (showPopOver) {
-        Matomo.trackEvent("Tab", "UserProfile", "Open");
+        Matomo.trackEvent('Tab', 'UserProfile', 'Open');
       }
       return () => {
         if (showPopOver) {
@@ -177,23 +178,23 @@ const UserProfileTab = observer(
     };
 
     const handleCopyToken = () => {
-      Matomo.trackEvent("Token", "Copy");
+      Matomo.trackEvent('Token', 'Copy');
       clearTimeout(tokenCopied);
       const timer = setTimeout(() => setTokenCopied(undefined), 2000);
       setTokenCopied(timer);
     };
 
     const handleLogout = () => {
-      Matomo.trackEvent("User", "Logout");
+      Matomo.trackEvent('User', 'Logout');
       logout();
     };
 
     if (!isAuthenticated || !userProfileStore.user) {
       return null;
     }
-  
+
     return (
-      <div className={`${classes.container} ${className ? className : ""}`}>
+      <div className={`${classes.container} ${className ? className : ''}`}>
         <button
           className={classes.button}
           onClick={handleButtonClick}
@@ -210,7 +211,7 @@ const UserProfileTab = observer(
           rootClose={true}
           onHide={handlePopOverClose}
         >
-          <Popover id={uniqueId("popover")} className={classes.popOver}>
+          <Popover id={uniqueId('popover')} className={classes.popOver}>
             <div>
               <div className={classes.popOverContent}>
                 <div className={classes.icon}>
@@ -238,7 +239,7 @@ const UserProfileTab = observer(
               </div>
               <div
                 className={`${classes.tokenCopiedBar} ${
-                  tokenCopied ? "show" : ""
+                  tokenCopied ? 'show' : ''
                 }`}
               >
                 <div className={classes.tokenCopied}>
@@ -253,6 +254,6 @@ const UserProfileTab = observer(
     );
   }
 );
-UserProfileTab.displayName = "UserProfileTab";
+UserProfileTab.displayName = 'UserProfileTab';
 
 export default UserProfileTab;

@@ -21,21 +21,21 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faLevelDownAlt} from "@fortawesome/free-solid-svg-icons/faLevelDownAlt";
-import { FieldProps } from "../Field";
+import {faLevelDownAlt} from '@fortawesome/free-solid-svg-icons/faLevelDownAlt';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import type { FieldProps } from '../Field';
 
 const useStyles = createUseStyles({
   container: {
-    color: "var(--ft-color-louder)"
+    color: 'var(--ft-color-louder)'
   },
 });
 
 const ChildrenFlag = observer(({ field }: FieldProps) => {
-  
+
   const classes = useStyles();
 
   if (!field.isFlattened || !field.structure || !field.structure.length) {
@@ -49,6 +49,6 @@ const ChildrenFlag = observer(({ field }: FieldProps) => {
     </span>
   );
 });
-ChildrenFlag.displayName = "ChildrenFlag";
+ChildrenFlag.displayName = 'ChildrenFlag';
 
 export default ChildrenFlag;

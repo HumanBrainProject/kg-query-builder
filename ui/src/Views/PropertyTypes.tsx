@@ -21,31 +21,31 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle";
+import { faCircle } from '@fortawesome/free-solid-svg-icons/faCircle';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../Hooks/useStores";
+import Icon from '../Components/Icon';
+import useStores from '../Hooks/useStores';
 
-import Icon from "../Components/Icon";
 
 const useStyles = createUseStyles({
   types: {
-    "& > div::before": {
-      content: "', '",
-      color: "var(--ft-color-loud)"
+    '& > div::before': {
+      content: '\', \'',
+      color: 'var(--ft-color-loud)'
     },
-    "& > div:first-child::before": {
-      content: "''"
+    '& > div:first-child::before': {
+      content: '\'\''
     }
   }
 });
 
 const extractLabel = (type: string): string => {
-  if (typeof type !== "string") {
-    return "<unknown filter>";
+  if (typeof type !== 'string') {
+    return '<unknown filter>';
   }
-  const idx = type.lastIndexOf("/");
+  const idx = type.lastIndexOf('/');
   if (idx !== -1) {
     return type.substring(idx + 1);
   }
@@ -64,7 +64,7 @@ export const Type = ({ type }: TypeProps) => {
   const color = t?.color;
 
   return (
-    <span title={typeof type === "string" ? type : JSON.stringify(type)}>
+    <span title={typeof type === 'string' ? type : JSON.stringify(type)}>
       <Icon icon={faCircle} color={color} />
       {label}
     </span>

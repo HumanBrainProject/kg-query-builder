@@ -21,60 +21,61 @@
  *
  */
 
-import React, { useRef, useEffect, useState, MouseEvent } from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
-import Button from "react-bootstrap/Button";
-import Overlay from "react-bootstrap/Overlay";
-import Popover from "react-bootstrap/Popover";
-import uniqueId from "lodash/uniqueId";
-import { faRedoAlt } from "@fortawesome/free-solid-svg-icons/faRedoAlt";
-import { faUndoAlt } from "@fortawesome/free-solid-svg-icons/faUndoAlt";
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
+import { faRedoAlt } from '@fortawesome/free-solid-svg-icons/faRedoAlt';
+import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
+import { faUndoAlt } from '@fortawesome/free-solid-svg-icons/faUndoAlt';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import uniqueId from 'lodash/uniqueId';
+import { observer } from 'mobx-react-lite';
+import React, { useRef, useEffect, useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import Overlay from 'react-bootstrap/Overlay';
+import Popover from 'react-bootstrap/Popover';
+import { createUseStyles } from 'react-jss';
+import type { MouseEvent } from 'react';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
-    display: "inline-block"
+    position: 'relative',
+    display: 'inline-block'
   },
   button: {
-    position: "relative",
-    minWidth: "1.1em",
+    position: 'relative',
+    minWidth: '1.1em',
     margin: 0,
     padding: 0,
     border: 0,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
     outline: 0
   },
   popOver: {
-    background: "#0a2332",
-    border: "1px solid var(--list-border-hover)",
-    "& .arrow:after": {
-      borderBottomColor: "var(--list-border-hover) !important"
+    background: '#0a2332',
+    border: '1px solid var(--list-border-hover)',
+    '& .arrow:after': {
+      borderBottomColor: 'var(--list-border-hover) !important'
     }
   },
   popOverContent: {
-    margin: "20px 0",
-    color: "var(--ft-color-loud)"
+    margin: '20px 0',
+    color: 'var(--ft-color-loud)'
   },
   popOverCloseButton: {
-    position: "absolute",
-    top: "3px",
-    right: "3px",
-    color: "var(--ft-color-loud)",
-    backgroundColor: "transparent",
-    border: "transparent"
+    position: 'absolute',
+    top: '3px',
+    right: '3px',
+    color: 'var(--ft-color-loud)',
+    backgroundColor: 'transparent',
+    border: 'transparent'
   },
   popOverFooterBar: {
-    marginBottom: "10px",
-    width: "100%",
-    textAlign: "center",
-    wordBreak: "keep-all",
-    whiteSpace: "nowrap",
-    "& button + button": {
-      marginLeft: "20px"
+    marginBottom: '10px',
+    width: '100%',
+    textAlign: 'center',
+    wordBreak: 'keep-all',
+    whiteSpace: 'nowrap',
+    '& button + button': {
+      marginLeft: '20px'
     }
   }
 });
@@ -101,14 +102,14 @@ const PopOverButton = observer(
     const buttonRef = useRef<HTMLButtonElement>(null);
     const [showPopOver, setShowPopOver] = useState(false);
 
-    useEffect(() => {
-      return () => {
+    useEffect(() =>
+      () => {
         if (showPopOver) {
           setShowPopOver(false);
         }
-      };
+      }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [showPopOver]);
+    , [showPopOver]);
 
     const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
@@ -133,10 +134,10 @@ const PopOverButton = observer(
     };
 
     return (
-      <div className={`${classes.container} ${className ? className : ""}`}>
+      <div className={`${classes.container} ${className ? className : ''}`}>
         <button
           className={`${classes.button} ${
-            buttonClassName ? buttonClassName : ""
+            buttonClassName ? buttonClassName : ''
           }`}
           onClick={handleButtonClick}
           title={buttonTitle}
@@ -152,7 +153,7 @@ const PopOverButton = observer(
           rootClose={true}
           onHide={handlePopOverClose}
         >
-          <Popover id={uniqueId("popover")} className={classes.popOver}>
+          <Popover id={uniqueId('popover')} className={classes.popOver}>
             <div>
               <div className={classes.popOverContent}>{children}</div>
               <div className={classes.popOverFooterBar}>
@@ -160,7 +161,7 @@ const PopOverButton = observer(
                   <FontAwesomeIcon icon={faUndoAlt} />
                   &nbsp;Cancel
                 </Button>
-                <Button variant="primary" size="sm" onClick={handleOkClick}>
+                <Button variant={'primary'} size="sm" onClick={handleOkClick}>
                   <FontAwesomeIcon icon={faRedoAlt} />
                   &nbsp;Retry
                 </Button>
@@ -170,7 +171,7 @@ const PopOverButton = observer(
                 onClick={handlePopOverClose}
                 title="close"
               >
-                <FontAwesomeIcon icon={faTimes}></FontAwesomeIcon>
+                <FontAwesomeIcon icon={faTimes} />
               </button>
             </div>
           </Popover>
@@ -179,6 +180,6 @@ const PopOverButton = observer(
     );
   }
 );
-PopOverButton.displayName = "PopOverButton";
+PopOverButton.displayName = 'PopOverButton';
 
 export default PopOverButton;

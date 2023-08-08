@@ -21,9 +21,10 @@
  *
  */
 
-import React, { ErrorInfo } from "react";
+import React from 'react';
 
-import RootStore from "../Stores/RootStore";
+import type RootStore from '../Stores/RootStore';
+import type { ErrorInfo } from 'react';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;

@@ -21,10 +21,11 @@
  *
  */
 
-import { useMemo } from "react";
-import { Type, Property } from "../types";
-import useAPI from "./useAPI";
-import useGenericQuery, { GenericQuery } from "./useGenericQuery";
+import { useMemo } from 'react';
+import useAPI from './useAPI';
+import useGenericQuery from './useGenericQuery';
+import type { GenericQuery } from './useGenericQuery';
+import type { Type, Property } from '../types';
 
 const typeComparer = (a: Type, b: Type) => a.label.localeCompare(b.label);
 
@@ -43,7 +44,7 @@ const normalizeProperties = (properties?: Property[]) => {
   }
   return properties
     .map(property => normalizeProperty(property))
-    .sort(propertyComparer)
+    .sort(propertyComparer);
 };
 
 const normalizeTypes = (types?: Type[]) => {
@@ -56,12 +57,12 @@ const normalizeTypes = (types?: Type[]) => {
       properties: normalizeProperties(type.properties)
     } as Type))
     .sort(typeComparer);
-}
+};
 
 export type ListSpacesQuery = GenericQuery<Type[]>;
 
 const useListSpacesQuery = (): ListSpacesQuery => {
-  
+
   const API = useAPI();
 
   const fetch = useMemo(() => async () => {

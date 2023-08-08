@@ -21,103 +21,103 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../../../Hooks/useStores";
+import useStores from '../../../Hooks/useStores';
 
-import ChildrenFlag from "./Field/ChildrenFlag";
-import RequiredFlag from "./Field/RequiredFlag";
-import Type from "./Field/Type";
-import TargetName from "./Field/TargetName";
-import Actions from "./Field/Actions";
-import Children from "./Field/Children";
-import FieldClass from "../../../Stores/Field";
+import Actions from './Field/Actions';
+import Children from './Field/Children';
+import ChildrenFlag from './Field/ChildrenFlag';
+import RequiredFlag from './Field/RequiredFlag';
+import TargetName from './Field/TargetName';
+import Type from './Field/Type';
+import type FieldClass from '../../../Stores/Field';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
-    "&::before": {
-      display: "block",
-      content: "''",
-      position: "absolute",
-      left: "10px",
-      width: "0",
-      height: "calc(100% - 20px)",
-      borderLeft: "1px dashed #ccc"
+    position: 'relative',
+    '&::before': {
+      display: 'block',
+      content: '\'\'',
+      position: 'absolute',
+      left: '10px',
+      width: '0',
+      height: 'calc(100% - 20px)',
+      borderLeft: '1px dashed #ccc'
     },
-    "&::after": {
-      display: "block",
-      content: "''",
-      position: "absolute",
-      left: "-9px",
-      top: "20px",
-      width: "10px",
-      height: "0",
-      borderTop: "1px dashed #ccc"
+    '&::after': {
+      display: 'block',
+      content: '\'\'',
+      position: 'absolute',
+      left: '-9px',
+      top: '20px',
+      width: '10px',
+      height: '0',
+      borderTop: '1px dashed #ccc'
     },
-    "&.has-flattened-parent::after": {
-      borderTop: "3px solid #40a9f3"
+    '&.has-flattened-parent::after': {
+      borderTop: '3px solid #40a9f3'
     }
   },
   verticalLineExtraPath: {
-    display: "block",
-    content: "''",
-    position: "absolute",
-    top: "-1px",
-    left: "-11px",
-    width: "0",
-    height: "24px",
-    borderLeft: "3px solid #40a9f3"
+    display: 'block',
+    content: '\'\'',
+    position: 'absolute',
+    top: '-1px',
+    left: '-11px',
+    width: '0',
+    height: '24px',
+    borderLeft: '3px solid #40a9f3'
   },
   content: {
-    padding: "10px 35px 10px 10px",
-    margin: "1px",
+    padding: '10px 35px 10px 10px',
+    margin: '1px',
     background:
-      "linear-gradient(180deg, rgba(5,20,40,1) 0%, rgba(5,25,40,0.9) 100%)",
-    position: "relative",
+      'linear-gradient(180deg, rgba(5,20,40,1) 0%, rgba(5,25,40,0.9) 100%)',
+    position: 'relative',
     zIndex: 2,
-    cursor: "pointer",
-    "&:hover": {
+    cursor: 'pointer',
+    '&:hover': {
       background:
-        "linear-gradient(90deg, rgba(35,55,70,1) 0%, rgba(30,50,70,0.9) 100%)",
-      "& $actions": {
+        'linear-gradient(90deg, rgba(35,55,70,1) 0%, rgba(30,50,70,0.9) 100%)',
+      '& $actions': {
         opacity: 1
       }
     },
-    "&.selected": {
+    '&.selected': {
       background:
-        "linear-gradient(90deg, rgba(35,55,70,1) 0%, rgba(30,50,70,0.9) 100%)",
-      "& $actions": {
+        'linear-gradient(90deg, rgba(35,55,70,1) 0%, rgba(30,50,70,0.9) 100%)',
+      '& $actions': {
         opacity: 1
       }
     },
-    "&.is-unknown": {
-      background: "var(--bg-color-warn-quiet)",
-      "&&.selected": {
-        background: "var(--bg-color-warn-normal)"
+    '&.is-unknown': {
+      background: 'var(--bg-color-warn-quiet)',
+      '&&.selected': {
+        background: 'var(--bg-color-warn-normal)'
       },
-      "&:hover, &.selected:hover": {
-        background: "var(--bg-color-warn-loud)"
+      '&:hover, &.selected:hover': {
+        background: 'var(--bg-color-warn-loud)'
       }
     },
-    "&.is-invalid, &.is-unknown.is-invalid": {
-      background: "var(--bg-color-error-quiet)",
-      "&&.selected": {
-        background: "var(--bg-color-error-normal)"
+    '&.is-invalid, &.is-unknown.is-invalid': {
+      background: 'var(--bg-color-error-quiet)',
+      '&&.selected': {
+        background: 'var(--bg-color-error-normal)'
       },
-      "&:hover, &.selected:hover": {
-        background: "var(--bg-color-error-loud)"
+      '&:hover, &.selected:hover': {
+        background: 'var(--bg-color-error-loud)'
       }
     },
-    "& small": {
-      color: "var(--ft-color-quiet)",
-      fontStyle: "italic"
+    '& small': {
+      color: 'var(--ft-color-quiet)',
+      fontStyle: 'italic'
     }
   },
   children: {
-    paddingLeft: "20px"
+    paddingLeft: '20px'
   },
   actions: {
     opacity: 0.25
@@ -126,15 +126,15 @@ const useStyles = createUseStyles({
 
 const getTitle = (field: FieldClass) => {
   if (field.isInvalid) {
-    return "this is not a recognized property for this type";
+    return 'this is not a recognized property for this type';
   }
 
   if (field.aliasError) {
-    return "alias should not be empty";
+    return 'alias should not be empty';
   }
 
   if (field.isInvalidLeaf) {
-    return "Links field must have at least one child field";
+    return 'Links field must have at least one child field';
   }
 
   return undefined;
@@ -161,16 +161,16 @@ const Field = observer(({ field }: FieldProps) => {
   const title = getTitle(field);
 
   const containerClassName = `${classes.container} ${
-    isFlattened ? "flattened" : ""
-  } ${hasFlattenedParent ? "has-flattened-parent" : ""}`;
+    isFlattened ? 'flattened' : ''
+  } ${hasFlattenedParent ? 'has-flattened-parent' : ''}`;
   const contentClassName = `${classes.content} ${
-    field.isUnknown ? "is-unknown" : ""
-  } ${isInvalid ? "is-invalid" : ""} ${isSelected ? "selected" : ""}`;
+    field.isUnknown ? 'is-unknown' : ''
+  } ${isInvalid ? 'is-invalid' : ''} ${isSelected ? 'selected' : ''}`;
 
   return (
     <div className={containerClassName}>
       {hasFlattenedParent && (
-        <div className={classes.verticalLineExtraPath}></div>
+        <div className={classes.verticalLineExtraPath} />
       )}
       <div
         className={contentClassName}
@@ -187,6 +187,6 @@ const Field = observer(({ field }: FieldProps) => {
     </div>
   );
 });
-Field.displayName = "Field";
+Field.displayName = 'Field';
 
 export default Field;

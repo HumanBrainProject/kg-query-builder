@@ -21,16 +21,16 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faCopy} from "@fortawesome/free-solid-svg-icons/faCopy";
-import { v4 as uuidv4 } from "uuid";
-import { useNavigate } from "react-router-dom";
+import {faCopy} from '@fortawesome/free-solid-svg-icons/faCopy';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import Button from 'react-bootstrap/Button';
+import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
-import useStores from "../../../Hooks/useStores";
-import Matomo from "../../../Services/Matomo";
+import useStores from '../../../Hooks/useStores';
+import Matomo from '../../../Services/Matomo';
 
 const CopyAsNewQueryButton = observer(() => {
 
@@ -39,7 +39,7 @@ const CopyAsNewQueryButton = observer(() => {
   const { queryBuilderStore } = useStores();
 
   const onClick = () => {
-    Matomo.trackEvent("Query", "CopyAsNew", queryBuilderStore.queryId);
+    Matomo.trackEvent('Query', 'CopyAsNew', queryBuilderStore.queryId);
     const uuid = uuidv4();
     queryBuilderStore.setAsNewQuery(uuid);
     navigate(`/queries/${uuid}`);
@@ -50,9 +50,9 @@ const CopyAsNewQueryButton = observer(() => {
   }
 
   return (
-      <Button variant="secondary" onClick={onClick}>
-        <FontAwesomeIcon icon={faCopy} />&nbsp;Copy as a new query
-      </Button>
+    <Button variant="secondary" onClick={onClick}>
+      <FontAwesomeIcon icon={faCopy} />&nbsp;Copy as a new query
+    </Button>
   );
 });
 

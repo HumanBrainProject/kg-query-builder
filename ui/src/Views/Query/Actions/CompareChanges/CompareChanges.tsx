@@ -21,13 +21,13 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 
-import useStores from "../../../../Hooks/useStores";
+import useStores from '../../../../Hooks/useStores';
 
-import ComparePart from "./ComparePart";
-import { Change } from "diff";
+import ComparePart from './ComparePart';
+import type { Change } from 'diff';
 
 const CompareChanges = observer(() => {
 
@@ -45,6 +45,6 @@ const CompareChanges = observer(() => {
     </pre>
   );
 });
-CompareChanges.displayName = "CompareChanges";
+CompareChanges.displayName = 'CompareChanges';
 
 export default CompareChanges;

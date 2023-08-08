@@ -21,33 +21,34 @@
  *
  */
 
-import React, { MouseEvent } from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
-import {faArrowUp} from "@fortawesome/free-solid-svg-icons/faArrowUp";
-import {faArrowDown} from "@fortawesome/free-solid-svg-icons/faArrowDown";
+import {faArrowDown} from '@fortawesome/free-solid-svg-icons/faArrowDown';
+import {faArrowUp} from '@fortawesome/free-solid-svg-icons/faArrowUp';
+import {faTimes} from '@fortawesome/free-solid-svg-icons/faTimes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import Button from 'react-bootstrap/Button';
+import { createUseStyles } from 'react-jss';
 
-import Button from "react-bootstrap/Button";
 
-import useStores from "../../../../Hooks/useStores";
-import { FieldProps } from "../Field";
+import useStores from '../../../../Hooks/useStores';
+import type { FieldProps } from '../Field';
+import type { MouseEvent } from 'react';
 
 const useStyles = createUseStyles({
   container: {
-    position: "absolute",
-    right: "6px",
-    top: "6px",
-    "&>button.btn": {
-      "&:not(:first-child):not(:last-child)": {
+    position: 'absolute',
+    right: '6px',
+    top: '6px',
+    '&>button.btn': {
+      '&:not(:first-child):not(:last-child)': {
         borderRadius: 0
       },
-      "&:first-child": {
+      '&:first-child': {
         borderTopRightRadius: 0,
         borderBottomRightRadius: 0
       },
-      "&:last-child": {
+      '&:last-child': {
         borderTopLeftRadius: 0,
         borderBottomLeftRadius: 0
       }
@@ -60,7 +61,7 @@ interface ActionsProps extends FieldProps {
 }
 
 const Actions = observer(({ field, className }: ActionsProps) => {
-  
+
   const classes = useStyles();
 
   const { queryBuilderStore } = useStores();
@@ -90,14 +91,14 @@ const Actions = observer(({ field, className }: ActionsProps) => {
 
   const canMoveUp = fieldIndex >= 1;
   const canMoveDown =
-    fieldIndex === -1 ? false : fieldIndex < field.parent.structure.length - 1; 
+    fieldIndex === -1 ? false : fieldIndex < field.parent.structure.length - 1;
 
   return (
-    <div className={`${classes.container} ${className?className:""}`}>
+    <div className={`${classes.container} ${className?className:''}`}>
       {canMoveUp && (
         <Button
           size="sm"
-          variant="primary"
+          variant={'primary'}
           onClick={handleMoveUpField}
           title="move up"
         >
@@ -107,7 +108,7 @@ const Actions = observer(({ field, className }: ActionsProps) => {
       {canMoveDown && (
         <Button
           size="sm"
-          variant="primary"
+          variant={'primary'}
           onClick={handleMoveDownField}
           title="move down"
         >
@@ -116,7 +117,7 @@ const Actions = observer(({ field, className }: ActionsProps) => {
       )}
       <Button
         size="sm"
-        variant="primary"
+        variant={'primary'}
         onClick={handleRemoveField}
         title="remove"
       >
@@ -125,6 +126,6 @@ const Actions = observer(({ field, className }: ActionsProps) => {
     </div>
   );
 });
-Actions.displayName = "Actions";
+Actions.displayName = 'Actions';
 
 export default Actions;

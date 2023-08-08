@@ -21,46 +21,47 @@
  *
  */
 
-import React, { MouseEvent } from "react";
-import { createUseStyles } from "react-jss";
-import {observer} from "mobx-react-lite";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faTag} from "@fortawesome/free-solid-svg-icons/faTag";
-import { useNavigate } from "react-router-dom";
+import {faTag} from '@fortawesome/free-solid-svg-icons/faTag';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {observer} from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import { useNavigate } from 'react-router-dom';
 
-import { Query as QuerySpecs } from "../../../../Types/Query";
-import Matomo from "../../../../Services/Matomo";
+import Matomo from '../../../../Services/Matomo';
+import type { Query as QuerySpecs } from '../../../../Types/Query';
+import type { MouseEvent } from 'react';
 
 const useStyles = createUseStyles({
   container:{
-    position:"relative",
-    cursor:"pointer",
-    margin:"4px 0",
-    padding:"10px",
-    background: "rgba(0,0,0,0.4)",
-    color:"var(--ft-color-normal)",
-    "&:hover": {
-      background: "linear-gradient(90deg, rgba(30,60,70,0.9) 0%, rgba(20,50,60,0.9) 100%)"
+    position:'relative',
+    cursor:'pointer',
+    margin:'4px 0',
+    padding:'10px',
+    background: 'rgba(0,0,0,0.4)',
+    color:'var(--ft-color-normal)',
+    '&:hover': {
+      background: 'linear-gradient(90deg, rgba(30,60,70,0.9) 0%, rgba(20,50,60,0.9) 100%)'
     }
   },
   name: {
-    position: "relative",
-    width: "100%",
-    display: "inline-block",
-    color:"var(--ft-color-louder)",
-    textTransform: "capitalize",
-    "& small": {
-      color:"var(--ft-color-quiet)",
-      fontStyle:"italic",
-      textTransform: "none"
+    position: 'relative',
+    width: '100%',
+    display: 'inline-block',
+    color:'var(--ft-color-louder)',
+    textTransform: 'capitalize',
+    '& small': {
+      color:'var(--ft-color-quiet)',
+      fontStyle:'italic',
+      textTransform: 'none'
     }
   },
   description: {
-    overflow:"hidden",
-    marginTop:"5px",
-    whiteSpace:"nowrap",
-    textOverflow:"ellipsis",
-    fontSize:"0.9em"
+    overflow:'hidden',
+    marginTop:'5px',
+    whiteSpace:'nowrap',
+    textOverflow:'ellipsis',
+    fontSize:'0.9em'
   }
 });
 
@@ -75,7 +76,7 @@ const Query = observer(({query}: QueryProps) => {
   const navigate = useNavigate();
 
   const handleSelect = (e: MouseEvent<HTMLDivElement>) => {
-    Matomo.trackEvent("Query", "Select", query.id);
+    Matomo.trackEvent('Query', 'Select', query.id);
     e.stopPropagation();
     navigate(`/queries/${query.id}`);
   };
@@ -92,6 +93,6 @@ const Query = observer(({query}: QueryProps) => {
     </div>
   );
 });
-Query.displayName = "Query";
+Query.displayName = 'Query';
 
 export default Query;

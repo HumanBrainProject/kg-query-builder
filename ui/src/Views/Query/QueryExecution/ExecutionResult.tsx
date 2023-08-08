@@ -21,49 +21,49 @@
  *
  */
 
-import React from "react";
-import ReactJson from "react-json-view";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
-import Button from "react-bootstrap/Button";
-import { Scrollbars } from "react-custom-scrollbars-2";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import Button from 'react-bootstrap/Button';
+import { Scrollbars } from 'react-custom-scrollbars-2';
+import ReactJson from 'react-json-view';
+import { createUseStyles } from 'react-jss';
 
-import ThemeRJV from "../../../Themes/ThemeRJV";
+import ThemeRJV from '../../../Themes/ThemeRJV';
 
-import { QueryExecutionResult } from "../../../types";
+import type { QueryExecutionResult } from '../../../types';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
-    display: "grid",
-    gridTemplateRows: "auto 1fr",
-    height: "100%",
-    color: "var(--ft-color-loud)",
-    background: "linear-gradient(90deg, rgba(5,25,35,0.4) 0%, rgba(5,20,35,0.8) 100%)",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    "& .react-json-view": {
-      backgroundColor: "rgba(0,0,0,0.3) !important"
+    position: 'relative',
+    display: 'grid',
+    gridTemplateRows: 'auto 1fr',
+    height: '100%',
+    color: 'var(--ft-color-loud)',
+    background: 'linear-gradient(90deg, rgba(5,25,35,0.4) 0%, rgba(5,20,35,0.8) 100%)',
+    border: '1px solid var(--border-color-ui-contrast1)',
+    '& .react-json-view': {
+      backgroundColor: 'rgba(0,0,0,0.3) !important'
     }
   },
   toggle: {
-    textAlign: "right",
-    padding: "10px 10px 0 0"
+    textAlign: 'right',
+    padding: '10px 10px 0 0'
   },
   result: {
-    padding: "10px"
+    padding: '10px'
   },
   executionTime: {
-    float: "left",
-    paddingLeft: "10px",
-    paddingTop: "8px"
+    float: 'left',
+    paddingLeft: '10px',
+    paddingTop: '8px'
   }
 });
 
 const download = (content: BlobPart) => {
-  const a = document.createElement("a");
-  const file = new Blob([content], { type: "text/plain" });
+  const a = document.createElement('a');
+  const file = new Blob([content], { type: 'text/plain' });
   a.href = URL.createObjectURL(file);
-  a.download = "result.json";
+  a.download = 'result.json';
   a.click();
 };
 
@@ -103,6 +103,6 @@ const ExecutionResult = observer(({ data }: ResultProps) => {
     </div>
   );
 });
-ExecutionResult.displayName = "ExecutionResult";
+ExecutionResult.displayName = 'ExecutionResult';
 
 export default ExecutionResult;

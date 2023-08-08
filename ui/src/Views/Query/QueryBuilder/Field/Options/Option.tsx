@@ -21,15 +21,15 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
-import Toggle from "../../../../../Components/Toggle";
-import Field from "../../../../../Stores/Field";
-import { QuerySpecification } from "../../../../../Types/QuerySpecification";
-import { Query } from "../../../../../Types/Query";
-import Filter from "./Filter";
-import SingleItemStrategy from "./SingleItemStrategy";
-import UnsupportedOption from "./UnsupportedOption";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import Toggle from '../../../../../Components/Toggle';
+import Filter from './Filter';
+import SingleItemStrategy from './SingleItemStrategy';
+import UnsupportedOption from './UnsupportedOption';
+import type Field from '../../../../../Stores/Field';
+import type { Query } from '../../../../../Types/Query';
+import type { QuerySpecification } from '../../../../../Types/QuerySpecification';
 
 interface OptionProps {
   field: Field;
@@ -45,7 +45,7 @@ const Option = observer(({ field, rootField, option, onChange }:OptionProps) => 
   const isParentFieldFlattened = field?.parent?.isFlattened;
 
   const showRequired = isNotRootField && !isParentFieldFlattened;
-  if (name === "required") {
+  if (name === 'required') {
     return (
       <Toggle
         option={option}
@@ -58,7 +58,7 @@ const Option = observer(({ field, rootField, option, onChange }:OptionProps) => 
   }
 
   const showSort = isNotRootField && !hasLeaf && field.isFlattenedToRoot;
-  if (name === "sort") {
+  if (name === 'sort') {
     return (
       <Toggle
         option={option}
@@ -70,7 +70,7 @@ const Option = observer(({ field, rootField, option, onChange }:OptionProps) => 
   }
 
   const showEnsureOrder = isNotRootField && hasLeaf && !isParentFieldFlattened;
-  if (name === "ensureOrder") {
+  if (name === 'ensureOrder') {
     return (
       <Toggle
         option={option}
@@ -83,14 +83,14 @@ const Option = observer(({ field, rootField, option, onChange }:OptionProps) => 
   }
 
   const showFilter = isNotRootField && !hasLeaf;
-  if (name === "filter") {
+  if (name === 'filter') {
     return (
       <Filter filter={option.value as QuerySpecification.FilterItem} show={showFilter} onChange={onChange} />
     );
   }
 
   const showSingleValue = isNotRootField && hasLeaf && !isParentFieldFlattened;
-  if (name === "singleValue") {
+  if (name === 'singleValue') {
     return (
       <SingleItemStrategy
         strategy={option.value as string}

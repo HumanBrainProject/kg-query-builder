@@ -21,35 +21,35 @@
  *
  */
 
-import React, { useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
+import { observer } from 'mobx-react-lite';
+import React, { useEffect, useState } from 'react';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../Hooks/useStores";
-import Matomo from "../Services/Matomo";
+import useStores from '../Hooks/useStores';
+import Matomo from '../Services/Matomo';
 
-import Types from "./Home/Types";
-import Selection from "./Home/Selection";
-import WelcomeTip from "./WelcomeTip";
+import Selection from './Home/Selection';
+import Types from './Home/Types';
+import WelcomeTip from './WelcomeTip';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    columnGap: "10px",
-    height: "100%",
-    padding: "10px",
-    background: "transparent",
-    color: "var(--ft-color-normal)",
-    overflow: "hidden",
-    "&.showWelcomeTip": {
-      gridTemplateRows: "auto 1fr",
-      rowGap: "10px",
+    position: 'relative',
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    columnGap: '10px',
+    height: '100%',
+    padding: '10px',
+    background: 'transparent',
+    color: 'var(--ft-color-normal)',
+    overflow: 'hidden',
+    '&.showWelcomeTip': {
+      gridTemplateRows: 'auto 1fr',
+      rowGap: '10px',
     }
   },
   welcomeTip: {
-    gridColumnEnd: "span 2"
+    gridColumnEnd: 'span 2'
   }
 });
 
@@ -57,7 +57,7 @@ const Home = observer(() => {
 
   const classes = useStyles();
 
-  const [ showWelcomeTip, setShowWelcomeTip ] = useState(!localStorage.getItem("hideWelcomeTip"));
+  const [ showWelcomeTip, setShowWelcomeTip ] = useState(!localStorage.getItem('hideWelcomeTip'));
 
   const { typeStore, queryBuilderStore } = useStores();
 
@@ -65,30 +65,30 @@ const Home = observer(() => {
     Matomo.setCustomUrl(window.location.href);
     Matomo.trackPageView();
     if (!queryBuilderStore.hasType) {
-      const typeId = localStorage.getItem("type");
+      const typeId = localStorage.getItem('type');
       const type = typeId && typeStore.types.get(typeId);
       if (type) {
-          queryBuilderStore.setType(type);
+        queryBuilderStore.setType(type);
       } else {
-        localStorage.removeItem("type");
+        localStorage.removeItem('type');
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleHideWelcomeTip = () => {
-    localStorage.setItem("hideWelcomeTip", "true");
+    localStorage.setItem('hideWelcomeTip', 'true');
     setShowWelcomeTip(false);
   };
 
   return (
-    <div className={`${classes.container} ${showWelcomeTip?"showWelcomeTip":""}`}>
+    <div className={`${classes.container} ${showWelcomeTip?'showWelcomeTip':''}`}>
       <WelcomeTip className={classes.welcomeTip} show={showWelcomeTip} onClose={handleHideWelcomeTip} />
       <Types />
       <Selection />
     </div>
   );
 });
-Home.displayName = "Home";
+Home.displayName = 'Home';
 
 export default Home;

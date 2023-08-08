@@ -21,50 +21,50 @@
  *
  */
 
-import React from "react";
-import {observer} from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTools} from "@fortawesome/free-solid-svg-icons/faTools";
-import {faCode} from "@fortawesome/free-solid-svg-icons/faCode";
-import {faPlay} from "@fortawesome/free-solid-svg-icons/faPlay";
-import useStores from "../../Hooks/useStores";
-import { useNavigate } from "react-router-dom";
+import {faCode} from '@fortawesome/free-solid-svg-icons/faCode';
+import {faPlay} from '@fortawesome/free-solid-svg-icons/faPlay';
+import {faTools} from '@fortawesome/free-solid-svg-icons/faTools';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {observer} from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
+import { useNavigate } from 'react-router-dom';
+import useStores from '../../Hooks/useStores';
 
-import { IconDefinition } from "@fortawesome/fontawesome-common-types";
-import Matomo from "../../Services/Matomo";
+import Matomo from '../../Services/Matomo';
+import type { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
 const useStyles = createUseStyles({
   tabs: {
-    borderRight: "1px solid var(--border-color-ui-contrast1)",
-    background: "linear-gradient(180deg, rgba(5,10,20,0.4) 0%, rgba(10,40,50,0.4) 100%)"
+    borderRight: '1px solid var(--border-color-ui-contrast1)',
+    background: 'linear-gradient(180deg, rgba(5,10,20,0.4) 0%, rgba(10,40,50,0.4) 100%)'
   },
   tab: {
-    color: "var(--ft-color-normal)",
-    borderLeft: "2px solid transparent",
-    opacity: "0.5",
-    cursor: "pointer",
-    height: "50px",
-    lineHeight: "50px",
-    fontSize: "1.75em",
-    textAlign: "center",
-    "&:hover": {
-      background: "var(--list-bg-hover)",
-      borderColor: "var(--list-border-hover)",
-      color: "var(--ft-color-loud)",
-      opacity: "1"
+    color: 'var(--ft-color-normal)',
+    borderLeft: '2px solid transparent',
+    opacity: '0.5',
+    cursor: 'pointer',
+    height: '50px',
+    lineHeight: '50px',
+    fontSize: '1.75em',
+    textAlign: 'center',
+    '&:hover': {
+      background: 'var(--list-bg-hover)',
+      borderColor: 'var(--list-border-hover)',
+      color: 'var(--ft-color-loud)',
+      opacity: '1'
     },
-    "&.active": {
-      background: "var(--list-bg-selected)",
-      borderColor: "var(--list-border-selected)",
-      color: "var(--ft-color-loud)",
-      opacity: "1"
+    '&.active': {
+      background: 'var(--list-bg-selected)',
+      borderColor: 'var(--list-border-selected)',
+      color: 'var(--ft-color-loud)',
+      opacity: '1'
     },
-    "&.disabled, &.disabled:hover":{
-      background: "transparent",
-      color: "var(--ft-color-normal)",
-      opacity: "0.2",
-      cursor: "not-allowed"
+    '&.disabled, &.disabled:hover':{
+      background: 'transparent',
+      color: 'var(--ft-color-normal)',
+      opacity: '0.2',
+      cursor: 'not-allowed'
     }
   }
 });
@@ -83,11 +83,11 @@ const Tab = ({ className, disabled, active, icon, mode, title, onClick }: TabPro
 
   const props = (disabled || active) ?
     {
-      className: `${className} ${disabled?"disabled":""} ${active?"active":""}`
+      className: `${className} ${disabled?'disabled':''} ${active?'active':''}`
     }:
     {
       className: className,
-      onClick: () => typeof onClick === "function" && onClick(mode)
+      onClick: () => typeof onClick === 'function' && onClick(mode)
     };
 
   return(
@@ -110,20 +110,20 @@ const Tabs = observer(({ mode }: TabsProps) => {
   const { queryBuilderStore } = useStores();
 
   const setMode = (selectedMode: string) => {
-    Matomo.trackEvent("Tab", "ChangeMode", selectedMode);
+    Matomo.trackEvent('Tab', 'ChangeMode', selectedMode);
     const id = (queryBuilderStore.saveAsMode && queryBuilderStore.sourceQuery && queryBuilderStore.queryId !== queryBuilderStore.sourceQuery.id)?queryBuilderStore.sourceQuery.id:queryBuilderStore.queryId;
-    const path = (selectedMode === "build")?`/queries/${id}`:`/queries/${id}/${selectedMode}`;
+    const path = (selectedMode === 'build')?`/queries/${id}`:`/queries/${id}/${selectedMode}`;
     navigate(path);
-  }
+  };
 
   return (
     <div className={classes.tabs}>
-      <Tab className={classes.tab} icon={faTools} mode="build"   active={mode === "build"}   onClick={setMode} title="build query"   disabled={false} />
-      <Tab className={classes.tab} icon={faCode}  mode="edit"    active={mode === "edit"}    onClick={setMode} title="edit query"    disabled={false} />
-      <Tab className={classes.tab} icon={faPlay}  mode="execute" active={mode === "execute"} onClick={setMode} title="execute query" disabled={queryBuilderStore.isQueryEmpty} />
+      <Tab className={classes.tab} icon={faTools} mode="build"   active={mode === 'build'}   onClick={setMode} title="build query"   disabled={false} />
+      <Tab className={classes.tab} icon={faCode}  mode="edit"    active={mode === 'edit'}    onClick={setMode} title="edit query"    disabled={false} />
+      <Tab className={classes.tab} icon={faPlay}  mode="execute" active={mode === 'execute'} onClick={setMode} title="execute query" disabled={queryBuilderStore.isQueryEmpty} />
     </div>
   );
 });
-Tabs.displayName = "Tabs";
+Tabs.displayName = 'Tabs';
 
 export default Tabs;

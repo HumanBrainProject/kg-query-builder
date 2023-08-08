@@ -25,18 +25,18 @@ import {
   observable,
   action,
   makeObservable
-} from "mobx";
+} from 'mobx';
 
-import { Query } from "../Types/Query";
-import { UUID, Stage } from "../types";
+import type { Query } from '../Types/Query';
+import type { UUID, Stage } from '../types';
 
 const defaultResultSize = 20;
 
 class QueryRunStore {
-  stage: Stage = "RELEASED";
+  stage: Stage = 'RELEASED';
   size = `${defaultResultSize}`;
-  start = "0";
-  instanceId: UUID = "";
+  start = '0';
+  instanceId: UUID = '';
   spaces?: string[];
   parameters: Query.ResultQueryParameters = {};
 
@@ -94,7 +94,7 @@ class QueryRunStore {
       if (!this.parameters[name]) {
         this.parameters[name] = {
           name: name,
-          value: ""
+          value: ''
         };
       }
     });

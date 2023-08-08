@@ -21,48 +21,48 @@
  *
  */
 
-import React from "react";
-import {observer} from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
+import {observer} from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../../../Hooks/useStores";
-import Toggle from "../../../Components/Toggle";
-import { ToggleItemValue } from "../../../Components/Toggle/types";
+import Toggle from '../../../Components/Toggle';
+import useStores from '../../../Hooks/useStores';
+import type { ToggleItemValue } from '../../../Components/Toggle/types';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
-    paddingBottom: "10px"
+    position: 'relative',
+    paddingBottom: '10px'
   },
   panel: {
-    display: "flex",
-    padding: "10px 10px 0 10px",
-    flexWrap: "wrap",
-    border: "1px solid var(--bg-color-ui-contrast4)",
-    marginTop: "4px"
+    display: 'flex',
+    padding: '10px 10px 0 10px',
+    flexWrap: 'wrap',
+    border: '1px solid var(--bg-color-ui-contrast4)',
+    marginTop: '4px'
   },
   space: {
-    display: "inline-block",
-    border: "1px solid var(--bg-color-ui-contrast4)",
-    borderRadius: "20px",
-    padding: "7px 4px 7px 10px",
-    float: "left",
-    marginRight: "10px",
-    marginBottom: "10px",
-    cursor: "pointer",
-    maxHeight: "40px",
-    minHeight: "40px",
-    "-webkitTouchCallout": "none",
-    userSelect: "none",
-    transition: "color .3s ease-in-out, border-color .3s ease-in-out",
-    "&.selected, &:hover": {
-      color: "var(--ft-color-loud)",
-      borderColor: "var(--ft-color-loud)"
+    display: 'inline-block',
+    border: '1px solid var(--bg-color-ui-contrast4)',
+    borderRadius: '20px',
+    padding: '7px 4px 7px 10px',
+    float: 'left',
+    marginRight: '10px',
+    marginBottom: '10px',
+    cursor: 'pointer',
+    maxHeight: '40px',
+    minHeight: '40px',
+    '-webkitTouchCallout': 'none',
+    userSelect: 'none',
+    transition: 'color .3s ease-in-out, border-color .3s ease-in-out',
+    '&.selected, &:hover': {
+      color: 'var(--ft-color-loud)',
+      borderColor: 'var(--ft-color-loud)'
     }
   },
   toggle: {
-    display: "inline-block",
-    paddingLeft: "6px"
+    display: 'inline-block',
+    paddingLeft: '6px'
   }
 });
 
@@ -78,12 +78,12 @@ const Space = ({ space: {name, selected}, onClick }: SpaceProps) => {
 
   const classes = useStyles();
 
-  const handleOnClick = () => typeof onClick === "function" && onClick(name, !selected);
+  const handleOnClick = () => typeof onClick === 'function' && onClick(name, !selected);
 
-  const handleToggleClick = (_?:string, value?:ToggleItemValue) => typeof onClick === "function" && onClick(name, !!(value as boolean|undefined));
+  const handleToggleClick = (_?:string, value?:ToggleItemValue) => typeof onClick === 'function' && onClick(name, !!(value as boolean|undefined));
 
   return(
-    <div className={`${classes.space}  ${selected?"selected":""}`} onClick={handleOnClick} >
+    <div className={`${classes.space}  ${selected?'selected':''}`} onClick={handleOnClick} >
       {name}
       <div className={classes.toggle}>
         <Toggle
@@ -135,7 +135,7 @@ const SpaceRestriction = observer(() => {
         <Toggle
           label="Restrict to space(s)"
           option={{
-            name: "spaceRestriction",
+            name: 'spaceRestriction',
             value: isRestricted?true:undefined
           }}
           show={true}

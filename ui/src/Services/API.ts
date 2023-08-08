@@ -32,8 +32,8 @@
  *   limitations under the License.
  *
  */
-import { QuerySpecification } from "../Types/QuerySpecification";
-import { UUID, Stage, Settings, UserProfile, Space, Type, TypesByName, QueryExecutionResult, KGCoreResult } from "../types";
+import type { QuerySpecification } from '../Types/QuerySpecification';
+import type { UUID, Stage, Settings, UserProfile, Space, Type, TypesByName, QueryExecutionResult, KGCoreResult } from '../types';
 
 interface APIErrorResponse {
   status: number;
@@ -46,7 +46,7 @@ export interface APIError {
   response?: APIErrorResponse;
 }
 
-export default interface API {
+interface API {
 
   getSettings(): Promise<Settings>;
 
@@ -80,3 +80,5 @@ export default interface API {
 
   deleteQuery(queryId: UUID): Promise<void>;
 }
+
+export default API;

@@ -21,15 +21,16 @@
  *
  */
 
-import { observable, action, computed, runInAction, makeObservable } from "mobx";
-import debounce from "lodash/debounce";
+import debounce from 'lodash/debounce';
+import { observable, action, computed, runInAction, makeObservable } from 'mobx';
 
-import API, { APIError }  from "../Services/API";
-import { Type } from "../types";
+import type { APIError } from '../Services/API';
+import type API  from '../Services/API';
+import type { Type } from '../types';
 
 
 export class TypeStore {
-  filterValue = "";
+  filterValue = '';
   types: Map<string, Type> = new Map;
   typeList: Type[] = [];
   typesQueue = new Set<string>();

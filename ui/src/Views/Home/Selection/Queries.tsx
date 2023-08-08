@@ -21,42 +21,42 @@
  *
  */
 
-import React, { useEffect } from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRedoAlt } from "@fortawesome/free-solid-svg-icons/faRedoAlt";
-import { Scrollbars } from "react-custom-scrollbars-2";
+import { faRedoAlt } from '@fortawesome/free-solid-svg-icons/faRedoAlt';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React, { useEffect } from 'react';
+import Button from 'react-bootstrap/Button';
+import { Scrollbars } from 'react-custom-scrollbars-2';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../../../Hooks/useStores";
-import useListQueriesQuery from "../../../Hooks/useListQueriesQuery";
 
-import Spinner from "../../../Components/Spinner";
-import ErrorPanel from "../../../Components/ErrorPanel";
-import Filter from "../../../Components/Filter";
-import List from "./Queries/List";
+import ErrorPanel from '../../../Components/ErrorPanel';
+import Filter from '../../../Components/Filter';
+import Spinner from '../../../Components/Spinner';
+import useListQueriesQuery from '../../../Hooks/useListQueriesQuery';
+import useStores from '../../../Hooks/useStores';
+import List from './Queries/List';
 
 const useStyles = createUseStyles({
   panel: {
-    position: "relative",
-    display: "grid",
-    gridTemplateRows: "auto 1fr",
-    color: "var(--ft-color-normal)",
-    border: "1px solid var(--border-color-ui-contrast2)",
-    overflow: "hidden"
+    position: 'relative',
+    display: 'grid',
+    gridTemplateRows: 'auto 1fr',
+    color: 'var(--ft-color-normal)',
+    border: '1px solid var(--border-color-ui-contrast2)',
+    overflow: 'hidden'
   },
   filter: {
     border: 0,
     background:
-      "linear-gradient(90deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 100%)"
+      'linear-gradient(90deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 100%)'
   },
   body: {
-    borderTop: "1px solid var(--border-color-ui-contrast2)",
-    padding: "0 0 10px 15px"
+    borderTop: '1px solid var(--border-color-ui-contrast2)',
+    padding: '0 0 10px 15px'
   },
   content: {
-    paddingRight: "15px"
+    paddingRight: '15px'
   }
 });
 
@@ -100,7 +100,7 @@ const Queries = observer(({ className }: QueriesProps) => {
         {error}
         <br />
         <br />
-        <Button variant="primary" onClick={refetch}>
+        <Button variant={'primary'} onClick={refetch}>
           <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Refresh
         </Button>
       </ErrorPanel>
@@ -122,11 +122,11 @@ const Queries = observer(({ className }: QueriesProps) => {
   if (!queriesStore.hasQueries) {
     return (
       <ErrorPanel>
-        {queryBuilderStore.type ? `No saved queries available yet for ${queryBuilderStore.type.label}`: "No saved queries available"}
+        {queryBuilderStore.type ? `No saved queries available yet for ${queryBuilderStore.type.label}`: 'No saved queries available'}
         {queryBuilderStore.type && <small> - {queryBuilderStore.type.id}</small>}
         <br />
         <br />
-        <Button variant="primary" onClick={refetch}>
+        <Button variant={'primary'} onClick={refetch}>
           <FontAwesomeIcon icon={faRedoAlt} /> &nbsp; Retry
         </Button>
       </ErrorPanel>
@@ -134,7 +134,7 @@ const Queries = observer(({ className }: QueriesProps) => {
   }
 
   return (
-    <div className={`${classes.panel} ${className ? className : ""}`}>
+    <div className={`${classes.panel} ${className ? className : ''}`}>
       <Filter
         className={classes.filter}
         value={queriesStore.filter}
@@ -157,6 +157,6 @@ const Queries = observer(({ className }: QueriesProps) => {
     </div>
   );
 });
-Queries.displayName = "Queries";
+Queries.displayName = 'Queries';
 
 export default Queries;

@@ -21,40 +21,40 @@
  *
  */
 
-import React, { useEffect, useState, useMemo } from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faRedoAlt} from "@fortawesome/free-solid-svg-icons/faRedoAlt";
-import { useNavigate, useParams } from "react-router-dom";
+import {faRedoAlt} from '@fortawesome/free-solid-svg-icons/faRedoAlt';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React, { useEffect, useState, useMemo } from 'react';
+import Button from 'react-bootstrap/Button';
+import { createUseStyles } from 'react-jss';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import useStores from "../Hooks/useStores";
-import Matomo from "../Services/Matomo";
-import { Type } from "../types";
-import useGetQueryQuery from "../Hooks/useGetQueryQuery";
+import ErrorPanel from '../Components/ErrorPanel';
+import SpinnerPanel from '../Components/SpinnerPanel';
+import useGetQueryQuery from '../Hooks/useGetQueryQuery';
+import useStores from '../Hooks/useStores';
+import Matomo from '../Services/Matomo';
 
-import Tabs from "./Query/Tabs";
-import QueryBuilder from "./Query/QueryBuilder";
-import QueryEditor from "./Query/QueryEditor";
-import QueryExecution from "./Query/QueryExecution";
-import SpinnerPanel from "../Components/SpinnerPanel";
-import ErrorPanel from "../Components/ErrorPanel";
+import QueryBuilder from './Query/QueryBuilder';
+import QueryEditor from './Query/QueryEditor';
+import QueryExecution from './Query/QueryExecution';
+import Tabs from './Query/Tabs';
+import type { Type } from '../types';
 
 
 const useStyles = createUseStyles({
   container: {
-    display: "grid",
-    height: "100%",
-    gridTemplateRows: "100%",
-    gridTemplateColumns: "50px 1fr",
-    "& .spinnerPanel": {
-      background: "#0a2332"
+    display: 'grid',
+    height: '100%',
+    gridTemplateRows: '100%',
+    gridTemplateColumns: '50px 1fr',
+    '& .spinnerPanel': {
+      background: '#0a2332'
     }
   },
   body: {
-    position: "relative",
-    overflow: "hidden"
+    position: 'relative',
+    overflow: 'hidden'
   }
 });
 
@@ -64,15 +64,15 @@ interface ModeProps {
 
 const View = ({mode}:ModeProps) => {
   switch (mode) {
-  case "edit":
+  case 'edit':
     return(
       <QueryEditor />
     );
-  case "execute":
+  case 'execute':
     return(
       <QueryExecution />
     );
-  case "build":
+  case 'build':
   default:
     return(
       <QueryBuilder />
@@ -81,17 +81,17 @@ const View = ({mode}:ModeProps) => {
 };
 
 const saveQueryToLocalStorage = (queryId: string, type: string, instanceId: string): void => {
-  localStorage.setItem("newQuery", JSON.stringify({queryId: queryId, type: type, instanceId: instanceId}));
-}
+  localStorage.setItem('newQuery', JSON.stringify({queryId: queryId, type: type, instanceId: instanceId}));
+};
 
 const getQueryFromLocalStorage = (queryId: string): {queryId: string, type: string, instanceId: string}|null => {
-  const newQueryItem = localStorage.getItem("newQuery");
+  const newQueryItem = localStorage.getItem('newQuery');
   if (!newQueryItem) {
     return null;
   }
   try {
     const newQuery = JSON.parse(newQueryItem) as {queryId: string, type: string, instanceId: string};
-    if (newQuery.queryId === queryId && typeof newQuery.type === "string" && !!newQuery.type && typeof newQuery.instanceId === "string") {
+    if (newQuery.queryId === queryId && typeof newQuery.type === 'string' && !!newQuery.type && typeof newQuery.instanceId === 'string') {
       return newQuery;
     }
   } catch (e)  {
@@ -100,12 +100,12 @@ const getQueryFromLocalStorage = (queryId: string): {queryId: string, type: stri
   return null;
 };
 
-const clearQueryFromLocalStorage = (): void => localStorage.removeItem("newQuery");
+const clearQueryFromLocalStorage = (): void => localStorage.removeItem('newQuery');
 
 const Query = observer(({ mode }:ModeProps) => {
 
   const classes = useStyles();
-  
+
   const params = useParams();
   const { id } = params;
   const queryId = id as string;
@@ -130,12 +130,12 @@ const Query = observer(({ mode }:ModeProps) => {
 
   const [isNotFound, setNotFound] = useState<boolean|undefined>(undefined);
 
-  useEffect(() => { 
+  useEffect(() => {
     Matomo.setCustomUrl(window.location.href);
     Matomo.trackPageView();
   }, [queryId]);
 
-  useEffect(() => { 
+  useEffect(() => {
 
     const onUnload = (e: BeforeUnloadEvent) => {
       if (!!queryBuilderStore.queryId && !!queryBuilderStore.type && queryBuilderStore.isNew) {
@@ -146,9 +146,9 @@ const Query = observer(({ mode }:ModeProps) => {
       }
     };
 
-    window.addEventListener("beforeunload", onUnload);
+    window.addEventListener('beforeunload', onUnload);
     return () => {
-      window.removeEventListener("beforeunload", onUnload);
+      window.removeEventListener('beforeunload', onUnload);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -165,7 +165,7 @@ const Query = observer(({ mode }:ModeProps) => {
         const newQuery = getQueryFromLocalStorage(queryId);
         const type = newQuery?typeStore.types.get(newQuery.type):undefined;
         if (newQuery && type) {
-          localStorage.setItem("type",newQuery.type);
+          localStorage.setItem('type',newQuery.type);
           queriesStore.toggleShowSavedQueries(false);
           queriesStore.clearQueries();
           queryBuilderStore.setType(type);
@@ -173,8 +173,8 @@ const Query = observer(({ mode }:ModeProps) => {
           if (newQuery.instanceId) {
             queryRunStore.setInstanceId(newQuery.instanceId);
           }
-          if (mode !== "edit") {
-            navigate(`/queries/${id}`)
+          if (mode !== 'edit') {
+            navigate(`/queries/${id}`);
           }
         } else {
           setNotFound(true);
@@ -183,26 +183,26 @@ const Query = observer(({ mode }:ModeProps) => {
       clearQueryFromLocalStorage();
     } else if (query) {
       const typeName = query.meta.type;
-      if (localStorage.getItem("type")) {
-        localStorage.setItem("type", typeName??"");
+      if (localStorage.getItem('type')) {
+        localStorage.setItem('type', typeName??'');
       }
       const type = typeName && typeStore.types.get(typeName);
       if(type) {
         queryBuilderStore.setType(type);
         queryBuilderStore.selectQuery(query);
       } else {
-        const typeId = typeName??"<undefined>";
+        const typeId = typeName??'<undefined>';
         const unknownType = {
           id: typeId,
           label: typeId,
-          color: "black",
-          description: "",
+          color: 'black',
+          description: '',
           properties: []
         } as Type;
         queryBuilderStore.setType(unknownType);
         queryBuilderStore.selectQuery(query);
-        if (mode !== "edit") {
-          navigate(`/queries/${id}/edit`)
+        if (mode !== 'edit') {
+          navigate(`/queries/${id}/edit`);
         }
       }
       clearQueryFromLocalStorage();
@@ -212,7 +212,7 @@ const Query = observer(({ mode }:ModeProps) => {
 
   const handleContinue = () => {
     queryBuilderStore.clearQuery();
-    navigate("/");
+    navigate('/');
   };
 
   if ((isUninitialized && !cachedQuery) || isFetching) {
@@ -225,10 +225,10 @@ const Query = observer(({ mode }:ModeProps) => {
     return (
       <ErrorPanel>
         {isError?error:`Query id "${queryId}" does not exist`}<br /><br />
-        <Button variant="primary" onClick={refetch}>
+        <Button variant={'primary'} onClick={refetch}>
           <FontAwesomeIcon icon={faRedoAlt} />&nbsp;&nbsp; Retry
         </Button>
-        <Button variant={"primary"} onClick={handleContinue}>Continue</Button>
+        <Button variant={'primary'} onClick={handleContinue}>Continue</Button>
       </ErrorPanel>
     );
   }

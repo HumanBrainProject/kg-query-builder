@@ -21,19 +21,19 @@
  *
  */
 
-import React from "react";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilter } from "@fortawesome/free-solid-svg-icons/faFilter";
+import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
-import PropertyTypes from "../../../PropertyTypes";
-import { FieldProps } from "../Field";
+import PropertyTypes from '../../../PropertyTypes';
+import type { FieldProps } from '../Field';
 
 const useStyles = createUseStyles({
   typeFilter: {
-    transform: "scale(0.9) translateY(1px)",
-    color: "lightskyblue"
+    transform: 'scale(0.9) translateY(1px)',
+    color: 'lightskyblue'
   }
 });
 
@@ -67,6 +67,6 @@ const Types = observer(({ field }: FieldProps) => {
   }
   return null;
 });
-Types.displayName = "Types";
+Types.displayName = 'Types';
 
 export default Types;

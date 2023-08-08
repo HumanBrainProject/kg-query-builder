@@ -21,12 +21,12 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
-import { Navigate } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
-import useStores from "../Hooks/useStores";
+import useStores from '../Hooks/useStores';
 
 const QueryByType = observer(() => {
 
@@ -38,7 +38,7 @@ const QueryByType = observer(() => {
 
   const type = typeId && typeStore.types.get(typeId);
   if (type) {
-    localStorage.setItem("type", type.id);
+    localStorage.setItem('type', type.id);
     queriesStore.toggleShowSavedQueries(false);
     queriesStore.clearQueries();
     queryBuilderStore.setType(type);
@@ -54,6 +54,6 @@ const QueryByType = observer(() => {
     <Navigate to={'/'} replace={true} />
   );
 });
-QueryByType.displayName = "QueryByType";
+QueryByType.displayName = 'QueryByType';
 
 export default QueryByType;

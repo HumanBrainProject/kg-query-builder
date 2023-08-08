@@ -21,14 +21,14 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
-import Button from "react-bootstrap/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faSave} from "@fortawesome/free-solid-svg-icons/faSave";
+import {faSave} from '@fortawesome/free-solid-svg-icons/faSave';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import Button from 'react-bootstrap/Button';
 
-import useStores from "../../../Hooks/useStores";
-import Matomo from "../../../Services/Matomo";
+import useStores from '../../../Hooks/useStores';
+import Matomo from '../../../Services/Matomo';
 
 interface SaveAsButtonProps {
   disabled: boolean;
@@ -39,16 +39,16 @@ const SaveAsButton = observer(({ disabled }:SaveAsButtonProps) => {
   const { queryBuilderStore } = useStores();
 
   const onClick = () => {
-    Matomo.trackEvent("Query", "SaveAs", queryBuilderStore.queryId);
+    Matomo.trackEvent('Query', 'SaveAs', queryBuilderStore.queryId);
     queryBuilderStore.setSaveAsMode(true);
   };
 
   return (
-      <Button variant="secondary" disabled={disabled} onClick={onClick}>
-        <FontAwesomeIcon icon={faSave} />&nbsp;Save As
-      </Button>
+    <Button variant="secondary" disabled={disabled} onClick={onClick}>
+      <FontAwesomeIcon icon={faSave} />&nbsp;Save As
+    </Button>
   );
 });
-SaveAsButton.displayName = "SaveAsButton";
+SaveAsButton.displayName = 'SaveAsButton';
 
 export default SaveAsButton;

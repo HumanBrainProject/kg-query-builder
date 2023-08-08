@@ -20,17 +20,17 @@
  * (Human Brain Project SGA1, SGA2 and SGA3).
  *
  */
-import uniqueId from "lodash/uniqueId";
-import camelCase from "lodash/camelCase";
+import camelCase from 'lodash/camelCase';
+import uniqueId from 'lodash/uniqueId';
 
 import {
   optionsToKeepOnFlattenendField,
   attributeReg,
   modelReg
-} from "../../Helpers/QueryHelpers";
-import { Query } from "../../Types/Query";
-import { QuerySpecification } from "../../Types/QuerySpecification";
-import Field from "../Field";
+} from '../../Helpers/QueryHelpers';
+import type { Query } from '../../Types/Query';
+import type { QuerySpecification } from '../../Types/QuerySpecification';
+import type Field from '../Field';
 
 const hasTypeFilter = (field: Field): boolean =>
   field instanceof Object &&
@@ -41,9 +41,9 @@ const hasTypeFilter = (field: Field): boolean =>
 const getTypeFilter = (field: Field): QuerySpecification.TypeFilter | QuerySpecification.TypeFilter[] => {
   if (hasTypeFilter(field)) {
     if (field.typeFilter.length === 1) {
-      return { "@id": field.typeFilter[0] };
+      return { '@id': field.typeFilter[0] };
     }
-    return field.typeFilter.map(t => ({ "@id": t }));
+    return field.typeFilter.map(t => ({ '@id': t }));
   }
   return [];
 };
@@ -83,7 +83,7 @@ const getPath = (field: Field): QuerySpecification.PathItem => {
   const hasType = hasTypeFilter(field);
   if (field.isReverse) {
     const path: QuerySpecification.PathObject = {
-      "@id": relativePath,
+      '@id': relativePath,
       reverse: true
     };
     if (hasType) {
@@ -94,14 +94,14 @@ const getPath = (field: Field): QuerySpecification.PathItem => {
 
   if (hasType) {
     return {
-      "@id": relativePath,
+      '@id': relativePath,
       typeFilter: getTypeFilter(field)
     };
   }
   return relativePath;
 };
 
-const getNamespace = (field: Field) => field.namespace || "query";
+const getNamespace = (field: Field) => field.namespace || 'query';
 
 const getPopertyName = (field: Field) => {
   const namespace = getNamespace(field);
@@ -110,7 +110,7 @@ const getPopertyName = (field: Field) => {
     alias ||
     (field.schema &&
       (field.schema.simpleAttributeName || camelCase(field.schema.label))) ||
-    uniqueId("field");
+    uniqueId('field');
   return `${namespace}:${name}`;
 };
 
@@ -118,45 +118,45 @@ const addOptions = (queryField: QuerySpecification.Field, options: Query.Option[
   if (Array.isArray(options)) {
     options.forEach(({ name, value }) => {
       switch (name) {
-        case "sort": {
-          if (value) {
-            queryField.sort = true;
-          }
-          break;
+      case 'sort': {
+        if (value) {
+          queryField.sort = true;
         }
-        case "ensureOrder": {
-          if (value) {
-            queryField.ensureOrder = true;
-          }
-          break;
+        break;
+      }
+      case 'ensureOrder': {
+        if (value) {
+          queryField.ensureOrder = true;
         }
-        case "filter": {
-          if (value) {
-            const v: QuerySpecification.FilterItem = {};
-            const valueAsFilterItem = value as QuerySpecification.FilterItem;
-            if(valueAsFilterItem.op) {
-              v.op = valueAsFilterItem.op;
-            }
-            if(valueAsFilterItem.parameter) {
-              v.parameter = valueAsFilterItem.parameter;
-            }
-            if(valueAsFilterItem.value) {
-              v.value = valueAsFilterItem.value;
-            }
-            queryField.filter = v;
+        break;
+      }
+      case 'filter': {
+        if (value) {
+          const v: QuerySpecification.FilterItem = {};
+          const valueAsFilterItem = value as QuerySpecification.FilterItem;
+          if(valueAsFilterItem.op) {
+            v.op = valueAsFilterItem.op;
           }
-          break;
+          if(valueAsFilterItem.parameter) {
+            v.parameter = valueAsFilterItem.parameter;
+          }
+          if(valueAsFilterItem.value) {
+            v.value = valueAsFilterItem.value;
+          }
+          queryField.filter = v;
         }
-        case "singleValue": {
-          if (value) {
-            queryField.singleValue = value as string;
-          }
-          break;
+        break;
+      }
+      case 'singleValue': {
+        if (value) {
+          queryField.singleValue = value as string;
         }
-        default:
-          if(name) {
-            queryField[name] = value;
-          }
+        break;
+      }
+      default:
+        if(name) {
+          queryField[name] = value;
+        }
       }
     });
   }
@@ -180,7 +180,7 @@ const getFlattenedField = (field: Field) => {
   queryField.propertyName = getPopertyName(field);
   addOptions(queryField, field.options);
   const paths: QuerySpecification.PathArrayItem[] = [];
-  let targetField: "" | Field | null | undefined = field;
+  let targetField: '' | Field | null | undefined = field;
   while (!!targetField && targetField.isFlattened) {
     const path = getPath(targetField);
     if (path) {

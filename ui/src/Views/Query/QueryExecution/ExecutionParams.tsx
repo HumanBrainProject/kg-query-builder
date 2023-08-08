@@ -21,64 +21,65 @@
  *
  */
 
-import React, { useEffect, ChangeEvent } from "react";
-import { observer } from "mobx-react-lite";
-import { createUseStyles } from "react-jss";
-import Button from "react-bootstrap/Button";
-import Row from "react-bootstrap/Row";
-import Container from "react-bootstrap/Container";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
+import { observer } from 'mobx-react-lite';
+import React, { useEffect } from 'react';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import { createUseStyles } from 'react-jss';
 
-import useStores from "../../../Hooks/useStores";
+import useStores from '../../../Hooks/useStores';
 
-import SpaceRestriction from "./SpaceRestriction";
-import { Stage } from "../../../types";
+import SpaceRestriction from './SpaceRestriction';
+import type { Stage } from '../../../types';
+import type { ChangeEvent } from 'react';
 
 const useStyles = createUseStyles({
   input: {
-    color: "var(--ft-color-loud)",
-    border: "1px solid transparent",
-    borderRadius: "2px",
-    backgroundColor: "var(--bg-color-blend-contrast1)",
-    "&:focus": {
-      color: "var(--ft-color-loud)",
-      borderColor: "rgba(64, 169, 243, 0.5)",
-      backgroundColor: "transparent"
+    color: 'var(--ft-color-loud)',
+    border: '1px solid transparent',
+    borderRadius: '2px',
+    backgroundColor: 'var(--bg-color-blend-contrast1)',
+    '&:focus': {
+      color: 'var(--ft-color-loud)',
+      borderColor: 'rgba(64, 169, 243, 0.5)',
+      backgroundColor: 'transparent'
     }
   },
   selectBox: {
-    position: "relative",
-    "& select": {
-      display: "inline-block",
-      paddingRight: "20px",
-      color: "white",
-      "-webkit-appearance": "none"
+    position: 'relative',
+    '& select': {
+      display: 'inline-block',
+      paddingRight: '20px',
+      color: 'white',
+      '-webkit-appearance': 'none'
     },
-    "&:after": {
+    '&:after': {
       content: '""',
-      position: "absolute",
-      top: "50%",
-      right: "10px",
+      position: 'absolute',
+      top: '50%',
+      right: '10px',
       width: 0,
       height: 0,
-      marginTop: "-3px",
-      borderTop: "6px solid white",
-      borderRight: "6px solid transparent",
-      borderLeft: "6px solid transparent",
-      pointerEvents: "none"
+      marginTop: '-3px',
+      borderTop: '6px solid white',
+      borderRight: '6px solid transparent',
+      borderLeft: '6px solid transparent',
+      pointerEvents: 'none'
     }
   },
   required: {
-    color: "var(--bg-color-error-normal)",
-    paddingLeft: "3px",
-    fontWeight: "bold"
+    color: 'var(--bg-color-error-normal)',
+    paddingLeft: '3px',
+    fontWeight: 'bold'
   },
   firstRow: {
-    marginBottom: "1rem"
+    marginBottom: '1rem'
   },
   runIt: {
-    textAlign: "right"
+    textAlign: 'right'
   }
 });
 
@@ -109,7 +110,7 @@ const QueryParameter = observer(({ parameter }:QueryParameterProps) => {
     </Form.Group>
   );
 });
-QueryParameter.displayName = "QueryParameter";
+QueryParameter.displayName = 'QueryParameter';
 
 interface Parameter {
   name: string;
@@ -123,7 +124,7 @@ interface Row {
 }
 
 const QueryParameters = observer(() => {
-  
+
   const { queryBuilderStore, queryRunStore } = useStores();
 
   useEffect(() => {
@@ -188,8 +189,8 @@ const ExecutionParams = observer(({ onExecute }: ExecutionParamsProps) => {
   const { queryBuilderStore, queryRunStore } = useStores();
 
   const scopeOptions: ScopeOption[] = [
-    { label: "Released", value: "RELEASED" },
-    { label: "In progress", value: "IN_PROGRESS"},
+    { label: 'Released', value: 'RELEASED' },
+    { label: 'In progress', value: 'IN_PROGRESS'},
   ];
 
   const isSpaceRestricted = Array.isArray(
@@ -205,8 +206,8 @@ const ExecutionParams = observer(({ onExecute }: ExecutionParamsProps) => {
   const handleChangeInstanceId = (e:ChangeEvent<HTMLInputElement> ) => queryRunStore.setInstanceId(e.target.value);
 
   const title = !queryBuilderStore.isQueryEmpty
-    ? "Run it"
-    : "The current query specification is not valid/complete. Please select at least one field.";
+    ? 'Run it'
+    : 'The current query specification is not valid/complete. Please select at least one field.';
 
   return (
     <Form>
@@ -288,8 +289,8 @@ const ExecutionParams = observer(({ onExecute }: ExecutionParamsProps) => {
               <Col xs={9} />
               <Col xs={3} className={classes.runIt}>
                 <Button
-                  variant="primary"
-                  className={"btn-block"}
+                  variant={'primary'}
+                  className={'btn-block'}
                   disabled={queryBuilderStore.isQueryEmpty}
                   onClick={onExecute}
                   title={title}
@@ -307,8 +308,8 @@ const ExecutionParams = observer(({ onExecute }: ExecutionParamsProps) => {
             <Col xs={6} />
             <Col xs={3} className={classes.runIt}>
               <Button
-                variant="primary"
-                className={"btn-block"}
+                variant={'primary'}
+                className={'btn-block'}
                 disabled={queryBuilderStore.isQueryEmpty}
                 onClick={onExecute}
                 title={title}
@@ -322,6 +323,6 @@ const ExecutionParams = observer(({ onExecute }: ExecutionParamsProps) => {
     </Form>
   );
 });
-ExecutionParams.displayName = "ExecutionParams";
+ExecutionParams.displayName = 'ExecutionParams';
 
 export default ExecutionParams;

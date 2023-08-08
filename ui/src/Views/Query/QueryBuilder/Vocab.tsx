@@ -21,14 +21,14 @@
  *
  */
 
-import React from "react";
+import React from 'react';
 
-import Toggle from "../../../Components/Toggle";
-import { ToggleItemValue } from "../../../Components/Toggle/types";
+import Toggle from '../../../Components/Toggle';
+import type { ToggleItemValue } from '../../../Components/Toggle/types';
 
 interface VocabProps{
   defaultValue?: string;
-  value?: boolean; 
+  value?: boolean;
   onChange: (value?: string) => void
 }
 
@@ -39,7 +39,7 @@ const Vocab = ({ defaultValue, value, onChange}: VocabProps) => {
   return (
     <Toggle
       option={{
-        name: "",
+        name: '',
         value: value?true:undefined
       }}
       label="Strip vocab"

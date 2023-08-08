@@ -21,64 +21,65 @@
  *
  */
 
-import React, { useState } from "react";
-import ReactJson, { InteractionProps } from "react-json-view";
-import { createUseStyles } from "react-jss";
-import { observer } from "mobx-react-lite";
-import { Scrollbars } from "react-custom-scrollbars-2";
-import Alert from "react-bootstrap/Alert";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faBan} from "@fortawesome/free-solid-svg-icons/faBan";
-import jsonld from "jsonld";
+import {faBan} from '@fortawesome/free-solid-svg-icons/faBan';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { observer } from 'mobx-react-lite';
+import React, { useState } from 'react';
+import Alert from 'react-bootstrap/Alert';
+import { Scrollbars } from 'react-custom-scrollbars-2';
+import ReactJson from 'react-json-view';
+import { createUseStyles } from 'react-jss';
+import { normalizeQuery } from '../../Helpers/QueryHelpers';
+import useStores from '../../Hooks/useStores';
+import { FIELD_FLAGS } from '../../Stores/Field';
+import ThemeRJV from '../../Themes/ThemeRJV';
+import Actions from './Actions';
+import type { QuerySpecification } from '../../Types/QuerySpecification';
+import type jsonld from 'jsonld';
 
-import useStores from "../../Hooks/useStores";
 
-import ThemeRJV from "../../Themes/ThemeRJV";
-import Actions from "./Actions";
-import { QuerySpecification } from "../../Types/QuerySpecification";
-import { FIELD_FLAGS } from "../../Stores/Field";
-import { normalizeQuery } from "../../Helpers/QueryHelpers";
+import type { InteractionProps } from 'react-json-view';
 
 const useStyles = createUseStyles({
   container: {
-    position: "relative",
-    display: "grid",
-    gridTemplateRows: "auto 1fr auto",
-    gridGap: "10px",
-    height: "100%",
-    padding:"0 10px 10px 10px"
+    position: 'relative',
+    display: 'grid',
+    gridTemplateRows: 'auto 1fr auto',
+    gridGap: '10px',
+    height: '100%',
+    padding:'0 10px 10px 10px'
   },
   body:{
-    color:"var(--ft-color-loud)",
-    background: "rgba(0,0,0,0.4)",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    padding:"10px",
-    "& .react-json-view": {
-      backgroundColor: "rgba(0,0,0,0.3) !important"
+    color:'var(--ft-color-loud)',
+    background: 'rgba(0,0,0,0.4)',
+    border: '1px solid var(--border-color-ui-contrast1)',
+    padding:'10px',
+    '& .react-json-view': {
+      backgroundColor: 'rgba(0,0,0,0.3) !important'
     }
   },
   actions: {
-    position: "relative",
-    background: "linear-gradient(90deg, rgba(5,25,35,0.4) 0%, rgba(5,20,35,0.8) 100%)",
-    border: "1px solid var(--border-color-ui-contrast1)",
-    color: "var(--ft-color-loud)",
-    padding: "10px 10px 0 0",
-    "& > div": {
-      textAlign: "right",
-      "& > button": {
-        marginLeft: "10px",
-        marginBottom: "10px"
+    position: 'relative',
+    background: 'linear-gradient(90deg, rgba(5,25,35,0.4) 0%, rgba(5,20,35,0.8) 100%)',
+    border: '1px solid var(--border-color-ui-contrast1)',
+    color: 'var(--ft-color-loud)',
+    padding: '10px 10px 0 0',
+    '& > div': {
+      textAlign: 'right',
+      '& > button': {
+        marginLeft: '10px',
+        marginBottom: '10px'
       }
     }
   },
   error: {
-    cursor: "pointer",
-    "& [role=\"alert\"]": {
-      marginTop: "10px",
+    cursor: 'pointer',
+    '& [role="alert"]': {
+      marginTop: '10px',
       marginBottom: 0,
-      "& svg": {
-        marginRight: "4px",
-        transform: "translateY(1px)"
+      '& svg': {
+        marginRight: '4px',
+        transform: 'translateY(1px)'
       }
     }
   }
@@ -113,12 +114,12 @@ const QueryEditor = observer(() => {
   };
 
   const handleOnAdd = ({existing_src, updated_src, namespace, name, new_value}:InteractionProps) => {
-    const path = namespace ? namespace.join("/"): "";
-    if (path === "" && name === ""){
-      setError("Adding properties to the root path is forbidden.");
+    const path = namespace ? namespace.join('/'): '';
+    if (path === '' && name === ''){
+      setError('Adding properties to the root path is forbidden.');
       updateQuery(existing_src);
     } else {
-      if ((Array.isArray(namespace) && namespace.length && namespace[namespace.length-1]) || name === "structure") {
+      if ((Array.isArray(namespace) && namespace.length && namespace[namespace.length-1]) || name === 'structure') {
         if (new_value instanceof Object) {
           const new_value_object: jsonld.NodeObject = {...new_value};
           FIELD_FLAGS.forEach(name => {
@@ -133,16 +134,16 @@ const QueryEditor = observer(() => {
   };
 
   const handleOnDelete = ({existing_src, updated_src, namespace, name}:InteractionProps) => {
-    const path = namespace?namespace.join("/"):"";
-    if ((path === "") ||
-        (name === "type" && path === "meta") ||
-        (name === "@vocab" && path === "@context") ||
-        (name === "propertyName" && path === "@context") ||
-        (name === "@type" && path === "@context/propertyName") ||
-        (name === "@id" && path === "@context/propertyName") ||
-        (name === "path" && path === "@context") ||
-        (name === "@type" && path === "@context/path") ||
-        (name === "@id" && path === "@context/path") ) {
+    const path = namespace?namespace.join('/'):'';
+    if ((path === '') ||
+        (name === 'type' && path === 'meta') ||
+        (name === '@vocab' && path === '@context') ||
+        (name === 'propertyName' && path === '@context') ||
+        (name === '@type' && path === '@context/propertyName') ||
+        (name === '@id' && path === '@context/propertyName') ||
+        (name === 'path' && path === '@context') ||
+        (name === '@type' && path === '@context/path') ||
+        (name === '@id' && path === '@context/path') ) {
       setError(`Deleting ${name} of ${path} is forbidden.`);
       updateQuery(existing_src);
     } else {
@@ -174,6 +175,6 @@ const QueryEditor = observer(() => {
     </div>
   );
 });
-QueryEditor.displayName = "QueryEditor";
+QueryEditor.displayName = 'QueryEditor';
 
 export default QueryEditor;

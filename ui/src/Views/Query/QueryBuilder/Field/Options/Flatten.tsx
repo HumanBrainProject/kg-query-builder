@@ -21,12 +21,12 @@
  *
  */
 
-import React from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 
-import Toggle from "../../../../../Components/Toggle";
-import { ToggleItemValue } from "../../../../../Components/Toggle/types";
-import Field from "../../../../../Stores/Field";
+import Toggle from '../../../../../Components/Toggle';
+import type { ToggleItemValue } from '../../../../../Components/Toggle/types';
+import type Field from '../../../../../Stores/Field';
 
 interface FlattenProps {
   field: Field;
@@ -44,7 +44,7 @@ const Flatten = observer(({ field, show, onChange }: FlattenProps) => {
   return (
     <Toggle
       option={{
-        name: "",
+        name: '',
         value: field.isFlattened ? true : undefined
       }}
       label="Flatten"
@@ -54,6 +54,6 @@ const Flatten = observer(({ field, show, onChange }: FlattenProps) => {
     />
   );
 });
-Flatten.displayName = "Flatten";
+Flatten.displayName = 'Flatten';
 
 export default Flatten;

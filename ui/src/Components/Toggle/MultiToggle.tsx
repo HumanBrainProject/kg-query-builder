@@ -21,18 +21,19 @@
  *
  */
 
-import React, { JSX } from "react";
-import { createUseStyles } from "react-jss";
+import React from 'react';
+import { createUseStyles } from 'react-jss';
 
-import MultiToggleItem from "./MultiToggleItem";
-import { ToggleItemValue } from "./types";
+import MultiToggleItem from './MultiToggleItem';
+import type { ToggleItemValue } from './types';
+import type { JSX } from 'react';
 
 const useStyles = createUseStyles({
   container: {
-    display: "inline-grid",
-    background: "var(--bg-color-ui-contrast4)",
-    borderRadius: "20px",
-    height: "24px"
+    display: 'inline-grid',
+    background: 'var(--bg-color-ui-contrast4)',
+    borderRadius: '20px',
+    height: '24px'
   }
 });
 
@@ -49,7 +50,7 @@ const MultiToggle = ({
 }: MultiToggleProps) => {
   const classes = useStyles();
 
-  const isReadOnly = typeof onChange !== "function";
+  const isReadOnly = typeof onChange !== 'function';
 
   const childrenWithProps = React.Children.map(
     children,
