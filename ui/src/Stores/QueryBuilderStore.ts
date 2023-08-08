@@ -121,6 +121,7 @@ class QueryBuilderStore {
       canDeleteQuery: computed,
       isQueryEmpty: computed,
       hasQueryChanged: computed,
+      isNew: computed,
       hasChanged: computed,
       childrenFilterValue: observable,
       setChildrenFilterValue: action,
@@ -474,6 +475,10 @@ class QueryBuilderStore {
 
   get hasQueryChanged(): boolean {
     return !isEqual(this.querySpecification, this.sourceQuerySpecification);
+  }
+
+  get isNew(): boolean {
+    return !!this.queryId && this.sourceQuery === undefined;
   }
 
   get hasChanged(): boolean {

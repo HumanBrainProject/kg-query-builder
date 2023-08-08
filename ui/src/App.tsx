@@ -21,7 +21,7 @@
  *
  */
 
-import React, { useEffect, Suspense } from "react";
+import React, { Suspense } from "react";
 import { observer } from "mobx-react-lite";
 import { JssProvider, ThemeProvider } from "react-jss";//NOSONAR
 import { BrowserRouter, Navigate, Routes, Route, useLocation, matchPath } from "react-router-dom";
@@ -59,27 +59,12 @@ interface AppProps {
 
 const App = observer(({ stores, api, authAdapter } : AppProps) => {
 
-  const { appStore, queryBuilderStore } = stores;
+  const { appStore } = stores;
 
   const theme = appStore.currentTheme;
 
   const location = useLocation();
   const matchQueryId = matchPath({path:"queries/:id/*"}, location.pathname);
-
-  useEffect(() => { 
-
-    const onUnload = (e: BeforeUnloadEvent) => {
-      if (queryBuilderStore?.hasChanged) {
-        e.returnValue = true;
-      }
-    };
-
-    window.addEventListener("beforeunload", onUnload);
-    return () => {
-      window.removeEventListener("beforeunload", onUnload);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <ThemeProvider theme={theme}>

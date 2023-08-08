@@ -80,6 +80,28 @@ const View = ({mode}:ModeProps) => {
   }
 };
 
+const saveQueryToLocalStorage = (queryId: string, type: string, instanceId: string): void => {
+  localStorage.setItem("newQuery", JSON.stringify({queryId: queryId, type: type, instanceId: instanceId}));
+}
+
+const getQueryFromLocalStorage = (queryId: string): {queryId: string, type: string, instanceId: string}|null => {
+  const newQueryItem = localStorage.getItem("newQuery");
+  if (!newQueryItem) {
+    return null;
+  }
+  try {
+    const newQuery = JSON.parse(newQueryItem) as {queryId: string, type: string, instanceId: string};
+    if (newQuery.queryId === queryId && typeof newQuery.type === "string" && !!newQuery.type && typeof newQuery.instanceId === "string") {
+      return newQuery;
+    }
+  } catch (e)  {
+    return null;
+  }
+  return null;
+};
+
+const clearQueryFromLocalStorage = (): void => localStorage.removeItem("newQuery");
+
 const Query = observer(({ mode }:ModeProps) => {
 
   const classes = useStyles();
@@ -90,7 +112,7 @@ const Query = observer(({ mode }:ModeProps) => {
 
   const navigate = useNavigate();
 
-  const { queryBuilderStore, queriesStore, typeStore } = useStores();
+  const { queryBuilderStore, queriesStore, queryRunStore, typeStore } = useStores();
 
   const cachedQuery = queriesStore.findQuery(queryId);
 
@@ -113,6 +135,24 @@ const Query = observer(({ mode }:ModeProps) => {
     Matomo.trackPageView();
   }, [queryId]);
 
+  useEffect(() => { 
+
+    const onUnload = (e: BeforeUnloadEvent) => {
+      if (!!queryBuilderStore.queryId && !!queryBuilderStore.type && queryBuilderStore.isNew) {
+        saveQueryToLocalStorage(queryBuilderStore.queryId, queryBuilderStore.type.id, queryRunStore.instanceId);
+      }
+      if (queryBuilderStore.hasChanged) {
+        e.returnValue = true;
+      }
+    };
+
+    window.addEventListener("beforeunload", onUnload);
+    return () => {
+      window.removeEventListener("beforeunload", onUnload);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (isFetching) {
       setNotFound(undefined);
@@ -121,32 +161,51 @@ const Query = observer(({ mode }:ModeProps) => {
         setNotFound(false);
         queryBuilderStore.setAsNewQuery(queryId);
       } else {
-        setNotFound(true);
+        setNotFound(false);
+        const newQuery = getQueryFromLocalStorage(queryId);
+        const type = newQuery?typeStore.types.get(newQuery.type):undefined;
+        if (newQuery && type) {
+          localStorage.setItem("type",newQuery.type);
+          queriesStore.toggleShowSavedQueries(false);
+          queriesStore.clearQueries();
+          queryBuilderStore.setType(type);
+          queryBuilderStore.setAsNewQuery(queryId);
+          if (newQuery.instanceId) {
+            queryRunStore.setInstanceId(newQuery.instanceId);
+          }
+          if (mode !== "edit") {
+            navigate(`/queries/${id}`)
+          }
+        } else {
+          setNotFound(true);
+        }
       }
+      clearQueryFromLocalStorage();
     } else if (query) {
       const typeName = query.meta.type;
-        if (localStorage.getItem("type")) {
-          localStorage.setItem("type", typeName??"");
+      if (localStorage.getItem("type")) {
+        localStorage.setItem("type", typeName??"");
+      }
+      const type = typeName && typeStore.types.get(typeName);
+      if(type) {
+        queryBuilderStore.setType(type);
+        queryBuilderStore.selectQuery(query);
+      } else {
+        const typeId = typeName??"<undefined>";
+        const unknownType = {
+          id: typeId,
+          label: typeId,
+          color: "black",
+          description: "",
+          properties: []
+        } as Type;
+        queryBuilderStore.setType(unknownType);
+        queryBuilderStore.selectQuery(query);
+        if (mode !== "edit") {
+          navigate(`/queries/${id}/edit`)
         }
-        const type = typeName && typeStore.types.get(typeName);
-        if(type) {
-          queryBuilderStore.setType(type);
-          queryBuilderStore.selectQuery(query);
-        } else {
-          const typeId = typeName??"<undefined>";
-          const unknownType = {
-            id: typeId,
-            label: typeId,
-            color: "black",
-            description: "",
-            properties: []
-          } as Type;
-          queryBuilderStore.setType(unknownType);
-          queryBuilderStore.selectQuery(query);
-          if (mode !== "edit") {
-            navigate(`/queries/${id}/edit`)
-          }
-        }
+      }
+      clearQueryFromLocalStorage();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryId, query, isFetching, isAvailable]);
