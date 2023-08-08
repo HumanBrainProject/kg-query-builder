@@ -243,6 +243,7 @@ const ExecutionParams = observer(({ onExecute }: ExecutionParamsProps) => {
                 type="number"
                 value={queryRunStore.size}
                 placeholder="20"
+                min={1}
                 onChange={handleChangeSize}
               />
             </Form.Group>
@@ -257,6 +258,7 @@ const ExecutionParams = observer(({ onExecute }: ExecutionParamsProps) => {
                 type="number"
                 value={queryRunStore.start}
                 placeholder="0"
+                min={0}
                 onChange={handleChangeStart}
               />
             </Form.Group>

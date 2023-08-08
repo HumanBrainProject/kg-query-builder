@@ -61,7 +61,7 @@ const getFrom = (from?: string|null) => {
 
 const getInstanceId = (instanceId?: UUID|null) => {
   if (instanceId !== undefined && instanceId !== null) {
-    return `instanceId=${instanceId}&`;
+    return `instanceId=${encodeURIComponent(instanceId)}&`;
   }
   return "";
 };
