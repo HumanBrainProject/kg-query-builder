@@ -108,9 +108,9 @@ const Query = observer(({ mode }:ModeProps) => {
 
   const [isNotFound, setNotFound] = useState<boolean|undefined>(undefined);
 
-  useEffect(() => {
-        Matomo.setCustomUrl(window.location.href);
-        Matomo.trackPageView();
+  useEffect(() => { 
+    Matomo.setCustomUrl(window.location.href);
+    Matomo.trackPageView();
   }, [queryId]);
 
   useEffect(() => {

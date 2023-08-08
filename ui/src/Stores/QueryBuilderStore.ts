@@ -468,9 +468,7 @@ class QueryBuilderStore {
 
   get isQueryEmpty(): boolean {
     return (
-      !this.rootField ||
-      !this.rootField.structure ||
-      !this.rootField.structure.length
+      !this.rootField?.structure?.length
     );
   }
 

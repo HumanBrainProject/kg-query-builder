@@ -68,9 +68,9 @@ const App = observer(({ stores, api, authAdapter } : AppProps) => {
 
   useEffect(() => { 
 
-    const onUnload = (e: Event) => {
+    const onUnload = (e: BeforeUnloadEvent) => {
       if (queryBuilderStore?.hasChanged) {
-        e.preventDefault();
+        e.returnValue = true;
       }
     };
 
