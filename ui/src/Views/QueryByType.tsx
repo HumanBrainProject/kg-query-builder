@@ -22,37 +22,36 @@
  */
 
 import { observer } from 'mobx-react-lite';
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-
 import useStores from '../Hooks/useStores';
 
 const QueryByType = observer(() => {
-
   const { typeStore, queryBuilderStore, queriesStore, queryRunStore } = useStores();
+  const navigate = useNavigate();
 
   const queryParams = new URLSearchParams(location.search);
   const typeId = queryParams.get('type');
   const instanceId = queryParams.get('instanceId');
-
-  const type = typeId && typeStore.types.get(typeId);
-  if (type) {
-    localStorage.setItem('type', type.id);
-    queriesStore.toggleShowSavedQueries(false);
-    queriesStore.clearQueries();
-    queryBuilderStore.setType(type);
-    const uuid = uuidv4();
-    if (instanceId) {
-      queryRunStore.setInstanceId(instanceId);
+  useEffect(() => {
+    const type = typeId && typeStore.types.get(typeId);
+    if (type) {
+      localStorage.setItem('type', type.id);
+      queriesStore.toggleShowSavedQueries(false);
+      queriesStore.clearQueries();
+      queryBuilderStore.setType(type);
+      const uuid = uuidv4();
+      if (instanceId) {
+        queryRunStore.setInstanceId(instanceId);
+      }
+      navigate(`/queries/${uuid}`,  { replace: true });
+    } else {
+      navigate('/', { replace: true });
     }
-    return (
-      <Navigate to={`/queries/${uuid}`} replace={true} />
-    );
-  }
-  return (
-    <Navigate to={'/'} replace={true} />
-  );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return null;
 });
 QueryByType.displayName = 'QueryByType';
 
