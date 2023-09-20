@@ -22,7 +22,7 @@
  */
 
 import { observer } from 'mobx-react-lite';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { createUseStyles } from 'react-jss';
 
 import useStores from '../Hooks/useStores';
@@ -30,7 +30,6 @@ import Matomo from '../Services/Matomo';
 
 import Selection from './Home/Selection';
 import Types from './Home/Types';
-import WelcomeTip from './WelcomeTip';
 
 const useStyles = createUseStyles({
   container: {
@@ -42,22 +41,13 @@ const useStyles = createUseStyles({
     padding: '10px',
     background: 'transparent',
     color: 'var(--ft-color-normal)',
-    overflow: 'hidden',
-    '&.showWelcomeTip': {
-      gridTemplateRows: 'auto 1fr',
-      rowGap: '10px',
-    }
-  },
-  welcomeTip: {
-    gridColumnEnd: 'span 2'
+    overflow: 'hidden'
   }
 });
 
 const Home = observer(() => {
 
   const classes = useStyles();
-
-  const [ showWelcomeTip, setShowWelcomeTip ] = useState(!localStorage.getItem('hideWelcomeTip'));
 
   const { typeStore, queryBuilderStore } = useStores();
 
@@ -76,14 +66,8 @@ const Home = observer(() => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleHideWelcomeTip = () => {
-    localStorage.setItem('hideWelcomeTip', 'true');
-    setShowWelcomeTip(false);
-  };
-
   return (
-    <div className={`${classes.container} ${showWelcomeTip?'showWelcomeTip':''}`}>
-      <WelcomeTip className={classes.welcomeTip} show={showWelcomeTip} onClose={handleHideWelcomeTip} />
+    <div className={classes.container}>
       <Types />
       <Selection />
     </div>

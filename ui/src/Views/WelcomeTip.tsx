@@ -32,7 +32,7 @@ const useStyles = createUseStyles({
   container: {
     display: 'flex',
     background: 'rgba(0,0,0,0.2)',
-    padding: '8px 8px 8px 12px',
+    padding: '8px 15px 8px 20px',
     color: 'var(--ft-color-loud)',
     '& > svg': {
       transform: 'translateY(3px)'
@@ -58,12 +58,11 @@ const useStyles = createUseStyles({
 });
 
 interface WelcomeTipProps {
-  className: string;
   show: boolean;
   onClose: () => void;
 }
 
-const WelcomeTip = observer(({ className, show, onClose}: WelcomeTipProps) => {
+const WelcomeTip = observer(({ show, onClose}: WelcomeTipProps) => {
 
   const classes = useStyles();
 
@@ -72,7 +71,7 @@ const WelcomeTip = observer(({ className, show, onClose}: WelcomeTipProps) => {
   }
 
   return (
-    <div className={`${classes.container} ${className?className:''}`}>
+    <div className={classes.container}>
       <FontAwesomeIcon icon={faLightbulb} />
       <div className={classes.tip}> This is the place to query the EBRAINS Knowledge Graph conveniently by UI. If you need any help, please check out <a href="https://docs.kg.ebrains.eu/9b511d36d7608eafc94ea43c918f16b6/tutorials.html" rel="nofollow noreferrer noopener" target="_blank">our tutorials</a> or contact us at <a href="mailto:kg@ebrains.eu">kg@ebrains.eu</a></div>
       <button className={classes.closeBtn} onClick={onClose} title="close"><FontAwesomeIcon icon={faTimes} /></button>

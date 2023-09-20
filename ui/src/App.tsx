@@ -22,7 +22,7 @@
  */
 
 import { observer } from 'mobx-react-lite';
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import { JssProvider, ThemeProvider } from 'react-jss';//NOSONAR
 import { BrowserRouter, Navigate, Routes, Route, useLocation, matchPath } from 'react-router-dom';
 
@@ -38,6 +38,7 @@ import Settings from './Views/Settings';
 import Shortcuts from './Views/Shortcuts';
 import StoresProvider from './Views/StoresProvider';
 import Styles from './Views/Styles';
+import WelcomeTip from './Views/WelcomeTip';
 import type API from './Services/API';
 import type AuthAdapter from './Services/AuthAdapter';
 import type RootStore from './Stores/RootStore';
@@ -59,12 +60,19 @@ interface AppProps {
 
 const App = observer(({ stores, api, authAdapter } : AppProps) => {
 
+  const [ showWelcomeTip, setShowWelcomeTip ] = useState(!localStorage.getItem('hideWelcomeTip'));
+
   const { appStore } = stores;
 
   const theme = appStore.currentTheme;
 
   const location = useLocation();
   const matchQueryId = matchPath({path:'queries/:id/*'}, location.pathname);
+
+  const handleHideWelcomeTip = () => {
+    localStorage.setItem('hideWelcomeTip', 'true');
+    setShowWelcomeTip(false);
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -87,6 +95,7 @@ const App = observer(({ stores, api, authAdapter } : AppProps) => {
                               <Types>
                                 <Shortcuts />
                                 <Suspense fallback={<SpinnerPanel text="Loading resource..." />} >
+                                  <WelcomeTip show={showWelcomeTip} onClose={handleHideWelcomeTip} />
                                   <Routes>
                                     <Route path="/" element={<Home />} />
                                     <Route path="queries" element={<QueryByType />} />
