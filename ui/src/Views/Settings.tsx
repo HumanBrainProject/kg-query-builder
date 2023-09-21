@@ -38,7 +38,7 @@ import type { JSX} from 'react';
 
 
 interface SettingsProps {
-  authAdapter?: AuthAdapter;
+  authAdapter: AuthAdapter;
   children?: string|JSX.Element|(null|undefined|string|JSX.Element)[];
 }
 
@@ -61,9 +61,7 @@ const Settings = observer(({ authAdapter, children }: SettingsProps) => {
       Matomo.initialize(settings?.matomo);
       Sentry.initialize(settings?.sentry);
       appStore.setCommit(settings?.commit);
-      if (authAdapter instanceof KeycloakAuthAdapter && settings.keycloak) {
-        authAdapter.setConfig(settings.keycloak);
-      }
+      authAdapter.setConfig(settings.keycloak as unknown as Record<string,unknown>);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings]);

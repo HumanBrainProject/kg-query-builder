@@ -32,6 +32,7 @@
  *   limitations under the License.
  *
  */
+import KeycloakAuthProvider from '../Views/KeycloakAuthProvider';
 import KeyCloakTokenProvider from './KeycloakTokenProvider';
 import UnauthorizedRequestResponseHandlerProvider from './UnauthorizedRequestResponseHandlerProvider';
 import type AuthAdapter from './AuthAdapter';
@@ -44,7 +45,7 @@ class KeycloakAuthAdapter implements AuthAdapter {
   private _initOptions: KeycloakInitOptions | undefined;
   private _redirectUri: string | undefined;
   private _config: KeycloakConfig | undefined = undefined;
-  private _keycloak: Keycloak | undefined = undefined;
+  private _keycloak: Keycloak | undefined = undefined; //NOSONAR, Keycloak is used as a type
 
   constructor(initOptions?: KeycloakInitOptions, redirectUri?: string) {
     this._tokenProvider = new KeyCloakTokenProvider();
@@ -61,6 +62,10 @@ class KeycloakAuthAdapter implements AuthAdapter {
     return this._unauthorizedRequestResponseHandlerProvider;
   }
 
+  get authProvider() {
+    return KeycloakAuthProvider;
+  }
+
   setOnLoad(onLoad: KeycloakOnLoad) {
     if (this._initOptions) {
       this._initOptions = {
@@ -72,8 +77,8 @@ class KeycloakAuthAdapter implements AuthAdapter {
     }
   }
 
-  get initOptions(): KeycloakInitOptions | undefined {
-    return this._initOptions?{...this._initOptions}:undefined;
+  get initOptions(): Record<string, unknown> | undefined {
+    return this._initOptions?{...this._initOptions} as Record<string, unknown>:undefined;
   }
 
   get redirectUri(): string | undefined {
@@ -84,15 +89,17 @@ class KeycloakAuthAdapter implements AuthAdapter {
     return this._config?{...this._config}:undefined;
   }
 
-  setConfig(config: KeycloakConfig | undefined) {
-    this._config = config;
+  setConfig(config: Record<string, unknown> | undefined) {
+    if (config) {
+      this._config = {...config} as unknown as KeycloakConfig;
+    }
   }
 
-  get keycloak(): Keycloak | undefined {
+  get keycloak(): Keycloak | undefined { //NOSONAR, Keycloak is used as a type
     return this._keycloak;
   }
 
-  setKeycloak(keycloak: Keycloak) {
+  setKeycloak(keycloak: Keycloak) { //NOSONAR, Keycloak is used as a type
     this._tokenProvider.setKeycloak(keycloak);
     this._keycloak = keycloak;
   }
