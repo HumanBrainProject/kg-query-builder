@@ -32,10 +32,10 @@ import SpinnerPanel from '../Components/SpinnerPanel';
 import useAuth from '../Hooks/useAuth';
 import useListSpacesQuery from '../Hooks/useListSpacesQuery';
 import useStores from '../Hooks/useStores';
-import type { JSX} from 'react';
+import type { ReactNode } from 'react';
 
 interface SpacesProps {
-  children?: string|JSX.Element|(null|undefined|string|JSX.Element)[];
+  children?: ReactNode;
 }
 
 const Spaces = observer(({ children }: SpacesProps) => {
