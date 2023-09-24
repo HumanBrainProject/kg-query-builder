@@ -50,7 +50,7 @@ const MultiToggle = ({
 }: MultiToggleProps) => {
   const classes = useStyles();
 
-  const isReadOnly = typeof onChange !== 'function';
+  const isReadOnly = !onChange;
 
   const childrenWithProps = React.Children.map(
     children,

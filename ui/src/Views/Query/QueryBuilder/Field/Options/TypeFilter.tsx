@@ -87,9 +87,9 @@ const TypeFilterItem = ({ type, onClick }: TypeFilterItemProps) => {
 
   const classes = useStyles();
 
-  const handleOnClick = () => typeof onClick === 'function' && onClick(type.id, !type.selected);
+  const handleOnClick = () => onClick(type.id, !type.selected);
 
-  const handleToggleClick = (name?: string, value?:ToggleItemValue) => typeof onClick === 'function' && onClick(name, !!(value as boolean|undefined));
+  const handleToggleClick = (name?: string, value?:ToggleItemValue) => onClick(name, !!(value as boolean|undefined));
 
   return(
     <div className={`${classes.typeFilter} ${type.isUnknown?'isUnknown':''} ${type.selected?'selected':''}`} onClick={handleOnClick} >

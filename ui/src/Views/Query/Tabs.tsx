@@ -87,7 +87,7 @@ const Tab = ({ className, disabled, active, icon, mode, title, onClick }: TabPro
     }:
     {
       className: className,
-      onClick: () => typeof onClick === 'function' && onClick(mode)
+      onClick: () => onClick(mode)
     };
 
   return(

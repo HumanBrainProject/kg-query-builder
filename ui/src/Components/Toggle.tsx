@@ -72,7 +72,7 @@ const Toggle = ({
 
   const { name, value } = option;
 
-  const isReadOnly = typeof onChange !== 'function';
+  const isReadOnly = !onChange;
 
   const handleChange = (newValue: ToggleItemValue) => !isReadOnly && onChange(name, newValue);
 

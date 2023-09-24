@@ -122,11 +122,11 @@ const Tab = ({
   onClose
 }: TabProps) => {
   const classes = useStyles();
-  const closeable = typeof onClose === 'function';
+  const closeable = !!onClose;
 
   const handleClick = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    typeof onClick === 'function' && onClick(e);
+    !!onClick && onClick(e);
   };
 
   const handleClose = (e: MouseEvent<HTMLElement>) => {
