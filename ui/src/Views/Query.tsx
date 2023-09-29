@@ -100,12 +100,6 @@ const getQueryFromLocalStorage = (queryId: string): {queryId: string, type: stri
   return null;
 };
 
-const isQueryIdMatch = (newQuery: {queryId: string, type: string, instanceId: string}, queryId: string): boolean => newQuery.queryId === queryId;
-
-const isTypeValid = (newQuery: {queryId: string, type: string, instanceId: string}): boolean => typeof newQuery.type === 'string' && !!newQuery.type;
-
-const isInstanceIdValid = (newQuery: {queryId: string, type: string, instanceId: string}): boolean => typeof newQuery.instanceId === 'string';
-
 const clearQueryFromLocalStorage = (): void => localStorage.removeItem('newQuery');
 
 const Query = observer(({ mode }:ModeProps) => {
