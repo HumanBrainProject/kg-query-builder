@@ -66,7 +66,9 @@ const useStyles = createUseStyles((theme: Jss.Theme) => {
     },
     main: {
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column'
     },
     footer: {
       position: 'relative',
