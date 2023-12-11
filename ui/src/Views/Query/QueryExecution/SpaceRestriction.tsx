@@ -39,7 +39,9 @@ const useStyles = createUseStyles({
     padding: '10px 10px 0 10px',
     flexWrap: 'wrap',
     border: '1px solid var(--bg-color-ui-contrast4)',
-    marginTop: '4px'
+    marginTop: '4px',
+    maxHeight: '160px',
+    overflowY: 'auto'
   },
   space: {
     display: 'inline-block',
