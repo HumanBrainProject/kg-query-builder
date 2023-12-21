@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>
 			<artifactId>tomcat-embed-core</artifactId>
-			<version>9.0.80</version>
+			<version>9.0.83</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -119,7 +119,7 @@
 		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>
 			<artifactId>tomcat-embed-core</artifactId>
-			<version>9.0.80</version>
+			<version>9.0.83</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
